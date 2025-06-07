@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres
+    container_name: itestra-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    volumes:
+      - ./src/main/java/com/itestra/eventorganizer/sql:/docker-entrypoint-initdb.d
