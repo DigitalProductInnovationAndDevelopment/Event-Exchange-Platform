@@ -17,8 +17,10 @@ This will create a `postgres` container with the necessary credentials and also 
       Email: itestra.tum.hr@gmail.com
       Password: itestratumhr1.
       ```
-2. After a successful login, you will receive a JWT token. You can find the Authentication JWT token as a cookie. Refer
+2. After a successful login, you will receive a JWT token. You can find the Authentication JWT token as a cookie in
+   DevTools menu. Refer
    to the attached screenshot for guidance.
+   ![Screenshot Where to Find Cookie](readme_assets/find_cookie.png)
 3. Add the authentication token as a header to trigger backend endpoints:
    ```
    Authorization: eyJhbGciOiJIUzI1.............
