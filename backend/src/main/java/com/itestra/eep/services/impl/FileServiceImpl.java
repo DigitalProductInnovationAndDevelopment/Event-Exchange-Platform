@@ -1,11 +1,11 @@
 package com.itestra.eep.services.impl;
 
 import com.itestra.eep.exceptions.EventNotFoundException;
+import com.itestra.eep.models.Event;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.repositories.FileRepository;
 import com.itestra.eep.services.FileService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,11 +25,8 @@ public class FileServiceImpl implements FileService {
     public void storeFile(MultipartFile file, UUID eventId) throws IOException {
         FileEntity entity = new FileEntity();
 
-        try {
-            entity.setEvent(eventRepository.getReferenceById(eventId));
-        } catch (EntityNotFoundException e) {
-            throw new EventNotFoundException();
-        }
+        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+        entity.setEvent(event);
 
         entity.setName(file.getOriginalFilename());
         entity.setContent(file.getBytes());
