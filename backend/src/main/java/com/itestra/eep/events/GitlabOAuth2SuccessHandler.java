@@ -45,7 +45,8 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         } catch (UserProfileNotFoundException e) {
 
             UserRole userRole = new UserRole();
-            userRole.setRole(Role.VISITOR);
+            // since we handle GitLab authentication here, we assume that the new profile belongs to an employee.
+            userRole.setRole(Role.EMPLOYEE);
 
             userProfile = Profile.builder()
                     .gitlabUsername(gitlabUsername)

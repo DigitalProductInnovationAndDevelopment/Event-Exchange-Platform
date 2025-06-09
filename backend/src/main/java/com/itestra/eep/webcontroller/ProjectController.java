@@ -28,7 +28,7 @@ public class ProjectController {
     private final ProjectMapper projectMapper;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'VISITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
     public ResponseEntity<ProjectCreateDTO> getProject(@PathVariable UUID id) {
         Project project = projectService.findById(id);
         return new ResponseEntity<>(projectMapper.toDto(project), HttpStatus.OK);

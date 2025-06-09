@@ -27,7 +27,7 @@ public class ProfileController {
     private final EmployeeService employeeService;
 
     @GetMapping("/employee/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'VISITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
     public ResponseEntity<EmployeeUpdateDTO> getEmployee(@PathVariable UUID id) {
         Employee employee = employeeService.findById(id);
         return new ResponseEntity<>(employeeMapper.toUpdateDto(employee), HttpStatus.OK);

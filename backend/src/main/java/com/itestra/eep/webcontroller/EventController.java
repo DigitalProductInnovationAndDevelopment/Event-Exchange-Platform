@@ -27,7 +27,7 @@ public class EventController {
     private final EventMapper eventMapper;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'VISITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
     public ResponseEntity<EventCreateDTO> getEvent(@PathVariable UUID id) {
         Event event = eventService.findById(id);
         return new ResponseEntity<>(eventMapper.toCreateDto(event), HttpStatus.OK);

@@ -33,9 +33,14 @@ public class FileSecurity {
             return true;
         }
 
-        // visitors can download if they are participants of the event
+        // allow visitors or employees to download if they are participants of the event
         boolean isVisitor = authentication.getAuthorities().stream()
-                .anyMatch(auth -> Role.VISITOR.name().equals(auth.getAuthority()));
+                .anyMatch(auth -> {
+                    String authority = auth.getAuthority();
+                    return Role.VISITOR.name().equals(authority) ||
+                            Role.EMPLOYEE.name().equals(authority);
+                });
+
         if (!isVisitor) {
             return false;
         }

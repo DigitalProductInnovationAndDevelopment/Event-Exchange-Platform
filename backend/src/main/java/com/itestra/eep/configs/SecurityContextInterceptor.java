@@ -12,7 +12,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +21,10 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -41,56 +43,78 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
             "/swagger-ui/**"
     };
 
+    private boolean isPathWhitelisted(String path) {
+        for (String pattern : WHITELIST) {
+            if (pathMatcher.match(pattern, path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String path = request.getRequestURI();
 
-        for (String pattern : WHITELIST) {
-            if (pathMatcher.match(pattern, path)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+        if (isPathWhitelisted(path)) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        UsernamePasswordAuthenticationToken authentication = attemptAuthenticationFromJwt(request);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        filterChain.doFilter(request, response);
+    }
+
+    private UsernamePasswordAuthenticationToken attemptAuthenticationFromJwt(HttpServletRequest request) {
         String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (Objects.isNull(jwt)) {
-            throw new UnauthorizedException();
+        if (jwt == null) {
+            return createAnonymousAuthentication();
         }
 
         try {
 
             Claims claims = jwtUtil.extractClaims(jwt);
-
-            String userEmail = claims.getSubject();
-            String userName = claims.get("name", String.class);
-            UUID userId = UUID.fromString(claims.get("id", String.class));
-            String userRoles = claims.get("roles", List.class).toString();
-
-            List<String> fetchedRoles = Strings.isEmpty(userRoles) || userRoles.length() < 2 ?
-                    List.of() :
-                    Arrays.asList(userRoles
-                            .replaceAll("[\\[\\]]", "")
-                            .split(",\\s*"));
-
-            Set<UserRole> roles = fetchedRoles.stream().map(role -> new UserRole(null, null, Role.valueOf(role))).collect(Collectors.toSet());
-
-            Profile profile = Profile.builder().id(userId).name(userName).email(userEmail).authorities(roles).build();
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(profile, null, roles);
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return createAuthenticationFromClaims(claims);
 
         } catch (ExpiredJwtException | SecurityException e) {
             throw new UnauthorizedException();
         }
-
-        filterChain.doFilter(request, response);
     }
+
+    private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
+        Set<UserRole> roles = Set.of(new UserRole(null, null, Role.VISITOR));
+        Profile profile = Profile.builder().authorities(roles).build();
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
+        authentication.setAuthenticated(false);
+        return authentication;
+    }
+
+    private UsernamePasswordAuthenticationToken createAuthenticationFromClaims(Claims claims) {
+        String userEmail = claims.getSubject();
+        String userName = claims.get("name", String.class);
+        UUID userId = UUID.fromString(claims.get("id", String.class));
+
+        @SuppressWarnings("unchecked")
+        List<String> userRoles = (List<String>) claims.getOrDefault("roles", Collections.emptyList());
+
+        Set<UserRole> roles = userRoles.stream()
+                .map(role -> new UserRole(null, null, Role.valueOf(role)))
+                .collect(Collectors.toSet());
+
+        Profile profile = Profile.builder()
+                .id(userId)
+                .name(userName)
+                .email(userEmail)
+                .authorities(roles)
+                .build();
+
+        return new UsernamePasswordAuthenticationToken(profile, null, roles);
+    }
+
 }
 
 
