@@ -1,109 +1,106 @@
-import { useState } from 'react';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Avatar, Dropdown } from 'antd';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   DashboardOutlined, 
   CalendarOutlined, 
-  TeamOutlined,
+  TeamOutlined, 
+  SettingOutlined,
   LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined
+  UserOutlined
 } from '@ant-design/icons';
-import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Breadcrumb } from './Breadcrumb';
 
-const { Content, Footer, Sider, Header } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 export const AppContainer = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const menuItems = [
+  const mainMenuItems = [
     {
-      key: '/',
+      key: '/dashboard',
       icon: <DashboardOutlined />,
       label: 'Dashboard',
-      onClick: () => navigate('/'),
     },
     {
       key: '/events',
       icon: <CalendarOutlined />,
       label: 'Events',
-      onClick: () => navigate('/events'),
     },
     {
       key: '/employees',
       icon: <TeamOutlined />,
       label: 'Employees',
-      onClick: () => navigate('/employees'),
+    },
+    {
+      key: '/settings',
+      icon: <SettingOutlined />,
+      label: 'Settings',
     },
   ];
 
-  // Get current menu key based on pathname
-  const getCurrentMenuKey = () => {
-    const pathname = location.pathname;
-    if (pathname.startsWith('/events')) return '/events';
-    if (pathname.startsWith('/employees')) return '/employees';
-    return pathname;
+  const handleMenuClick = (key: string) => {
+    if (key === 'logout') {
+      logout();
+    } else {
+      navigate(key);
+    }
   };
 
+  const userMenuItems = [
+    {
+      key: '/profile',
+      icon: <UserOutlined />,
+      label: 'Profile Settings',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      danger: true,
+    },
+  ];
+
   return (
-    <Layout className="h-full w-full flex">
-      <Sider
+    <Layout className="min-h-screen">
+      <Sider 
+        theme="dark" 
+        className="fixed h-full z-10"
         breakpoint="lg"
-        collapsedWidth={80}
-        className="bg-[#001529]"
-        collapsed={collapsed}
-        onBreakpoint={(broken) => {
-          console.log(broken);
-        }}
-        onCollapse={(collapsed, type) => {
-          console.log(collapsed, type);
-        }}
+        collapsedWidth="0"
       >
-        <div className="h-8 m-4 rounded flex items-center justify-center text-white font-bold">
-          {collapsed ? "EMP" : "Event Management Platform"}
-        </div>
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[getCurrentMenuKey()]}
-          items={menuItems}
-          className="border-r-0"
+          selectedKeys={[location.pathname]}
+          items={mainMenuItems}
+          onClick={({ key }) => handleMenuClick(key)}
+          className="mt-10"
         />
       </Sider>
-      <Layout className="flex-1 flex flex-col">
-        <Header className="bg-white border-b border-gray-200 px-6 flex items-center justify-between">
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            className="flex items-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md"
-          />
-          <Button 
-            type="text" 
-            icon={<LogoutOutlined />} 
-            onClick={handleLogout}
-            className="flex items-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md"
+      <Layout className="ml-[200px] flex flex-col min-h-screen">
+        <Header className="bg-white px-6 flex items-center justify-end shadow-sm">
+          <Dropdown
+            menu={{
+              items: userMenuItems,
+              onClick: ({ key }) => handleMenuClick(key),
+            }}
+            placement="bottomRight"
           >
-            Logout
-          </Button>
+            <div className="flex items-center cursor-pointer">
+              <Avatar icon={<UserOutlined />} className="bg-blue-500" />
+              <span className="ml-2">{user?.name || user?.email || 'User'}</span>
+            </div>
+          </Dropdown>
         </Header>
-        <Content className="flex-1 p-8 bg-gray-50">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <Breadcrumb />
+        <Content className="bg-gray-50 flex-1 overflow-auto">
+          <div className="p-6">
             <Outlet />
           </div>
         </Content>
         <Footer className="text-center bg-white border-t border-gray-200">
-          Itestra Event Management Platform ©{new Date().getFullYear()} Created by Itestra
+          Event Exchange Platform ©{new Date().getFullYear()}
         </Footer>
       </Layout>
     </Layout>
