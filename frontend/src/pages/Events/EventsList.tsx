@@ -31,7 +31,7 @@ export const EventsList = () => {
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
 
   // Mock data for events
-  const events: Event[] = [
+  const events = useMemo<Event[]>(() => [
     {
       key: '1',
       id: '1',
@@ -39,8 +39,8 @@ export const EventsList = () => {
       date: '2024-03-15',
       location: 'San Francisco',
       participants: 150,
-      status: 'upcoming',
-      type: 'conference',
+      status: 'upcoming' as const,
+      type: 'conference' as const,
       budget: 50000,
       department: 'IT',
     },
@@ -51,8 +51,8 @@ export const EventsList = () => {
       date: '2024-02-28',
       location: 'New York',
       participants: 75,
-      status: 'ongoing',
-      type: 'workshop',
+      status: 'ongoing' as const,
+      type: 'workshop' as const,
       budget: 15000,
       department: 'Marketing',
     },
@@ -63,8 +63,8 @@ export const EventsList = () => {
       date: '2024-01-20',
       location: 'Chicago',
       participants: 200,
-      status: 'completed',
-      type: 'meeting',
+      status: 'completed' as const,
+      type: 'meeting' as const,
       budget: 30000,
       department: 'All',
     },
@@ -75,12 +75,12 @@ export const EventsList = () => {
       date: '2024-04-10',
       location: 'Boston',
       participants: 45,
-      status: 'upcoming',
-      type: 'training',
+      status: 'upcoming' as const,
+      type: 'training' as const,
       budget: 25000,
       department: 'HR',
     },
-  ];
+  ], []);
 
   // Filter events based on all criteria
   const filteredEvents = useMemo(() => {
@@ -212,10 +212,8 @@ export const EventsList = () => {
   };
 
   // Calculate statistics based on filtered events
-  const totalEvents = filteredEvents.length;
   const totalParticipants = filteredEvents.reduce((sum, event) => sum + event.participants, 0);
   const totalBudget = filteredEvents.reduce((sum, event) => sum + event.budget, 0);
-  const upcomingEvents = filteredEvents.filter(event => event.status === 'upcoming').length;
 
   return (
     <div>
@@ -230,26 +228,18 @@ export const EventsList = () => {
         <Col span={6}>
           <Card>
             <Statistic
-              title="Total Events"
-              value={totalEvents}
-              prefix={<CalendarOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="Total Participants"
-              value={totalParticipants}
+              title="Average Event Size"
+              value={filteredEvents.length > 0 ? Math.round(totalParticipants / filteredEvents.length) : 0}
               prefix={<TeamOutlined />}
+              suffix="participants"
             />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
             <Statistic
-              title="Total Budget"
-              value={totalBudget}
+              title="Average Budget"
+              value={filteredEvents.length > 0 ? Math.round(totalBudget / filteredEvents.length) : 0}
               prefix={<DollarOutlined />}
               formatter={(value) => `$${value.toLocaleString()}`}
             />
@@ -258,8 +248,32 @@ export const EventsList = () => {
         <Col span={6}>
           <Card>
             <Statistic
-              title="Upcoming Events"
-              value={upcomingEvents}
+              title="Most Active Department"
+              value={(() => {
+                const deptCounts = filteredEvents.reduce((acc, event) => {
+                  acc[event.department] = (acc[event.department] || 0) + 1;
+                  return acc;
+                }, {} as Record<string, number>);
+                return Object.entries(deptCounts)
+                  .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
+              })()}
+              prefix={<TeamOutlined />}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Most Common Event Type"
+              value={(() => {
+                const typeCounts = filteredEvents.reduce((acc, event) => {
+                  acc[event.type] = (acc[event.type] || 0) + 1;
+                  return acc;
+                }, {} as Record<string, number>);
+                const mostCommon = Object.entries(typeCounts)
+                  .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
+                return mostCommon.charAt(0).toUpperCase() + mostCommon.slice(1);
+              })()}
               prefix={<CalendarOutlined />}
             />
           </Card>
