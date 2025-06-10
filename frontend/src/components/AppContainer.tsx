@@ -4,7 +4,6 @@ import {
   DashboardOutlined, 
   CalendarOutlined, 
   TeamOutlined, 
-  SettingOutlined,
   LogoutOutlined,
   UserOutlined
 } from '@ant-design/icons';
@@ -33,11 +32,6 @@ export const AppContainer = () => {
       icon: <TeamOutlined />,
       label: 'Employees',
     },
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-    },
   ];
 
   const handleMenuClick = (key: string) => {
@@ -62,6 +56,12 @@ export const AppContainer = () => {
     },
   ];
 
+  // Get the base path for menu selection
+  const getBasePath = (path: string) => {
+    const segments = path.split('/');
+    return `/${segments[1]}`;
+  };
+
   return (
     <Layout className="min-h-screen">
       <Sider 
@@ -73,7 +73,7 @@ export const AppContainer = () => {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[location.pathname]}
+          selectedKeys={[getBasePath(location.pathname)]}
           items={mainMenuItems}
           onClick={({ key }) => handleMenuClick(key)}
           className="mt-10"
