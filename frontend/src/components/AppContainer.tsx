@@ -1,18 +1,29 @@
 import { useState } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button } from 'antd';
 import { 
   DashboardOutlined, 
   CalendarOutlined, 
-  TeamOutlined
+  TeamOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Breadcrumb } from './Breadcrumb';
 
-const { Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider, Header } = Layout;
 
 export const AppContainer = () => {
-  const [collapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const menuItems = [
     {
@@ -47,8 +58,9 @@ export const AppContainer = () => {
     <Layout className="h-full w-full flex">
       <Sider
         breakpoint="lg"
-        collapsedWidth="0"
-        className="bg-white border-r border-gray-200"
+        collapsedWidth={80}
+        className="bg-[#001529]"
+        collapsed={collapsed}
         onBreakpoint={(broken) => {
           console.log(broken);
         }}
@@ -56,11 +68,11 @@ export const AppContainer = () => {
           console.log(collapsed, type);
         }}
       >
-        <div className="h-8 m-4 bg-blue-50 rounded flex items-center justify-center text-blue-600 font-bold">
-          {collapsed ? "IEMP" : "Itestra Event Management Platform"}
+        <div className="h-8 m-4 rounded flex items-center justify-center text-white font-bold">
+          {collapsed ? "EMP" : "Event Management Platform"}
         </div>
         <Menu
-          theme="light"
+          theme="dark"
           mode="inline"
           selectedKeys={[getCurrentMenuKey()]}
           items={menuItems}
@@ -68,8 +80,27 @@ export const AppContainer = () => {
         />
       </Sider>
       <Layout className="flex-1 flex flex-col">
+        <Header className="bg-white border-b border-gray-200 px-6 flex items-center justify-between">
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            className="flex items-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md"
+          />
+          <Button 
+            type="text" 
+            icon={<LogoutOutlined />} 
+            onClick={handleLogout}
+            className="flex items-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md"
+          >
+            Logout
+          </Button>
+        </Header>
         <Content className="flex-1 p-8 bg-gray-50">
-          <Outlet />
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <Breadcrumb />
+            <Outlet />
+          </div>
         </Content>
         <Footer className="text-center bg-white border-t border-gray-200">
           Itestra Event Management Platform ©{new Date().getFullYear()} Created by Itestra

@@ -1,14 +1,27 @@
-import { Typography, Button, Table, Space, Tag } from 'antd';
-import { PlusOutlined, EyeOutlined } from '@ant-design/icons';
+import { Typography, Button, Table, Space, Tag, Card, Row, Col, Switch } from 'antd';
+import { PlusOutlined, EyeOutlined, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Breadcrumb } from '../../components/Breadcrumb';
 
 const { Title } = Typography;
 
+interface Event {
+  key: string;
+  id: string;
+  name: string;
+  date: string;
+  location: string;
+  participants: number;
+  status: 'upcoming' | 'ongoing' | 'completed';
+}
+
 export const EventsList = () => {
   const navigate = useNavigate();
+  const [isTableView, setIsTableView] = useState(true);
 
   // Mock data for events
-  const events = [
+  const events: Event[] = [
     {
       key: '1',
       id: '1',
@@ -63,7 +76,7 @@ export const EventsList = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => {
+      render: (status: Event['status']) => {
         const color = status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
         return <Tag color={color}>{status.toUpperCase()}</Tag>;
       },
@@ -71,7 +84,7 @@ export const EventsList = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_: any, record: any) => (
+      render: (_: unknown, record: Event) => (
         <Space size="middle">
           <Button 
             icon={<EyeOutlined />} 
@@ -84,25 +97,78 @@ export const EventsList = () => {
     },
   ];
 
+  const getStatusColor = (status: Event['status']) => {
+    return status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
+  };
+
   return (
     <div>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: 24 
-      }}>
-        <Title level={2} style={{ margin: 0 }}>Events</Title>
-        <Button type="primary" icon={<PlusOutlined />}>
-          Create Event
-        </Button>
+      <Breadcrumb 
+        items={[
+          { path: '/events', label: 'Events' }
+        ]} 
+      />
+      <div className="flex justify-between items-center mb-6">
+        <Title level={2} className="m-0">Events</Title>
+        <div className="flex items-center gap-4">
+          <Space>
+            <UnorderedListOutlined className={isTableView ? "text-blue-500" : "text-gray-400"} />
+            <Switch 
+              checked={!isTableView} 
+              onChange={(checked) => setIsTableView(!checked)}
+              className="bg-gray-200"
+            />
+            <AppstoreOutlined className={!isTableView ? "text-blue-500" : "text-gray-400"} />
+          </Space>
+          <Button type="primary" icon={<PlusOutlined />}>
+            Create Event
+          </Button>
+        </div>
       </div>
 
-      <Table 
-        columns={columns} 
-        dataSource={events} 
-        pagination={{ pageSize: 10 }}
-      />
+      {isTableView ? (
+        <Table 
+          columns={columns} 
+          dataSource={events} 
+          pagination={{ pageSize: 10 }}
+        />
+      ) : (
+        <Row gutter={[16, 16]}>
+          {events.map((event) => (
+            <Col xs={24} sm={12} md={8} lg={6} key={event.id}>
+              <Card 
+                hoverable
+                className="h-full"
+                actions={[
+                  <Button 
+                    type="text" 
+                    icon={<EyeOutlined />} 
+                    onClick={() => navigate(`/events/${event.id}`)}
+                  >
+                    View Details
+                  </Button>
+                ]}
+              >
+                <Card.Meta
+                  title={event.name}
+                  description={
+                    <div className="space-y-2">
+                      <div className="text-gray-600">
+                        <div>Date: {event.date}</div>
+                        <div>Location: {event.location}</div>
+                        <div>Participants: {event.participants}</div>
+                      </div>
+                      <Tag color={getStatusColor(event.status)}>
+                        {event.status.toUpperCase()}
+                      </Tag>
+                    </div>
+                  }
+                />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
     </div>
   );
 }; 
