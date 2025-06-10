@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from '../components/ProtectedRoute';
+import { AppContainer } from '../components/AppContainer';
 import { Login } from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
 import { EventsList } from '../pages/Events/EventsList';
@@ -16,54 +17,40 @@ const routes: RouteObject[] = [
     element: <Login />,
   },
 
-  // Protected routes
+  // Protected routes with layout
   {
     path: '/',
     element: (
       <ProtectedRoute>
-        <Dashboard />
+        <AppContainer />
       </ProtectedRoute>
     ),
-  },
-  {
-    path: '/dashboard',
-    element: (
-      <ProtectedRoute>
-        <Dashboard />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/events',
-    element: (
-      <ProtectedRoute>
-        <EventsList />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/events/:eventId',
-    element: (
-      <ProtectedRoute>
-        <EventDetails />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/employees',
-    element: (
-      <ProtectedRoute>
-        <EmployeesList />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/employees/:employeeId',
-    element: (
-      <ProtectedRoute>
-        <EmployeeDetails />
-      </ProtectedRoute>
-    ),
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
+      },
+      {
+        path: 'events',
+        element: <EventsList />,
+      },
+      {
+        path: 'events/:eventId',
+        element: <EventDetails />,
+      },
+      {
+        path: 'employees',
+        element: <EmployeesList />,
+      },
+      {
+        path: 'employees/:employeeId',
+        element: <EmployeeDetails />,
+      },
+    ],
   },
 
   // Not found route

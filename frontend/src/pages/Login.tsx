@@ -30,15 +30,9 @@ export const Login = () => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      background: '#f0f2f5'
-    }}>
-      <Card style={{ width: 400, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Card className="w-[400px] shadow-lg">
+        <div className="text-center mb-6">
           <Title level={2}>Welcome</Title>
           <Typography.Text type="secondary">
             Sign in to continue

@@ -5,13 +5,7 @@ import { router } from './routes/routes';
 
 function App() {
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#1890ff',
-        },
-      }}
-    >
+    <ConfigProvider>
       <AuthProvider>
         <RouterProvider router={router} />
       </AuthProvider>
