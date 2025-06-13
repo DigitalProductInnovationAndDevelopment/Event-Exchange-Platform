@@ -5,20 +5,11 @@ import { useState, useMemo } from 'react';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import type { ColumnsType } from 'antd/es/table';
 import type { Dayjs } from 'dayjs';
+import { mockEvents } from '../../mocks/eventData';
+import type { Event } from '../../types/event';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
-
-interface Event {
-  key: string;
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  participants: number;
-  status: 'upcoming' | 'ongoing' | 'completed';
-  type: 'training' | 'meeting' | 'conference' | 'workshop';
-}
 
 export const EventsList = () => {
   const navigate = useNavigate();
@@ -27,59 +18,8 @@ export const EventsList = () => {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
 
-  // Mock data for events
-  const events = useMemo<Event[]>(() => [
-    {
-      key: '1',
-      id: '1',
-      name: 'Tech Conference 2024',
-      date: '2024-03-15',
-      location: 'San Francisco',
-      participants: 150,
-      status: 'upcoming' as const,
-      type: 'conference' as const,
-    },
-    {
-      key: '2',
-      id: '2',
-      name: 'Marketing Workshop',
-      date: '2024-02-28',
-      location: 'New York',
-      participants: 75,
-      status: 'ongoing' as const,
-      type: 'workshop' as const,
-    },
-    {
-      key: '3',
-      id: '3',
-      name: 'Annual Company Meeting',
-      date: '2024-01-20',
-      location: 'Chicago',
-      participants: 200,
-      status: 'completed' as const,
-      type: 'meeting' as const,
-    },
-    {
-      key: '4',
-      id: '4',
-      name: 'Leadership Training',
-      date: '2023-12-10',
-      location: 'Boston',
-      participants: 45,
-      status: 'completed' as const,
-      type: 'training' as const,
-    },
-    {
-      key: '5',
-      id: '5',
-      name: 'Product Launch',
-      date: '2023-11-15',
-      location: 'Los Angeles',
-      participants: 120,
-      status: 'completed' as const,
-      type: 'conference' as const,
-    },
-  ], []);
+  // Use mockEvents as the events data source, adding a key property for the table
+  const events = useMemo(() => mockEvents.map(e => ({ ...e, key: e.id })), []);
 
   // Filter events based on all criteria
   const filteredEvents = useMemo(() => {
@@ -121,9 +61,9 @@ export const EventsList = () => {
       key: 'type',
       render: (type: Event['type']) => (
         <Tag color={
-          type === 'conference' ? 'blue' :
-          type === 'workshop' ? 'green' :
-          type === 'training' ? 'purple' : 'orange'
+          type === 'Winter-Event' ? 'blue' :
+          type === 'Summer-Event' ? 'orange' :
+          'purple' // Year-End-Party
         }>
           {type.toUpperCase()}
         </Tag>
@@ -183,9 +123,9 @@ export const EventsList = () => {
   };
 
   const getTypeColor = (type: Event['type']) => {
-    return type === 'conference' ? 'blue' :
-           type === 'workshop' ? 'green' :
-           type === 'training' ? 'purple' : 'orange';
+    return type === 'Winter-Event' ? 'blue' :
+           type === 'Summer-Event' ? 'orange' :
+           'purple'; // Year-End-Party
   };
 
   // Split events into upcoming/ongoing and past events

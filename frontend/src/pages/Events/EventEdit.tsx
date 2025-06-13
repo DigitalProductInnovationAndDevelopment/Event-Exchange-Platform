@@ -1,22 +1,13 @@
-import { Typography, Form, Input, DatePicker, InputNumber, Button, Card, Space, Row, Col, Descriptions } from 'antd';
+import { Typography, Form, Input, DatePicker, InputNumber, Button, Card, Space, Row, Col, Descriptions, Select } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
+import { mockEvents } from '../../mocks/eventData';
+import type { Event } from '../../types/event';
 
 const { Title } = Typography;
 const { TextArea } = Input;
-
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  participants: number;
-  description: string;
-  organizer: string;
-  capacity: number;
-}
 
 export const EventEdit = () => {
   const { eventId } = useParams();
@@ -26,25 +17,15 @@ export const EventEdit = () => {
   const [eventName, setEventName] = useState('');
 
   useEffect(() => {
-    // Mock data - replace with actual API call
-    const mockEvent = {
-      id: eventId || '',
-      name: 'Tech Conference 2024',
-      date: '2024-03-15',
-      location: 'San Francisco Convention Center',
-      participants: 150,
-      description: 'Join us for the biggest tech conference of the year. Network with industry leaders, attend workshops, and discover the latest innovations in technology.',
-      organizer: 'Tech Events Inc.',
-      capacity: 200,
-    };
-
-    setEventName(mockEvent.name);
-    form.setFieldsValue({
-      ...mockEvent,
-      date: dayjs(mockEvent.date),
-      capacity: mockEvent.capacity,
-      participants: mockEvent.participants
-    });
+    // Find event in mock data
+    const event = mockEvents.find(e => e.id === eventId);
+    if (event) {
+      setEventName(event.name);
+      form.setFieldsValue({
+        ...event,
+        date: dayjs(event.date),
+      });
+    }
   }, [eventId, form]);
 
   const onFinish = async (values: Event) => {
@@ -123,13 +104,19 @@ export const EventEdit = () => {
                   </Form.Item>
                 </Descriptions.Item>
 
-                <Descriptions.Item label="Organizer" span={3}>
+                <Descriptions.Item label="Type" span={3}>
                   <Form.Item
-                    name="organizer"
-                    rules={[{ required: true, message: 'Please enter organizer name' }]}
+                    name="type"
+                    rules={[{ required: true, message: 'Please select event type' }]}
                     noStyle
                   >
-                    <Input />
+                    <Select
+                      options={[
+                        { value: 'Winter-Event', label: 'Winter Event' },
+                        { value: 'Summer-Event', label: 'Summer Event' },
+                        { value: 'Year-End-Party', label: 'Year End Party' },
+                      ]}
+                    />
                   </Form.Item>
                 </Descriptions.Item>
 

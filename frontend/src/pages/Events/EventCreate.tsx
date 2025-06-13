@@ -1,20 +1,11 @@
-import { Typography, Form, Input, DatePicker, InputNumber, Button, Card, Space, Row, Col, Descriptions } from 'antd';
+import { Typography, Form, Input, DatePicker, InputNumber, Button, Card, Space, Row, Col, Descriptions, Select } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { useState } from 'react';
+import type { Event } from '../../types/event';
 
 const { Title } = Typography;
 const { TextArea } = Input;
-
-interface Event {
-  name: string;
-  date: string;
-  location: string;
-  participants: number;
-  description: string;
-  organizer: string;
-  capacity: number;
-}
 
 export const EventCreate = () => {
   const navigate = useNavigate();
@@ -66,7 +57,8 @@ export const EventCreate = () => {
               onFinish={onFinish}
               initialValues={{ 
                 participants: 0,
-                capacity: 1
+                capacity: 1,
+                type: 'Winter-Event'
               }}
             >
               <Descriptions title="Event Information" bordered>
@@ -100,13 +92,19 @@ export const EventCreate = () => {
                   </Form.Item>
                 </Descriptions.Item>
 
-                <Descriptions.Item label="Organizer" span={3}>
+                <Descriptions.Item label="Type" span={3}>
                   <Form.Item
-                    name="organizer"
-                    rules={[{ required: true, message: 'Please enter organizer name' }]}
+                    name="type"
+                    rules={[{ required: true, message: 'Please select event type' }]}
                     noStyle
                   >
-                    <Input />
+                    <Select
+                      options={[
+                        { value: 'Winter-Event', label: 'Winter Event' },
+                        { value: 'Summer-Event', label: 'Summer Event' },
+                        { value: 'Year-End-Party', label: 'Year End Party' },
+                      ]}
+                    />
                   </Form.Item>
                 </Descriptions.Item>
 
