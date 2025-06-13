@@ -6,6 +6,8 @@ import { Login } from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
 import { EventsList } from '../pages/Events/EventsList';
 import { EventDetails } from '../pages/Events/EventDetails';
+import { EventEdit } from '../pages/Events/EventEdit';
+import { EventCreate } from '../pages/Events/EventCreate';
 import { EmployeesList } from '../pages/Employees/EmployeesList';
 import { EmployeeDetails } from '../pages/Employees/EmployeeDetails';
 import { NotFound } from '../pages/NotFound';
@@ -39,8 +41,16 @@ const routes: RouteObject[] = [
         element: <EventsList />,
       },
       {
+        path: 'events/create',
+        element: <EventCreate />,
+      },
+      {
         path: 'events/:eventId',
         element: <EventDetails />,
+      },
+      {
+        path: 'events/:eventId/edit',
+        element: <EventEdit />,
       },
       {
         path: 'employees',

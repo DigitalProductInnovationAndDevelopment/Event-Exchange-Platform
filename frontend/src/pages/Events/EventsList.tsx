@@ -1,86 +1,25 @@
-import { Typography, Button, Table, Space, Tag, Card, Row, Col, Switch, Input, Select, DatePicker, Statistic } from 'antd';
-import { PlusOutlined, EyeOutlined, AppstoreOutlined, UnorderedListOutlined, SearchOutlined, TeamOutlined, CalendarOutlined, DollarOutlined } from '@ant-design/icons';
+import { Typography, Button, Table, Space, Tag, Card, Row, Col, Switch, Input, Select, DatePicker } from 'antd';
+import { PlusOutlined, EyeOutlined, AppstoreOutlined, UnorderedListOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useState, useMemo } from 'react';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import type { ColumnsType } from 'antd/es/table';
 import type { Dayjs } from 'dayjs';
+import { mockEvents } from '../../mocks/eventData';
+import type { Event } from '../../types/event';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
-
-interface Event {
-  key: string;
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  participants: number;
-  status: 'upcoming' | 'ongoing' | 'completed';
-  type: 'training' | 'meeting' | 'conference' | 'workshop';
-  budget: number;
-  department: string;
-}
 
 export const EventsList = () => {
   const navigate = useNavigate();
   const [isTableView, setIsTableView] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
 
-  // Mock data for events
-  const events = useMemo<Event[]>(() => [
-    {
-      key: '1',
-      id: '1',
-      name: 'Tech Conference 2024',
-      date: '2024-03-15',
-      location: 'San Francisco',
-      participants: 150,
-      status: 'upcoming' as const,
-      type: 'conference' as const,
-      budget: 50000,
-      department: 'IT',
-    },
-    {
-      key: '2',
-      id: '2',
-      name: 'Marketing Workshop',
-      date: '2024-02-28',
-      location: 'New York',
-      participants: 75,
-      status: 'ongoing' as const,
-      type: 'workshop' as const,
-      budget: 15000,
-      department: 'Marketing',
-    },
-    {
-      key: '3',
-      id: '3',
-      name: 'Annual Company Meeting',
-      date: '2024-01-20',
-      location: 'Chicago',
-      participants: 200,
-      status: 'completed' as const,
-      type: 'meeting' as const,
-      budget: 30000,
-      department: 'All',
-    },
-    {
-      key: '4',
-      id: '4',
-      name: 'Leadership Training',
-      date: '2024-04-10',
-      location: 'Boston',
-      participants: 45,
-      status: 'upcoming' as const,
-      type: 'training' as const,
-      budget: 25000,
-      department: 'HR',
-    },
-  ], []);
+  // Use mockEvents as the events data source, adding a key property for the table
+  const events = useMemo(() => mockEvents.map(e => ({ ...e, key: e.id })), []);
 
   // Filter events based on all criteria
   const filteredEvents = useMemo(() => {
@@ -93,18 +32,15 @@ export const EventsList = () => {
       // Event type filter
       const matchesType = !selectedType || event.type === selectedType;
 
-      // Department filter
-      const matchesDepartment = !selectedDepartment || event.department === selectedDepartment;
-
       // Date range filter
       const matchesDateRange = !dateRange || !dateRange[0] || !dateRange[1] || (
         new Date(event.date) >= dateRange[0].toDate() &&
         new Date(event.date) <= dateRange[1].toDate()
       );
 
-      return matchesSearch && matchesType && matchesDepartment && matchesDateRange;
+      return matchesSearch && matchesType && matchesDateRange;
     });
-  }, [events, searchText, selectedType, selectedDepartment, dateRange]);
+  }, [events, searchText, selectedType, dateRange]);
 
   const columns: ColumnsType<Event> = [
     {
@@ -125,9 +61,9 @@ export const EventsList = () => {
       key: 'type',
       render: (type: Event['type']) => (
         <Tag color={
-          type === 'conference' ? 'blue' :
-          type === 'workshop' ? 'green' :
-          type === 'training' ? 'purple' : 'orange'
+          type === 'Winter-Event' ? 'blue' :
+          type === 'Summer-Event' ? 'orange' :
+          'purple' // Year-End-Party
         }>
           {type.toUpperCase()}
         </Tag>
@@ -141,18 +77,6 @@ export const EventsList = () => {
       onFilter: (value, record) => record.type === value,
     },
     {
-      title: 'Department',
-      dataIndex: 'department',
-      key: 'department',
-      filters: [
-        { text: 'IT', value: 'IT' },
-        { text: 'Marketing', value: 'Marketing' },
-        { text: 'HR', value: 'HR' },
-        { text: 'All', value: 'All' },
-      ],
-      onFilter: (value, record) => record.department === value,
-    },
-    {
       title: 'Location',
       dataIndex: 'location',
       key: 'location',
@@ -162,13 +86,6 @@ export const EventsList = () => {
       dataIndex: 'participants',
       key: 'participants',
       sorter: (a, b) => a.participants - b.participants,
-    },
-    {
-      title: 'Budget',
-      dataIndex: 'budget',
-      key: 'budget',
-      render: (budget: number) => `$${budget.toLocaleString()}`,
-      sorter: (a, b) => a.budget - b.budget,
     },
     {
       title: 'Status',
@@ -206,14 +123,19 @@ export const EventsList = () => {
   };
 
   const getTypeColor = (type: Event['type']) => {
-    return type === 'conference' ? 'blue' :
-           type === 'workshop' ? 'green' :
-           type === 'training' ? 'purple' : 'orange';
+    return type === 'Winter-Event' ? 'blue' :
+           type === 'Summer-Event' ? 'orange' :
+           'purple'; // Year-End-Party
   };
 
-  // Calculate statistics based on filtered events
-  const totalParticipants = filteredEvents.reduce((sum, event) => sum + event.participants, 0);
-  const totalBudget = filteredEvents.reduce((sum, event) => sum + event.budget, 0);
+  // Split events into upcoming/ongoing and past events
+  const upcomingEvents = filteredEvents
+    .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  const pastEvents = filteredEvents
+    .filter(event => event.status === 'completed')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div>
@@ -222,63 +144,6 @@ export const EventsList = () => {
           { path: '/events', label: 'Events' }
         ]} 
       />
-      
-      {/* Statistics Cards */}
-      <Row gutter={16} className="mb-6">
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="Average Event Size"
-              value={filteredEvents.length > 0 ? Math.round(totalParticipants / filteredEvents.length) : 0}
-              prefix={<TeamOutlined />}
-              suffix="participants"
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="Average Budget"
-              value={filteredEvents.length > 0 ? Math.round(totalBudget / filteredEvents.length) : 0}
-              prefix={<DollarOutlined />}
-              formatter={(value) => `$${value.toLocaleString()}`}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="Most Active Department"
-              value={(() => {
-                const deptCounts = filteredEvents.reduce((acc, event) => {
-                  acc[event.department] = (acc[event.department] || 0) + 1;
-                  return acc;
-                }, {} as Record<string, number>);
-                return Object.entries(deptCounts)
-                  .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
-              })()}
-              prefix={<TeamOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="Most Common Event Type"
-              value={(() => {
-                const typeCounts = filteredEvents.reduce((acc, event) => {
-                  acc[event.type] = (acc[event.type] || 0) + 1;
-                  return acc;
-                }, {} as Record<string, number>);
-                const mostCommon = Object.entries(typeCounts)
-                  .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
-                return mostCommon.charAt(0).toUpperCase() + mostCommon.slice(1);
-              })()}
-              prefix={<CalendarOutlined />}
-            />
-          </Card>
-        </Col>
-      </Row>
 
       <div className="flex justify-between items-center mb-6">
         <Title level={2} className="m-0">Events</Title>
@@ -292,7 +157,11 @@ export const EventsList = () => {
             />
             <AppstoreOutlined className={!isTableView ? "text-blue-500" : "text-gray-400"} />
           </Space>
-          <Button type="primary" icon={<PlusOutlined />}>
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/events/create')}
+          >
             Create Event
           </Button>
         </div>
@@ -301,7 +170,7 @@ export const EventsList = () => {
       {/* Search and Filters */}
       <Card className="mb-6">
         <Row gutter={16}>
-          <Col span={6}>
+          <Col span={8}>
             <Input
               placeholder="Search events..."
               prefix={<SearchOutlined />}
@@ -309,7 +178,7 @@ export const EventsList = () => {
               onChange={(e) => setSearchText(e.target.value)}
             />
           </Col>
-          <Col span={6}>
+          <Col span={8}>
             <Select
               placeholder="Event Type"
               style={{ width: '100%' }}
@@ -324,22 +193,7 @@ export const EventsList = () => {
               ]}
             />
           </Col>
-          <Col span={6}>
-            <Select
-              placeholder="Department"
-              style={{ width: '100%' }}
-              allowClear
-              value={selectedDepartment}
-              onChange={setSelectedDepartment}
-              options={[
-                { value: 'IT', label: 'IT' },
-                { value: 'Marketing', label: 'Marketing' },
-                { value: 'HR', label: 'HR' },
-                { value: 'All', label: 'All' },
-              ]}
-            />
-          </Col>
-          <Col span={6}>
+          <Col span={8}>
             <RangePicker 
               style={{ width: '100%' }}
               value={dateRange}
@@ -349,56 +203,111 @@ export const EventsList = () => {
         </Row>
       </Card>
 
-      {isTableView ? (
-        <Table 
-          columns={columns} 
-          dataSource={filteredEvents} 
-          pagination={{ pageSize: 10 }}
-        />
-      ) : (
-        <Row gutter={[16, 16]}>
-          {filteredEvents.map((event) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={event.id}>
-              <Card 
-                hoverable
-                className="h-full"
-                actions={[
-                  <Button 
-                    type="text" 
-                    icon={<EyeOutlined />} 
-                    onClick={() => navigate(`/events/${event.id}`)}
-                  >
-                    View Details
-                  </Button>
-                ]}
-              >
-                <Card.Meta
-                  title={event.name}
-                  description={
-                    <div className="space-y-2">
-                      <div className="text-gray-600">
-                        <div>Date: {event.date}</div>
-                        <div>Location: {event.location}</div>
-                        <div>Participants: {event.participants}</div>
-                        <div>Budget: ${event.budget.toLocaleString()}</div>
-                        <div>Department: {event.department}</div>
+      {/* Upcoming Events Section */}
+      <div className="mb-8">
+        <Title level={3} className="mb-4">Upcoming Events</Title>
+        {isTableView ? (
+          <Table 
+            columns={columns} 
+            dataSource={upcomingEvents} 
+            pagination={false}
+          />
+        ) : (
+          <Row gutter={[16, 16]}>
+            {upcomingEvents.map((event) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={event.id}>
+                <Card 
+                  hoverable
+                  className="h-full"
+                  actions={[
+                    <Button 
+                      type="text" 
+                      icon={<EyeOutlined />} 
+                      onClick={() => navigate(`/events/${event.id}`)}
+                    >
+                      View Details
+                    </Button>
+                  ]}
+                >
+                  <Card.Meta
+                    title={event.name}
+                    description={
+                      <div className="space-y-2">
+                        <div className="text-gray-600">
+                          <div>Date: {event.date}</div>
+                          <div>Location: {event.location}</div>
+                          <div>Participants: {event.participants}</div>
+                        </div>
+                        <Space>
+                          <Tag color={getStatusColor(event.status)}>
+                            {event.status.toUpperCase()}
+                          </Tag>
+                          <Tag color={getTypeColor(event.type)}>
+                            {event.type.toUpperCase()}
+                          </Tag>
+                        </Space>
                       </div>
-                      <Space>
-                        <Tag color={getStatusColor(event.status)}>
-                          {event.status.toUpperCase()}
-                        </Tag>
-                        <Tag color={getTypeColor(event.type)}>
-                          {event.type.toUpperCase()}
-                        </Tag>
-                      </Space>
-                    </div>
-                  }
-                />
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
+                    }
+                  />
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
+      </div>
+
+      {/* Past Events Section */}
+      <div>
+        <Title level={3} className="mb-4">Past Events</Title>
+        {isTableView ? (
+          <Table 
+            columns={columns} 
+            dataSource={pastEvents} 
+            pagination={{ pageSize: 15 }}
+          />
+        ) : (
+          <Row gutter={[16, 16]}>
+            {pastEvents.map((event) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={event.id}>
+                <Card 
+                  hoverable
+                  className="h-full"
+                  actions={[
+                    <Button 
+                      type="text" 
+                      icon={<EyeOutlined />} 
+                      onClick={() => navigate(`/events/${event.id}`)}
+                    >
+                      View Details
+                    </Button>
+                  ]}
+                >
+                  <Card.Meta
+                    title={event.name}
+                    description={
+                      <div className="space-y-2">
+                        <div className="text-gray-600">
+                          <div>Date: {event.date}</div>
+                          <div>Location: {event.location}</div>
+                          <div>Participants: {event.participants}</div>
+                        </div>
+                        <Space>
+                          <Tag color={getStatusColor(event.status)}>
+                            {event.status.toUpperCase()}
+                          </Tag>
+                          <Tag color={getTypeColor(event.type)}>
+                            {event.type.toUpperCase()}
+                          </Tag>
+                        </Space>
+                      </div>
+                    }
+                  />
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
+      </div>
     </div>
   );
 }; 

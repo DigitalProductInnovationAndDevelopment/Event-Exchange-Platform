@@ -1,40 +1,24 @@
 import { Typography, Card, Descriptions, Tag, Button, Space, Row, Col, Statistic } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
+import { mockEvents } from '../../mocks/eventData';
+import type { Event } from '../../types/event';
 
 const { Title, Text } = Typography;
 
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  participants: number;
-  status: 'upcoming' | 'ongoing' | 'completed';
-  description: string;
-  organizer: string;
-  capacity: number;
-}
-
 export const EventDetails = () => {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
 
   useEffect(() => {
-    // Mock data - replace with actual API call
-    setEvent({
-      id: eventId || '',
-      name: 'Tech Conference 2024',
-      date: '2024-03-15',
-      location: 'San Francisco Convention Center',
-      participants: 150,
-      status: 'upcoming',
-      description: 'Join us for the biggest tech conference of the year. Network with industry leaders, attend workshops, and discover the latest innovations in technology.',
-      organizer: 'Tech Events Inc.',
-      capacity: 200,
-    });
+    // Find event in mock data
+    const foundEvent = mockEvents.find(e => e.id === eventId);
+    if (foundEvent) {
+      setEvent(foundEvent);
+    }
   }, [eventId]);
 
   if (!event) {
@@ -43,6 +27,12 @@ export const EventDetails = () => {
 
   const getStatusColor = (status: Event['status']) => {
     return status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
+  };
+
+  const getTypeColor = (type: Event['type']) => {
+    return type === 'Winter-Event' ? 'blue' :
+           type === 'Summer-Event' ? 'orange' :
+           'purple'; // Year-End-Party
   };
 
   return (
@@ -57,7 +47,11 @@ export const EventDetails = () => {
       <div className="flex justify-between items-center">
         <Title level={2}>{event.name}</Title>
         <Space>
-          <Button type="primary" icon={<EditOutlined />}>
+          <Button 
+            type="primary" 
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/events/${eventId}/edit`)}
+          >
             Edit Event
           </Button>
           <Button danger icon={<DeleteOutlined />}>
@@ -82,8 +76,10 @@ export const EventDetails = () => {
                   {event.location}
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="Organizer" span={3}>
-                {event.organizer}
+              <Descriptions.Item label="Type" span={3}>
+                <Tag color={getTypeColor(event.type)}>
+                  {event.type.toUpperCase()}
+                </Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
