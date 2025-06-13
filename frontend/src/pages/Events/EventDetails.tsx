@@ -1,10 +1,11 @@
-import { Typography, Card, Descriptions, Tag, Button, Space, Row, Col, Statistic } from 'antd';
+import { Typography, Card, Descriptions, Tag, Button, Space, Row, Col, Statistic, Progress} from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../../components/Breadcrumb';
-import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, FileTextOutlined } from '@ant-design/icons';
+import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, FileTextOutlined, DollarOutlined, BarChartOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { mockEvents } from '../../mocks/eventData';
 import type { Event } from '../../types/event';
+import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
 
 const { Title, Text } = Typography;
 
@@ -22,18 +23,9 @@ export const EventDetails = () => {
   }, [eventId]);
 
   if (!event) {
-    return <div>Loading...</div>;
+    return <div>Event not found</div>;
   }
 
-  const getStatusColor = (status: Event['status']) => {
-    return status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
-  };
-
-  const getTypeColor = (type: Event['type']) => {
-    return type === 'Winter-Event' ? 'blue' :
-           type === 'Summer-Event' ? 'orange' :
-           'purple'; // Year-End-Party
-  };
 
   return (
     <div className="space-y-6">
@@ -64,11 +56,11 @@ export const EventDetails = () => {
         <Col span={16}>
           <Card className="mb-6">
             <Descriptions title="Event Information" bordered>
+              <Descriptions.Item label="Event Name" span={3}>
+                {event.name}
+              </Descriptions.Item>
               <Descriptions.Item label="Date" span={3}>
-                <Space>
-                  <CalendarOutlined />
-                  {event.date}
-                </Space>
+                {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </Descriptions.Item>
               <Descriptions.Item label="Location" span={3}>
                 <Space>
@@ -77,8 +69,8 @@ export const EventDetails = () => {
                 </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Type" span={3}>
-                <Tag color={getTypeColor(event.type)}>
-                  {event.type.toUpperCase()}
+                <Tag color={EVENT_TYPE_COLORS[event.type]}>
+                  {event.type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                 </Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Description" span={3}>
@@ -87,25 +79,29 @@ export const EventDetails = () => {
             </Descriptions>
           </Card>
 
-          <Card title="Participant Management" className="mb-6">
+          <Card title="Event Statistics" className="mb-6">
             <Row gutter={16}>
-              <Col span={8}>
+              <Col span={6}>
                 <Statistic
-                  title="Total Participants"
+                  title="Participants"
                   value={event.participants}
                   prefix={<TeamOutlined />}
                 />
               </Col>
-              <Col span={8}>
-                <Statistic
-                  title="Available Spots"
-                  value={event.capacity - event.participants}
-                />
-              </Col>
-              <Col span={8}>
+              <Col span={6}>
                 <Statistic
                   title="Capacity"
                   value={event.capacity}
+                  prefix={<TeamOutlined />}
+                />
+              </Col>
+
+              <Col span={8}>
+                <Statistic
+                  title="Engagement"
+                  value={event.engagement}
+                  prefix={<BarChartOutlined />}
+                  suffix="%"
                 />
               </Col>
             </Row>
@@ -115,7 +111,7 @@ export const EventDetails = () => {
         <Col span={8}>
           <Card title="Event Status" className="mb-6">
             <div className="flex flex-col items-center space-y-4">
-              <Tag color={getStatusColor(event.status)} className="text-lg px-4 py-2">
+              <Tag color={EVENT_STATUS_COLORS[event.status]} className="text-lg px-4 py-2">
                 {event.status.toUpperCase()}
               </Tag>
               <Text type="secondary">

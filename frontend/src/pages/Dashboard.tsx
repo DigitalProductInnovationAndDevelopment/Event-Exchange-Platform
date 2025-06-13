@@ -1,10 +1,10 @@
 import { Typography, Card, Row, Col, Statistic, List, Tag, Space, Divider, Button } from 'antd';
-import { CalendarOutlined, TeamOutlined, CheckCircleOutlined, ClockCircleOutlined, RiseOutlined, BankOutlined, FireOutlined, PlusOutlined, UserOutlined, DashboardOutlined, EyeOutlined } from '@ant-design/icons';
+import { CalendarOutlined, TeamOutlined, CheckCircleOutlined, ClockCircleOutlined, FireOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { Event } from '../types/event';
+import type { Event, EventStatus } from '../types/event';
+import { EVENT_STATUS_COLORS } from '../types/event';
 import { mockEvents } from '../mocks/eventData';
-
 
 const { Title, Text } = Typography;
 
@@ -33,22 +33,10 @@ export const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const getStatusColor = (status: Event['status']) => {
-    return status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
-  };
-
-  const getStatusIcon = (status: Event['status']) => {
+  const getStatusIcon = (status: EventStatus) => {
     return status === 'completed' ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="space-y-4">
@@ -101,7 +89,9 @@ export const Dashboard = () => {
             bodyStyle={{ padding: '12px' }}
           >
             <List
-              dataSource={events.filter(event => event.status === 'upcoming')}
+              dataSource={events
+                .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
               renderItem={(event) => (
                 <List.Item
                   actions={[
@@ -117,7 +107,7 @@ export const Dashboard = () => {
                     title={
                       <Space>
                         <Link to={`/events/${event.id}`}>{event.name}</Link>
-                        <Tag color={getStatusColor(event.status)} icon={getStatusIcon(event.status)}>
+                        <Tag color={EVENT_STATUS_COLORS[event.status]} icon={getStatusIcon(event.status)}>
                           {event.status.toUpperCase()}
                         </Tag>
                       </Space>

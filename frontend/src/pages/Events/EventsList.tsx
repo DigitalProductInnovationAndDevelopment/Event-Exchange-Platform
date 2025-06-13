@@ -6,7 +6,8 @@ import { Breadcrumb } from '../../components/Breadcrumb';
 import type { ColumnsType } from 'antd/es/table';
 import type { Dayjs } from 'dayjs';
 import { mockEvents } from '../../mocks/eventData';
-import type { Event } from '../../types/event';
+import type { Event, EventType, EventStatus } from '../../types/event';
+import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -15,7 +16,7 @@ export const EventsList = () => {
   const navigate = useNavigate();
   const [isTableView, setIsTableView] = useState(true);
   const [searchText, setSearchText] = useState('');
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<EventType | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
 
   // Use mockEvents as the events data source, adding a key property for the table
@@ -59,21 +60,15 @@ export const EventsList = () => {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
-      render: (type: Event['type']) => (
-        <Tag color={
-          type === 'Winter-Event' ? 'blue' :
-          type === 'Summer-Event' ? 'orange' :
-          'purple' // Year-End-Party
-        }>
+      render: (type: EventType) => (
+        <Tag color={EVENT_TYPE_COLORS[type]}>
           {type.toUpperCase()}
         </Tag>
       ),
-      filters: [
-        { text: 'Conference', value: 'conference' },
-        { text: 'Workshop', value: 'workshop' },
-        { text: 'Training', value: 'training' },
-        { text: 'Meeting', value: 'meeting' },
-      ],
+      filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
+        text: type.replace(/-/g, ' '),
+        value: type
+      })),
       onFilter: (value, record) => record.type === value,
     },
     {
@@ -91,15 +86,15 @@ export const EventsList = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (status: Event['status']) => {
-        const color = status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
-      },
-      filters: [
-        { text: 'Upcoming', value: 'upcoming' },
-        { text: 'Ongoing', value: 'ongoing' },
-        { text: 'Completed', value: 'completed' },
-      ],
+      render: (status: EventStatus) => (
+        <Tag color={EVENT_STATUS_COLORS[status]}>
+          {status.toUpperCase()}
+        </Tag>
+      ),
+      filters: Object.entries(EVENT_STATUS_COLORS).map(([status, _]) => ({
+        text: status.charAt(0).toUpperCase() + status.slice(1),
+        value: status
+      })),
       onFilter: (value, record) => record.status === value,
     },
     {
@@ -118,20 +113,10 @@ export const EventsList = () => {
     },
   ];
 
-  const getStatusColor = (status: Event['status']) => {
-    return status === 'completed' ? 'green' : status === 'ongoing' ? 'blue' : 'orange';
-  };
-
-  const getTypeColor = (type: Event['type']) => {
-    return type === 'Winter-Event' ? 'blue' :
-           type === 'Summer-Event' ? 'orange' :
-           'purple'; // Year-End-Party
-  };
-
   // Split events into upcoming/ongoing and past events
   const upcomingEvents = filteredEvents
     .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   
   const pastEvents = filteredEvents
     .filter(event => event.status === 'completed')
@@ -185,12 +170,10 @@ export const EventsList = () => {
               allowClear
               value={selectedType}
               onChange={setSelectedType}
-              options={[
-                { value: 'conference', label: 'Conference' },
-                { value: 'workshop', label: 'Workshop' },
-                { value: 'training', label: 'Training' },
-                { value: 'meeting', label: 'Meeting' },
-              ]}
+              options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
+                value,
+                label: value.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+              }))}
             />
           </Col>
           <Col span={8}>
@@ -239,10 +222,10 @@ export const EventsList = () => {
                           <div>Participants: {event.participants}</div>
                         </div>
                         <Space>
-                          <Tag color={getStatusColor(event.status)}>
+                          <Tag color={EVENT_STATUS_COLORS[event.status]}>
                             {event.status.toUpperCase()}
                           </Tag>
-                          <Tag color={getTypeColor(event.type)}>
+                          <Tag color={EVENT_TYPE_COLORS[event.type]}>
                             {event.type.toUpperCase()}
                           </Tag>
                         </Space>
@@ -292,10 +275,10 @@ export const EventsList = () => {
                           <div>Participants: {event.participants}</div>
                         </div>
                         <Space>
-                          <Tag color={getStatusColor(event.status)}>
+                          <Tag color={EVENT_STATUS_COLORS[event.status]}>
                             {event.status.toUpperCase()}
                           </Tag>
-                          <Tag color={getTypeColor(event.type)}>
+                          <Tag color={EVENT_TYPE_COLORS[event.type]}>
                             {event.type.toUpperCase()}
                           </Tag>
                         </Space>

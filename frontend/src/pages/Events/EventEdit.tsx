@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { mockEvents } from '../../mocks/eventData';
 import type { Event } from '../../types/event';
+import { EVENT_TYPE_COLORS } from '../../types/event';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -111,11 +112,10 @@ export const EventEdit = () => {
                     noStyle
                   >
                     <Select
-                      options={[
-                        { value: 'Winter-Event', label: 'Winter Event' },
-                        { value: 'Summer-Event', label: 'Summer Event' },
-                        { value: 'Year-End-Party', label: 'Year End Party' },
-                      ]}
+                      options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
+                        value,
+                        label: value.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                      }))}
                     />
                   </Form.Item>
                 </Descriptions.Item>
