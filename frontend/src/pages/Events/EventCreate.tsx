@@ -2,7 +2,8 @@ import { Typography, Form, Input, DatePicker, InputNumber, Button, Card, Space, 
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { useState } from 'react';
-import type { Event } from '../../types/event';
+import type { Event, EventType } from '../../types/event';
+import { EVENT_TYPE_COLORS } from '../../types/event';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -58,7 +59,7 @@ export const EventCreate = () => {
               initialValues={{ 
                 participants: 0,
                 capacity: 1,
-                type: 'Winter-Event'
+                type: Object.keys(EVENT_TYPE_COLORS)[0] as EventType
               }}
             >
               <Descriptions title="Event Information" bordered>
@@ -99,11 +100,10 @@ export const EventCreate = () => {
                     noStyle
                   >
                     <Select
-                      options={[
-                        { value: 'Winter-Event', label: 'Winter Event' },
-                        { value: 'Summer-Event', label: 'Summer Event' },
-                        { value: 'Year-End-Party', label: 'Year End Party' },
-                      ]}
+                      options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
+                        value,
+                        label: value.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                      }))}
                     />
                   </Form.Item>
                 </Descriptions.Item>
