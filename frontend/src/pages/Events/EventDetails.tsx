@@ -1,5 +1,5 @@
 import { Typography, Card, Descriptions, Tag, Button, Space, Row, Col, Statistic } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
@@ -20,6 +20,7 @@ interface Event {
 
 export const EventDetails = () => {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
 
   useEffect(() => {
@@ -57,7 +58,11 @@ export const EventDetails = () => {
       <div className="flex justify-between items-center">
         <Title level={2}>{event.name}</Title>
         <Space>
-          <Button type="primary" icon={<EditOutlined />}>
+          <Button 
+            type="primary" 
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/events/${eventId}/edit`)}
+          >
             Edit Event
           </Button>
           <Button danger icon={<DeleteOutlined />}>
