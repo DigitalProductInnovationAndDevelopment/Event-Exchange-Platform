@@ -16,4 +16,5 @@ public interface EmployeeService {
 
     void delete(UUID id);
 
+    void importEmployeesFromCSV(List<@Valid EmployeeCreateDTO> employees);
 }

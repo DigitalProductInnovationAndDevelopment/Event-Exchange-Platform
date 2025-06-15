@@ -53,4 +53,19 @@ public class ProfileController {
         employeeService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/import")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> importEmployees(@RequestParam("file") MultipartFile file) throws Exception {
+
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("Please upload a non-empty file", HttpStatus.BAD_REQUEST);
+        }
+
+        List<EmployeeCreateDTO> employees = CSVUtils.getEmployeesFromCSV(file);
+        employeeService.importEmployeesFromCSV(employees);
+        return new ResponseEntity<>("Employees imported successfully", HttpStatus.OK);
+
+    }
+
 }
