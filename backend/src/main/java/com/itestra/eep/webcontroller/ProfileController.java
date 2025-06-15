@@ -1,18 +1,25 @@
 package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
+import com.itestra.eep.dtos.EmployeeDetailsDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.services.EmployeeService;
+import com.itestra.eep.utils.CSVUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -26,6 +33,13 @@ public class ProfileController {
     private final EmployeeMapper employeeMapper;
     private final EmployeeService employeeService;
 
+    @GetMapping("/own")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    public ResponseEntity<EmployeeDetailsDTO> getMyProfile() {
+        Employee employee = employeeService.getAuthenticatedUserEmployeeDetails();
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
+    }
+
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
     public ResponseEntity<EmployeeUpdateDTO> getEmployee(@PathVariable UUID id) {
@@ -33,18 +47,30 @@ public class ProfileController {
         return new ResponseEntity<>(employeeMapper.toUpdateDto(employee), HttpStatus.OK);
     }
 
+    @GetMapping("/employees")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<Page<EmployeeDetailsDTO>> getEmployees(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Employee> employees = employeeService.findAllByPage(pageable);
+        return new ResponseEntity<>(employees.map(employeeMapper::toDetailsDto), HttpStatus.OK);
+
+    }
+
     @PostMapping("/employee")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeUpdateDTO> createEmployee(@RequestBody @Valid EmployeeCreateDTO dto) {
+    public ResponseEntity<EmployeeDetailsDTO> createEmployee(@RequestBody @Valid EmployeeCreateDTO dto) {
         Employee employee = employeeService.create(dto);
-        return new ResponseEntity<>(employeeMapper.toUpdateDto(employee), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @PutMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeUpdateDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto) {
+    public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto) {
         Employee employee = employeeService.update(id, dto);
-        return new ResponseEntity<>(employeeMapper.toUpdateDto(employee), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @DeleteMapping("/employee/{id}")

@@ -1,8 +1,10 @@
 package com.itestra.eep.mappers;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
+import com.itestra.eep.dtos.EmployeeDetailsDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.models.Employee;
+import com.itestra.eep.models.UserRole;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -20,4 +22,10 @@ public interface EmployeeMapper {
     EmployeeCreateDTO toCreateDto(Employee employee);
 
     EmployeeUpdateDTO toUpdateDto(Employee employee);
+
+    EmployeeDetailsDTO toDetailsDto(Employee employee);
+
+    default String map(UserRole userRole) {
+        return userRole != null ? userRole.getRole().name() : null;
+    }
 }
