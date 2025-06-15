@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -45,6 +46,9 @@ public class WebSecurityConfig {
                     .oauth2Login(oauth -> oauth
                             .successHandler(gitlabOAuth2SuccessHandler)
                     )
+                    .sessionManagement(session -> session
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    )
                     .addFilterBefore(securityContextInterceptor, UsernamePasswordAuthenticationFilter.class);
         }
         return http.build();
@@ -56,8 +60,14 @@ public class WebSecurityConfig {
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
             configuration.setAllowCredentials(true);
             // TODO fix for production
-            configuration.addAllowedOrigin("*");
-            configuration.addAllowedHeader("*");
+
+            configuration.addAllowedOrigin("http://localhost:3000");
+            configuration.addAllowedOrigin("http://localhost:5173");
+
+            configuration.addAllowedHeader("Content-Type");
+            configuration.addAllowedHeader("Authorization");
+            configuration.addAllowedHeader("X-Requested-With");
+            configuration.addAllowedHeader("Accept");
 
             UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
             source.registerCorsConfiguration("/**", configuration);
