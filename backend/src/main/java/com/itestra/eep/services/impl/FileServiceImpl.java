@@ -29,6 +29,7 @@ public class FileServiceImpl implements FileService {
         entity.setEvent(event);
 
         entity.setName(file.getOriginalFilename());
+        entity.setContentType(file.getContentType());
         entity.setContent(file.getBytes());
 
         fileRepository.save(entity);

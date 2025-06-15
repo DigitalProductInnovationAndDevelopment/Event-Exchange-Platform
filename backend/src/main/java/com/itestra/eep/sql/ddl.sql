@@ -122,12 +122,13 @@ CREATE TABLE organization.chair
 
 CREATE TABLE organization.files
 (
-    file_id    UUID PRIMARY KEY,
-    event_id   UUID references organization.event (id),
-    name       VARCHAR(255) NOT NULL,
-    content    BYTEA        NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    file_id      UUID PRIMARY KEY,
+    event_id     UUID references organization.event (id),
+    name         VARCHAR(255) NOT NULL,
+    content_type VARCHAR(255) NULL,
+    content      BYTEA        NOT NULL,
+    created_at   TIMESTAMP,
+    updated_at   TIMESTAMP
 );
 
 
