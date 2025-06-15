@@ -3,7 +3,6 @@ package com.itestra.eep.dtos;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.models.Address;
 import com.itestra.eep.models.Event;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -25,9 +24,15 @@ public class EventUpdateDTO implements Serializable {
     @Nullable
     EventType eventType;
 
-    @NotNull
     @Nullable
     EventUpdateDTO.AddressCreateDTO address;
+
+    @Nullable
+    @Size(message = "Event description should be shorter than 10000 characters", max = 10000)
+    String description;
+
+    @Nullable
+    Integer capacity;
 
     /**
      * DTO for {@link Address}

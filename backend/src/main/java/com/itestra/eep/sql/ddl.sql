@@ -90,10 +90,12 @@ CREATE TABLE organization.previous_matches
 
 CREATE TABLE organization.event
 (
-    id         UUID PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    event_type organization.event_type,
-    address_id UUID REFERENCES organization.address (id)
+    id          UUID PRIMARY KEY,
+    name        VARCHAR(255)   NOT NULL,
+    description VARCHAR(10000) NOT NULL,
+    capacity    INT            NOT NULL,
+    event_type  organization.event_type,
+    address_id  UUID REFERENCES organization.address (id)
 );
 
 
