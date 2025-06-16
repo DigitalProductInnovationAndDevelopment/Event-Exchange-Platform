@@ -1,13 +1,8 @@
-import { Layout, Menu, Avatar, Dropdown } from 'antd';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  DashboardOutlined, 
-  CalendarOutlined, 
-  TeamOutlined, 
-  LogoutOutlined,
-  UserOutlined
-} from '@ant-design/icons';
-import { useAuth } from '../contexts/AuthContext';
+import {Avatar, Dropdown, Layout, Menu} from 'antd';
+import {Outlet, useLocation, useNavigate} from 'react-router-dom';
+import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined} from '@ant-design/icons';
+import {useAuth} from '../contexts/AuthContext';
+import useApiService from "../services/apiService.ts";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -15,6 +10,7 @@ export const AppContainer = () => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const {logoutRequest} = useApiService();
 
   const mainMenuItems = [
     {
@@ -36,7 +32,7 @@ export const AppContainer = () => {
 
   const handleMenuClick = (key: string) => {
     if (key === 'logout') {
-      logout();
+      logoutRequest().then(() => logout());
     } else {
       navigate(key);
     }

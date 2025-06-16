@@ -1,19 +1,9 @@
-import type { User, LoginCredentials } from '../types/auth';
+import type {User} from '../types/auth';
 
 const AUTH_KEY = 'auth_user';
 
 export const authService = {
-  login: async (credentials: LoginCredentials): Promise<User> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Create a user from the provided email
-    const user: User = {
-      id: crypto.randomUUID(),
-      email: credentials.email,
-      name: credentials.email.split('@')[0], // Use part of email as name
-    };
-
+  login: async (user: User): Promise<User> => {
     // Store user in localStorage
     localStorage.setItem(AUTH_KEY, JSON.stringify(user));
     

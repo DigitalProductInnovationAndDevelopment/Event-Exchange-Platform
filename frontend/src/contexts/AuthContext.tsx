@@ -1,9 +1,9 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { AuthState, LoginCredentials } from '../types/auth';
-import { authService } from '../services/authService';
+import {createContext, type ReactNode, useContext, useEffect, useState} from 'react';
+import type {AuthState, User} from '../types/auth';
+import {authService} from '../services/authService';
 
 interface AuthContextType extends AuthState {
-  login: (credentials: LoginCredentials) => Promise<void>;
+  login: (credentials: User) => Promise<void>;
   logout: () => void;
 }
 
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials: User) => {
     setAuthState(prev => ({ ...prev, isLoading: true }));
     try {
       const user = await authService.login(credentials);

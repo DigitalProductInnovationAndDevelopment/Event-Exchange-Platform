@@ -1,7 +1,7 @@
 export interface User {
-  id: string;
   email: string;
   name: string;
+  roles: string[];
 }
 
 export interface AuthState {
@@ -9,8 +9,3 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 }
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-} 
