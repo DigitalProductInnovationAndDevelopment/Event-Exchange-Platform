@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -29,6 +30,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event findById(UUID id) {
         return eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
+    }
+
+    @Override
+    public List<Event> findAll() {
+        return eventRepository.findAll();
     }
 
     @Override

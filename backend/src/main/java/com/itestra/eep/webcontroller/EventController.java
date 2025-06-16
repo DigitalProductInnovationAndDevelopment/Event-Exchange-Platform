@@ -1,6 +1,7 @@
 package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.EventCreateDTO;
+import com.itestra.eep.dtos.EventDetailsDTO;
 import com.itestra.eep.dtos.EventUpdateDTO;
 import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.Event;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -28,14 +30,21 @@ public class EventController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
-    public ResponseEntity<EventCreateDTO> getEvent(@PathVariable UUID id) {
+    public ResponseEntity<EventDetailsDTO> getEvent(@PathVariable UUID id) {
         Event event = eventService.findById(id);
-        return new ResponseEntity<>(eventMapper.toCreateDto(event), HttpStatus.OK);
+        return new ResponseEntity<>(eventMapper.toDetailsDto(event), HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    public ResponseEntity<List<EventDetailsDTO>> getAllEvents() {
+        List<Event> events = eventService.findAll();
+        return new ResponseEntity<>(eventMapper.toDetailsDto(events), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EventCreateDTO> createEvent(@RequestBody EventCreateDTO eventCreateDTO) {
+    public ResponseEntity<EventCreateDTO> createEvent(@RequestBody @Valid EventCreateDTO eventCreateDTO) {
         Event event = eventService.create(eventCreateDTO);
         return new ResponseEntity<>(eventMapper.toCreateDto(event), HttpStatus.OK);
     }
@@ -51,7 +60,7 @@ public class EventController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> deleteEvent(@PathVariable UUID id) {
         eventService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(true);
     }
 
 

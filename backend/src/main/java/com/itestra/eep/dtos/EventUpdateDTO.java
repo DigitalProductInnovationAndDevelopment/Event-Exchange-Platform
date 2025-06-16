@@ -3,6 +3,7 @@ package com.itestra.eep.dtos;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.models.Address;
 import com.itestra.eep.models.Event;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link Event}
@@ -25,7 +27,8 @@ public class EventUpdateDTO implements Serializable {
     EventType eventType;
 
     @Nullable
-    EventUpdateDTO.AddressCreateDTO address;
+    @Size(message = "Event address should be shorter than 1000 characters", max = 1000)
+    String address;
 
     @Nullable
     @Size(message = "Event description should be shorter than 10000 characters", max = 10000)
@@ -33,6 +36,10 @@ public class EventUpdateDTO implements Serializable {
 
     @Nullable
     Integer capacity;
+
+    @Nullable
+    @FutureOrPresent(message = "Event cannot be in the past.")
+    private LocalDateTime date;
 
     /**
      * DTO for {@link Address}

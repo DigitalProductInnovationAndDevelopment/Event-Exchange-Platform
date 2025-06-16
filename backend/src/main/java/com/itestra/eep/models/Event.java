@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +28,11 @@ public class Event {
     private String name;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private EventType eventType;
+
+    @Column(name = "date")
+    private LocalDateTime date;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -33,8 +40,8 @@ public class Event {
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
-    @OneToOne
-    private Address address;
+    @Column(name = "address", nullable = false)
+    private String address;
 
     @OneToMany(mappedBy = "event")
     private Set<Participation> participants;
