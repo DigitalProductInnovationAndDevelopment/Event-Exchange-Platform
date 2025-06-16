@@ -1,4 +1,4 @@
-import {Button, Card, Col, Descriptions, Modal, Row, Space, Statistic, Tag, Typography} from 'antd';
+import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {
@@ -75,7 +75,15 @@ export const EventDetails = () => {
         fileEntities: event!.fileEntities.filter((file) => file.fileId !== fileId) ?? [],
       });
     }
+  };
 
+  const handleFileUpload = async (file: FileEntity) => {
+    event!.fileEntities.push(file)
+    if (file) {
+      setEvent({
+        ...event!,
+      });
+    }
   };
 
   const handleDownload = async (file: FileEntity) => {
@@ -86,6 +94,10 @@ export const EventDetails = () => {
     return <div>Event not found</div>;
   }
 
+
+  const imageFiles = event.fileEntities?.filter(file =>
+      file.contentType === "image/png" || file.contentType === "image/jpeg"
+  );
 
   return (
     <div className="space-y-6">
@@ -164,7 +176,31 @@ export const EventDetails = () => {
             </Descriptions>
           </Card>
 
-          <Card title="Event Statistics" className="mb-6">
+          {imageFiles?.length > 0 && (
+              <Card title="Event Images">
+                <Image.PreviewGroup>
+                  <Row gutter={[16, 16]}>
+                    {imageFiles.map(file => (
+                        <Col
+                            key={file.fileId}
+                            xs={24}
+                            sm={12}
+                            md={8}
+                            lg={6}
+                            xl={4}
+                        >
+                          <Image
+                              src={`http://localhost:8000/files/${file.fileId}`}
+                              alt="Event Image"
+                              style={{maxWidth: "200", maxHeight: "100", objectFit: "cover"}}
+                          />
+                        </Col>
+                    ))}
+                  </Row>
+                </Image.PreviewGroup>
+              </Card>
+          )}
+          <Card title="Event Statistics" className="mb-6 mt-6">
             <Row gutter={16}>
               <Col span={6}>
                 <Statistic
@@ -220,7 +256,7 @@ export const EventDetails = () => {
               </Button>
               <div className="space-y-4">
                 <FileListDisplay files={event.fileEntities} onDelete={handleFileDelete} onDownload={handleDownload}/>
-                <FileUploadButton eventId={eventId}/>
+                <FileUploadButton eventId={eventId} onUpload={handleFileUpload}/>
               </div>
             </Space>
           </Card>
