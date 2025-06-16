@@ -10,16 +10,16 @@ import {
   Row,
   Select,
   Space,
-  Typography
+  Typography,
 } from 'antd';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Breadcrumb} from '../../components/Breadcrumb';
-import {useEffect, useState} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useEffect, useState } from 'react';
 
-import type {Event} from '../../types/event';
-import {EVENT_TYPE_COLORS} from '../../types/event';
-import dayjs from "dayjs";
-import useApiService from "../../services/apiService.ts";
+import type { Event } from '../../types/event';
+import { EVENT_TYPE_COLORS } from '../../types/event';
+import dayjs from 'dayjs';
+import useApiService from '../../services/apiService.ts';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -30,8 +30,7 @@ export const EventEdit = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [eventName, setEventName] = useState('');
-  const {getEventById, updateEvent} = useApiService();
-
+  const { getEventById, updateEvent } = useApiService();
 
   useEffect(() => {
     (async () => {
@@ -46,15 +45,14 @@ export const EventEdit = () => {
     })();
   }, [eventId, form, getEventById]);
 
-
   const onFinish = async (values: Event) => {
     setLoading(true);
     try {
       // @ts-ignore
-      console.log('Form values:', {...values, date: values.date.toISOString()});
+      console.log('Form values:', { ...values, date: values.date.toISOString() });
       const result = await updateEvent(eventId!, values);
       if (result) {
-        navigate(`/events/${eventId}`, {replace: true});
+        navigate(`/events/${eventId}`, { replace: true });
       }
     } catch (error) {
       console.error('Error updating event:', error);
@@ -65,12 +63,12 @@ export const EventEdit = () => {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb 
+      <Breadcrumb
         items={[
           { path: '/events', label: 'Events' },
           { path: `/events/${eventId}`, label: eventName },
-          { path: `/events/${eventId}/edit`, label: 'Edit Event' }
-        ]} 
+          { path: `/events/${eventId}/edit`, label: 'Edit Event' },
+        ]}
       />
 
       <div className="flex justify-between items-center">
@@ -79,20 +77,14 @@ export const EventEdit = () => {
           <Button type="primary" htmlType="submit" loading={loading} onClick={() => form.submit()}>
             Save Changes
           </Button>
-          <Button onClick={() => navigate(`/events/${eventId}`)}>
-            Cancel
-          </Button>
+          <Button onClick={() => navigate(`/events/${eventId}`)}>Cancel</Button>
         </Space>
       </div>
 
       <Row gutter={16}>
         <Col span={24}>
           <Card className="mb-6">
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={onFinish}
-            >
+            <Form form={form} layout="vertical" onFinish={onFinish}>
               <Descriptions title="Event Information" bordered>
                 <Descriptions.Item label="Event Name" span={3}>
                   <Form.Item
@@ -111,18 +103,18 @@ export const EventEdit = () => {
                     noStyle
                   >
                     <DatePicker
-                        className="w-full"
-                        format="DD/MM/YYYY hh:mm A"
-                        onChange={(date, dateString) => console.log(date, dateString)}
-                        showTime={{use12Hours: true}}
+                      className="w-full"
+                      format="DD/MM/YYYY hh:mm A"
+                      onChange={(date, dateString) => console.log(date, dateString)}
+                      showTime={{ use12Hours: true }}
                     />
                   </Form.Item>
                 </Descriptions.Item>
 
                 <Descriptions.Item label="Address" span={3}>
                   <Form.Item
-                      name="address"
-                      rules={[{required: true, message: 'Please enter event address'}]}
+                    name="address"
+                    rules={[{ required: true, message: 'Please enter event address' }]}
                     noStyle
                   >
                     <Input />
@@ -131,14 +123,17 @@ export const EventEdit = () => {
 
                 <Descriptions.Item label="Type" span={3}>
                   <Form.Item
-                      name="eventType"
+                    name="eventType"
                     rules={[{ required: true, message: 'Please select event type' }]}
                     noStyle
                   >
                     <Select
                       options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
                         value,
-                        label: value.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                        label: value
+                          .split('-')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' '),
                       }))}
                     />
                   </Form.Item>
@@ -159,32 +154,30 @@ export const EventEdit = () => {
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                        name="participants"
-                        label="Current Participants"
-                        rules={[{required: true, message: 'Please enter number of participants'}]}
-                        initialValue={0}
+                      name="participants"
+                      label="Current Participants"
+                      rules={[{ required: true, message: 'Please enter number of participants' }]}
+                      initialValue={0}
                     >
-                      <InputNumber min={0} className="w-full"/>
+                      <InputNumber min={0} className="w-full" />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                        name="capacity"
-                        label="Capacity"
-                        rules={[{required: true, message: 'Please enter event capacity'}]}
-                        initialValue={1}
+                      name="capacity"
+                      label="Capacity"
+                      rules={[{ required: true, message: 'Please enter event capacity' }]}
+                      initialValue={1}
                     >
-                      <InputNumber min={1} className="w-full"/>
+                      <InputNumber min={1} className="w-full" />
                     </Form.Item>
                   </Col>
                 </Row>
               </Card>
             </Form>
           </Card>
-
-
         </Col>
       </Row>
     </div>
   );
-}; 
+};

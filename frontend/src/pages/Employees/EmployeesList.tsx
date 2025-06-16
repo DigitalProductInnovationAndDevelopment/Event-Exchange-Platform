@@ -9,4 +9,4 @@ export const EmployeesList = () => {
       {/* Add your employees list content here */}
     </div>
   );
-}; 
+};

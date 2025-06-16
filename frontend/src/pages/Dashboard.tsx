@@ -1,4 +1,4 @@
-import {Button, Card, Col, Divider, List, Row, Space, Statistic, Typography} from 'antd';
+import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from 'antd';
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -6,19 +6,19 @@ import {
   EyeOutlined,
   FireOutlined,
   PlusOutlined,
-  TeamOutlined
+  TeamOutlined,
 } from '@ant-design/icons';
-import {useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import type {Event, EventStatus} from '../types/event';
-import useApiService from "../services/apiService.ts";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import type { Event, EventStatus } from '../types/event';
+import useApiService from '../services/apiService.ts';
 
 const { Title, Text } = Typography;
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
-  const {getEvents} = useApiService();
+  const { getEvents } = useApiService();
 
   useEffect(() => {
     // TODO: Replace with actual API calls
@@ -31,7 +31,6 @@ export const Dashboard = () => {
         // const statsData = await statsResponse.json();
         const data = await getEvents();
         setEvents(data ?? []);
-
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
         // TODO: Handle error appropriately
@@ -45,7 +44,6 @@ export const Dashboard = () => {
     return status === 'completed' ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
   };
 
-
   return (
     <div className="space-y-4">
       <div>
@@ -57,7 +55,7 @@ export const Dashboard = () => {
         <Col span={16}>
           <Row gutter={[16, 16]} className="mb-4">
             <Col span={8}>
-              <Button 
+              <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 size="large"
@@ -68,7 +66,7 @@ export const Dashboard = () => {
               </Button>
             </Col>
             <Col span={8}>
-              <Button 
+              <Button
                 type="primary"
                 icon={<CalendarOutlined />}
                 size="large"
@@ -79,7 +77,7 @@ export const Dashboard = () => {
               </Button>
             </Col>
             <Col span={8}>
-              <Button 
+              <Button
                 type="primary"
                 icon={<TeamOutlined />}
                 size="large"
@@ -91,25 +89,18 @@ export const Dashboard = () => {
             </Col>
           </Row>
 
-          <Card 
-            title="Upcoming Events" 
-            className="shadow-sm"
-            bodyStyle={{ padding: '12px' }}
-          >
+          <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: '12px' }}>
             <List
               dataSource={events
-                  // TODO .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
-                  .filter(event => new Date(event.date).getTime() > new Date().getTime())
+                // TODO .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
+                .filter(event => new Date(event.date).getTime() > new Date().getTime())
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
-              renderItem={(event) => (
+              renderItem={event => (
                 <List.Item
                   actions={[
-                    <Button 
-                      icon={<EyeOutlined />} 
-                      onClick={() => navigate(`/events/${event.id}`)}
-                    >
+                    <Button icon={<EyeOutlined />} onClick={() => navigate(`/events/${event.id}`)}>
                       View
-                    </Button>
+                    </Button>,
                   ]}
                 >
                   <List.Item.Meta
@@ -139,28 +130,30 @@ export const Dashboard = () => {
           </Card>
         </Col>
         <Col span={8}>
-          <Card 
+          <Card
             className="shadow-sm h-full"
-            title={<Title level={4} className="mb-0">Event Statistics</Title>}
+            title={
+              <Title level={4} className="mb-0">
+                Event Statistics
+              </Title>
+            }
           >
             <div className="space-y-2">
-              <Statistic
-                title="Total Events"
-                value={events.length}
-                prefix={<CalendarOutlined />}
-              />
+              <Statistic title="Total Events" value={events.length} prefix={<CalendarOutlined />} />
               <Divider className="my-4" />
-              
+
               <Statistic
                 title="Total Participants"
                 value={events.reduce((sum, event) => sum + event.participants, 0)}
                 prefix={<TeamOutlined />}
               />
               <Divider className="my-4" />
-              
+
               <Statistic
                 title="Average Engagement"
-                value={events.reduce((sum, event) => sum + (event.engagement || 0), 0) / events.length}
+                value={
+                  events.reduce((sum, event) => sum + (event.engagement || 0), 0) / events.length
+                }
                 suffix="%"
                 prefix={<FireOutlined />}
               />
@@ -170,4 +163,4 @@ export const Dashboard = () => {
       </Row>
     </div>
   );
-}; 
+};

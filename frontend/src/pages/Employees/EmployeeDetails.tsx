@@ -13,4 +13,4 @@ export const EmployeeDetails = () => {
       {/* Add your employee details content here */}
     </div>
   );
-}; 
+};

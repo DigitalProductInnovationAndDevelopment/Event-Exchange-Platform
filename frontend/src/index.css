@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -12,4 +14,4 @@ html, body, #root {
 #root {
   display: flex;
   flex-direction: column;
-} 
+}

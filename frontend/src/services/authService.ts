@@ -1,4 +1,4 @@
-import type {User} from '../types/auth';
+import type { User } from '../types/auth';
 
 const AUTH_KEY = 'auth_user';
 
@@ -6,7 +6,7 @@ export const authService = {
   login: async (user: User): Promise<User> => {
     // Store user in localStorage
     localStorage.setItem(AUTH_KEY, JSON.stringify(user));
-    
+
     return user;
   },
 
@@ -17,7 +17,7 @@ export const authService = {
   getCurrentUser: (): User | null => {
     const userStr = localStorage.getItem(AUTH_KEY);
     if (!userStr) return null;
-    
+
     try {
       return JSON.parse(userStr);
     } catch {
@@ -28,4 +28,4 @@ export const authService = {
   isAuthenticated: (): boolean => {
     return !!authService.getCurrentUser();
   },
-}; 
+};

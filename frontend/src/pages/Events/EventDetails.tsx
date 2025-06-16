@@ -1,6 +1,18 @@
-import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography} from 'antd';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Breadcrumb} from '../../components/Breadcrumb';
+import {
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Image,
+  Modal,
+  Row,
+  Space,
+  Statistic,
+  Tag,
+  Typography,
+} from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Breadcrumb } from '../../components/Breadcrumb';
 import {
   BarChartOutlined,
   DeleteOutlined,
@@ -9,22 +21,22 @@ import {
   ExclamationCircleOutlined,
   FileTextOutlined,
   TeamOutlined,
-  UserAddOutlined
+  UserAddOutlined,
 } from '@ant-design/icons';
-import {useEffect, useState} from 'react';
-import type {Event, FileEntity} from '../../types/event';
-import {EVENT_TYPE_COLORS} from '../../types/event';
-import useApiService from "../../services/apiService.ts";
-import FileUploadButton from "../../components/FileUploadButton.tsx";
-import FileListDisplay from "../../components/FileListComponent.tsx";
+import { useEffect, useState } from 'react';
+import type { Event, FileEntity } from '../../types/event';
+import { EVENT_TYPE_COLORS } from '../../types/event';
+import useApiService from '../../services/apiService.ts';
+import FileUploadButton from '../../components/FileUploadButton.tsx';
+import FileListDisplay from '../../components/FileListComponent.tsx';
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 export const EventDetails = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
-  const {getEventById, deleteEvent, deleteFile, fileDownload} = useApiService();
+  const { getEventById, deleteEvent, deleteFile, fileDownload } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -37,7 +49,6 @@ export const EventDetails = () => {
       }
     })();
   }, [eventId, getEventById]);
-
 
   async function onDelete() {
     try {
@@ -72,13 +83,13 @@ export const EventDetails = () => {
     if (result) {
       setEvent({
         ...event!,
-        fileEntities: event!.fileEntities.filter((file) => file.fileId !== fileId) ?? [],
+        fileEntities: event!.fileEntities.filter(file => file.fileId !== fileId) ?? [],
       });
     }
   };
 
   const handleFileUpload = async (file: FileEntity) => {
-    event!.fileEntities.push(file)
+    event!.fileEntities.push(file);
     if (file) {
       setEvent({
         ...event!,
@@ -94,58 +105,53 @@ export const EventDetails = () => {
     return <div>Event not found</div>;
   }
 
-
-  const imageFiles = event.fileEntities?.filter(file =>
-      file.contentType === "image/png" || file.contentType === "image/jpeg"
+  const imageFiles = event.fileEntities?.filter(
+    file => file.contentType === 'image/png' || file.contentType === 'image/jpeg'
   );
 
   return (
     <div className="space-y-6">
-      <Breadcrumb 
+      <Breadcrumb
         items={[
           { path: '/events', label: 'Events' },
-          { path: `/events/${eventId}`, label: event.name }
-        ]} 
+          { path: `/events/${eventId}`, label: event.name },
+        ]}
       />
 
       <div className="flex justify-between items-center">
         <Title level={2}>{event.name}</Title>
         <Space>
           <Button
-              type="primary"
+            type="primary"
             icon={<EditOutlined />}
             onClick={() => navigate(`/events/${eventId}/edit`)}
           >
             Edit Event
           </Button>
 
-
-          <Button danger icon={<DeleteOutlined/>} onClick={showDeleteModal}>
+          <Button danger icon={<DeleteOutlined />} onClick={showDeleteModal}>
             Delete Event
           </Button>
 
           <Modal
-              title={
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                  <ExclamationCircleOutlined style={{color: '#faad14'}}/>
-                  Confirm Delete
-                </div>
-              }
-              centered
-              open={deleteModalOpen}
-              onOk={handleDeleteConfirm}
-              onCancel={handleDeleteCancel}
-              okText="Yes, Delete"
-              cancelText="Cancel"
-              okButtonProps={{danger: true}}
-              width={400}
+            title={
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ExclamationCircleOutlined style={{ color: '#faad14' }} />
+                Confirm Delete
+              </div>
+            }
+            centered
+            open={deleteModalOpen}
+            onOk={handleDeleteConfirm}
+            onCancel={handleDeleteCancel}
+            okText="Yes, Delete"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+            width={400}
           >
             <p>Are you sure you want to delete this event?</p>
-            <p style={{color: '#8c8c8c', fontSize: '14px'}}>
-              This action cannot be undone.
-            </p>
+            <p style={{ color: '#8c8c8c', fontSize: '14px' }}>This action cannot be undone.</p>
           </Modal>
-
         </Space>
       </div>
 
@@ -157,7 +163,11 @@ export const EventDetails = () => {
                 {event.name}
               </Descriptions.Item>
               <Descriptions.Item label="Date" span={3}>
-                {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                {new Date(event.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
               </Descriptions.Item>
               <Descriptions.Item label="Address" span={3}>
                 <Space>
@@ -167,7 +177,10 @@ export const EventDetails = () => {
               </Descriptions.Item>
               <Descriptions.Item label="Type" span={3}>
                 <Tag color={EVENT_TYPE_COLORS[event.eventType]}>
-                  {event.eventType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  {event.eventType
+                    .split('_')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')}
                 </Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Description" span={3}>
@@ -177,28 +190,21 @@ export const EventDetails = () => {
           </Card>
 
           {imageFiles?.length > 0 && (
-              <Card title="Event Images">
-                <Image.PreviewGroup>
-                  <Row gutter={[16, 16]}>
-                    {imageFiles.map(file => (
-                        <Col
-                            key={file.fileId}
-                            xs={24}
-                            sm={12}
-                            md={8}
-                            lg={6}
-                            xl={4}
-                        >
-                          <Image
-                              src={`http://localhost:8000/files/${file.fileId}`}
-                              alt="Event Image"
-                              style={{maxWidth: "200", maxHeight: "100", objectFit: "cover"}}
-                          />
-                        </Col>
-                    ))}
-                  </Row>
-                </Image.PreviewGroup>
-              </Card>
+            <Card title="Event Images">
+              <Image.PreviewGroup>
+                <Row gutter={[16, 16]}>
+                  {imageFiles.map(file => (
+                    <Col key={file.fileId} xs={24} sm={12} md={8} lg={6} xl={4}>
+                      <Image
+                        src={`http://localhost:8000/files/${file.fileId}`}
+                        alt="Event Image"
+                        style={{ maxWidth: '200', maxHeight: '100', objectFit: 'cover' }}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+              </Image.PreviewGroup>
+            </Card>
           )}
           <Card title="Event Statistics" className="mb-6 mt-6">
             <Row gutter={16}>
@@ -210,11 +216,7 @@ export const EventDetails = () => {
                 />
               </Col>
               <Col span={6}>
-                <Statistic
-                  title="Capacity"
-                  value={event.capacity}
-                  prefix={<TeamOutlined />}
-                />
+                <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
               </Col>
 
               <Col span={8}>
@@ -251,12 +253,14 @@ export const EventDetails = () => {
               <Button block icon={<FileTextOutlined />}>
                 Generate Reports
               </Button>
-              <Button block>
-                Export Event Data
-              </Button>
+              <Button block>Export Event Data</Button>
               <div className="space-y-4">
-                <FileListDisplay files={event.fileEntities} onDelete={handleFileDelete} onDownload={handleDownload}/>
-                <FileUploadButton eventId={eventId} onUpload={handleFileUpload}/>
+                <FileListDisplay
+                  files={event.fileEntities}
+                  onDelete={handleFileDelete}
+                  onDownload={handleDownload}
+                />
+                <FileUploadButton eventId={eventId} onUpload={handleFileUpload} />
               </div>
             </Space>
           </Card>
@@ -264,4 +268,4 @@ export const EventDetails = () => {
       </Row>
     </div>
   );
-}; 
+};

@@ -1,6 +1,6 @@
-import {createContext, type ReactNode, useContext, useEffect, useState} from 'react';
-import type {AuthState, User} from '../types/auth';
-import {authService} from '../services/authService';
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import type { AuthState, User } from '../types/auth';
+import { authService } from '../services/authService';
 
 interface AuthContextType extends AuthState {
   login: (credentials: User) => Promise<void>;
@@ -51,9 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ ...authState, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ ...authState, login, logout }}>{children}</AuthContext.Provider>
   );
 }
 
@@ -63,4 +61,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};

@@ -2,21 +2,21 @@ export type EventStatus = 'upcoming' | 'ongoing' | 'completed';
 export type EventType = 'WINTER_EVENT' | 'SUMMER_EVENT' | 'YEAR_END_PARTY';
 
 export const EVENT_STATUS_COLORS: Record<EventStatus, string> = {
-  'upcoming': 'orange',
-  'ongoing': 'blue',
-  'completed': 'green'
+  upcoming: 'orange',
+  ongoing: 'blue',
+  completed: 'green',
 };
 
 export const EVENT_TYPE_COLORS: Record<EventType, string> = {
-  'WINTER_EVENT': 'blue',
-  'SUMMER_EVENT': 'orange',
-  'YEAR_END_PARTY': 'purple'
+  WINTER_EVENT: 'blue',
+  SUMMER_EVENT: 'orange',
+  YEAR_END_PARTY: 'purple',
 };
 
 export interface FileEntity {
-  "fileId": string,
-  "name": string,
-  "contentType": string
+  fileId: string;
+  name: string;
+  contentType: string;
 }
 
 export interface Event {
@@ -32,5 +32,5 @@ export interface Event {
   year: number;
   description: string;
   cost: number;
-  fileEntities: FileEntity[]
+  fileEntities: FileEntity[];
 }

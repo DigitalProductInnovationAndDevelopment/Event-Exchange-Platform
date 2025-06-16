@@ -12,12 +12,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (isLoading) {
     return (
-      <div style={{ 
-        height: '100vh', 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center' 
-      }}>
+      <div
+        style={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Spin size="large" />
       </div>
     );
@@ -28,4 +30,4 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   return <>{children}</>;
-} 
+}

@@ -1,17 +1,17 @@
-import type {RouteObject} from 'react-router-dom';
-import {createBrowserRouter} from 'react-router-dom';
-import {ProtectedRoute} from '../components/ProtectedRoute';
-import {AppContainer} from '../components/AppContainer';
-import {Login} from '../pages/Login';
-import {Dashboard} from '../pages/Dashboard';
-import {EventsList} from '../pages/Events/EventsList';
-import {EventDetails} from '../pages/Events/EventDetails';
-import {EventEdit} from '../pages/Events/EventEdit';
-import {EventCreate} from '../pages/Events/EventCreate';
-import {EmployeesList} from '../pages/Employees/EmployeesList';
-import {LoginSuccess} from "../pages/LoginSuccess.tsx";
-import {EmployeeDetails} from '../pages/Employees/EmployeeDetails';
-import {NotFound} from '../pages/NotFound';
+import type { RouteObject } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
+import { ProtectedRoute } from '../components/ProtectedRoute';
+import { AppContainer } from '../components/AppContainer';
+import { Login } from '../pages/Login';
+import { Dashboard } from '../pages/Dashboard';
+import { EventsList } from '../pages/Events/EventsList';
+import { EventDetails } from '../pages/Events/EventDetails';
+import { EventEdit } from '../pages/Events/EventEdit';
+import { EventCreate } from '../pages/Events/EventCreate';
+import { EmployeesList } from '../pages/Employees/EmployeesList';
+import { LoginSuccess } from '../pages/LoginSuccess.tsx';
+import { EmployeeDetails } from '../pages/Employees/EmployeeDetails';
+import { NotFound } from '../pages/NotFound';
 
 const routes: RouteObject[] = [
   // Public routes
@@ -21,7 +21,7 @@ const routes: RouteObject[] = [
   },
   {
     path: '/login_success',
-    element: <LoginSuccess/>,
+    element: <LoginSuccess />,
   },
 
   // Protected routes with layout
@@ -75,4 +75,4 @@ const routes: RouteObject[] = [
   },
 ];
 
-export const router = createBrowserRouter(routes); 
+export const router = createBrowserRouter(routes);

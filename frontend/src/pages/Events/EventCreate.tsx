@@ -10,13 +10,13 @@ import {
   Row,
   Select,
   Space,
-  Typography
+  Typography,
 } from 'antd';
-import {useNavigate} from 'react-router-dom';
-import {Breadcrumb} from '../../components/Breadcrumb';
-import {useState} from 'react';
-import type {Event, EventType} from '../../types/event';
-import {EVENT_TYPE_COLORS} from '../../types/event';
+import { useNavigate } from 'react-router-dom';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useState } from 'react';
+import type { Event, EventType } from '../../types/event';
+import { EVENT_TYPE_COLORS } from '../../types/event';
 import useApiService from '../../services/apiService';
 
 const { Title } = Typography;
@@ -26,19 +26,18 @@ export const EventCreate = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const {createEvent} = useApiService();
+  const { createEvent } = useApiService();
 
   const onFinish = async (values: Event) => {
     setLoading(true);
     try {
       // @ts-ignore
-      console.log('Form values:', {...values, date: values.date.toISOString()});
+      console.log('Form values:', { ...values, date: values.date.toISOString() });
 
       const result = await createEvent(values);
       if (result) {
-        navigate(`/events`, {replace: true});
+        navigate(`/events`, { replace: true });
       }
-
     } catch (error) {
       console.error('Error creating event:', error);
     } finally {
@@ -48,11 +47,11 @@ export const EventCreate = () => {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb 
+      <Breadcrumb
         items={[
           { path: '/events', label: 'Events' },
-          { path: '/events/create', label: 'Create Event' }
-        ]} 
+          { path: '/events/create', label: 'Create Event' },
+        ]}
       />
 
       <div className="flex justify-between items-center">
@@ -61,9 +60,7 @@ export const EventCreate = () => {
           <Button type="primary" htmlType="submit" loading={loading} onClick={() => form.submit()}>
             Create Event
           </Button>
-          <Button onClick={() => navigate('/events')}>
-            Cancel
-          </Button>
+          <Button onClick={() => navigate('/events')}>Cancel</Button>
         </Space>
       </div>
 
@@ -74,10 +71,10 @@ export const EventCreate = () => {
               form={form}
               layout="vertical"
               onFinish={onFinish}
-              initialValues={{ 
+              initialValues={{
                 participants: 0,
                 capacity: 1,
-                eventType: Object.keys(EVENT_TYPE_COLORS)[0] as EventType
+                eventType: Object.keys(EVENT_TYPE_COLORS)[0] as EventType,
               }}
             >
               <Descriptions title="Event Information" bordered>
@@ -98,18 +95,18 @@ export const EventCreate = () => {
                     noStyle
                   >
                     <DatePicker
-                        className="w-full"
-                        format="DD/MM/YYYY hh:mm A"
-                        onChange={(date, dateString) => console.log(date, dateString)}
-                        showTime={{use12Hours: true}}
+                      className="w-full"
+                      format="DD/MM/YYYY hh:mm A"
+                      onChange={(date, dateString) => console.log(date, dateString)}
+                      showTime={{ use12Hours: true }}
                     />
                   </Form.Item>
                 </Descriptions.Item>
 
                 <Descriptions.Item label="Address" span={3}>
                   <Form.Item
-                      name="address"
-                      rules={[{required: true, message: 'Please enter event address'}]}
+                    name="address"
+                    rules={[{ required: true, message: 'Please enter event address' }]}
                     noStyle
                   >
                     <Input />
@@ -118,14 +115,17 @@ export const EventCreate = () => {
 
                 <Descriptions.Item label="Type" span={3}>
                   <Form.Item
-                      name="eventType"
+                    name="eventType"
                     rules={[{ required: true, message: 'Please select event type' }]}
                     noStyle
                   >
                     <Select
                       options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
                         value,
-                        label: value.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                        label: value
+                          .split('_')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' '),
                       }))}
                     />
                   </Form.Item>
@@ -146,29 +146,28 @@ export const EventCreate = () => {
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                        name="participants"
-                        label="Current Participants"
-                        rules={[{required: true, message: 'Please enter number of participants'}]}
+                      name="participants"
+                      label="Current Participants"
+                      rules={[{ required: true, message: 'Please enter number of participants' }]}
                     >
-                      <InputNumber min={0} className="w-full"/>
+                      <InputNumber min={0} className="w-full" />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                        name="capacity"
-                        label="Capacity"
-                        rules={[{required: true, message: 'Please enter event capacity'}]}
+                      name="capacity"
+                      label="Capacity"
+                      rules={[{ required: true, message: 'Please enter event capacity' }]}
                     >
-                      <InputNumber min={1} className="w-full"/>
+                      <InputNumber min={1} className="w-full" />
                     </Form.Item>
                   </Col>
                 </Row>
               </Card>
             </Form>
           </Card>
-
         </Col>
       </Row>
     </div>
   );
-}; 
+};

@@ -19,10 +19,8 @@ export const Breadcrumb = ({ items = [] }: BreadcrumbProps) => {
   return (
     <AntBreadcrumb className="mb-4">
       {breadcrumbItems.map(item => (
-        <AntBreadcrumb.Item key={item.key}>
-          {item.title}
-        </AntBreadcrumb.Item>
+        <AntBreadcrumb.Item key={item.key}>{item.title}</AntBreadcrumb.Item>
       ))}
     </AntBreadcrumb>
   );
-}; 
+};

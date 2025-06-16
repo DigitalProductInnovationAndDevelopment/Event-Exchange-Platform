@@ -1,8 +1,14 @@
-import {Avatar, Dropdown, Layout, Menu} from 'antd';
-import {Outlet, useLocation, useNavigate} from 'react-router-dom';
-import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined} from '@ant-design/icons';
-import {useAuth} from '../contexts/AuthContext';
-import useApiService from "../services/apiService.ts";
+import { Avatar, Dropdown, Layout, Menu } from 'antd';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import {
+  CalendarOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { useAuth } from '../contexts/AuthContext';
+import useApiService from '../services/apiService.ts';
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -10,7 +16,7 @@ export const AppContainer = () => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const {logoutRequest} = useApiService();
+  const { logoutRequest } = useApiService();
 
   const mainMenuItems = [
     {
@@ -60,12 +66,7 @@ export const AppContainer = () => {
 
   return (
     <Layout className="min-h-screen">
-      <Sider 
-        theme="dark" 
-        className="fixed h-full z-10"
-        breakpoint="lg"
-        collapsedWidth="0"
-      >
+      <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0">
         <Menu
           theme="dark"
           mode="inline"
@@ -101,4 +102,4 @@ export const AppContainer = () => {
       </Layout>
     </Layout>
   );
-}; 
+};
