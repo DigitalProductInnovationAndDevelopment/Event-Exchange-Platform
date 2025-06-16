@@ -53,7 +53,7 @@ public class ProjectController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> deleteProject(@PathVariable UUID id) {
         projectService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(true);
 
     }
 

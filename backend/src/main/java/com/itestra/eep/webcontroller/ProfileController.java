@@ -5,14 +5,18 @@ import com.itestra.eep.dtos.EmployeeDetailsDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
+import com.itestra.eep.models.Profile;
 import com.itestra.eep.services.EmployeeService;
 import com.itestra.eep.utils.CSVUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -34,10 +38,10 @@ public class ProfileController {
     private final EmployeeService employeeService;
 
     @GetMapping("/own")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<EmployeeDetailsDTO> getMyProfile() {
-        Employee employee = employeeService.getAuthenticatedUserEmployeeDetails();
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    public ResponseEntity<Profile> getMyProfile() {
+        Profile profile = employeeService.getAuthenticatedProfileDetails();
+        return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
@@ -77,7 +81,7 @@ public class ProfileController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable UUID id) {
         employeeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/import")
@@ -92,6 +96,22 @@ public class ProfileController {
         employeeService.importEmployeesFromCSV(employees);
         return new ResponseEntity<>("Employees imported successfully", HttpStatus.OK);
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Boolean> logout(HttpServletResponse response) {
+
+        ResponseCookie deleteCookie = ResponseCookie.from("Authorization", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
+        return ResponseEntity.ok(true);
     }
 
 }

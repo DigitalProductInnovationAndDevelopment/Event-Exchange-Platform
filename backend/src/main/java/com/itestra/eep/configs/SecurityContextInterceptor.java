@@ -70,8 +70,8 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (UnauthorizedException e) {
             response.setContentType("application/json");
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.getWriter().write("Access Denied");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("Access Denied, You are logged out!");
             return;
         }
         filterChain.doFilter(request, response);
@@ -98,13 +98,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
             }
         }
 
-        // if still no JWT found, return null
         if (jwt == null || jwt.isEmpty()) {
-            return null;
-        }
-
-
-        if (jwt == null) {
             return createAnonymousAuthentication();
         }
 
@@ -120,7 +114,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
     private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
         Set<UserRole> roles = Set.of(new UserRole(null, null, Role.VISITOR));
-        Profile profile = Profile.builder().authorities(roles).build();
+        Profile profile = Profile.builder().name("Visitor").authorities(roles).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
         authentication.setAuthenticated(false);
         return authentication;
