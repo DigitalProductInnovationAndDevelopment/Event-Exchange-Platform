@@ -41,7 +41,7 @@ export const EventsList = () => {
             // Search text filter
             const matchesSearch = searchText === '' ||
                 event.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                event.location.toLowerCase().includes(searchText.toLowerCase());
+                event.address.toLowerCase().includes(searchText.toLowerCase());
 
             // Event type filter
             const matchesType = !selectedType || event.eventType === selectedType;
@@ -237,7 +237,7 @@ export const EventsList = () => {
                                             <div className="space-y-2">
                                                 <div className="text-gray-600">
                                                     <div>Date: {event.date}</div>
-                                                    <div>Location: {event.location}</div>
+                                                    <div>Location: {event.address}</div>
                                                     <div>Participants: {event.participants}</div>
                                                 </div>
                                                 <Space>
@@ -293,7 +293,7 @@ export const EventsList = () => {
                                             <div className="space-y-2">
                                                 <div className="text-gray-600">
                                                     <div>Date: {event.date}</div>
-                                                    <div>Location: {event.location}</div>
+                                                    <div>Location: {event.address}</div>
                                                     <div>Participants: {event.participants}</div>
                                                 </div>
                                                 <Space>

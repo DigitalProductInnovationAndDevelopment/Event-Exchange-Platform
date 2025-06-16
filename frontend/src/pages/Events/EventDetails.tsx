@@ -159,10 +159,10 @@ export const EventDetails = () => {
               <Descriptions.Item label="Date" span={3}>
                 {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </Descriptions.Item>
-              <Descriptions.Item label="Location" span={3}>
+              <Descriptions.Item label="Address" span={3}>
                 <Space>
                   <EnvironmentOutlined />
-                  {event.location}
+                  {event.address}
                 </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Type" span={3}>
