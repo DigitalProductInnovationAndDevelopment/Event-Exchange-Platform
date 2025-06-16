@@ -139,11 +139,12 @@ export default function useApiService() {
     const fileUpload = async (formData: FormData) => {
 
         try {
-            await request<string>('/files/upload', {
+            const response = await request<string>('/files/upload', {
                 method: 'POST',
                 body: formData,
             });
             toast.success('File upload is successful!');
+            return response;
         } catch (err) {
             toast.error('File upload failed');
         }

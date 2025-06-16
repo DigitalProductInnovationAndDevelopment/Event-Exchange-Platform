@@ -3,7 +3,8 @@ import {Button, message, Upload} from 'antd';
 import {UploadOutlined} from '@ant-design/icons';
 import useApiService from "../services/apiService.ts";
 
-const FileUploadButton = ({eventId}) => {
+
+const FileUploadButton = ({eventId, onUpload}) => {
     const [uploading, setUploading] = useState(false);
     const [file, setFile] = useState(null);
     const {fileUpload} = useApiService();
@@ -25,7 +26,8 @@ const FileUploadButton = ({eventId}) => {
 
         try {
             setUploading(true);
-            await fileUpload(formData);
+            const uploadedFile = await fileUpload(formData);
+            onUpload(uploadedFile);
         } catch (error) {
             message.error('Upload failed');
         } finally {
