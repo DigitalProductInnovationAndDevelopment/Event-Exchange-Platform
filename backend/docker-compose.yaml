@@ -11,4 +11,4 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: postgres
     volumes:
-      - ./src/main/java/com/itestra/eventorganizer/sql:/docker-entrypoint-initdb.d
+      - ./src/main/java/com/itestra/eep/sql:/docker-entrypoint-initdb.d
