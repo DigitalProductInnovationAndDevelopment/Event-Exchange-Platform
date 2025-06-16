@@ -38,6 +38,13 @@ public class FileController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Boolean> deleteFile(@PathVariable UUID id) {
+        fileService.deleteFile(id);
+        return ResponseEntity.ok(true);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("@fileSecurity.canDownloadFile(#id, authentication)")
     public ResponseEntity<byte[]> downloadFile(@PathVariable UUID id) {

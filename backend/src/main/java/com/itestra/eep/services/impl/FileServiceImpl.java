@@ -36,6 +36,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public void deleteFile(UUID id) {
+        fileRepository.deleteById(id);
+    }
+
+    @Override
     public Optional<FileEntity> getFile(UUID id) {
         return fileRepository.findById(id);
     }

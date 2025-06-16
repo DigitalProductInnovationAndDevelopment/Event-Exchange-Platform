@@ -11,5 +11,7 @@ public interface FileService {
 
     void storeFile(MultipartFile file, UUID eventId) throws IOException;
 
+    void deleteFile(UUID id);
+
     Optional<FileEntity> getFile(UUID id);
 }
