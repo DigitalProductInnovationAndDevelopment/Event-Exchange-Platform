@@ -3,6 +3,7 @@ package com.itestra.eep.services;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.models.Employee;
+import com.itestra.eep.models.Profile;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface EmployeeService {
 
-    Employee getAuthenticatedUserEmployeeDetails();
+    Profile getAuthenticatedProfileDetails();
 
     Employee findById(UUID id);
 

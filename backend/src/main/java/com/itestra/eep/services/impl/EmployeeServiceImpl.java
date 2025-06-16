@@ -37,10 +37,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public Employee getAuthenticatedUserEmployeeDetails() {
+    public Profile getAuthenticatedProfileDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Profile profile = (Profile) authentication.getPrincipal();
-        return employeeRepository.findByProfile_Id(profile.getId()).orElseThrow(EmployeeNotFoundException::new);
+        return (Profile) authentication.getPrincipal();
     }
 
     @Override
