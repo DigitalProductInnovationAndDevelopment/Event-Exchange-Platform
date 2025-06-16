@@ -1,11 +1,25 @@
-import { Typography, Form, Input, DatePicker, InputNumber, Button, Card, Space, Row, Col, Descriptions, Select } from 'antd';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import { useState, useEffect } from 'react';
-import dayjs from 'dayjs';
-import { mockEvents } from '../../mocks/eventData';
-import type { Event } from '../../types/event';
-import { EVENT_TYPE_COLORS } from '../../types/event';
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Select,
+  Space,
+  Typography
+} from 'antd';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Breadcrumb} from '../../components/Breadcrumb';
+import {useEffect, useState} from 'react';
+
+import type {Event} from '../../types/event';
+import {EVENT_TYPE_COLORS} from '../../types/event';
+import dayjs from "dayjs";
+import useApiService from "../../services/apiService.ts";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -16,27 +30,32 @@ export const EventEdit = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [eventName, setEventName] = useState('');
+  const {getEventById, updateEvent} = useApiService();
+
 
   useEffect(() => {
-    // Find event in mock data
-    const event = mockEvents.find(e => e.id === eventId);
-    if (event) {
-      setEventName(event.name);
-      form.setFieldsValue({
-        ...event,
-        date: dayjs(event.date),
-      });
-    }
-  }, [eventId, form]);
+    (async () => {
+      const event = await getEventById(eventId!);
+      if (event) {
+        setEventName(event.name);
+        form.setFieldsValue({
+          ...event,
+          date: dayjs(event.date),
+        });
+      }
+    })();
+  }, [eventId, form, getEventById]);
+
 
   const onFinish = async (values: Event) => {
     setLoading(true);
     try {
-      // TODO: Replace with actual API call
-      console.log('Form values:', values);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      navigate(`/events/${eventId}`);
+      // @ts-ignore
+      console.log('Form values:', {...values, date: values.date.toISOString()});
+      const result = await updateEvent(eventId!, values);
+      if (result) {
+        navigate(`/events/${eventId}`, {replace: true});
+      }
     } catch (error) {
       console.error('Error updating event:', error);
     } finally {
@@ -91,14 +110,19 @@ export const EventEdit = () => {
                     rules={[{ required: true, message: 'Please select event date' }]}
                     noStyle
                   >
-                    <DatePicker className="w-full" />
+                    <DatePicker
+                        className="w-full"
+                        format="DD/MM/YYYY hh:mm A"
+                        onChange={(date, dateString) => console.log(date, dateString)}
+                        showTime={{use12Hours: true}}
+                    />
                   </Form.Item>
                 </Descriptions.Item>
 
-                <Descriptions.Item label="Location" span={3}>
+                <Descriptions.Item label="Address" span={3}>
                   <Form.Item
-                    name="location"
-                    rules={[{ required: true, message: 'Please enter event location' }]}
+                      name="address"
+                      rules={[{required: true, message: 'Please enter event address'}]}
                     noStyle
                   >
                     <Input />
@@ -107,7 +131,7 @@ export const EventEdit = () => {
 
                 <Descriptions.Item label="Type" span={3}>
                   <Form.Item
-                    name="type"
+                      name="eventType"
                     rules={[{ required: true, message: 'Please select event type' }]}
                     noStyle
                   >
@@ -130,33 +154,35 @@ export const EventEdit = () => {
                   </Form.Item>
                 </Descriptions.Item>
               </Descriptions>
+
+              <Card title="Participant Management" className="mb-6 mt-6">
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                        name="participants"
+                        label="Current Participants"
+                        rules={[{required: true, message: 'Please enter number of participants'}]}
+                        initialValue={0}
+                    >
+                      <InputNumber min={0} className="w-full"/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                        name="capacity"
+                        label="Capacity"
+                        rules={[{required: true, message: 'Please enter event capacity'}]}
+                        initialValue={1}
+                    >
+                      <InputNumber min={1} className="w-full"/>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
             </Form>
           </Card>
 
-          <Card title="Participant Management" className="mb-6">
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="participants"
-                  label="Current Participants"
-                  rules={[{ required: true, message: 'Please enter number of participants' }]}
-                  initialValue={0}
-                >
-                  <InputNumber min={0} className="w-full" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="capacity"
-                  label="Capacity"
-                  rules={[{ required: true, message: 'Please enter event capacity' }]}
-                  initialValue={1}
-                >
-                  <InputNumber min={1} className="w-full" />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Card>
+
         </Col>
       </Row>
     </div>

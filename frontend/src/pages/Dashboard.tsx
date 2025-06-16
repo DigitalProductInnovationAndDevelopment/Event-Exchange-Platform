@@ -1,16 +1,24 @@
-import { Typography, Card, Row, Col, Statistic, List, Tag, Space, Divider, Button } from 'antd';
-import { CalendarOutlined, TeamOutlined, CheckCircleOutlined, ClockCircleOutlined, FireOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import type { Event, EventStatus } from '../types/event';
-import { EVENT_STATUS_COLORS } from '../types/event';
-import { mockEvents } from '../mocks/eventData';
+import {Button, Card, Col, Divider, List, Row, Space, Statistic, Typography} from 'antd';
+import {
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  EyeOutlined,
+  FireOutlined,
+  PlusOutlined,
+  TeamOutlined
+} from '@ant-design/icons';
+import {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import type {Event, EventStatus} from '../types/event';
+import useApiService from "../services/apiService.ts";
 
 const { Title, Text } = Typography;
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
+  const {getEvents} = useApiService();
 
   useEffect(() => {
     // TODO: Replace with actual API calls
@@ -21,9 +29,9 @@ export const Dashboard = () => {
         // const statsResponse = await fetch('/api/dashboard/stats');
         // const eventsData = await eventsResponse.json();
         // const statsData = await statsResponse.json();
-        
-        // For now, use mock data
-        setEvents(mockEvents);
+        const data = await getEvents();
+        setEvents(data ?? []);
+
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
         // TODO: Handle error appropriately
@@ -31,7 +39,7 @@ export const Dashboard = () => {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [getEvents]);
 
   const getStatusIcon = (status: EventStatus) => {
     return status === 'completed' ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
@@ -90,7 +98,8 @@ export const Dashboard = () => {
           >
             <List
               dataSource={events
-                .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
+                  // TODO .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
+                  .filter(event => new Date(event.date).getTime() > new Date().getTime())
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
               renderItem={(event) => (
                 <List.Item
@@ -107,9 +116,9 @@ export const Dashboard = () => {
                     title={
                       <Space>
                         <Link to={`/events/${event.id}`}>{event.name}</Link>
-                        <Tag color={EVENT_STATUS_COLORS[event.status]} icon={getStatusIcon(event.status)}>
-                          {event.status.toUpperCase()}
-                        </Tag>
+                        {/*<Tag color={EVENT_STATUS_COLORS[event.status]} icon={getStatusIcon(event.status)}>
+                          {event.status?.toUpperCase()}
+                        </Tag>*/}
                       </Space>
                     }
                     description={
