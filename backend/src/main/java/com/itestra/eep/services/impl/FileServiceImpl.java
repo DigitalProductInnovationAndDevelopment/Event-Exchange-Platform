@@ -22,7 +22,7 @@ public class FileServiceImpl implements FileService {
     private final EventRepository eventRepository;
 
     @Override
-    public void storeFile(MultipartFile file, UUID eventId) throws IOException {
+    public FileEntity storeFile(MultipartFile file, UUID eventId) throws IOException {
         FileEntity entity = new FileEntity();
 
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
@@ -32,7 +32,7 @@ public class FileServiceImpl implements FileService {
         entity.setContentType(file.getContentType());
         entity.setContent(file.getBytes());
 
-        fileRepository.save(entity);
+        return fileRepository.save(entity);
     }
 
     @Override

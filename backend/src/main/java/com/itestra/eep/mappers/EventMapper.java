@@ -14,7 +14,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface EventMapper {
@@ -37,9 +36,6 @@ public interface EventMapper {
         return participants.stream().filter(Participation::isConfirmed).count();
     }
 
-    default List<FileDetailsDTO> map(List<FileEntity> fileEntities) {
-        return fileEntities.stream().map(fileEntity ->
-                new FileDetailsDTO(fileEntity.getFileId(), fileEntity.getName(), fileEntity.getContentType())).collect(Collectors.toList());
-    }
+    FileDetailsDTO toFileDetailsDto(FileEntity file);
 
 }

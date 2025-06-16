@@ -1,12 +1,11 @@
 package com.itestra.eep.webcontroller;
 
+import com.itestra.eep.dtos.FileDetailsDTO;
+import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.services.FileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin
 @RestController
@@ -24,18 +24,16 @@ import java.util.UUID;
 public class FileController {
 
     private final FileService fileService;
+    private final EventMapper eventMapper;
 
     @PostMapping("/upload")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("eventId") UUID eventId) {
-        try {
-            fileService.storeFile(file, eventId);
-            return ResponseEntity.ok("File uploaded successfully");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error uploading file");
-        }
+    public ResponseEntity<FileDetailsDTO> uploadFile(@RequestParam("file") MultipartFile file,
+                                                     @RequestParam("eventId") UUID eventId) throws IOException {
+
+        FileEntity savedFile = fileService.storeFile(file, eventId);
+        return new ResponseEntity<>(eventMapper.toFileDetailsDto(savedFile), HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}")
@@ -57,10 +55,11 @@ public class FileController {
 
         FileEntity fileEntity = fileOptional.get();
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + id + "\"")
-                .body(fileEntity.getContent());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS));
+
+        return new ResponseEntity<>(fileEntity.getContent(), headers, HttpStatus.OK);
     }
 
 
