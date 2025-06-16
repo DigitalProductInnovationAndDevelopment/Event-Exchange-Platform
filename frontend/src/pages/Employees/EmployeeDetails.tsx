@@ -177,12 +177,6 @@ export const EmployeeDetails = () => {
             <Form.Item label="Date Joined" name="dateJoined">
               <Input placeholder="Enter date joined" />
             </Form.Item>
-            <Form.Item>
-              <Space>
-                <Button type="primary" onClick={handleSave}>Save</Button>
-                <Button onClick={isNew ? handleBack : handleCancelEdit}>Cancel</Button>
-              </Space>
-            </Form.Item>
           </Form>
         </Card>
       );
@@ -208,14 +202,22 @@ export const EmployeeDetails = () => {
     if (isNew || isEdit) {
       // Editable form for add or edit
       return (
-        <Card title="Contact Information" style={{ marginBottom: 24 }}>
-          <Form layout="vertical" initialValues={employee || {}}>
-            <Form.Item label="Email" name="email">
-              <Input placeholder="Enter email" />
-            </Form.Item>
-            {/* Add more contact fields here if needed */}
-          </Form>
-        </Card>
+        <>
+          <Card title="Contact Information" style={{ marginBottom: 24 }}>
+            <Form layout="vertical" initialValues={employee || {}}>
+              <Form.Item label="Email" name="email">
+                <Input placeholder="Enter email" />
+              </Form.Item>
+              {/* Add more contact fields here if needed */}
+            </Form>
+          </Card>
+          <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'center' }}>
+            <Space>
+              <Button type="primary" onClick={handleSave}>Save</Button>
+              <Button onClick={isNew ? handleBack : handleCancelEdit}>Cancel</Button>
+            </Space>
+          </div>
+        </>
       );
     }
     // Read-only details
