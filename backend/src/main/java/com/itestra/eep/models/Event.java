@@ -27,6 +27,12 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "capacity", nullable = false)
+    private int capacity;
+
     @OneToOne
     private Address address;
 

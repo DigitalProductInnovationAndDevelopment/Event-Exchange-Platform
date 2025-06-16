@@ -9,12 +9,14 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
@@ -63,13 +65,44 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = attemptAuthenticationFromJwt(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            UsernamePasswordAuthenticationToken authentication = attemptAuthenticationFromJwt(request);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (UnauthorizedException e) {
+            response.setContentType("application/json");
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.getWriter().write("Access Denied");
+            return;
+        }
         filterChain.doFilter(request, response);
     }
 
     private UsernamePasswordAuthenticationToken attemptAuthenticationFromJwt(HttpServletRequest request) {
-        String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String jwt = null;
+
+        // we try to get JWT from cookie first
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("Authorization".equals(cookie.getName())) {
+                    jwt = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        // a fallback to Authorization header if no cookie found
+        if (jwt == null) {
+            String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                jwt = authHeader.substring(7);
+            }
+        }
+
+        // if still no JWT found, return null
+        if (jwt == null || jwt.isEmpty()) {
+            return null;
+        }
+
 
         if (jwt == null) {
             return createAnonymousAuthentication();

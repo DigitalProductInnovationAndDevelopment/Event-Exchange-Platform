@@ -27,6 +27,13 @@ public class EventCreateDTO implements Serializable {
     @NotNull
     EventType eventType;
 
+    @Size(message = "Event description should be shorter than 10000 characters", max = 10000)
+    @NotBlank(message = "Event description cannot be empty.")
+    String description;
+
+    @NotNull
+    Integer capacity;
+
     @NotNull
     EventCreateDTO.AddressCreateDTO address;
 

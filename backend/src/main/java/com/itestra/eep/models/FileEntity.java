@@ -31,6 +31,9 @@ public class FileEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "content_type", nullable = false)
+    private String contentType;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

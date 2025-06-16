@@ -90,10 +90,12 @@ CREATE TABLE organization.previous_matches
 
 CREATE TABLE organization.event
 (
-    id         UUID PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    event_type organization.event_type,
-    address_id UUID REFERENCES organization.address (id)
+    id          UUID PRIMARY KEY,
+    name        VARCHAR(255)   NOT NULL,
+    description VARCHAR(10000) NOT NULL,
+    capacity    INT            NOT NULL,
+    event_type  organization.event_type,
+    address_id  UUID REFERENCES organization.address (id)
 );
 
 
@@ -122,12 +124,13 @@ CREATE TABLE organization.chair
 
 CREATE TABLE organization.files
 (
-    file_id    UUID PRIMARY KEY,
-    event_id   UUID references organization.event (id),
-    name       VARCHAR(255) NOT NULL,
-    content    BYTEA        NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    file_id      UUID PRIMARY KEY,
+    event_id     UUID references organization.event (id),
+    name         VARCHAR(255) NOT NULL,
+    content_type VARCHAR(255) NULL,
+    content      BYTEA        NOT NULL,
+    created_at   TIMESTAMP,
+    updated_at   TIMESTAMP
 );
 
 

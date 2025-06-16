@@ -2,7 +2,6 @@ package com.itestra.eep.dtos;
 
 import com.itestra.eep.enums.DietaryPreference;
 import com.itestra.eep.enums.EmploymentType;
-import com.itestra.eep.models.Employee;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
@@ -10,6 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,11 +17,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * DTO for {@link Employee}
- */
+
 @Getter
 @Setter
+@AllArgsConstructor
 public class EmployeeCreateDTO implements Serializable {
 
     @Valid
@@ -37,6 +36,7 @@ public class EmployeeCreateDTO implements Serializable {
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class ProfileCreateDTO implements Serializable {
 
         @NotNull(message = "Name cannot be empty.")
