@@ -1,14 +1,9 @@
-import { Avatar, Dropdown, Layout, Menu } from 'antd';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import {
-  CalendarOutlined,
-  DashboardOutlined,
-  LogoutOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { useAuth } from '../contexts/AuthContext';
+import {Avatar, Dropdown, Layout, Menu} from 'antd';
+import {Outlet, useLocation, useNavigate} from 'react-router-dom';
+import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined,} from '@ant-design/icons';
+import {useAuth} from '../contexts/AuthContext';
 import useApiService from '../services/apiService.ts';
+import {useState} from "react";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -17,6 +12,7 @@ export const AppContainer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logoutRequest } = useApiService();
+  const [collapsed, setCollapsed] = useState(false);
 
   const mainMenuItems = [
     {
@@ -66,7 +62,8 @@ export const AppContainer = () => {
 
   return (
     <Layout className="min-h-screen">
-      <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0">
+      <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0"
+             onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
         <Menu
           theme="dark"
           mode="inline"
@@ -76,7 +73,10 @@ export const AppContainer = () => {
           className="mt-10"
         />
       </Sider>
-      <Layout className="ml-[200px] flex flex-col min-h-screen">
+      <Layout className="flex flex-col min-h-screen"
+              style={{
+                marginLeft: collapsed ? 0 : 200,
+              }}>
         <Header className="bg-white px-6 flex items-center justify-end shadow-sm">
           <Dropdown
             menu={{
