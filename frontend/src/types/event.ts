@@ -19,6 +19,11 @@ export interface FileEntity {
   contentType: string;
 }
 
+export interface SchematicsEntity {
+  id: string;
+  name: string;
+}
+
 export interface Event {
   id: string;
   name: string;
@@ -33,4 +38,5 @@ export interface Event {
   description: string;
   cost: number;
   fileEntities: FileEntity[];
+  schematics: SchematicsEntity[];
 }

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button, message, Upload } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import useApiService from '../services/apiService.ts';
+import React, {useState} from 'react';
+import {Button, message, Upload} from 'antd';
+import {UploadOutlined} from '@ant-design/icons';
+import useApiService from '../../../services/apiService.ts';
 
 const FileUploadButton = ({ eventId, onUpload }) => {
   const [uploading, setUploading] = useState(false);

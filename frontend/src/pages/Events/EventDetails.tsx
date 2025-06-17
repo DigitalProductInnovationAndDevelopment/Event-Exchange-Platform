@@ -1,18 +1,6 @@
-import {
-  Button,
-  Card,
-  Col,
-  Descriptions,
-  Image,
-  Modal,
-  Row,
-  Space,
-  Statistic,
-  Tag,
-  Typography,
-} from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography,} from 'antd';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Breadcrumb} from '../../components/Breadcrumb';
 import {
   BarChartOutlined,
   DeleteOutlined,
@@ -23,12 +11,14 @@ import {
   TeamOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import type { Event, FileEntity } from '../../types/event';
-import { EVENT_TYPE_COLORS } from '../../types/event';
+import {useEffect, useState} from 'react';
+import type {Event, FileEntity, SchematicsEntity} from '../../types/event';
+import {EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
-import FileUploadButton from '../../components/FileUploadButton.tsx';
-import FileListDisplay from '../../components/FileListComponent.tsx';
+import FileUploadButton from './components/FileUploadButton.tsx';
+import FileListDisplay from './components/FileListComponent.tsx';
+import SchematicsCreateButton from "./components/SchematicsCreateButton.tsx";
+import SchematicsListComponent from "./components/SchematicsListComponent.tsx";
 
 const { Title } = Typography;
 
@@ -36,7 +26,7 @@ export const EventDetails = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
-  const { getEventById, deleteEvent, deleteFile, fileDownload } = useApiService();
+  const {getEventById, deleteEvent, deleteFile, fileDownload, deleteSchematics} = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -93,6 +83,25 @@ export const EventDetails = () => {
     if (file) {
       setEvent({
         ...event!,
+      });
+    }
+  };
+
+  const handleSchematicsCreate = async (schematic: SchematicsEntity) => {
+    event!.schematics.push(schematic);
+    if (schematic) {
+      setEvent({
+        ...event!,
+      });
+    }
+  };
+
+  const handleSchematicsDelete = async (schematicId: string) => {
+    const result = await deleteSchematics(schematicId!);
+    if (result) {
+      setEvent({
+        ...event!,
+        schematics: event!.schematics.filter(schematic => schematic.id !== schematicId) ?? [],
       });
     }
   };
@@ -254,6 +263,14 @@ export const EventDetails = () => {
                 Generate Reports
               </Button>
               <Button block>Export Event Data</Button>
+              <div className="space-y-4">
+                <SchematicsListComponent
+                    schematics={event.schematics}
+                    onDelete={handleSchematicsDelete}
+                />
+                <SchematicsCreateButton eventId={eventId} onCreate={handleSchematicsCreate}/>
+              </div>
+
               <div className="space-y-4">
                 <FileListDisplay
                   files={event.fileEntities}

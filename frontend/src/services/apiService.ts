@@ -1,8 +1,9 @@
-import type { Profile } from 'types/employee.ts';
-import type { Event, FileEntity } from 'types/event.ts';
+import type {Profile} from 'types/employee.ts';
+import type {Event, FileEntity} from 'types/event.ts';
 import toast from 'react-hot-toast';
-import { useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext.tsx';
+import {useCallback} from 'react';
+import {useAuth} from '../contexts/AuthContext.tsx';
+import type {AppState} from "components/canvas/reducers/CanvasReducer.tsx";
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -69,13 +70,13 @@ export default function useApiService() {
   );
 
   const logoutRequest = useCallback(async () => {
-    return request(`/profile/logout`, {
+      return await request(`/profile/logout`, {
       method: 'POST',
     });
   }, [request]);
 
   const getOwnProfile = useCallback(async (): Promise<Profile> => {
-    return request<Profile>('/profile/own');
+      return await request<Profile>('/profile/own');
   }, [request]);
 
   const getEventById = useCallback(
@@ -136,7 +137,7 @@ export default function useApiService() {
   const deleteEvent = useCallback(
     async (id: string) => {
       try {
-        const response = request(`/events/${id}`, {
+          const response = await request(`/events/${id}`, {
           method: 'DELETE',
         });
         toast.success('Event is deleted successfully!');
@@ -182,7 +183,7 @@ export default function useApiService() {
   const deleteFile = useCallback(
     async (id: string) => {
       try {
-        const response = request(`/files/${id}`, {
+          const response = await request(`/files/${id}`, {
           method: 'DELETE',
         });
         toast.success('File is deleted successfully!');
@@ -194,17 +195,83 @@ export default function useApiService() {
     [request]
   );
 
-  return {
-    request,
-    logoutRequest,
-    getOwnProfile,
-    getEventById,
-    getEvents,
-    createEvent,
-    updateEvent,
-    deleteEvent,
-    fileUpload,
-    deleteFile,
-    fileDownload,
-  };
+    const getSchematics = useCallback(async (id: string) => {
+        try {
+            return await request<{ id: string, name: string, state: AppState }>(`/schematics/${id}`);
+        } catch (err) {
+            toast.error('Schematics fetch failed');
+        }
+    }, [request]);
+
+
+    const initiateSchematics = useCallback(async (eventId: string, fileName: string) => {
+        try {
+            const response = await request(`/schematics`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: fileName,
+                    eventId: eventId,
+                    state: JSON.stringify({
+                        buildMode: 0,
+                        elements: [],
+                        groups: [],
+                        canvasPosition: {x: 0, y: 0},
+                        scale: 1
+                    } as AppState),
+                }),
+            });
+            toast.success('Schematics saved successfully!');
+            return response;
+        } catch (err) {
+            toast.error('Schematics save failed');
+        }
+    }, [request]);
+
+    const updateSchematics = useCallback(async (id: string, canvasState: AppState) => {
+        try {
+            const response = await request(`/schematics/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    state: JSON.stringify(canvasState),
+                }),
+            });
+            toast.success('Schematics saved successfully!');
+            return response;
+        } catch (err) {
+            toast.error('Schematics save failed');
+        }
+    }, [request]);
+
+    const deleteSchematics = useCallback(
+        async (id: string) => {
+            try {
+                const response = await request(`/schematics/${id}`, {
+                    method: 'DELETE',
+                });
+                toast.success('Schematics is deleted successfully!');
+                return response;
+            } catch (err) {
+                toast.error('Schematics deletion failed');
+            }
+        },
+        [request]
+    );
+
+    return {
+        request,
+        logoutRequest,
+        getOwnProfile,
+        getEventById,
+        getEvents,
+        createEvent,
+        updateEvent,
+        deleteEvent,
+        fileUpload,
+        deleteFile,
+        fileDownload,
+        initiateSchematics,
+        getSchematics,
+        updateSchematics,
+        deleteSchematics,
+    };
 }
