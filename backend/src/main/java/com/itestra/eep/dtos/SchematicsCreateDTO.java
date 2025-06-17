@@ -2,6 +2,7 @@ package com.itestra.eep.dtos;
 
 import com.itestra.eep.validators.ValidJson;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
 
@@ -16,7 +17,7 @@ public class SchematicsCreateDTO implements Serializable {
     @NotBlank(message = "Schematics name cannot be empty.")
     String name;
 
-    @NotBlank(message = "Schematics must be connected to an event.")
+    @NotNull(message = "Schematics must be connected to an event.")
     UUID eventId;
 
     @NotBlank(message = "Schematics state cannot be empty.")
