@@ -1,0 +1,33 @@
+.panelStyle {
+    position: fixed;
+    bottom: 10%;
+    right: 20px;
+    width: 300px;
+    height: 350px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.fieldStyle {
+    margin-bottom: 8px;
+}
+
+.labelStyle {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.inputStyle {
+    padding: 4px;
+    width: 120px;
+}
+
+.selectStyle {
+    padding: 4px;
+    width: 130px;
+}
