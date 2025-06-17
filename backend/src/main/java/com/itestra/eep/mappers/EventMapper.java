@@ -15,7 +15,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import java.util.List;
 import java.util.Set;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = SchematicsMapper.class)
 public interface EventMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -32,10 +32,10 @@ public interface EventMapper {
 
     EventDetailsDTO toDetailsDto(Event event);
 
+    FileDetailsDTO toFileDetailsDto(FileEntity file);
+
     default Long map(Set<Participation> participants) {
         return participants.stream().filter(Participation::isConfirmed).count();
     }
-
-    FileDetailsDTO toFileDetailsDto(FileEntity file);
 
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,9 @@ public class EventDetailsDTO implements Serializable {
 
     LocalDateTime date;
 
-    List<FileDetailsDTO> fileEntities;
+    List<FileDetailsDTO> fileEntities = new ArrayList<>();
+
+    List<SchematicsDetailsDTO> schematics = new ArrayList<>();
 
     @Getter
     @Setter

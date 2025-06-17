@@ -43,14 +43,17 @@ public class Event {
     @Column(name = "address", nullable = false)
     private String address;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private Set<Participation> participants;
 
-    @OneToMany(mappedBy = "event", orphanRemoval = true)
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<FileEntity> fileEntities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "event", orphanRemoval = true)
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Participation> participations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Schematics> schematics = new ArrayList<>();
 
 }
 

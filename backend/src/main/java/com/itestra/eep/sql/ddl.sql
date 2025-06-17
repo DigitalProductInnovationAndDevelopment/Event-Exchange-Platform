@@ -123,6 +123,14 @@ CREATE TABLE organization.chair
     table_id UUID REFERENCES organization.table (id)
 );
 
+CREATE TABLE organization.schematics
+(
+    id       UUID PRIMARY KEY,
+    event_id UUID REFERENCES organization.event (id),
+    name     VARCHAR(255) NOT NULL,
+    state    TEXT         NOT NULL
+);
+
 CREATE TABLE organization.files
 (
     file_id      UUID PRIMARY KEY,
