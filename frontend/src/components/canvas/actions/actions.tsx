@@ -52,7 +52,7 @@ export const updateElement = (payload: {
     payload,
 });
 
-export const updateElementSpecificField = (payload: { id: string; key: string; value: string }): Action => ({
+export const updateElementSpecificField = (payload: { id: string; key: string; value: string | number }): Action => ({
     type: UPDATE_ELEMENT_SPECIFIC_FIELD,
     payload,
 });

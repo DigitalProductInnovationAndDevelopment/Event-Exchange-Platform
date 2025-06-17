@@ -84,7 +84,7 @@ export function ElementInspector({dispatch, state, selectedIds}:
                                                         updateElementSpecificField({
                                                             id: selectedIds[0],
                                                             key,
-                                                            value: e.target.value,
+                                                            value: paramType === "number" ? parseFloat(e.target.value) : e.target.value,
                                                         })
                                                     )
                                                 }
