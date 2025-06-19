@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import { message } from 'antd';
-import { useAuth } from '../contexts/AuthContext';
-import { useEffect } from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {message} from 'antd';
+import {useAuth} from '../contexts/AuthContext';
+import {useEffect} from 'react';
 import useApiService from '../services/apiService';
 
 export const LoginSuccess = () => {
@@ -17,7 +17,7 @@ export const LoginSuccess = () => {
       const ownProfile = await getOwnProfile();
 
       const values = {
-        name: ownProfile!.name || '',
+        name: ownProfile!.fullName || '',
         email: ownProfile!.email || '',
         roles: ownProfile!.authorities || [],
       };
