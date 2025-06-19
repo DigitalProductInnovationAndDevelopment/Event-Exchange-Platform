@@ -1,6 +1,6 @@
 import {Rect} from "react-konva";
 import {v4 as uuidv4} from "uuid";
-import type {ElementProperties} from "../../../utils/constants.tsx";
+import type {ElementProperties} from "components/canvas/utils/constants.tsx";
 
 export class Room implements ElementProperties {
     id: string;

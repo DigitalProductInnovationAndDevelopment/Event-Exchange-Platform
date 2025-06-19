@@ -1,7 +1,7 @@
 import {v4 as uuidv4} from "uuid";
 import type {Chair} from "../elements/Chair.tsx";
 import type {Wall} from "../elements/Wall.tsx";
-import type {ElementProperties} from "../../../utils/constants.tsx";
+import type {ElementProperties} from "components/canvas/utils/constants.tsx";
 import {
     type Action,
     ADD_ELEMENT,

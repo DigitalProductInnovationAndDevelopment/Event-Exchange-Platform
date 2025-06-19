@@ -1,7 +1,7 @@
-import {Table, TABLE_TYPES, TableRender} from "../components/canvas/elements/Table";
-import {Room, RoomRender} from "../components/canvas/elements/Room";
-import {Wall, WallRender} from "../components/canvas/elements/Wall";
-import {Chair, ChairRender} from "../components/canvas/elements/Chair";
+import {Table, TABLE_TYPES, TableRender} from "../elements/Table.tsx";
+import {Room, RoomRender} from "../elements/Room.tsx";
+import {Wall, WallRender} from "../elements/Wall.tsx";
+import {Chair, ChairRender} from "../elements/Chair.tsx";
 
 
 export interface ElementProperties {
@@ -106,7 +106,6 @@ export const getEditableParameters = (el: ElementProperties): { [key: string]: s
             return {};
     }
 };
-
 
 export const shapeFactory = (type: string) => {
     switch (type) {

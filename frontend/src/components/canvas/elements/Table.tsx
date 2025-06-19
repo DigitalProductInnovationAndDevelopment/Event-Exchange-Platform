@@ -1,6 +1,6 @@
 import {Circle, Group, Rect, Text} from "react-konva";
 import {v4 as uuidv4} from "uuid";
-import type {ElementProperties} from "../../../utils/constants.tsx";
+import type {ElementProperties} from "components/canvas/utils/constants.tsx";
 
 export const TABLE_TYPES = {
     RECT: {
