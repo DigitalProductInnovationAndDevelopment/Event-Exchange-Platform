@@ -33,6 +33,9 @@ public class Employee {
     @Column(name = "employment_start_date")
     private LocalDate employmentStartDate;
 
+    @Column(name = "location", nullable = false)
+    private String location;
+
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "employment_type", columnDefinition = "organization.employment_type")

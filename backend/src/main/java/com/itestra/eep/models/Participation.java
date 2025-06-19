@@ -21,7 +21,7 @@ public class Participation {
 
     private boolean confirmed;
 
-    @OneToOne
+    @ManyToOne
     private Profile person;
 
     @ManyToOne

@@ -12,10 +12,11 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 
 @Getter
@@ -34,19 +35,18 @@ public class EmployeeCreateDTO implements Serializable {
     @Enumerated(EnumType.STRING)
     EmploymentType employmentType;
 
+    @NotNull(message = "Employee location cannot be empty.")
+    String location;
+
     @Getter
     @Setter
     @AllArgsConstructor
     public static class ProfileCreateDTO implements Serializable {
 
-        @NotNull(message = "Name cannot be empty.")
-        @Size(max = 255)
+        @NotNull(message = "Full name cannot be empty.")
+        @Size(max = 500)
         @NotEmpty
-        String name;
-
-        @Size(max = 255)
-        @NotEmpty(message = "Last name cannot be empty.")
-        String lastName;
+        String fullName;
 
         @Size(max = 255)
         @NotEmpty(message = "Gender cannot be empty.")
@@ -59,6 +59,8 @@ public class EmployeeCreateDTO implements Serializable {
         @NotEmpty(message = "Email cannot be empty.")
         String email;
 
-        List<DietaryPreference> dietTypes;
+        @JdbcTypeCode(SqlTypes.ARRAY)
+        @Enumerated(EnumType.STRING)
+        DietaryPreference[] dietTypes;
     }
 }

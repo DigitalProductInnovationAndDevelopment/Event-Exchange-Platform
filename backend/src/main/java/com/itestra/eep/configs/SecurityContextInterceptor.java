@@ -114,7 +114,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
     private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
         Set<UserRole> roles = Set.of(new UserRole(null, null, Role.VISITOR));
-        Profile profile = Profile.builder().name("Visitor").authorities(roles).build();
+        Profile profile = Profile.builder().fullName("Visitor").authorities(roles).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
         authentication.setAuthenticated(false);
         return authentication;
@@ -134,7 +134,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
         Profile profile = Profile.builder()
                 .id(userId)
-                .name(userName)
+                .fullName(userName)
                 .email(userEmail)
                 .authorities(roles)
                 .build();

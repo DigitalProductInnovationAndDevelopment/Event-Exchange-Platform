@@ -39,12 +39,11 @@ CREATE TABLE organization.address
 CREATE TABLE organization.profile
 (
     id              UUID PRIMARY KEY,
-    gitlab_username VARCHAR(255)                      NULL UNIQUE,
-    email           VARCHAR(255)                      NULL UNIQUE,
-    name            VARCHAR(255)                      NOT NULL,
-    last_name       VARCHAR(255)                      NULL,
-    gender          VARCHAR(255)                      NULL,
-    diet_types      organization.dietary_preference[] NULL,
+    gitlab_username VARCHAR(255)  NULL UNIQUE,
+    email           VARCHAR(255)  NULL UNIQUE,
+    full_name       VARCHAR(500)  NOT NULL,
+    gender          VARCHAR(255)  NULL,
+    diet_types      VARCHAR(55)[] NULL,
     created_at      TIMESTAMP,
     updated_at      TIMESTAMP
 );
@@ -62,6 +61,7 @@ CREATE TABLE organization.employee
 (
     profile_id            UUID PRIMARY KEY REFERENCES organization.Profile (id),
     employment_type       organization.employment_type,
+    location VARCHAR(255) NOT NULL,
     employment_start_date DATE
 );
 
@@ -106,7 +106,8 @@ CREATE TABLE organization.participation
     guest_count INTEGER,
     confirmed   BOOLEAN,
     person_id   UUID REFERENCES organization.Profile (id),
-    event_id    UUID REFERENCES organization.Event (id)
+    event_id UUID REFERENCES organization.Event (id),
+    CONSTRAINT unique_person_event UNIQUE (person_id, event_id)
 );
 
 
@@ -128,7 +129,9 @@ CREATE TABLE organization.schematics
     id       UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.event (id),
     name     VARCHAR(255) NOT NULL,
-    state    TEXT         NOT NULL
+    state      TEXT NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE organization.files
@@ -148,10 +151,10 @@ GRANT USAGE, SELECT ON SEQUENCE organization.audit_log_id_seq TO organization_us
 
 
 
-INSERT INTO organization.profile (id, gitlab_username, email, name, last_name, gender, diet_types, created_at,
+INSERT INTO organization.profile (id, gitlab_username, email, full_name, gender, diet_types, created_at,
                                   updated_at)
-VALUES ('a3f2f969-d8cd-4af1-9391-85eb57b0c6b4'::uuid, 'itestra.tum.hr', 'itestra.tum.hr@gmail.com', 'itestra', NULL,
-        NULL, NULL, '2025-06-11 20:45:36.046825', '2025-06-11 20:45:36.046855');
+VALUES ('a3f2f969-d8cd-4af1-9391-85eb57b0c6b4'::uuid, 'itestra.tum.hr', 'itestra.tum.hr@gmail.com', 'itestra',
+        'MALE', NULL, '2025-06-11 20:45:36.046825', '2025-06-11 20:45:36.046855');
 
 INSERT INTO organization.user_roles (profile_id, "role")
 VALUES ('a3f2f969-d8cd-4af1-9391-85eb57b0c6b4'::uuid, 'ADMIN');

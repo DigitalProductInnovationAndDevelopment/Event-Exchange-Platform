@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 
 @Getter
@@ -26,14 +27,18 @@ public class EmployeeDetailsDTO implements Serializable {
     @Enumerated(EnumType.STRING)
     EmploymentType employmentType;
 
+    String location;
+
+    List<ParticipationDetailsDTO> participations;
+
     @Getter
     @Setter
     @AllArgsConstructor
     public static class ProfileDetailsDTO implements Serializable {
 
-        String name;
+        UUID id;
 
-        String lastName;
+        String fullName;
 
         String gender;
 
@@ -43,6 +48,6 @@ public class EmployeeDetailsDTO implements Serializable {
 
         Set<String> authorities;
 
-        List<DietaryPreference> dietTypes;
+        DietaryPreference[] dietTypes;
     }
 }

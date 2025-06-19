@@ -1,11 +1,15 @@
 package com.itestra.eep.models;
 
+import com.itestra.eep.enums.DietaryPreference;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,11 +27,8 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Column(name = "gender")
     private String gender;
@@ -38,14 +39,26 @@ public class Profile {
     @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
 
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<UserRole> authorities = new HashSet<>();
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<UserRole> authorities = new HashSet<>();
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "diet_types",
+            columnDefinition = "organization.dietary_preference[]"
+    )
+    private DietaryPreference[] dietTypes;
+
+    @OneToMany(mappedBy = "person")
+    private List<Participation> participations;
+
 
     @PrePersist
     protected void onCreate() {
@@ -57,7 +70,6 @@ public class Profile {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 
 }
 

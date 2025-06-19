@@ -11,9 +11,6 @@ import com.itestra.eep.utils.CSVUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -46,21 +43,16 @@ public class ProfileController {
 
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
-    public ResponseEntity<EmployeeUpdateDTO> getEmployee(@PathVariable UUID id) {
+    public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
         Employee employee = employeeService.findById(id);
-        return new ResponseEntity<>(employeeMapper.toUpdateDto(employee), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @GetMapping("/employees")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<Page<EmployeeDetailsDTO>> getEmployees(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Employee> employees = employeeService.findAllByPage(pageable);
-        return new ResponseEntity<>(employees.map(employeeMapper::toDetailsDto), HttpStatus.OK);
-
+    public ResponseEntity<List<EmployeeDetailsDTO>> getEmployees() {
+        List<Employee> employees = employeeService.findAll();
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
     }
 
     @PostMapping("/employee")

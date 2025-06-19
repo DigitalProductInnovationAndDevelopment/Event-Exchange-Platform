@@ -32,7 +32,7 @@ public class JwtUtil {
     public String generateToken(Profile userProfile) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userProfile.getId());
-        claims.put("name", userProfile.getName());
+        claims.put("name", userProfile.getFullName());
         claims.put("email", userProfile.getEmail());
         claims.put("roles", userProfile.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

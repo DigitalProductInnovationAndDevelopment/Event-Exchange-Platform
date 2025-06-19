@@ -42,6 +42,7 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
 
         String gitlabUsername = oauthToken.getPrincipal().getAttribute("username");
+        String location = oauthToken.getPrincipal().getAttribute("location");
         String email = oauthToken.getPrincipal().getAttribute("email");
         String name = oauthToken.getPrincipal().getAttribute("name");
 
@@ -58,13 +59,14 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             userProfile = Profile.builder()
                     .gitlabUsername(gitlabUsername)
                     .email(email)
-                    .name(name)
+                    .fullName(name)
                     .build();
 
             userRole.setProfile(userProfile);
 
             userProfile.setAuthorities(Set.of(userRole));
             newEmployeeRecord.setProfile(userProfile);
+            newEmployeeRecord.setLocation(location);
             employeeRepository.saveAndFlush(newEmployeeRecord);
 
         }

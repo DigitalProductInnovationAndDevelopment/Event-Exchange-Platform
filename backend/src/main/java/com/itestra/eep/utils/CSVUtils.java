@@ -35,14 +35,15 @@ public class CSVUtils {
 
                 String name = line[0];
                 String lastName = line[1];
-                //String address = line[2];
+                String address = line[2];
                 //LocalDate employmentStartDate = LocalDate.parse(line[3]);
                 //EmploymentType employmentType = EmploymentType.valueOf(line[4]);
 
                 EmployeeCreateDTO employeeDTO = new EmployeeCreateDTO(
-                        new EmployeeCreateDTO.ProfileCreateDTO(name, lastName, line[6], line[7], null, null),
+                        new EmployeeCreateDTO.ProfileCreateDTO("%s %s".formatted(name, lastName), line[6], line[7], null, null),
                         null,
-                        null
+                        null,
+                        address
                 );
 
                 employeeDTOs.add(employeeDTO);
