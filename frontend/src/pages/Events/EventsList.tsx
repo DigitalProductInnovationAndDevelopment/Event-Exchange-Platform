@@ -104,11 +104,6 @@ export const EventsList = () => {
       onFilter: (value, record) => record.eventType === value,
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
       title: 'Participants',
       dataIndex: 'participants',
       key: 'participants',
@@ -142,14 +137,10 @@ export const EventsList = () => {
 
   // Split events into upcoming/ongoing and past events
   const upcomingEvents = filteredEvents
-    // TODO
-    // .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
     .filter(event => new Date(event.date).getTime() > new Date().getTime())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const pastEvents = filteredEvents
-    // TODO
-    // .filter(event => event.status === 'completed')
     .filter(event => new Date(event.date).getTime() < new Date().getTime())
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -198,7 +189,7 @@ export const EventsList = () => {
               options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
                 value,
                 label: value
-                  .split('-')
+                  .split('_')
                   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                   .join(' '),
               }))}
@@ -247,16 +238,6 @@ export const EventsList = () => {
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participants}</div>
                         </div>
-                        <Space>
-                          {/* TODO
-
-                                                    <Tag color={EVENT_STATUS_COLORS[event.status]}>
-                                                        {event.status.toUpperCase()}
-                                                    </Tag>
-                                                    <Tag color={EVENT_TYPE_COLORS[event.eventType]}>
-                                                        {event.eventType.toUpperCase()}
-                                                    </Tag>*/}
-                        </Space>
                       </div>
                     }
                   />
@@ -305,16 +286,6 @@ export const EventsList = () => {
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participants}</div>
                         </div>
-                        <Space>
-                          {/* TODO
-
-                                                    <Tag color={EVENT_STATUS_COLORS[event.status]}>
-                                                        {event.status?.toUpperCase()}
-                                                    </Tag>
-                                                    <Tag color={EVENT_TYPE_COLORS[event.eventType]}>
-                                                        {event.eventType.toUpperCase()}
-                                                    </Tag>*/}
-                        </Space>
                       </div>
                     }
                   />

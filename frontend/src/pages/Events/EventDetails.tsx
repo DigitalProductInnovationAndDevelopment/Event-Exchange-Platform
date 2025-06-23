@@ -13,12 +13,13 @@ import {
 } from '@ant-design/icons';
 import {useEffect, useState} from 'react';
 import type {Event, FileEntity, SchematicsEntity} from '../../types/event';
-import {EVENT_TYPE_COLORS} from '../../types/event';
+import {EVENT_TYPE_COLORS, EVENT_STATUS_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import FileUploadButton from './components/FileUploadButton.tsx';
 import FileListDisplay from './components/FileListComponent.tsx';
 import SchematicsCreateButton from "./components/SchematicsCreateButton.tsx";
 import SchematicsListComponent from "./components/SchematicsListComponent.tsx";
+import seat_preview from '../../assets/Seat_plan_preview.png';
 
 const { Title } = Typography;
 
@@ -118,6 +119,9 @@ export const EventDetails = () => {
     file => file.contentType === 'image/png' || file.contentType === 'image/jpeg'
   );
 
+  // Force event status to 'upcoming' for now
+  const eventStatus = 'upcoming';
+
   return (
     <div className="space-y-6">
       <Breadcrumb
@@ -128,7 +132,12 @@ export const EventDetails = () => {
       />
 
       <div className="flex justify-between items-center">
-        <Title level={2}>{event.name}</Title>
+        <div className="flex items-center space-x-4">
+          <Title level={2} className="mb-0">{event.name}</Title>
+          <Tag color={EVENT_STATUS_COLORS[eventStatus]} className="text-lg px-4 py-2">
+            {eventStatus.toUpperCase()}
+          </Tag>
+        </div>
         <Space>
           <Button
             type="primary"
@@ -165,7 +174,7 @@ export const EventDetails = () => {
       </div>
 
       <Row gutter={16}>
-        <Col span={16}>
+        <Col span={14}>
           <Card className="mb-6">
             <Descriptions title="Event Information" bordered>
               <Descriptions.Item label="Event Name" span={3}>
@@ -240,28 +249,42 @@ export const EventDetails = () => {
           </Card>
         </Col>
 
-        <Col span={8}>
-          <Card title="Event Status" className="mb-6">
-            {/*<div className="flex flex-col items-center space-y-4">
-              <Tag color={EVENT_STATUS_COLORS[event.status]} className="text-lg px-4 py-2">
-                {event.status.toUpperCase()}
-              </Tag>
-              <Text type="secondary">
-                {event.status === 'upcoming' && 'This event is scheduled for the future'}
-                {event.status === 'ongoing' && 'This event is currently in progress'}
-                {event.status === 'completed' && 'This event has been completed'}
-              </Text>
-            </div>*/}
-          </Card>
-
-          <Card title="Management Actions">
+        <Col span={10}>
+          {/* Participants Tile */}
+          <Card title="Participants" className="mb-6">
             <Space direction="vertical" className="w-full">
-              <Button block icon={<UserAddOutlined />}>
+              <Button block icon={<UserAddOutlined />} onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
                 Manage Participants
               </Button>
-              <Button block icon={<FileTextOutlined />}>
-                Generate Reports
+              <Button block icon={<FileTextOutlined />}>Export Participants List</Button>
+            </Space>
+          </Card>
+
+          {/* Seat Plan Tile */}
+          <Card title="Seat Plan" className="mb-6">
+            <Space direction="vertical" className="w-full">
+              <Button block icon={<EditOutlined />} onClick={() => navigate(`/events/${eventId}/seat-plan`)}>
+                Manage Seat Plan
               </Button>
+              <div className="flex justify-center items-center mt-2" style={{height: 160, background: '#f5f5f5', borderRadius: 4}}>
+                <img src={seat_preview} alt="Seat Plan Preview" style={{maxWidth: '100%', maxHeight: '100%'}} />
+              </div>
+            </Space>
+          </Card>
+
+          {/* Seat Allocation Tile */}
+          <Card title="Seat Allocation" className="mb-6">
+            <Space direction="vertical" className="w-full">
+              <Button block icon={<EditOutlined />} onClick={() => navigate(`/events/${eventId}/seat-allocation`)}>
+                Manage Seat Allocation
+              </Button>
+              <Button block icon={<FileTextOutlined />}>Export Seat Allocation</Button>
+            </Space>
+          </Card>
+
+          {/* Existing Management Actions Tile */}
+          <Card title="Management Actions">
+            <Space direction="vertical" className="w-full">
               <Button block>Export Event Data</Button>
               <div className="space-y-4">
                 <SchematicsListComponent

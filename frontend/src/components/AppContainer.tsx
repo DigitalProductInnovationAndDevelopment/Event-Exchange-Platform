@@ -72,25 +72,26 @@ export const AppContainer = () => {
           onClick={({ key }) => handleMenuClick(key)}
           className="mt-10"
         />
-      </Sider>
-      <Layout className="flex flex-col min-h-screen"
-              style={{
-                marginLeft: collapsed ? 0 : 200,
-              }}>
-        <Header className="bg-white px-6 flex items-center justify-end shadow-sm">
+        {/* User profile at the bottom */}
+        <div style={{ position: 'absolute', bottom: 0, width: '100%', padding: '24px 0' }} className="flex flex-col items-center">
           <Dropdown
             menu={{
               items: userMenuItems,
               onClick: ({ key }) => handleMenuClick(key),
             }}
-            placement="bottomRight"
+            placement="topLeft"
           >
-            <div className="flex items-center cursor-pointer">
+            <div className="flex flex-col items-center cursor-pointer">
               <Avatar icon={<UserOutlined />} className="bg-blue-500" />
-              <span className="ml-2">{user?.name || user?.email || 'User'}</span>
+              <span className="mt-2 text-white text-sm">{user?.name || user?.email || 'User'}</span>
             </div>
           </Dropdown>
-        </Header>
+        </div>
+      </Sider>
+      <Layout className="flex flex-col min-h-screen"
+              style={{
+                marginLeft: collapsed ? 0 : 200,
+              }}>
         <Content className="bg-gray-50 flex-1 overflow-auto">
           <div className="p-6">
             <Outlet />
