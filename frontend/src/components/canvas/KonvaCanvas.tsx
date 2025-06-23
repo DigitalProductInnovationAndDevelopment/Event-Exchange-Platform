@@ -1,7 +1,7 @@
 import {useCanvas} from "./contexts/CanvasContext.tsx";
 import {useEffect, useRef, useState} from "react";
 import {Group, Layer, Rect, Stage, Text, Transformer} from "react-konva";
-import {type ElementProperties, renderElement, shapeFactory} from "../../utils/constants";
+import {type ElementProperties, renderElement, shapeFactory} from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
 import StagePreview from "./elements/StagePreview";
 import {ElementInspector} from "./elements/ElementInspector.tsx";
@@ -46,7 +46,7 @@ function KonvaCanvas() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (schematicsId) {
+            if (!initiated && schematicsId) {
                 const fetchedAppState = await getSchematics(schematicsId);
                 if (fetchedAppState && !initiated) {
                     dispatch(setState(fetchedAppState.state));
@@ -54,12 +54,15 @@ function KonvaCanvas() {
             }
         };
         fetchData().then(() => {
-            window.scrollTo(0, 0); // we have to scroll to top-left corner of the page, otherwise it looks bad
             stageRef.current?.setPosition(state.canvasPosition);
             setScale(state.scale)
             setInitiated(true);
         });
     }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // we have to scroll to top-left corner of the page, otherwise it looks bad
+    }, []);
 
     const isSelecting = useRef(false);
     const transformerRef = useRef<Konva.Transformer>(null);

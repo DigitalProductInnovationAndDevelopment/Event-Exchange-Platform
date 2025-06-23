@@ -65,13 +65,19 @@ export const AppContainer = () => {
     <Layout className="min-h-screen">
       <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0"
              onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 100, marginTop: 16, marginBottom: 4 }}>
+          <img
+            src={itestraEventLogo}
+            alt="itestra event planning logo"
+            style={{ height: '64px' }}
+          />
+        </div>
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[getBasePath(location.pathname)]}
           items={mainMenuItems}
           onClick={({ key }) => handleMenuClick(key)}
-          className="mt-10"
         />
       </Sider>
       <Layout className="flex flex-col min-h-screen"
@@ -79,11 +85,6 @@ export const AppContainer = () => {
                 marginLeft: collapsed ? 0 : 200,
               }}>
         <Header className="bg-white px-6 flex items-center justify-between shadow-sm">
-          <img
-            src={itestraEventLogo}
-            alt="itestra event planning logo"
-            style={{ height: '40px' }}
-          />
           <Dropdown
             menu={{
               items: userMenuItems,

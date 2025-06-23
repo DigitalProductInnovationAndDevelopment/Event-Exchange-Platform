@@ -1,5 +1,5 @@
 import {Group, Layer, Rect, Stage, Text} from "react-konva";
-import {shapeFactory, TOOLBOX_ITEMS, TOOLBOX_X, TOOLBOX_Y} from "../../../utils/constants";
+import {shapeFactory, TOOLBOX_ITEMS, TOOLBOX_X, TOOLBOX_Y} from "../utils/constants";
 import type {Chair} from "./Chair";
 import type {Room} from "./Room";
 import type {Wall} from "./Wall";
@@ -22,7 +22,7 @@ function downloadURI(uri: string, name: string) {
 }
 
 const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
-    const uri = stageRef.current!.toDataURL();
+    const uri = stageRef.current!.toDataURL({pixelRatio: 2});
     downloadURI(uri, 'stage.png');
 };
 

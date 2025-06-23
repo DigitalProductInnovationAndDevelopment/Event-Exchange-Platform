@@ -1,5 +1,5 @@
 import {Group, Layer, Stage} from "react-konva";
-import {renderElement} from "../../../utils/constants";
+import {renderElement} from "../utils/constants";
 import {useState} from "react";
 import type {AppState} from "../reducers/CanvasReducer.tsx";
 import Konva from "konva";

@@ -37,7 +37,7 @@ public class SecurityContextInterceptorLocal extends OncePerRequestFilter {
 
         Profile profile = Profile.builder()
                 .id(userId)
-                .name(userName)
+                .fullName(userName)
                 .email(userEmail)
                 .authorities(roles).build();
 

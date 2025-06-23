@@ -1,46 +1,22 @@
-import React, { useState } from 'react';
-import { Table, Input, Button, Space, Typography, Popconfirm, message, Select } from 'antd';
-import { SearchOutlined, PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import { useNavigate } from 'react-router-dom';
+import {useEffect, useMemo, useState} from 'react';
+import {Button, Input, Popconfirm, Select, Space, Table, Typography, Card, Row, Col} from 'antd';
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  SearchOutlined
+} from '@ant-design/icons';
+import type {ColumnsType} from 'antd/es/table';
+import {useNavigate} from 'react-router-dom';
+import type {Employee} from "types/employee.ts";
+import useApiService from "../../services/apiService.ts";
+import toast from "react-hot-toast";
+import { Breadcrumb } from '../../components/Breadcrumb';
 
 const { Title } = Typography;
 
-// Define the employee data type
-interface Employee {
-  key: string;
-  employeeId: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  project: string;
-  location: string;
-  department: string;
-  email: string;
-  role: string;
-  dateJoined: string;
-  attendedEventsCount?: number; // Number of events attended
-}
-
-// Example employee data structure
-const initialData: Employee[] = [
-  // You can replace this with real data from API
-  {
-    key: '1',
-    employeeId: 'E001',
-    firstName: 'John',
-    lastName: 'Doe',
-    gender: 'Male',
-    project: 'Project Alpha',
-    location: 'Germany',
-    department: 'Engineering',
-    email: 'john.doe@example.com',
-    role: 'Developer',
-    dateJoined: '2022-01-15',
-    attendedEventsCount: 3,
-  },
-  // ... more data
-];
 
 // Define table columns with correct types
 const columns = (
@@ -48,32 +24,20 @@ const columns = (
   onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
 ): ColumnsType<Employee> => [
   {
-    title: 'Employee ID',
-    dataIndex: 'employeeId',
-    key: 'employeeId',
-    sorter: (a, b) => a.employeeId.localeCompare(b.employeeId),
-  },
-  {
-    title: 'First Name',
-    dataIndex: 'firstName',
-    key: 'firstName',
-    sorter: (a, b) => a.firstName.localeCompare(b.firstName),
-  },
-  {
-    title: 'Last Name',
-    dataIndex: 'lastName',
-    key: 'lastName',
-    sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+    title: 'Full Name',
+    dataIndex: ['profile', 'fullName'],
+    key: 'profile.fullName',
+    sorter: (a, b) => (a.profile?.fullName ?? '').localeCompare(b.profile?.fullName ?? ''),
   },
   {
     title: 'Gender',
-    dataIndex: 'gender',
-    key: 'gender',
+    dataIndex: ['profile', 'gender'],
+    key: 'profile.gender',
     filters: [
       { text: 'Male', value: 'Male' },
       { text: 'Female', value: 'Female' },
     ],
-    onFilter: (value, record) => record.gender === value,
+    onFilter: (value, record) => record.profile.gender === value,
   },
   {
     title: 'Project',
@@ -92,47 +56,45 @@ const columns = (
   },
   {
     title: 'Email',
-    dataIndex: 'email',
-    key: 'email',
+    dataIndex: ['profile', 'email'],
+    key: 'profile.email',
   },
   {
     title: 'Role',
-    dataIndex: 'role',
-    key: 'role',
+    dataIndex: ['profile', 'authorities'],
+    key: 'profile.authorities',
   },
   {
     title: 'Date Joined',
-    dataIndex: 'dateJoined',
-    key: 'dateJoined',
+    dataIndex: 'employmentStartDate',
+    key: 'employmentStartDate',
   },
   {
     title: 'Events',
     dataIndex: 'attendedEventsCount',
     key: 'attendedEventsCount',
-    render: (count: number, record: Employee) => (
-      <Button type="link" onClick={() => onNavigate(record.employeeId, 'events')}>
-        {count || 0}
+    render: (_count: number, record: Employee) => (
+        <Button type="link" onClick={() => onNavigate(record.profile.id, 'events')}>
+          {record.participations?.length || 0}
       </Button>
     ),
   },
   {
     title: 'Actions',
     key: 'actions',
-    render: (_: any, record: Employee) => (
-      <Space size="middle">
-        {/* View action navigates to EmployeeDetails page in view mode */}
-        <Button type="link" icon={<EyeOutlined />} onClick={() => onNavigate(record.employeeId)}>View</Button>
-        {/* Edit action navigates to EmployeeDetails page in edit mode */}
-        <Button type="link" icon={<EditOutlined />} onClick={() => onNavigate(record.employeeId, undefined, true)}>Edit</Button>
-        {/* Delete action with confirmation, styled in red */}
-        <Popconfirm
+    render: (_, record: Employee) => (
+        <Space size="small" align="end">
+          <Button type="link" icon={<EyeOutlined/>} onClick={() => onNavigate(record.profile.id)}>View</Button>
+          <Button type="link" icon={<EditOutlined/>}
+                  onClick={() => onNavigate(record.profile.id, undefined, true)}>Edit</Button>
+          {<Popconfirm
           title="Are you sure to delete this employee?"
-          onConfirm={() => onDelete(record.key)}
+          onConfirm={() => onDelete(record.profile.id)}
           okText="Yes"
           cancelText="No"
         >
           <Button type="link" danger icon={<DeleteOutlined />}>Delete</Button>
-        </Popconfirm>
+          </Popconfirm>}
       </Space>
     ),
   },
@@ -142,32 +104,28 @@ const columns = (
 const exportToCSV = (data: Employee[]) => {
   // Define CSV headers
   const headers = [
-    'Employee ID',
-    'First Name',
-    'Last Name',
+    'Gitlab ID',
+    'Full Name',
     'Gender',
-    'Project',
+    'Projects',
     'Location',
-    'Department',
     'Email',
-    'Role',
+    'Roles',
     'Date Joined',
   ];
   // Map data to CSV rows
   const rows = data.map(emp => [
-    emp.employeeId,
-    emp.firstName,
-    emp.lastName,
-    emp.gender,
-    emp.project,
+    emp.profile.gitlabUsername,
+    emp.profile.fullName,
+    emp.profile.gender,
+    emp.projects,
     emp.location,
-    emp.department,
-    emp.email,
-    emp.role,
-    emp.dateJoined,
+    emp.profile.email,
+    emp.profile.authorities,
+    emp.employmentStartDate,
   ]);
   // Combine headers and rows
-  const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+  const csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");
   // Create a blob and trigger download
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -180,47 +138,57 @@ const exportToCSV = (data: Employee[]) => {
 };
 
 export const EmployeesList = () => {
-  // State for search input
-  const [searchText, setSearchText] = useState('');
-  // State for employee data
-  const [data, setData] = useState<Employee[]>(initialData);
-  // State for pagination page size
-  const [pageSize, setPageSize] = useState<number>(10);
-  // React Router navigation hook
   const navigate = useNavigate();
-
-  // State for project and location filters
-  const [projectFilter, setProjectFilter] = useState<string | undefined>(undefined);
+  const [searchText, setSearchText] = useState('');
   const [locationFilter, setLocationFilter] = useState<string | undefined>(undefined);
+  const [fetchedEmployees, setEmployees] = useState<Employee[]>([]);
+  const { getEmployees, deleteEmployee } = useApiService();
+  const [pageSize, setPageSize] = useState<number>(10);
 
-  // Get unique projects and locations for filter dropdowns
-  const uniqueProjects = Array.from(new Set(data.map(emp => emp.project))).filter(Boolean);
-  const uniqueLocations = Array.from(new Set(data.map(emp => emp.location))).filter(Boolean);
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getEmployees();
+        setEmployees(data ?? []);
+      } catch (err) {
+        console.error('Failed to fetch employees:', err);
+      }
+    })();
+  }, [getEmployees]);
 
-  // Filter employees by name, employee ID, project, and location
-  const filteredData = data.filter(
-    (item) =>
-      (item.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.employeeId.toLowerCase().includes(searchText.toLowerCase())) &&
-      (!projectFilter || item.project === projectFilter) &&
-      (!locationFilter || item.location === locationFilter)
-  );
+  const employees = useMemo(() => fetchedEmployees.map(e => ({ ...e, key: e.profile.id })), [fetchedEmployees]);
+
+  // Get unique locations for filter dropdown
+  const uniqueLocations = useMemo(() => Array.from(new Set(employees.map(emp => emp.location))).filter(Boolean), [employees]);
+
+  // Filter employees by name and location
+  const filteredData = useMemo(() => {
+    return employees.filter(item => {
+      const matchesSearch =
+        searchText === '' ||
+        item.profile.fullName?.toLowerCase().includes(searchText.toLowerCase());
+      const matchesLocation = !locationFilter || item.location === locationFilter;
+      return matchesSearch && matchesLocation;
+    });
+  }, [employees, searchText, locationFilter]);
 
   // Handle delete action
-  const handleDelete = (key: string) => {
-    setData(prev => prev.filter(item => item.key !== key));
-    message.success('Employee deleted successfully');
+  const handleDelete = async (profileId: string) => {
+    try {
+      await deleteEmployee(profileId);
+      setEmployees(prev => prev.filter(item => item.profile.id !== profileId));
+    } catch (err) {
+      console.error('Failed to delete employee:', err);
+    }
   };
 
   // Handle export action
   const handleExport = () => {
     exportToCSV(filteredData);
-    message.success('Exported employee data as CSV');
+    toast.success('Exported employee data as CSV');
   };
 
   // Handle navigation to EmployeeDetails page
-  // If employeeId is provided, go to details of that employee; otherwise, go to create page
   const handleNavigate = (employeeId?: string, anchor?: string, editMode?: boolean) => {
     if (employeeId) {
       if (editMode) {
@@ -235,70 +203,49 @@ export const EmployeesList = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      {/* Page Title */}
-      <Title level={2}>Employees</Title>
-      {/* Top bar: Search, Filters, Add Employee, Export */}
-      <div style={{ marginBottom: 16, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Evenly distribute search and filter controls */}
-        <div style={{ display: 'flex', flex: 1, gap: 16, maxWidth: 600 }}>
-          {/* Search input for name or employee ID */}
-          <Input
-            placeholder="Search"
-            prefix={<SearchOutlined />}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            style={{ flex: 1, minWidth: 0 }}
-            allowClear
-          />
-          {/* Project filter dropdown */}
-          <Select
-            allowClear
-            placeholder="Project"
-            style={{ flex: 1, minWidth: 0 }}
-            value={projectFilter}
-            onChange={value => setProjectFilter(value)}
-          >
-            {uniqueProjects.map(project => (
-              <Select.Option key={project} value={project}>
-                {project}
-              </Select.Option>
-            ))}
-          </Select>
-          {/* Location filter dropdown */}
-          <Select
-            allowClear
-            placeholder="Location"
-            style={{ flex: 1, minWidth: 0 }}
-            value={locationFilter}
-            onChange={value => setLocationFilter(value)}
-          >
-            {uniqueLocations.map(location => (
-              <Select.Option key={location} value={location}>
-                {location}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        {/* Export and Add Employee buttons */}
-        <Space>
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>
-            Export
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
-            Add Employee
-          </Button>
-        </Space>
+      <Breadcrumb items={[{ path: '/employees', label: 'Employees' }]} />
+      <div className="flex justify-between items-center mb-6">
+        <Title level={2} className="m-0">Employees</Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
+          Add Employee
+        </Button>
       </div>
-      {/* Employee Table */}
+      <Card className="mb-6">
+        <Row gutter={16}>
+          <Col span={8}>
+            <Input
+              placeholder="Search Employee Name or ID"
+              prefix={<SearchOutlined />}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              allowClear
+            />
+          </Col>
+          <Col span={8}>
+            <Select
+              allowClear
+              placeholder="Location"
+              style={{ width: '100%' }}
+              value={locationFilter}
+              onChange={value => setLocationFilter(value)}
+              options={uniqueLocations.map(location => ({ value: location, label: location }))}
+            />
+          </Col>
+          <Col span={8}>
+            <Button icon={<DownloadOutlined />} onClick={handleExport} style={{ width: '100%' }}>
+              Export
+            </Button>
+          </Col>
+        </Row>
+      </Card>
       <Table
         columns={columns(handleDelete, handleNavigate)}
         dataSource={filteredData}
         bordered
-        rowKey="employeeId"
+        rowKey={(record) => record.profile.id}
         pagination={{
           pageSize: pageSize,
           showSizeChanger: true,
-          // Set page size options to 10, 20, 50, and All (all = filteredData.length)
           pageSizeOptions: ['10', '20', '50', filteredData.length > 0 ? filteredData.length.toString() : '1000'],
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           onShowSizeChange: (_current, size) => setPageSize(size),

@@ -10,11 +10,12 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * DTO for {@link Employee}
@@ -34,6 +35,9 @@ public class EmployeeUpdateDTO implements Serializable {
     @Enumerated(EnumType.STRING)
     EmploymentType employmentType;
 
+    @Nullable
+    String location;
+
     @Getter
     @Setter
     public static class ProfileUpdateDTO implements Serializable {
@@ -41,7 +45,7 @@ public class EmployeeUpdateDTO implements Serializable {
         @Nullable
         @Size(max = 255)
         @NotEmpty
-        String name;
+        String fullName;
 
         @Nullable
         @Size(max = 255)
@@ -54,6 +58,8 @@ public class EmployeeUpdateDTO implements Serializable {
         String gender;
 
         @Nullable
-        List<DietaryPreference> dietTypes;
+        @JdbcTypeCode(SqlTypes.ARRAY)
+        @Enumerated(EnumType.STRING)
+        DietaryPreference[] dietTypes;
     }
 }

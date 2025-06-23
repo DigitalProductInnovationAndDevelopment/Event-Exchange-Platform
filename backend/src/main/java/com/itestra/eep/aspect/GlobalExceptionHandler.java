@@ -1,5 +1,7 @@
 package com.itestra.eep.aspect;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -45,7 +48,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleRuntimeException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(exception.getMessage());
+                .body("Internal Server Error");
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException exception) {
+        log.error("Data integrity violation", exception);
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("A data integrity error occurred. Please check your input.");
     }
 
     // This handles illegal accesses stemming from @PreAuthorized

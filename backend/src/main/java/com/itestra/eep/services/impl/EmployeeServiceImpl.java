@@ -11,8 +11,6 @@ import com.itestra.eep.services.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -43,8 +41,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Page<Employee> findAllByPage(Pageable page) {
-        return employeeRepository.findAll(page);
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
     }
 
     @Override
