@@ -8,6 +8,10 @@ Run `docker compose up`.
 
 This will create a `postgres` container with the necessary credentials and also set up the required tables.
 
+Run `./mvnw spring-boot:run`
+
+This will initialize the backend. Make sure you are using Java version 21. 
+
 ## Accessing the endpoints:
 
 1. You need to be authenticated via GitLab.

@@ -4,6 +4,7 @@ import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserO
 import {useAuth} from '../contexts/AuthContext';
 import useApiService from '../services/apiService.ts';
 import {useState} from "react";
+import itestraEventLogo from '../assets/itestra_event_logo.png';
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -77,7 +78,12 @@ export const AppContainer = () => {
               style={{
                 marginLeft: collapsed ? 0 : 200,
               }}>
-        <Header className="bg-white px-6 flex items-center justify-end shadow-sm">
+        <Header className="bg-white px-6 flex items-center justify-between shadow-sm">
+          <img
+            src={itestraEventLogo}
+            alt="itestra event planning logo"
+            style={{ height: '40px' }}
+          />
           <Dropdown
             menu={{
               items: userMenuItems,

@@ -223,12 +223,10 @@ export const EmployeesList = () => {
   // If employeeId is provided, go to details of that employee; otherwise, go to create page
   const handleNavigate = (employeeId?: string, anchor?: string, editMode?: boolean) => {
     if (employeeId) {
-      if (anchor) {
-        navigate(`/employees/${employeeId}#${anchor}`);
-      } else if (editMode) {
-        navigate(`/employees/${employeeId}`, { state: { editMode: true } });
+      if (editMode) {
+        navigate(`/employees/${employeeId}/edit`);
       } else {
-        navigate(`/employees/${employeeId}`);
+        navigate(`/employees/${employeeId}${anchor ? `#${anchor}` : ''}`);
       }
     } else {
       navigate('/employees/new');

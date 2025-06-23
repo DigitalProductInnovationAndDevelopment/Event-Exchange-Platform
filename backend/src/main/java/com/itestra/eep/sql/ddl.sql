@@ -158,23 +158,20 @@ VALUES ('a3f2f969-d8cd-4af1-9391-85eb57b0c6b4'::uuid, 'ADMIN');
 
 
 INSERT INTO organization."event" (id, "name", description, "date", capacity, "event_type", address)
-VALUES ('a8f2b29f-634e-4e56-a2f7-d3a3e7e1f8e0'::uuid, 'Tech Conference 2024',
-        'Join us for the biggest tech conference of the year. Network with industry leaders, attend workshops, and discover the latest innovations in technology.',
-        '2025-12-13 14:00:00', 200, 'WINTER_EVENT'::organization."event_type", 'San Francisco Convention Center'),
-       ('c0b7a9de-42c0-4e1c-8358-d8f6f7d8f7c1'::uuid, 'Web Development Workshop',
-        'Hands-on workshop covering modern web development practices, frameworks, and tools. Perfect for developers looking to enhance their skills.',
-        '2023-07-06 14:00:00', 300, 'WINTER_EVENT'::organization."event_type", 'New York Tech Hub'),
-       ('e3059cd7-f7fa-4821-9671-c73f1462a1a6'::uuid, 'Project Planning Meeting',
-        'Quarterly project planning meeting to discuss goals, timelines, and resource allocation for upcoming initiatives.',
-        '2024-12-20 14:00:00', 150, 'YEAR_END_PARTY'::organization."event_type", 'Chicago Business Center'),
-       ('b1578e9a-0a39-4e7a-9187-940181ddc64d'::uuid, 'Winter Networking Mixer',
-        'Annual winter networking event bringing together industry professionals for an evening of connections and collaboration.',
-        '2023-12-14 14:00:00', 150, 'WINTER_EVENT'::organization."event_type", 'Boston Innovation Center'),
-       ('9f5a4dbf-e15d-4c8b-8d51-fb9a3e07f289'::uuid, 'Summer Tech Festival',
-        'A week-long celebration of technology and innovation featuring workshops, hackathons, and networking opportunities.',
-        '2025-06-25 14:00:00', 250, 'SUMMER_EVENT'::organization."event_type", 'Miami Beach Convention Center'),
-       ('d624cc6d-98ea-4d27-9f04-14d47ef55856'::uuid, 'Annual Company Celebration',
-        'Join us for our annual year-end celebration featuring awards, entertainment, and a look back at our achievements.',
-        '2024-06-20 14:00:00', 150, 'SUMMER_EVENT'::organization."event_type", 'Las Vegas Grand Hotel');
+VALUES ('a8f2b29f-634e-4e56-a2f7-d3a3e7e1f8e0'::uuid, 'Augustiner-Keller',
+        'Relaxed year-end dinner with the whole team. Great food, cold beer, and a look back at the highlights of the year.',
+        '2025-12-20 19:00:00', 150, 'YEAR_END_PARTY'::organization."event_type", 'Arnulfstraße 52, 80335 München'),
+        ('c0b7a9de-42c0-4e1c-8358-d8f6f7d8f7c1'::uuid, 'Lost Weekend',
+        'Casual after-work meetup with coffee, snacks, and short lightning talks. Great chance to connect across teams.',
+        '2024-11-06 17:00:00', 50, 'WINTER_EVENT'::organization."event_type", 'Schellingstraße 3, 80779 München'),
+        ('9f5a4dbf-e15d-4c8b-8d51-fb9a3e07f289'::uuid, 'Alte Utting',
+        'Laid-back summer hangout on the ship with drinks, music, and rooftop views. Just time to catch up and enjoy the sun.',
+        '2024-06-25 15:00:00', 75, 'SUMMER_EVENT'::organization."event_type", 'Lagerhausstraße 15, 81371 München'),
+        ('d624cc6d-98ea-4d27-9f04-14d47ef55856'::uuid, 'Café Münchner Freiheit',
+        'Small informal meetup to welcome new colleagues and casually chat about project ideas and team topics.',
+        '2023-12-05 17:00:00', 50, 'WINTER_EVENT'::organization."event_type", 'Leopoldstraße 82, 80802 München'),
+        ('f1c9d9f4-7a5e-4d91-9fcb-2c9d1c3b7bfa'::uuid, 'Käfer-Schänke',
+        'Dinner in a small group focused on sharing ideas between project leads and management. Great food, relaxed setting.',
+        '2023-06-23 18:30:00', 40, 'SUMMER_EVENT'::organization."event_type", 'Prinzregentenstraße 73, 81675 München');
 
 

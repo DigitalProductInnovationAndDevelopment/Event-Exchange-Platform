@@ -14,6 +14,8 @@ import {EmployeeDetails} from '../pages/Employees/EmployeeDetails';
 import {NotFound} from '../pages/NotFound';
 import {CanvasProvider} from "../components/canvas/contexts/CanvasContext.tsx";
 import KonvaCanvas from "../components/canvas/KonvaCanvas.tsx";
+import {EmployeeEdit} from '../pages/Employees/EmployeeEdit';
+import {EmployeeCreate} from '../pages/Employees/EmployeeCreate';
 
 const routes: RouteObject[] = [
   // Public routes
@@ -64,8 +66,16 @@ const routes: RouteObject[] = [
         element: <EmployeesList />,
       },
       {
+        path: 'employees/new',
+        element: <EmployeeCreate />,
+      },
+      {
         path: 'employees/:employeeId',
         element: <EmployeeDetails />,
+      },
+      {
+        path: 'employees/:employeeId/edit',
+        element: <EmployeeEdit />,
       },
       {
         path: 'canvas/:schematicsId',
