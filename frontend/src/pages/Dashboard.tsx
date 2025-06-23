@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Event, EventStatus } from '../types/event';
 import useApiService from '../services/apiService.ts';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -39,10 +40,6 @@ export const Dashboard = () => {
 
     fetchDashboardData();
   }, [getEvents]);
-
-  const getStatusIcon = (status: EventStatus) => {
-    return status === 'completed' ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
-  };
 
   return (
     <div className="space-y-4">
@@ -115,7 +112,8 @@ export const Dashboard = () => {
                     description={
                       <Space direction="vertical" size="small">
                         <Space>
-                          <CalendarOutlined /> {event.date}
+                          <CalendarOutlined /> {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}
+                          <span style={{ marginLeft: 24 }} />
                           <TeamOutlined /> {event.participants}/{event.capacity} participants
                         </Space>
                         <Space>

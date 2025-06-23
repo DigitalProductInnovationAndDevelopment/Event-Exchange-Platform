@@ -5,7 +5,7 @@ import {useAuth} from '../contexts/AuthContext';
 import useApiService from '../services/apiService.ts';
 import {useState} from "react";
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Sider, Content, Footer } = Layout;
 
 export const AppContainer = () => {
   const { logout, user } = useAuth();
@@ -97,7 +97,7 @@ export const AppContainer = () => {
             <Outlet />
           </div>
         </Content>
-        <Footer className="text-center bg-white border-t border-gray-200">
+        <Footer className="text-center border-t border-gray-200" style={{ background: '#e6f4ff' }}>
           Event Exchange Platform ©{new Date().getFullYear()}
         </Footer>
       </Layout>

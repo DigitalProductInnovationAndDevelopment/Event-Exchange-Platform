@@ -234,7 +234,7 @@ export const EventsList = () => {
                     description={
                       <div className="space-y-2">
                         <div className="text-gray-600">
-                          <div>Date: {event.date}</div>
+                          <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participants}</div>
                         </div>
@@ -282,7 +282,7 @@ export const EventsList = () => {
                     description={
                       <div className="space-y-2">
                         <div className="text-gray-600">
-                          <div>Date: {event.date}</div>
+                          <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participants}</div>
                         </div>
