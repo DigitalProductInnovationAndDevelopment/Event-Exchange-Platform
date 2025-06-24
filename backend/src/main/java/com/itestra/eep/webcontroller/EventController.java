@@ -42,6 +42,34 @@ public class EventController {
         return new ResponseEntity<>(eventMapper.toDetailsDto(events), HttpStatus.OK);
     }
 
+    @GetMapping("/{eventId}/participants")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<List<ParticipationDetailsDTO>> getEventParticipants(@PathVariable UUID eventId) {
+        Event event = eventService.findById(eventId);
+        return new ResponseEntity<>(participationMapper.map(event.getParticipations()), HttpStatus.OK);
+    }
+
+    @PostMapping("/{eventId}/participants")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<ParticipationDetailsDTO> addEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {
+        Participation participation = eventService.addParticipant(dto);
+        return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
+    }
+
+    @PutMapping("/{eventId}/participants")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {
+        Participation participation = eventService.updateParticipant(dto);
+        return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/participants/{participationId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<Boolean> deleteEventParticipant(@PathVariable UUID participationId) {
+        eventService.deleteParticipant(participationId);
+        return ResponseEntity.ok(true);
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EventCreateDTO> createEvent(@RequestBody @Valid EventCreateDTO eventCreateDTO) {

@@ -12,11 +12,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ParticipationDetailsDTO implements Serializable {
 
+    UUID id;
+
+    UUID employeeId;
+
+    UUID eventId;
+
     int guestCount;
 
     boolean confirmed;
-
-    UUID eventId;
 
     String eventName;
 
@@ -25,4 +29,10 @@ public class ParticipationDetailsDTO implements Serializable {
     LocalDateTime eventDate;
 
     String eventAddress;
+
+    String fullName;
+
+    String gitlabUsername;
+
+    String email;
 }
