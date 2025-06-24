@@ -1,10 +1,10 @@
-import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography, } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import { useEffect, useState } from 'react';
+import {Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography,} from 'antd';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Breadcrumb} from '../../components/Breadcrumb';
+import {useEffect, useState} from 'react';
 import useApiService from '../../services/apiService';
-import { DeleteOutlined, UploadOutlined, UserAddOutlined } from '@ant-design/icons';
-import type { Employee, ParticipationDetails } from "types/employee.ts";
+import {DeleteOutlined, UploadOutlined, UserAddOutlined} from '@ant-design/icons';
+import type {Employee, ParticipationDetails} from "types/employee.ts";
 
 const { Title } = Typography;
 
@@ -230,7 +230,7 @@ export const EventParticipants = () => {
                   type="primary"
                   icon={<UserAddOutlined />}
                   onClick={() => handleAddParticipant({
-                    guestCount: employeeGuests[record.id],
+                      guestCount: employeeGuests[record.profile.id],
                     eventId: eventId!,
                     employeeId: record.profile.id
                   })}
