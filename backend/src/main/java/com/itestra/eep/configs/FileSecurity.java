@@ -46,7 +46,7 @@ public class FileSecurity {
         }
 
         Optional<FileEntity> fileOpt = fileService.getFile(fileId);
-        return fileOpt.isPresent() && fileOpt.get().getEvent().getParticipants().stream()
+        return fileOpt.isPresent() && fileOpt.get().getEvent().getParticipations().stream()
                 .anyMatch(participant -> participant.getId().equals(user.getId()));
     }
 }
