@@ -22,8 +22,62 @@ function downloadURI(uri: string, name: string) {
 }
 
 const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
-    const uri = stageRef.current!.toDataURL({pixelRatio: 2});
-    downloadURI(uri, 'stage.png');
+
+    if (!stageRef.current) return;
+
+    const stage = stageRef.current;
+    const layers = stage.getLayers();
+
+    // Check if there are any layers with content
+    if (layers.length === 0) {
+        console.warn('No layers found');
+        return;
+    }
+
+    // Get valid layer rectangles
+    const layerRects = layers
+        .map(layer => layer.getClientRect({skipTransform: false}))
+        .filter(rect => rect.width > 0 && rect.height > 0);
+
+    if (layerRects.length === 0) {
+        console.warn('No visible content found');
+        return;
+    }
+
+    // Calculate bounding box
+    const minX = Math.min(...layerRects.map(rect => rect.x));
+    const minY = Math.min(...layerRects.map(rect => rect.y));
+    const maxX = Math.max(...layerRects.map(rect => rect.x + rect.width));
+    const maxY = Math.max(...layerRects.map(rect => rect.y + rect.height));
+
+    const contentRect = {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY,
+    };
+
+    const padding = 50;
+    const exportRect = {
+        x: contentRect.x - padding,
+        y: contentRect.y - padding,
+        width: contentRect.width + (padding * 2),
+        height: contentRect.height + (padding * 2),
+    };
+
+    try {
+        const uri = stage.toDataURL({
+            x: exportRect.x,
+            y: exportRect.y,
+            width: exportRect.width,
+            height: exportRect.height,
+            pixelRatio: 2,
+        });
+
+        downloadURI(uri, 'stage.png');
+    } catch (error) {
+        console.error('Export failed:', error);
+    }
 };
 
 const handleToolboxClick =
@@ -109,7 +163,9 @@ function Toolbox({dispatch, stageRef, state}: {
                                 ...state,
                                 canvasPosition: stageRef!.current!.getPosition(),
                                 scale: stageRef!.current!.scaleX()
-                            })
+                            },
+                            stageRef
+                        )
                     }>
                         <Rect
                             width={80}
