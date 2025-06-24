@@ -53,7 +53,7 @@ export const EventSeatPlan = () => {
         <Col span={24}>
           <Card className="mb-6">
             <CanvasProvider>
-                <KonvaCanvas/>
+              <KonvaCanvas/>
             </CanvasProvider>
           </Card>
         </Col>
