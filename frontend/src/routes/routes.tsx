@@ -69,7 +69,7 @@ const routes: RouteObject[] = [
         element: <EventParticipants />,
       },
       {
-        path: 'events/:eventId/seat-plan',
+        path: 'events/:eventId/seat-plan/:schematicsId',
         element: <EventSeatPlan />,
       },
       {
@@ -88,6 +88,7 @@ const routes: RouteObject[] = [
         path: 'employees/:employeeId',
         element: <EmployeeDetails />,
       },
+      // TODO: Unnecessary route, remove it
       {
         path: 'employees/:employeeId/edit',
         element: <EmployeeEdit />,

@@ -1,6 +1,6 @@
-import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography,} from 'antd';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Breadcrumb} from '../../components/Breadcrumb';
+import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography, } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Breadcrumb } from '../../components/Breadcrumb';
 import {
   BarChartOutlined,
   DeleteOutlined,
@@ -11,9 +11,9 @@ import {
   TeamOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import {useEffect, useState} from 'react';
-import type {Event, FileEntity} from '../../types/event';
-import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
+import { useEffect, useState } from 'react';
+import type { Event, FileEntity } from '../../types/event';
+import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import FileUploadButton from './components/FileUploadButton.tsx';
 import FileListDisplay from './components/FileListComponent.tsx';
@@ -25,7 +25,7 @@ export const EventDetails = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
-  const {getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics} = useApiService();
+  const { getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -231,7 +231,7 @@ export const EventDetails = () => {
               <Col span={8}>
                 <Statistic
                   title="Engagement"
-                  value={event.engagement}
+                  value={((event.participantCount / event.capacity) * 100).toFixed(2)}
                   prefix={<BarChartOutlined />}
                   suffix="%"
                 />
@@ -254,9 +254,9 @@ export const EventDetails = () => {
           {/* Seat Plan Tile */}
           <Card title="Seat Plan" className="mb-6">
             <Space direction="vertical" className="w-full">
-              <Button block icon={<EditOutlined/>} onClick={() => {
+              <Button block icon={<EditOutlined />} onClick={() => {
                 if (event?.schematics) {
-                  navigate(`/canvas/${event.schematics.id}`)
+                  navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`)
                 } else {
                   handleCreate();
                 }
@@ -264,29 +264,29 @@ export const EventDetails = () => {
                 Manage Seat Plan
               </Button>
               {event.schematics?.overviewFileId &&
-                  (
-                      <div className="flex flex-row w-full">
-                        <div
-                            className="flex justify-center items-center mt-2"
-                            style={{
-                              background: '#f5f5f5',
-                              borderRadius: 4,
-                              width: 200,
-                              overflow: 'hidden',
-                            }}
-                        >
-                          <Image
-                              src={`http://localhost:8000/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
-                              alt="Event Seat Plan Image"
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                          />
-                        </div>
-                      </div>
-                  )
+                (
+                  <div className="flex flex-row w-full">
+                    <div
+                      className="flex justify-center items-center mt-2"
+                      style={{
+                        background: '#f5f5f5',
+                        borderRadius: 4,
+                        width: 200,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={`http://localhost:8000/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
+                        alt="Event Seat Plan Image"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
               }
             </Space>
           </Card>

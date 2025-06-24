@@ -439,9 +439,6 @@ function KonvaCanvas() {
     return (
 
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <Title level={2}>Manage Seat Plan</Title>
-            </div>
             <div className="App" style={{display: "flex", border: "1px solid #e0e0e0", flexDirection: "row"}}>
 
                 <Toolbox dispatch={dispatch} stageRef={stageRef} state={state}/>

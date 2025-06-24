@@ -93,7 +93,6 @@ export const Dashboard = () => {
           <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: '12px' }}>
             <List
               dataSource={events
-                // TODO .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
                 .filter(event => new Date(event.date).getTime() > new Date().getTime())
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
               renderItem={event => (
@@ -108,10 +107,6 @@ export const Dashboard = () => {
                     title={
                       <Space>
                         <Link to={`/events/${event.id}`}>{event.name}</Link>
-                        {<Tag color={EVENT_STATUS_COLORS[event.status]} icon={getStatusIcon(event.status)}>
-                          {event.status?.toUpperCase()}
-                        </Tag>
-                        }
                       </Space>
                     }
                     description={
@@ -122,7 +117,7 @@ export const Dashboard = () => {
                           <TeamOutlined/> {event.participantCount}/{event.capacity} participants
                         </Space>
                         <Space>
-                          <FireOutlined /> {event.engagement}% engagement
+                          <FireOutlined /> {Number(((event.participantCount / event.capacity) * 100).toFixed(2))} % engagement
                         </Space>
                       </Space>
                     }
@@ -155,7 +150,19 @@ export const Dashboard = () => {
               <Statistic
                 title="Average Engagement"
                 value={
-                  events.reduce((sum, event) => sum + (event.engagement || 0), 0) / events.length
+                  // TODO: Fix this calculation
+                  Number(
+                    (
+                      events.reduce(
+                        (sum, event) =>
+                          sum +
+                          (event.capacity > 0
+                            ? (event.participantCount / event.capacity) * 100
+                            : 0),
+                        0
+                      ) / (events.length || 1)
+                    ).toFixed(2)
+                  )
                 }
                 suffix="%"
                 prefix={<FireOutlined />}
