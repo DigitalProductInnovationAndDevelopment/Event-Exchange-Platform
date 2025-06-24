@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import {Button, Input, Popconfirm, Select, Space, Table, Typography, Card, Row, Col} from 'antd';
+import {Button, Input, Popconfirm, Select, Space, Table, Typography, Card, Row, Col, Tag} from 'antd';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -17,6 +17,12 @@ import { Breadcrumb } from '../../components/Breadcrumb';
 
 const { Title } = Typography;
 
+const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
+  FULLTIME: 'green',
+  PARTTIME: 'blue',
+  WORKING_STUDENT: 'orange',
+  THESIS: 'purple',
+};
 
 // Define table columns with correct types
 const columns = (
@@ -30,19 +36,9 @@ const columns = (
     sorter: (a, b) => (a.profile?.fullName ?? '').localeCompare(b.profile?.fullName ?? ''),
   },
   {
-    title: 'Gender',
-    dataIndex: ['profile', 'gender'],
-    key: 'profile.gender',
-    filters: [
-      { text: 'Male', value: 'Male' },
-      { text: 'Female', value: 'Female' },
-    ],
-    onFilter: (value, record) => record.profile.gender === value,
-  },
-  {
-    title: 'Project',
-    dataIndex: 'project',
-    key: 'project',
+    title: 'Email',
+    dataIndex: ['profile', 'email'],
+    key: 'profile.email',
   },
   {
     title: 'Location',
@@ -50,19 +46,23 @@ const columns = (
     key: 'location',
   },
   {
-    title: 'Department',
-    dataIndex: 'department',
-    key: 'department',
-  },
-  {
-    title: 'Email',
-    dataIndex: ['profile', 'email'],
-    key: 'profile.email',
-  },
-  {
     title: 'Role',
     dataIndex: ['profile', 'authorities'],
     key: 'profile.authorities',
+  },
+  {
+    title: 'Employment Type',
+    dataIndex: 'employmentType',
+    key: 'employmentType',
+    render: (type: string) =>
+      type ? (
+        <Tag color={EMPLOYMENT_TYPE_COLORS[type]}>
+          {type
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ')}
+        </Tag>
+      ) : null,
   },
   {
     title: 'Date Joined',
@@ -74,8 +74,8 @@ const columns = (
     dataIndex: 'attendedEventsCount',
     key: 'attendedEventsCount',
     render: (_count: number, record: Employee) => (
-        <Button type="link" onClick={() => onNavigate(record.profile.id, 'events')}>
-          {record.participations?.length || 0}
+      <Button type="link" style={{ color: 'black' }} onClick={() => onNavigate(record.profile.id, 'events')}>
+        {record.participations?.length || 0}
       </Button>
     ),
   },
@@ -83,18 +83,15 @@ const columns = (
     title: 'Actions',
     key: 'actions',
     render: (_, record: Employee) => (
-        <Space size="small" align="end">
-          <Button type="link" icon={<EyeOutlined/>} onClick={() => onNavigate(record.profile.id)}>View</Button>
-          <Button type="link" icon={<EditOutlined/>}
-                  onClick={() => onNavigate(record.profile.id, undefined, true)}>Edit</Button>
-          {<Popconfirm
-          title="Are you sure to delete this employee?"
-          onConfirm={() => onDelete(record.profile.id)}
-          okText="Yes"
-          cancelText="No"
+      <Space size="small" align="end">
+        <Button
+          type="default"
+          icon={<EyeOutlined />} 
+          onClick={() => onNavigate(record.profile.id)}
+          style={{ background: '#fff', border: '1px solid #d9d9d9' }}
         >
-          <Button type="link" danger icon={<DeleteOutlined />}>Delete</Button>
-          </Popconfirm>}
+          View
+        </Button>
       </Space>
     ),
   },
@@ -202,7 +199,7 @@ export const EmployeesList = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 0 }}>
       <Breadcrumb items={[{ path: '/employees', label: 'Employees' }]} />
       <div className="flex justify-between items-center mb-6">
         <Title level={2} className="m-0">Employees</Title>
@@ -241,7 +238,7 @@ export const EmployeesList = () => {
       <Table
         columns={columns(handleDelete, handleNavigate)}
         dataSource={filteredData}
-        bordered
+        bordered={false}
         rowKey={(record) => record.profile.id}
         pagination={{
           pageSize: pageSize,

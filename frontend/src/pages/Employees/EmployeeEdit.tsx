@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import EmployeeForm from './EmployeeForm';
-import { Card, Button, message, Typography } from 'antd';
+import { Card, Button, message, Typography, Tag } from 'antd';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import useApiService from '../../services/apiService';
 
@@ -42,7 +42,7 @@ export const EmployeeEdit = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 0 }}>
       <Breadcrumb
         items={[
           { path: '/employees', label: 'Employees' },

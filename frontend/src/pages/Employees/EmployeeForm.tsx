@@ -29,11 +29,19 @@ const EmployeeForm = ({ initialValues, onSave }: EmployeeFormProps) => {
     { label: <Tag color={DIET_TYPE_COLORS['KOSHER']}>Kosher</Tag>, value: 'KOSHER' },
     { label: <Tag color={DIET_TYPE_COLORS['VEGAN']}>Vegan</Tag>, value: 'VEGAN' },
   ];
+
+  const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
+    FULLTIME: 'green',
+    PARTTIME: 'blue',
+    WORKING_STUDENT: 'orange',
+    THESIS: 'purple',
+  };
+  
   const EMPLOYMENT_TYPES = [
-    { label: 'Fulltime', value: 'FULLTIME' },
-    { label: 'Parttime', value: 'PARTTIME' },
-    { label: 'Working Student', value: 'WORKING_STUDENT' },
-    { label: 'Thesis', value: 'THESIS' },
+    { label: <Tag color={EMPLOYMENT_TYPE_COLORS['FULLTIME']}>Full time</Tag>, value: 'FULLTIME' },
+    { label: <Tag color={EMPLOYMENT_TYPE_COLORS['PARTTIME']}>Part time</Tag>, value: 'PARTTIME' },
+    { label: <Tag color={EMPLOYMENT_TYPE_COLORS['WORKING_STUDENT']}>Working Student</Tag>, value: 'WORKING_STUDENT' },
+    { label: <Tag color={EMPLOYMENT_TYPE_COLORS['THESIS']}>Thesis</Tag>, value: 'THESIS' },
   ];
 
   return (

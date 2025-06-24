@@ -22,7 +22,7 @@ export const EmployeeCreate = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div>
       <Breadcrumb items={[
         { path: '/employees', label: 'Employees' },
         { path: '/employees/new', label: 'Add Employee' },
