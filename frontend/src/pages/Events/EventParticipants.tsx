@@ -186,6 +186,10 @@ export const EventParticipants = () => {
               xl: '50%',
               xxl: '40%',
           }}
+          style={{
+              maxHeight: '70vh',
+              overflow: 'auto',
+          }}
           centered
         title="Add Participants"
         open={addModalOpen}
@@ -207,13 +211,13 @@ export const EventParticipants = () => {
               title: 'Guests',
                 dataIndex: 'guestCount',
                 key: 'guestCount',
-                render: (guestCount: number, record: any) => (
+                render: (guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
-                  value={employeeGuests[record.id] ?? 0}
-                  onChange={value => setEmployeeGuests(prev => ({ ...prev, [record.id]: value ?? 0 }))}
+                  value={employeeGuests[record.profile.id] ?? 0}
+                  onChange={value => setEmployeeGuests(prev => ({...prev, [record.profile.id]: value ?? 0}))}
                   style={{ width: 80 }}
-                  disabled={participants.some(p => p.employeeId === record.id)}
+                  disabled={participants.some(p => p.employeeId === record.profile.id)}
                 />
               ),
             },
@@ -250,6 +254,10 @@ export const EventParticipants = () => {
               xl: '50%',
               xxl: '40%',
           }}
+          style={{
+              maxHeight: '70vh',
+              overflow: 'auto',
+          }}
           centered
         title="Import Participants"
         open={importModalOpen}
@@ -285,13 +293,13 @@ export const EventParticipants = () => {
               title: 'Guests',
                 dataIndex: 'guestCount',
                 key: 'guestCount',
-                render: (guestCount: number, record: any) => (
+                render: (guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
-                  value={employeeGuests[record.id] ?? 0}
-                  onChange={value => setEmployeeGuests(prev => ({ ...prev, [record.id]: value ?? 0 }))}
+                  value={employeeGuests[record.profile.id] ?? 0}
+                  onChange={value => setEmployeeGuests(prev => ({...prev, [record.profile.id]: value ?? 0}))}
                   style={{ width: 80 }}
-                  disabled={participants.some(p => p.employeeId === record.id)}
+                  disabled={participants.some(p => p.employeeId === record.profile.id)}
                 />
               ),
             },
@@ -307,7 +315,7 @@ export const EventParticipants = () => {
                       eventId: eventId,
                       employeeId: record.profile.id
                   })}
-                  disabled={participants.some(p => p.employeeId === record.id)}
+                  disabled={participants.some(p => p.employeeId === record.profile.id)}
                 >
                   Add
                 </Button>

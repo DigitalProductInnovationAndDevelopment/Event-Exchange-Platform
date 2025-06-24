@@ -43,6 +43,9 @@ export enum DietaryPreference {
   HALAL = 'Halal',
   KOSHER = 'Kosher',
   VEGAN = 'Vegan',
+  LACTOSE_FREE = 'Lactose free',
+  GLUTEN_FREE = 'Gluten free',
+  KETO = 'Keto'
 }
 
 export enum EmploymentType {
