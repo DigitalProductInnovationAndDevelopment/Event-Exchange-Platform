@@ -17,6 +17,8 @@ import KonvaCanvas from "../components/canvas/KonvaCanvas.tsx";
 import { EventParticipants } from '../pages/Events/EventParticipants.tsx';
 import { EventSeatPlan } from '../pages/Events/EventSeatPlan.tsx';
 import { EventSeatAllocation } from '../pages/Events/EventSeatAllocation.tsx';
+import {EmployeeEdit} from '../pages/Employees/EmployeeEdit';
+import {EmployeeCreate} from '../pages/Employees/EmployeeCreate';
 
 const routes: RouteObject[] = [
   // Public routes
@@ -79,8 +81,16 @@ const routes: RouteObject[] = [
         element: <EmployeesList />,
       },
       {
+        path: 'employees/new',
+        element: <EmployeeCreate />,
+      },
+      {
         path: 'employees/:employeeId',
         element: <EmployeeDetails />,
+      },
+      {
+        path: 'employees/:employeeId/edit',
+        element: <EmployeeEdit />,
       },
       {
         path: 'canvas/:schematicsId',

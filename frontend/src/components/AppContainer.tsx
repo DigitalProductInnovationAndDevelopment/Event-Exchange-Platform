@@ -4,6 +4,7 @@ import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserO
 import {useAuth} from '../contexts/AuthContext';
 import useApiService from '../services/apiService.ts';
 import {useState} from "react";
+import itestraEventLogo from '../assets/itestra_event_logo.png';
 
 const { Sider, Content, Footer } = Layout;
 
@@ -64,16 +65,23 @@ export const AppContainer = () => {
     <Layout className="min-h-screen">
       <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0"
              onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 100, marginTop: 16, marginBottom: 4 }}>
+          <img
+            src={itestraEventLogo}
+            alt="itestra event planning logo"
+            style={{ height: '64px' }}
+          />
+        </div>
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[getBasePath(location.pathname)]}
           items={mainMenuItems}
           onClick={({ key }) => handleMenuClick(key)}
-          className="mt-10"
         />
         {/* User profile at the bottom */}
         <div style={{ position: 'absolute', bottom: 0, width: '100%', padding: '24px 0' }} className="flex flex-col items-center">
+
           <Dropdown
             menu={{
               items: userMenuItems,

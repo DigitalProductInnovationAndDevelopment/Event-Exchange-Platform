@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react';
-import {Button, Card, DatePicker, Descriptions, Form, Input, Select, Space, Table, Typography} from 'antd';
+import {Button, Card, Descriptions, Form, Input, Select, Space, Table, Typography, Modal, message, DatePicker} from 'antd';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import {ArrowLeftOutlined} from '@ant-design/icons';
+import {ArrowLeftOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {DietaryPreference, type Employee, EmploymentType, Role} from "../../types/employee.ts";
 import useApiService from "../../services/apiService.ts";
+import {Breadcrumb} from '../../components/Breadcrumb';
 import dayjs from 'dayjs';
 
 const {Title} = Typography;
@@ -21,7 +22,7 @@ const eventColumns = [
         title: 'Date',
         dataIndex: 'eventDate',
         key: 'eventDate',
-        render: (text, record) => {
+        render: (_: any, record: any) => {
             return new Date(record.eventDate).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -48,7 +49,7 @@ const eventColumns = [
         title: 'Status',
         dataIndex: 'confirmed',
         key: 'confirmed',
-        render: (text, record) => {
+        render: (_: any, record: any) => {
             return record.confirmed ? 'Confirmed' : 'Not Confirmed'
         }
     },
@@ -60,7 +61,8 @@ export const EmployeeDetails = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [employee, setEmployee] = useState<Employee | null>(null);
-    const {getEmployeeById, createEmployee, updateEmployee} = useApiService();
+    const {getEmployeeById, createEmployee, updateEmployee, deleteEmployee} = useApiService();
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const isNew = !employeeId || employeeId === 'new';
 
@@ -136,6 +138,27 @@ export const EmployeeDetails = () => {
     // Handle cancel edit
     const handleCancelEdit = () => {
         setIsEdit(false);
+    };
+
+    const showDeleteModal = () => {
+        setDeleteModalOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        try {
+            await deleteEmployee(employeeId!);
+            message.success('Employee deleted successfully');
+            navigate('/employees');
+        } catch (error) {
+            message.error('Failed to delete employee');
+            console.error('Error deleting employee:', error);
+        } finally {
+            setDeleteModalOpen(false);
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteModalOpen(false);
     };
 
     // If editing, show editable form; if viewing, show read-only details
@@ -299,7 +322,13 @@ export const EmployeeDetails = () => {
     };
 
     return (
-        <div style={{padding: 24, maxWidth: 1000, margin: '0 auto'}}>
+        <div>
+            <Breadcrumb
+                items={[
+                    { path: '/employees', label: 'Employees' },
+                    { path: `/employees/${employeeId}`, label: employee?.profile?.fullName || 'Employee Details' }
+                ]}
+            />
             {/* Back Button at the very top left, above the page title, styled with Ant Design */}
             <div style={{marginBottom: 16}}>
                 <Button
@@ -312,9 +341,44 @@ export const EmployeeDetails = () => {
                 </Button>
             </div>
             {/* Page Title */}
-            <Title level={2} style={{marginBottom: 24}}>
-                {isNew ? 'Add Employee' : 'Employee Details'}
-            </Title>
+            <div className="flex justify-between items-center mb-6">
+                <Title level={2} className="m-0">{employee?.profile?.fullName || 'Employee Details'}</Title>
+                <Space>
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={() => navigate(`/employees/${employeeId}/edit`)}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={showDeleteModal}
+                    >
+                        Delete
+                    </Button>
+                    <Modal
+                        title={
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <ExclamationCircleOutlined style={{ color: '#faad14' }} />
+                                Confirm Delete
+                            </div>
+                        }
+                        centered
+                        open={deleteModalOpen}
+                        onOk={handleDeleteConfirm}
+                        onCancel={handleDeleteCancel}
+                        okText="Yes, Delete"
+                        cancelText="Cancel"
+                        okButtonProps={{ danger: true }}
+                        width={400}
+                    >
+                        <p>Are you sure you want to delete this employee?</p>
+                        <p style={{ color: '#8c8c8c', fontSize: '14px' }}>This action cannot be undone.</p>
+                    </Modal>
+                </Space>
+            </div>
 
             {/* Basic Information Section (editable or read-only) */}
             {renderBasicInfo()}

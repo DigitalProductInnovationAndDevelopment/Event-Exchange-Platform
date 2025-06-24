@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {Button, Input, Popconfirm, Select, Space, Table, Typography} from 'antd';
+import {useEffect, useMemo, useState} from 'react';
+import {Button, Input, Popconfirm, Select, Space, Table, Typography, Card, Row, Col, Tag} from 'antd';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -13,9 +13,16 @@ import {useNavigate} from 'react-router-dom';
 import type {Employee} from "types/employee.ts";
 import useApiService from "../../services/apiService.ts";
 import toast from "react-hot-toast";
+import { Breadcrumb } from '../../components/Breadcrumb';
 
 const { Title } = Typography;
 
+const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
+  FULLTIME: 'green',
+  PARTTIME: 'blue',
+  WORKING_STUDENT: 'orange',
+  THESIS: 'purple',
+};
 
 // Define table columns with correct types
 const columns = (
@@ -29,34 +36,14 @@ const columns = (
     sorter: (a, b) => (a.profile?.fullName ?? '').localeCompare(b.profile?.fullName ?? ''),
   },
   {
-    title: 'Gender',
-    dataIndex: ['profile', 'gender'],
-    key: 'profile.gender',
-    filters: [
-      { text: 'Male', value: 'Male' },
-      { text: 'Female', value: 'Female' },
-    ],
-    onFilter: (value, record) => record.profile.gender === value,
-  },
-  {
-    title: 'Project',
-    dataIndex: 'project',
-    key: 'project',
+    title: 'Email',
+    dataIndex: ['profile', 'email'],
+    key: 'profile.email',
   },
   {
     title: 'Location',
     dataIndex: 'location',
     key: 'location',
-  },
-  {
-    title: 'Department',
-    dataIndex: 'department',
-    key: 'department',
-  },
-  {
-    title: 'Email',
-    dataIndex: ['profile', 'email'],
-    key: 'profile.email',
   },
   {
     title: 'Role',
@@ -68,6 +55,20 @@ const columns = (
     },
   },
   {
+    title: 'Employment Type',
+    dataIndex: 'employmentType',
+    key: 'employmentType',
+    render: (type: string) =>
+      type ? (
+        <Tag color={EMPLOYMENT_TYPE_COLORS[type]}>
+          {type
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ')}
+        </Tag>
+      ) : null,
+  },
+  {
     title: 'Date Joined',
     dataIndex: 'employmentStartDate',
     key: 'employmentStartDate',
@@ -77,8 +78,8 @@ const columns = (
     dataIndex: 'attendedEventsCount',
     key: 'attendedEventsCount',
     render: (_count: number, record: Employee) => (
-        <Button type="link" onClick={() => onNavigate(record.profile.id, 'events')}>
-          {record.participations?.length || 0}
+      <Button type="link" style={{ color: 'black' }} onClick={() => onNavigate(record.profile.id, 'events')}>
+        {record.participations?.length || 0}
       </Button>
     ),
   },
@@ -86,18 +87,15 @@ const columns = (
     title: 'Actions',
     key: 'actions',
     render: (_, record: Employee) => (
-        <Space size="small" align="end">
-          <Button type="link" icon={<EyeOutlined/>} onClick={() => onNavigate(record.profile.id)}>View</Button>
-          <Button type="link" icon={<EditOutlined/>}
-                  onClick={() => onNavigate(record.profile.id, undefined, true)}>Edit</Button>
-          {<Popconfirm
-          title="Are you sure to delete this employee?"
-          onConfirm={() => onDelete(record.profile.id)}
-          okText="Yes"
-          cancelText="No"
+      <Space size="small" align="end">
+        <Button
+          type="default"
+          icon={<EyeOutlined />} 
+          onClick={() => onNavigate(record.profile.id)}
+          style={{ background: '#fff', border: '1px solid #d9d9d9' }}
         >
-          <Button type="link" danger icon={<DeleteOutlined />}>Delete</Button>
-          </Popconfirm>}
+          View
+        </Button>
       </Space>
     ),
   },
@@ -141,50 +139,47 @@ const exportToCSV = (data: Employee[]) => {
 };
 
 export const EmployeesList = () => {
-  // State for search input
-  const [searchText, setSearchText] = useState('');
-  // State for employee data
-  const [data, setData] = useState<Employee[]>([]);
-  // State for pagination page size
-  const [pageSize, setPageSize] = useState<number>(10);
-  // React Router navigation hook
   const navigate = useNavigate();
-  const {getEmployees, deleteEmployee} = useApiService();
-  // State for project and location filters
-  const [projectFilter, setProjectFilter] = useState<string | undefined>(undefined);
+  const [searchText, setSearchText] = useState('');
   const [locationFilter, setLocationFilter] = useState<string | undefined>(undefined);
-
-  // Get unique projects and locations for filter dropdowns
-  const uniqueProjects = Array.from(new Set(data.map(emp => emp.projects))).filter(Boolean);
-  const uniqueLocations = Array.from(new Set(data.map(emp => emp.location))).filter(Boolean);
+  const [fetchedEmployees, setEmployees] = useState<Employee[]>([]);
+  const { getEmployees, deleteEmployee } = useApiService();
+  const [pageSize, setPageSize] = useState<number>(10);
 
   useEffect(() => {
     (async () => {
       try {
         const data = await getEmployees();
-        setData(data!);
+        setEmployees(data ?? []);
       } catch (err) {
         console.error('Failed to fetch employees:', err);
       }
     })();
   }, [getEmployees]);
 
+  const employees = useMemo(() => fetchedEmployees.map(e => ({ ...e, key: e.profile.id })), [fetchedEmployees]);
 
-  // Filter employees by name, employee ID, project, and location
-  const filteredData = data.filter(
-    (item) =>
-        (item.profile.fullName?.toLowerCase().includes(searchText.toLowerCase())) &&
-        (!projectFilter || item.projects.find(prj => prj.name === projectFilter)) &&
-      (!locationFilter || item.location === locationFilter)
-  );
+  // Get unique locations for filter dropdown
+  const uniqueLocations = useMemo(() => Array.from(new Set(employees.map(emp => emp.location))).filter(Boolean), [employees]);
+
+  // Filter employees by name and location
+  const filteredData = useMemo(() => {
+    return employees.filter(item => {
+      const matchesSearch =
+        searchText === '' ||
+        item.profile.fullName?.toLowerCase().includes(searchText.toLowerCase());
+      const matchesLocation = !locationFilter || item.location === locationFilter;
+      return matchesSearch && matchesLocation;
+    });
+  }, [employees, searchText, locationFilter]);
 
   // Handle delete action
   const handleDelete = async (profileId: string) => {
     try {
       await deleteEmployee(profileId);
-      setData(prev => prev.filter(item => item.profile.id !== profileId));
+      setEmployees(prev => prev.filter(item => item.profile.id !== profileId));
     } catch (err) {
-      console.error('Failed to fetch employee:', err);
+      console.error('Failed to delete employee:', err);
     }
   };
 
@@ -195,15 +190,12 @@ export const EmployeesList = () => {
   };
 
   // Handle navigation to EmployeeDetails page
-  // If employeeId is provided, go to details of that employee; otherwise, go to create page
   const handleNavigate = (employeeId?: string, anchor?: string, editMode?: boolean) => {
     if (employeeId) {
-      if (anchor) {
-        navigate(`/employees/${employeeId}#${anchor}`);
-      } else if (editMode) {
-        navigate(`/employees/${employeeId}`, { state: { editMode: true } });
+      if (editMode) {
+        navigate(`/employees/${employeeId}/edit`);
       } else {
-        navigate(`/employees/${employeeId}`);
+        navigate(`/employees/${employeeId}${anchor ? `#${anchor}` : ''}`);
       }
     } else {
       navigate('/employees/new');
@@ -211,71 +203,50 @@ export const EmployeesList = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* Page Title */}
-      <Title level={2}>Employees</Title>
-      {/* Top bar: Search, Filters, Add Employee, Export */}
-      <div style={{ marginBottom: 16, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Evenly distribute search and filter controls */}
-        <div style={{ display: 'flex', flex: 1, gap: 16, maxWidth: 600 }}>
-          {/* Search input for name or employee ID */}
-          <Input
-            placeholder="Search"
-            prefix={<SearchOutlined />}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            style={{ flex: 1, minWidth: 0 }}
-            allowClear
-          />
-          {/* Project filter dropdown */}
-          {/* <Select
-            allowClear
-            placeholder="Project"
-            style={{ flex: 1, minWidth: 0 }}
-            value={projectFilter}
-            onChange={value => setProjectFilter(value)}
-          >
-            {uniqueProjects.map(project => (
-              <Select.Option key={project} value={project}>
-                {project}
-              </Select.Option>
-            ))}
-          </Select>*/}
-          {/* Location filter dropdown */}
-          <Select
-            allowClear
-            placeholder="Location"
-            style={{ flex: 1, minWidth: 0 }}
-            value={locationFilter}
-            onChange={value => setLocationFilter(value)}
-          >
-            {uniqueLocations.map(location => (
-              <Select.Option key={location} value={location}>
-                {location}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        {/* Export and Add Employee buttons */}
-        <Space>
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>
-            Export
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
-            Add Employee
-          </Button>
-        </Space>
+    <div style={{ padding: 0 }}>
+      <Breadcrumb items={[{ path: '/employees', label: 'Employees' }]} />
+      <div className="flex justify-between items-center mb-6">
+        <Title level={2} className="m-0">Employees</Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
+          Add Employee
+        </Button>
       </div>
-      {/* Employee Table */}
+      <Card className="mb-6">
+        <Row gutter={16}>
+          <Col span={8}>
+            <Input
+              placeholder="Search Employee Name or ID"
+              prefix={<SearchOutlined />}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              allowClear
+            />
+          </Col>
+          <Col span={8}>
+            <Select
+              allowClear
+              placeholder="Location"
+              style={{ width: '100%' }}
+              value={locationFilter}
+              onChange={value => setLocationFilter(value)}
+              options={uniqueLocations.map(location => ({ value: location, label: location }))}
+            />
+          </Col>
+          <Col span={8}>
+            <Button icon={<DownloadOutlined />} onClick={handleExport} style={{ width: '100%' }}>
+              Export
+            </Button>
+          </Col>
+        </Row>
+      </Card>
       <Table
         columns={columns(handleDelete, handleNavigate)}
         dataSource={filteredData}
-        bordered
+        bordered={false}
         rowKey={(record) => record.profile.id}
         pagination={{
           pageSize: pageSize,
           showSizeChanger: true,
-          // Set page size options to 10, 20, 50, and All (all = filteredData.length)
           pageSizeOptions: ['10', '20', '50', filteredData.length > 0 ? filteredData.length.toString() : '1000'],
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           onShowSizeChange: (_current, size) => setPageSize(size),

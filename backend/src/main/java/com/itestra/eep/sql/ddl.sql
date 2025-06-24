@@ -149,3 +149,32 @@ CREATE TABLE organization.schematics
 GRANT USAGE, SELECT ON SEQUENCE organization.user_roles_id_seq TO organization_user;
 GRANT USAGE, SELECT ON SEQUENCE organization.audit_log_id_seq TO organization_user;
 
+
+
+INSERT INTO organization.profile (id, gitlab_username, email, full_name, gender, diet_types, created_at,
+                                  updated_at)
+VALUES ('a3f2f969-d8cd-4af1-9391-85eb57b0c6b4'::uuid, 'itestra.tum.hr', 'itestra.tum.hr@gmail.com', 'itestra',
+        'MALE', NULL, '2025-06-11 20:45:36.046825', '2025-06-11 20:45:36.046855');
+
+INSERT INTO organization.user_roles (profile_id, "role")
+VALUES ('a3f2f969-d8cd-4af1-9391-85eb57b0c6b4'::uuid, 'ADMIN');
+
+
+INSERT INTO organization."event" (id, "name", description, "date", capacity, "event_type", address)
+VALUES ('a8f2b29f-634e-4e56-a2f7-d3a3e7e1f8e0'::uuid, 'Augustiner-Keller',
+        'Relaxed year-end dinner with the whole team. Great food, cold beer, and a look back at the highlights of the year.',
+        '2025-12-20 19:00:00', 150, 'YEAR_END_PARTY'::organization."event_type", 'Arnulfstraße 52, 80335 München'),
+        ('c0b7a9de-42c0-4e1c-8358-d8f6f7d8f7c1'::uuid, 'Lost Weekend',
+        'Casual after-work meetup with coffee, snacks, and short lightning talks. Great chance to connect across teams.',
+        '2024-11-06 17:00:00', 50, 'WINTER_EVENT'::organization."event_type", 'Schellingstraße 3, 80779 München'),
+        ('9f5a4dbf-e15d-4c8b-8d51-fb9a3e07f289'::uuid, 'Alte Utting',
+        'Laid-back summer hangout on the ship with drinks, music, and rooftop views. Just time to catch up and enjoy the sun.',
+        '2024-06-25 15:00:00', 75, 'SUMMER_EVENT'::organization."event_type", 'Lagerhausstraße 15, 81371 München'),
+        ('d624cc6d-98ea-4d27-9f04-14d47ef55856'::uuid, 'Café Münchner Freiheit',
+        'Small informal meetup to welcome new colleagues and casually chat about project ideas and team topics.',
+        '2023-12-05 17:00:00', 50, 'WINTER_EVENT'::organization."event_type", 'Leopoldstraße 82, 80802 München'),
+        ('f1c9d9f4-7a5e-4d91-9fcb-2c9d1c3b7bfa'::uuid, 'Käfer-Schänke',
+        'Dinner in a small group focused on sharing ideas between project leads and management. Great food, relaxed setting.',
+        '2023-06-23 18:30:00', 40, 'SUMMER_EVENT'::organization."event_type", 'Prinzregentenstraße 73, 81675 München');
+
+
