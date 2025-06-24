@@ -125,12 +125,13 @@ CREATE TABLE organization.chair
 
 CREATE TABLE organization.schematics
 (
-    id       UUID PRIMARY KEY,
-    event_id UUID REFERENCES organization.event (id),
-    name     VARCHAR(255) NOT NULL,
+    id         UUID PRIMARY KEY,
+    event_id   UUID REFERENCES organization.event (id),
+    file_id    UUID REFERENCES organization.files (file_id),
     state      TEXT NOT NULL,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP,
+    CONSTRAINT unique_schematic_per_event UNIQUE (event_id)
 );
 
 CREATE TABLE organization.files

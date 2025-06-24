@@ -15,6 +15,7 @@ public interface SchematicsMapper {
     SchematicsCreateDTO toSchematicsCreateDTO(Schematics schematics);
 
     @Mapping(source = "event.id", target = "eventId")
+    @Mapping(source = "overview.fileId", target = "overviewFileId")
     SchematicsDetailsDTO toSchematicsDetailsDTO(Schematics schematics);
 
 }
