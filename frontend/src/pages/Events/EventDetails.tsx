@@ -1,6 +1,6 @@
-import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography, } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography,} from 'antd';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Breadcrumb} from '../../components/Breadcrumb';
 import {
   BarChartOutlined,
   DeleteOutlined,
@@ -11,9 +11,9 @@ import {
   TeamOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import type { Event, FileEntity } from '../../types/event';
-import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
+import {useEffect, useState} from 'react';
+import type {Event, FileEntity} from '../../types/event';
+import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import FileUploadButton from './components/FileUploadButton.tsx';
 import FileListDisplay from './components/FileListComponent.tsx';
@@ -172,10 +172,13 @@ export const EventDetails = () => {
                 {event.name}
               </Descriptions.Item>
               <Descriptions.Item label="Date" span={3}>
-                {new Date(event.date).toLocaleDateString('en-US', {
+                {new Date(event.date).toLocaleString(undefined, {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: true,
                 })}
               </Descriptions.Item>
               <Descriptions.Item label="Address" span={3}>

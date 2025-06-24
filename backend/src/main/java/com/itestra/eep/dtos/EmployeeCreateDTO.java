@@ -42,20 +42,18 @@ public class EmployeeCreateDTO implements Serializable {
     @AllArgsConstructor
     public static class ProfileCreateDTO implements Serializable {
 
-        @NotNull(message = "Full name cannot be empty.")
         @Size(max = 500)
-        @NotEmpty
+        @NotBlank(message = "Full name cannot be empty.")
         String fullName;
 
         @Size(max = 255)
-        @NotEmpty(message = "Gender cannot be empty.")
+        @NotBlank(message = "Gender cannot be empty.")
         String gender;
 
-        @NotNull
+        @NotBlank(message = "GitLab username cannot be empty.")
         String gitlabUsername;
 
-        @NotNull(message = "Email cannot be empty.")
-        @NotEmpty(message = "Email cannot be empty.")
+        @NotBlank(message = "Email cannot be empty.")
         @Email(message = "Email should be valid.")
         String email;
 
