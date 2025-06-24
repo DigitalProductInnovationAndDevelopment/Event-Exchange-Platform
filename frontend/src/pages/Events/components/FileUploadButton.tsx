@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {Button, message, Upload} from 'antd';
 import {UploadOutlined} from '@ant-design/icons';
 import useApiService from '../../../services/apiService.ts';
+import toast from "react-hot-toast";
 
 const FileUploadButton = ({ eventId, onUpload }) => {
   const [uploading, setUploading] = useState(false);
@@ -9,8 +10,12 @@ const FileUploadButton = ({ eventId, onUpload }) => {
   const { fileUpload } = useApiService();
 
   const handleBeforeUpload = file => {
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size exceeds 10 MB');
+      return false;
+    }
     setFile(file);
-    return false;
+    return true;
   };
 
   const handleUpload = async () => {

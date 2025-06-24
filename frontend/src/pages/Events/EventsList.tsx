@@ -1,4 +1,18 @@
-import {Button, Card, Col, DatePicker, Input, Row, Select, Space, Switch, Table, Tag, Typography,} from 'antd';
+import {
+  Button,
+  Card,
+  Carousel,
+  Col,
+  DatePicker,
+  Input,
+  Row,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Tag,
+  Typography,
+} from 'antd';
 import {AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined,} from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import {useEffect, useMemo, useState} from 'react';
@@ -6,9 +20,10 @@ import {Breadcrumb} from '../../components/Breadcrumb';
 import type {ColumnsType} from 'antd/es/table';
 import type {Dayjs} from 'dayjs';
 import dayjs from 'dayjs';
-import type {Event, EventStatus, EventType} from '../../types/event';
+import type {Event, EventStatus, EventType, FileEntity} from '../../types/event';
 import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
+import "./carousel_arrows.css";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -205,7 +220,6 @@ export const EventsList = () => {
               <Col xs={24} sm={12} md={8} lg={6} key={event.id}>
                 <Card
                   hoverable
-                  className="h-full"
                   actions={[
                     <Button
                       type="text"
@@ -224,6 +238,37 @@ export const EventsList = () => {
                           <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participantCount}</div>
+                          <div>
+                            {(() => {
+                              const filteredImages = event.fileEntities?.filter(
+                                  (file: FileEntity) =>
+                                      file.contentType === "image/png" || file.contentType === "image/jpeg"
+                              );
+                              if (filteredImages && filteredImages.length > 0) {
+                                return (
+                                    <Carousel dots={false} arrows={filteredImages.length > 1}>
+                                      {filteredImages.map((file: FileEntity) => (
+                                          <div key={file.fileId} className="px-8"
+                                          >
+                                            <Card>
+                                              <img
+                                                  src={`http://localhost:8000/files/${file.fileId}`}
+                                                  alt="Event Image"
+                                                  style={{
+                                                    margin: 0,
+                                                    maxWidth: 200, maxHeight: 100, objectFit: "cover"
+                                                  }}
+                                              />
+                                            </Card>
+
+                                          </div>
+                                      ))}
+                                    </Carousel>
+                                );
+                              }
+                              return <div/>;
+                            })()}
+                          </div>
                         </div>
                       </div>
                     }
