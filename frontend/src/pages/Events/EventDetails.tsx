@@ -12,14 +12,12 @@ import {
   UserAddOutlined,
 } from '@ant-design/icons';
 import {useEffect, useState} from 'react';
-import type {Event, FileEntity, SchematicsEntity} from '../../types/event';
-import {EVENT_TYPE_COLORS, EVENT_STATUS_COLORS} from '../../types/event';
+import type {Event, FileEntity} from '../../types/event';
+import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import FileUploadButton from './components/FileUploadButton.tsx';
 import FileListDisplay from './components/FileListComponent.tsx';
-import SchematicsCreateButton from "./components/SchematicsCreateButton.tsx";
-import SchematicsListComponent from "./components/SchematicsListComponent.tsx";
-import seat_preview from '../../assets/Seat_plan_preview.png';
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
@@ -27,7 +25,7 @@ export const EventDetails = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
-  const {getEventById, deleteEvent, deleteFile, fileDownload, deleteSchematics} = useApiService();
+  const {getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics} = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -88,24 +86,20 @@ export const EventDetails = () => {
     }
   };
 
-  const handleSchematicsCreate = async (schematic: SchematicsEntity) => {
-    event!.schematics.push(schematic);
-    if (schematic) {
-      setEvent({
-        ...event!,
-      });
+  const handleCreate = async () => {
+    try {
+      event!.schematics = await initiateSchematics(eventId!);
+      if (event!.schematics) {
+        setEvent({
+          ...event!,
+        });
+        navigate(`/canvas/${event!.schematics.id}`)
+      }
+    } catch (error) {
+      toast.error("Failed to create schematics.");
     }
   };
 
-  const handleSchematicsDelete = async (schematicId: string) => {
-    const result = await deleteSchematics(schematicId!);
-    if (result) {
-      setEvent({
-        ...event!,
-        schematics: event!.schematics.filter(schematic => schematic.id !== schematicId) ?? [],
-      });
-    }
-  };
 
   const handleDownload = async (file: FileEntity) => {
     await fileDownload(file);
@@ -119,9 +113,6 @@ export const EventDetails = () => {
     file => file.contentType === 'image/png' || file.contentType === 'image/jpeg'
   );
 
-  // Force event status to 'upcoming' for now
-  const eventStatus = 'upcoming';
-
   return (
     <div className="space-y-6">
       <Breadcrumb
@@ -133,9 +124,9 @@ export const EventDetails = () => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <Title level={2} className="mb-0">{event.name}</Title>
-          <Tag color={EVENT_STATUS_COLORS[eventStatus]} className="text-lg px-4 py-2">
-            {eventStatus.toUpperCase()}
+          <Title level={2} className="mb-0 max-w-xl">{event.name}</Title>
+          <Tag color={EVENT_STATUS_COLORS[event.status]} className="text-lg px-4 py-2">
+            {event.status.toUpperCase()}
           </Tag>
         </div>
         <Space>
@@ -229,7 +220,7 @@ export const EventDetails = () => {
               <Col span={6}>
                 <Statistic
                   title="Participants"
-                  value={event.participants}
+                  value={event.participantCount}
                   prefix={<TeamOutlined />}
                 />
               </Col>
@@ -263,12 +254,40 @@ export const EventDetails = () => {
           {/* Seat Plan Tile */}
           <Card title="Seat Plan" className="mb-6">
             <Space direction="vertical" className="w-full">
-              <Button block icon={<EditOutlined />} onClick={() => navigate(`/events/${eventId}/seat-plan`)}>
+              <Button block icon={<EditOutlined/>} onClick={() => {
+                if (event?.schematics) {
+                  navigate(`/canvas/${event.schematics.id}`)
+                } else {
+                  handleCreate();
+                }
+              }}>
                 Manage Seat Plan
               </Button>
-              <div className="flex justify-center items-center mt-2" style={{height: 160, background: '#f5f5f5', borderRadius: 4}}>
-                <img src={seat_preview} alt="Seat Plan Preview" style={{maxWidth: '100%', maxHeight: '100%'}} />
-              </div>
+              {event.schematics?.overviewFileId &&
+                  (
+                      <div className="flex flex-row w-full">
+                        <div
+                            className="flex justify-center items-center mt-2"
+                            style={{
+                              background: '#f5f5f5',
+                              borderRadius: 4,
+                              width: 200,
+                              overflow: 'hidden',
+                            }}
+                        >
+                          <Image
+                              src={`http://localhost:8000/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
+                              alt="Event Seat Plan Image"
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                              }}
+                          />
+                        </div>
+                      </div>
+                  )
+              }
             </Space>
           </Card>
 
@@ -286,14 +305,6 @@ export const EventDetails = () => {
           <Card title="Management Actions">
             <Space direction="vertical" className="w-full">
               <Button block>Export Event Data</Button>
-              <div className="space-y-4">
-                <SchematicsListComponent
-                    schematics={event.schematics}
-                    onDelete={handleSchematicsDelete}
-                />
-                <SchematicsCreateButton eventId={eventId} onCreate={handleSchematicsCreate}/>
-              </div>
-
               <div className="space-y-4">
                 <FileListDisplay
                   files={event.fileEntities}

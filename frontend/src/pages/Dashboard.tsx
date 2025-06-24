@@ -1,4 +1,4 @@
-import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from 'antd';
+import {Button, Card, Col, Divider, List, Row, Space, Statistic, Tag, Typography} from 'antd';
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -8,9 +8,9 @@ import {
   PlusOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import type { Event, EventStatus } from '../types/event';
+import {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import {type Event, EVENT_STATUS_COLORS, type EventStatus} from '../types/event';
 import useApiService from '../services/apiService.ts';
 import dayjs from 'dayjs';
 
@@ -40,6 +40,10 @@ export const Dashboard = () => {
 
     fetchDashboardData();
   }, [getEvents]);
+
+  const getStatusIcon = (status: EventStatus) => {
+    return status === 'completed' ? <CheckCircleOutlined/> : <ClockCircleOutlined/>;
+  };
 
   return (
     <div className="space-y-4">
@@ -104,9 +108,10 @@ export const Dashboard = () => {
                     title={
                       <Space>
                         <Link to={`/events/${event.id}`}>{event.name}</Link>
-                        {/*<Tag color={EVENT_STATUS_COLORS[event.status]} icon={getStatusIcon(event.status)}>
+                        {<Tag color={EVENT_STATUS_COLORS[event.status]} icon={getStatusIcon(event.status)}>
                           {event.status?.toUpperCase()}
-                        </Tag>*/}
+                        </Tag>
+                        }
                       </Space>
                     }
                     description={
@@ -114,7 +119,7 @@ export const Dashboard = () => {
                         <Space>
                           <CalendarOutlined /> {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}
                           <span style={{ marginLeft: 24 }} />
-                          <TeamOutlined /> {event.participants}/{event.capacity} participants
+                          <TeamOutlined/> {event.participantCount}/{event.capacity} participants
                         </Space>
                         <Space>
                           <FireOutlined /> {event.engagement}% engagement
@@ -142,7 +147,7 @@ export const Dashboard = () => {
 
               <Statistic
                 title="Total Participants"
-                value={events.reduce((sum, event) => sum + event.participants, 0)}
+                value={events.reduce((sum, event) => sum + event.participantCount, 0)}
                 prefix={<TeamOutlined />}
               />
               <Divider className="my-4" />

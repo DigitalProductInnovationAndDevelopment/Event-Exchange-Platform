@@ -1,32 +1,13 @@
-import {
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Input,
-  Row,
-  Select,
-  Space,
-  Switch,
-  Table,
-  Tag,
-  Typography,
-} from 'antd';
-import {
-  AppstoreOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import type { ColumnsType } from 'antd/es/table';
-import type { Dayjs } from 'dayjs';
+import {Button, Card, Col, DatePicker, Input, Row, Select, Space, Switch, Table, Tag, Typography,} from 'antd';
+import {AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined,} from '@ant-design/icons';
+import {useNavigate} from 'react-router-dom';
+import {useEffect, useMemo, useState} from 'react';
+import {Breadcrumb} from '../../components/Breadcrumb';
+import type {ColumnsType} from 'antd/es/table';
+import type {Dayjs} from 'dayjs';
 import dayjs from 'dayjs';
-import type { Event, EventStatus, EventType } from '../../types/event';
-import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
+import type {Event, EventStatus, EventType} from '../../types/event';
+import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 
 const { Title } = Typography;
@@ -83,12 +64,14 @@ export const EventsList = () => {
       title: 'Event Name',
       dataIndex: 'name',
       key: 'name',
+      width: '30%',
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
+      width: '14%',
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       render: (date: string) => dayjs(date).format('YYYY-MM-DD HH:mm'),
     },
@@ -96,6 +79,7 @@ export const EventsList = () => {
       title: 'Type',
       dataIndex: 'eventType',
       key: 'eventType',
+      width: '14%',
       render: (type: EventType) => <Tag color={EVENT_TYPE_COLORS[type]}>{type.toUpperCase()}</Tag>,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
         text: type.replace(/-/g, ' '),
@@ -105,14 +89,16 @@ export const EventsList = () => {
     },
     {
       title: 'Participants',
-      dataIndex: 'participants',
-      key: 'participants',
-      sorter: (a, b) => a.participants - b.participants,
+      dataIndex: 'participantCount',
+      key: 'participantCount',
+      width: '14%',
+      sorter: (a, b) => a.participantCount - b.participantCount,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      width: '14%',
       render: (status: EventStatus) => (
         <Tag color={EVENT_STATUS_COLORS[status]}>{status?.toUpperCase()}</Tag>
       ),
@@ -125,6 +111,7 @@ export const EventsList = () => {
     {
       title: 'Actions',
       key: 'actions',
+      width: '14%',
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => navigate(`/events/${record.id}`)}>
@@ -236,7 +223,7 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participants}</div>
+                          <div>Participants: {event.participantCount}</div>
                         </div>
                       </div>
                     }
@@ -284,7 +271,7 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participants}</div>
+                          <div>Participants: {event.participantCount}</div>
                         </div>
                       </div>
                     }
