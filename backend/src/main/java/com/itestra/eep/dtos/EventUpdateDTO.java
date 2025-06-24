@@ -1,8 +1,12 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.models.Address;
 import com.itestra.eep.models.Event;
+import com.itestra.eep.serializers.LocalDateTimeDeserializer;
+import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -39,6 +43,8 @@ public class EventUpdateDTO implements Serializable {
 
     @Nullable
     @FutureOrPresent(message = "Event cannot be in the past.")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
 
     /**
