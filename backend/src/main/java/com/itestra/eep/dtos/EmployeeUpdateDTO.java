@@ -2,10 +2,11 @@ package com.itestra.eep.dtos;
 
 import com.itestra.eep.enums.DietaryPreference;
 import com.itestra.eep.enums.EmploymentType;
-import com.itestra.eep.models.Employee;
+import com.itestra.eep.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -16,10 +17,9 @@ import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
-/**
- * DTO for {@link Employee}
- */
+
 @Getter
 @Setter
 public class EmployeeUpdateDTO implements Serializable {
@@ -61,5 +61,9 @@ public class EmployeeUpdateDTO implements Serializable {
         @JdbcTypeCode(SqlTypes.ARRAY)
         @Enumerated(EnumType.STRING)
         DietaryPreference[] dietTypes;
+
+        @NotNull(message = "Employee role cannot be empty.")
+        @Enumerated(EnumType.STRING)
+        private Set<Role> authorities;
     }
 }

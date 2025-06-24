@@ -8,9 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -40,6 +38,9 @@ public class Employee {
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "employment_type", columnDefinition = "organization.employment_type")
     private EmploymentType employmentType;
+
+    @OneToMany(mappedBy = "employee")
+    private List<Participation> participations = new LinkedList<>();
 
     @ManyToMany
     @JoinTable(
