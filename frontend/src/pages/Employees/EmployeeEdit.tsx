@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import EmployeeForm from './EmployeeForm';
-import { Card, Button, message, Typography, Tag } from 'antd';
+import { Card, Button, message, Typography, Tag, Form } from 'antd';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import useApiService from '../../services/apiService';
 
@@ -13,6 +13,8 @@ export const EmployeeEdit = () => {
   const { getEmployeeById, updateEmployee } = useApiService();
   const [employee, setEmployee] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [form] = Form.useForm();
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -28,14 +30,21 @@ export const EmployeeEdit = () => {
     })();
   }, [employeeId, getEmployeeById]);
 
-  const handleSave = async (values: any) => {
+  const handleFinish = async (values: any) => {
+    setSaving(true);
     try {
+      // Ensure authorities is always an array
+      if (values.profile && values.profile.authorities && !Array.isArray(values.profile.authorities)) {
+        values.profile.authorities = [values.profile.authorities];
+      }
       await updateEmployee(employeeId!, values);
       message.success('Employee updated successfully');
       navigate(`/employees/${employeeId!}`);
     } catch (error) {
       message.error('Failed to update employee');
       console.error('Error updating employee:', error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -49,11 +58,18 @@ export const EmployeeEdit = () => {
           { path: `/employees/${employeeId}/edit`, label: 'Edit Employee' }
         ]}
       />
-      <Title level={2}>Edit Employee</Title>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <Title level={2} style={{ margin: 0 }}>Edit Employee</Title>
+        <div style={{ display: 'flex' }}>
+          <Button type="primary" htmlType="submit" loading={saving} onClick={() => form.submit()} style={{ marginRight: 8 }}>
+            Save
+          </Button>
+          <Button onClick={() => navigate(-1)}>Cancel</Button>
+        </div>
+      </div>
       <Card>
-        <EmployeeForm initialValues={employee} onSave={handleSave} />
+        <EmployeeForm initialValues={employee} onSave={handleFinish} form={form} />
       </Card>
-      <Button style={{ marginTop: 16 }} onClick={() => navigate(-1)}>Cancel</Button>
     </div>
   );
 }; 

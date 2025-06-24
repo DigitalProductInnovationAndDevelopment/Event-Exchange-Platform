@@ -1,15 +1,13 @@
 import {useEffect, useState} from 'react';
-import {Button, Card, Descriptions, Form, Input, Select, Space, Table, Typography, Modal, message, DatePicker} from 'antd';
+import {Button, Card, Descriptions, Space, Table, Typography, Modal, message, Tag} from 'antd';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ArrowLeftOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import {DietaryPreference, type Employee, EmploymentType, Role} from "../../types/employee.ts";
+import {type Employee} from "../../types/employee.ts";
 import useApiService from "../../services/apiService.ts";
 import {Breadcrumb} from '../../components/Breadcrumb';
-import dayjs from 'dayjs';
+import { DIET_TYPES, EMPLOYMENT_TYPES, EMPLOYMENT_TYPE_COLORS } from './EmployeeForm';
 
 const {Title} = Typography;
-const {Option} = Select;
-
 
 // Table columns for attended events
 const eventColumns = [
@@ -59,41 +57,43 @@ export const EmployeeDetails = () => {
     const {employeeId} = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const [form] = Form.useForm();
     const [employee, setEmployee] = useState<Employee | null>(null);
-    const {getEmployeeById, createEmployee, updateEmployee, deleteEmployee} = useApiService();
+    const {getEmployeeById, deleteEmployee} = useApiService();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-
-    const isNew = !employeeId || employeeId === 'new';
-
-    const [isEdit, setIsEdit] = useState(
-        isNew || (location.state && location.state.editMode) || location.search.includes('edit=true')
-    );
 
     useEffect(() => {
         (async () => {
             try {
-                if (!isNew) {
-                    const data = await getEmployeeById(employeeId!);
-                    setEmployee(data!);
-                    form.setFieldsValue(data);
-                }
+                const data = await getEmployeeById(employeeId!);
+                setEmployee(data!);
             } catch (err) {
                 console.error('Failed to fetch employee:', err);
             }
         })();
-    }, [employeeId, getEmployeeById, form, isNew]);
-
+    }, [employeeId, getEmployeeById]);
 
     const basicFields = [
-        {label: 'Gitlab Username', value: employee?.profile.gitlabUsername},
         {label: 'Full Name', value: employee?.profile.fullName},
-        {label: 'Gender', value: employee?.profile.gender},
-        {label: 'Project', value: employee?.projects},
-        {label: 'Role', value: employee?.profile.authorities},
-        {label: 'Dietary Preferences', value: employee?.profile.dietTypes},
+        {label: 'Gitlab Username', value: employee?.profile.gitlabUsername},
+        {label: 'Gender', value: employee?.profile.gender ? employee.profile.gender.charAt(0).toUpperCase() + employee.profile.gender.slice(1).toLowerCase() : undefined},
+        {label: 'Role', value: employee?.profile.authorities?.map((role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase())},
+        {
+            label: 'Dietary Preferences',
+            value: employee?.profile.dietTypes?.length
+                ? employee.profile.dietTypes.map(type => {
+                    const typeObj = DIET_TYPES.find(t => t.value === type);
+                    return typeObj ? typeObj.label : type;
+                  })
+                : undefined
+        },
         {label: 'Location', value: employee?.location},
-        {label: 'Employment Type', value: employee?.employmentType},
+        {
+            label: 'Employment Type',
+            value: employee?.employmentType
+                ? (EMPLOYMENT_TYPES.find(t => t.value === employee.employmentType)?.label ||
+                    <Tag color={EMPLOYMENT_TYPE_COLORS[employee.employmentType]}>{employee.employmentType}</Tag>)
+                : undefined
+        },
         {label: 'Date Joined', value: employee?.employmentStartDate},
     ];
 
@@ -110,35 +110,6 @@ export const EmployeeDetails = () => {
             }
         }
     }, [location.hash]);
-
-    // Handle back button click
-    const handleBack = () => {
-        navigate(-1);
-    };
-
-
-    const handleSave = async (values: Employee) => {
-        if (isNew) {
-            try {
-                await createEmployee(values!);
-                handleBack();
-            } catch (error) {
-                console.error('Error creating employee:', error);
-            }
-        } else {
-            try {
-                await updateEmployee(employeeId, values!);
-            } catch (error) {
-                console.error('Error updating employee:', error);
-            }
-        }
-        setIsEdit(false);
-    };
-
-    // Handle cancel edit
-    const handleCancelEdit = () => {
-        setIsEdit(false);
-    };
 
     const showDeleteModal = () => {
         setDeleteModalOpen(true);
@@ -161,166 +132,6 @@ export const EmployeeDetails = () => {
         setDeleteModalOpen(false);
     };
 
-    // If editing, show editable form; if viewing, show read-only details
-    const renderBasicInfo = () => {
-        if (isNew || isEdit) {
-            // Editable form for add or edit
-            return (
-                <Card title="Basic Information" style={{marginBottom: 24}}>
-                    <Form form={form} layout="vertical" initialValues={employee || {}} onFinish={handleSave}>
-                        {/* Employee ID field for add and edit form, always editable in edit mode */}
-                        <Form.Item
-                            label="Gitlab Username"
-                            name={['profile', 'gitlabUsername']}
-                            rules={[{required: true, message: 'Please enter Gitlab Username'}]}
-                        >
-                            <Input placeholder="Enter Gitlab Username"/>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Full Name"
-                            name={['profile', 'fullName']}
-                            rules={[{required: true, message: 'Please enter full name of the employee'}]}
-                        >
-                            <Input placeholder="Enter full name of the employee"/>
-                        </Form.Item>
-
-                        {/* Gender as a select field */}
-                        <Form.Item
-                            label="Gender"
-                            name={['profile', 'gender']}
-                            rules={[{required: true, message: 'Please select gender'}]}
-                        >
-                            <Select placeholder="Select gender">
-                                <Option value="Male">Male</Option>
-                                <Option value="Female">Female</Option>
-                                <Option value="Diverse">Diverse</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item label="Projects" name="projects">
-                            <Input placeholder="Enter project"/>
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Role"
-                            name={['profile', 'authorities']}
-                            rules={[{required: true, message: 'Please select one role!'}]}
-                        >
-                            <Select
-                                mode="multiple"
-                                maxCount={1}
-                                placeholder="Enter role"
-                                options={Object.entries(Role).map(([key, value]) => ({
-                                    label: value,
-                                    value: key,
-                                }))}
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Dietary Preferences"
-                            name={['profile', 'dietTypes']}
-                            rules={[{required: false, message: 'Please select at least one dietary preference!'}]}
-                        >
-                            <Select
-                                mode="multiple"
-                                placeholder="Select dietary preferences"
-                                options={Object.entries(DietaryPreference).map(([key, value]) => ({
-                                    label: value,
-                                    value: key,
-                                }))}
-                            />
-                        </Form.Item>
-
-                        <Form.Item label="Location" name="location">
-                            <Input placeholder="Enter location"/>
-                        </Form.Item>
-
-                        <Form.Item label="Employment Type" name="employmentType"
-                                   rules={[{required: true, message: 'Please select employment type!'}]}
-                        >
-                            <Select
-                                placeholder="Select employment type"
-                                options={Object.entries(EmploymentType).map(([key, value]) => ({
-                                    label: value,
-                                    value: key,
-                                }))}
-                            />
-
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Date Joined"
-                            name="employmentStartDate"
-                            getValueProps={(value) => ({value: value ? dayjs(value) : "",})}
-                            rules={[{required: true, message: 'Please select date joined'}]}
-                        >
-                            <DatePicker
-                                format="YYYY-MM-DD"
-                                style={{width: '100%'}}
-                                placeholder="Select date"
-                            />
-                        </Form.Item>
-
-                    </Form>
-                </Card>
-            );
-        }
-        // View Details Mode
-        return (
-            <Card title="Basic Information" style={{marginBottom: 24}}>
-                <Descriptions column={2} bordered>
-                    {basicFields.map(
-                        (field) =>
-                            <Descriptions.Item label={field.label} key={field.label}>
-                                {field.value ? field.value.toString() : ""}
-                            </Descriptions.Item>
-                    )}
-                </Descriptions>
-            </Card>
-        );
-    };
-
-    const renderContactInfo = () => {
-        if (isNew || isEdit) {
-            // Editable form for add or edit
-            return (
-                <>
-                    <Card title="Contact Information" style={{marginBottom: 24}}>
-                        <Form form={form} layout="vertical" initialValues={employee || {}} onFinish={handleSave}>
-                            <Form.Item label="Email" name={['profile', 'email']}>
-                                <Input disabled={!isNew} placeholder="Enter email"/>
-                            </Form.Item>
-                        </Form>
-                    </Card>
-                    <div style={{marginBottom: 24, display: 'flex', justifyContent: 'center'}}>
-                        <Space>
-                            <Button type="primary" onClick={() => form.submit()}>Save</Button>
-                            <Button onClick={isNew ? handleBack : handleCancelEdit}>Cancel</Button>
-                        </Space>
-                    </div>
-                </>
-            );
-        }
-        // Read-only details
-        return (
-            <Card title="Contact Information" style={{marginBottom: 24}}>
-                <Descriptions column={1} bordered>
-                    {contactFields.map(
-                        (field) =>
-                            field.value && (
-                                <Descriptions.Item label={field.label} key={field.label}>
-                                    {field.value}
-                                </Descriptions.Item>
-                            )
-                    )}
-                </Descriptions>
-            </Card>
-        );
-    };
-
     return (
         <div>
             <Breadcrumb
@@ -329,17 +140,6 @@ export const EmployeeDetails = () => {
                     { path: `/employees/${employeeId}`, label: employee?.profile?.fullName || 'Employee Details' }
                 ]}
             />
-            {/* Back Button at the very top left, above the page title, styled with Ant Design */}
-            <div style={{marginBottom: 16}}>
-                <Button
-                    type="text"
-                    icon={<ArrowLeftOutlined/>}
-                    onClick={handleBack}
-                    style={{paddingLeft: 0}}
-                >
-                    Back
-                </Button>
-            </div>
             {/* Page Title */}
             <div className="flex justify-between items-center mb-6">
                 <Title level={2} className="m-0">{employee?.profile?.fullName || 'Employee Details'}</Title>
@@ -380,26 +180,46 @@ export const EmployeeDetails = () => {
                 </Space>
             </div>
 
-            {/* Basic Information Section (editable or read-only) */}
-            {renderBasicInfo()}
+            {/* Basic Information Section (view only) */}
+            <Card title="Basic Information" style={{marginBottom: 24}}>
+                <Descriptions column={2} bordered>
+                    {basicFields.map(
+                        (field) =>
+                            <Descriptions.Item label={field.label} key={field.label}>
+                                {Array.isArray(field.value)
+                                    ? field.value.map((v, i) => <span key={i} style={{ marginRight: 4 }}>{v}</span>)
+                                    : field.value || ""}
+                            </Descriptions.Item>
+                    )}
+                </Descriptions>
+            </Card>
 
-            {/* Contact Information Section (editable or read-only) */}
-            {renderContactInfo()}
+            {/* Contact Information Section (view only) */}
+            <Card title="Contact Information" style={{marginBottom: 24}}>
+                <Descriptions column={1} bordered>
+                    {contactFields.map(
+                        (field) =>
+                            field.value && (
+                                <Descriptions.Item label={field.label} key={field.label}>
+                                    {field.value}
+                                </Descriptions.Item>
+                            )
+                    )}
+                </Descriptions>
+            </Card>
 
-            {/* Attended Events List Section (only show for view or edit, not for add) */}
-            {!isNew && !isEdit && (
-                <div id="events-section">
-                    <Card title="Attended Events List" style={{marginBottom: 24}}>
-                        <Table
-                            columns={eventColumns}
-                            dataSource={employee?.participations ?? []}
-                            bordered
-                            rowKey="key"
-                            pagination={false}
-                        />
-                    </Card>
-                </div>
-            )}
+            {/* Attended Events List Section */}
+            <div id="events-section">
+                <Card title="Attended Events List" style={{marginBottom: 24}}>
+                    <Table
+                        columns={eventColumns}
+                        dataSource={employee?.participations ?? []}
+                        bordered
+                        rowKey="key"
+                        pagination={false}
+                    />
+                </Card>
+            </div>
         </div>
     );
 };

@@ -1,9 +1,7 @@
 import {useEffect, useMemo, useState} from 'react';
-import {Button, Input, Popconfirm, Select, Space, Table, Typography, Card, Row, Col, Tag} from 'antd';
+import {Button, Input, Select, Space, Table, Typography, Card, Row, Col, Tag} from 'antd';
 import {
-  DeleteOutlined,
   DownloadOutlined,
-  EditOutlined,
   EyeOutlined,
   PlusOutlined,
   SearchOutlined
@@ -14,15 +12,9 @@ import type {Employee} from "types/employee.ts";
 import useApiService from "../../services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from '../../components/Breadcrumb';
+import { EMPLOYMENT_TYPE_COLORS, EMPLOYMENT_TYPES } from './EmployeeForm';
 
 const { Title } = Typography;
-
-const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
-  FULLTIME: 'green',
-  PARTTIME: 'blue',
-  WORKING_STUDENT: 'orange',
-  THESIS: 'purple',
-};
 
 // Define table columns with correct types
 const columns = (
@@ -46,27 +38,23 @@ const columns = (
     key: 'location',
   },
   {
-    title: 'Role',
-    dataIndex: ['profile', 'authorities'],
-    key: 'profile.authorities',
-    render: (authorities: string[] | undefined) => {
-      if (!authorities || authorities.length === 0) return '-';
-      return authorities.join(', ');
-    },
-  },
-  {
     title: 'Employment Type',
     dataIndex: 'employmentType',
     key: 'employmentType',
-    render: (type: string) =>
-      type ? (
+    render: (type: string) => {
+      if (!type) return null;
+      const typeObj = EMPLOYMENT_TYPES.find(t => t.value === type);
+      return typeObj ? (
+        typeObj.label
+      ) : (
         <Tag color={EMPLOYMENT_TYPE_COLORS[type]}>
           {type
             .split('_')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(' ')}
         </Tag>
-      ) : null,
+      );
+    },
   },
   {
     title: 'Date Joined',
