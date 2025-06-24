@@ -100,23 +100,22 @@ CREATE TABLE organization.event
 );
 
 
-CREATE TABLE organization.participation
-(
-    id          UUID PRIMARY KEY,
-    guest_count INTEGER,
-    confirmed   BOOLEAN,
-    person_id   UUID REFERENCES organization.Profile (id),
-    event_id UUID REFERENCES organization.Event (id),
-    CONSTRAINT unique_person_event UNIQUE (person_id, event_id)
-);
-
-
 CREATE TABLE organization.table
 (
     id       UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.Event (id)
 );
 
+CREATE TABLE organization.participation
+(
+    id          UUID PRIMARY KEY,
+    guest_count INTEGER,
+    confirmed   BOOLEAN,
+    employee_id UUID REFERENCES organization.employee (profile_id) NOT NULL,
+    event_id    UUID REFERENCES organization.Event (id),
+    table_id    UUID REFERENCES organization.table (id)            NULL,
+    CONSTRAINT unique_person_event UNIQUE (employee_id, event_id)
+);
 
 CREATE TABLE organization.chair
 (
