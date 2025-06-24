@@ -58,7 +58,7 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
         <Input placeholder="Enter GitLab Username" maxLength={500} />
       </Form.Item>
       <Form.Item label="Full Name" name={["profile", "fullName"]} rules={[{ required: true, message: 'Please enter full name' }]}> 
-        <Input placeholder="Enter full name" maxLength={500} />
+        <Input placeholder="Enter full name" maxLength={250} />
       </Form.Item>
       <Form.Item label="Gender" name={["profile", "gender"]} rules={[{ required: true, message: 'Please select gender' }]}> 
         <Select placeholder="Select gender" maxLength={255}>
@@ -86,7 +86,12 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
       <Form.Item label="Location" name="location" rules={[{ required: true, message: 'Please enter location' }]}> 
         <Input placeholder="Enter location" />
       </Form.Item>
-      <Form.Item label="Employee Role" name={["profile", "authorities"]} rules={[{ required: true, message: 'Please select a role' }]}> 
+      <Form.Item 
+        label="Employee Role" 
+        name={["profile", "authorities"]} 
+        rules={[{ required: true, message: 'Please select a role' }]}
+        normalize={value => (Array.isArray(value) ? value : value ? [value] : [])}
+      > 
         <Select
           placeholder="Select role"
           options={ROLE_OPTIONS}

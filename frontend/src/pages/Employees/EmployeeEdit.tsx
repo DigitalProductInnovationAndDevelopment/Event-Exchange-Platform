@@ -37,6 +37,7 @@ export const EmployeeEdit = () => {
       if (values.profile && values.profile.authorities && !Array.isArray(values.profile.authorities)) {
         values.profile.authorities = [values.profile.authorities];
       }
+      // No gender normalization
       await updateEmployee(employeeId!, values);
       message.success('Employee updated successfully');
       navigate(`/employees/${employeeId!}`);
@@ -49,6 +50,17 @@ export const EmployeeEdit = () => {
   };
 
   if (loading) return <div>Loading...</div>;
+
+  // Normalize gender to uppercase for initialValues
+  const normalizedInitialValues = employee
+    ? {
+        ...employee,
+        profile: {
+          ...employee.profile,
+          gender: employee.profile.gender?.toUpperCase() || undefined,
+        },
+      }
+    : { profile: { gender: undefined } };
 
   return (
     <div style={{ padding: 0 }}>
@@ -68,7 +80,7 @@ export const EmployeeEdit = () => {
         </div>
       </div>
       <Card>
-        <EmployeeForm initialValues={employee} onSave={handleFinish} form={form} />
+        <EmployeeForm initialValues={normalizedInitialValues} onSave={handleFinish} form={form} />
       </Card>
     </div>
   );
