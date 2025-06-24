@@ -7,13 +7,10 @@ import com.itestra.eep.dtos.FileDetailsDTO;
 import com.itestra.eep.models.Event;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.models.Participation;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = SchematicsMapper.class)
 public interface EventMapper {
@@ -30,12 +27,23 @@ public interface EventMapper {
 
     List<EventDetailsDTO> toDetailsDto(List<Event> events);
 
+    @Mappings({
+            @Mapping(source = "participations", target = "participantCount", qualifiedByName = "countConfirmed"),
+            @Mapping(source = "date", target = "status", qualifiedByName = "status")
+    })
     EventDetailsDTO toDetailsDto(Event event);
 
     FileDetailsDTO toFileDetailsDto(FileEntity file);
 
-    default Long map(Set<Participation> participants) {
-        return participants.stream().filter(Participation::isConfirmed).count();
+    @Named("countConfirmed")
+    default Long map(List<Participation> participations) {
+        return participations.stream().filter(Participation::isConfirmed).count();
     }
+
+    @Named("status")
+    default String status(LocalDateTime eventDate) {
+        return eventDate.isAfter(LocalDateTime.now()) ? "upcoming" : "completed";
+    }
+
 
 }
