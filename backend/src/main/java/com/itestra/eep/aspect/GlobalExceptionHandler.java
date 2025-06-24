@@ -1,5 +1,6 @@
 package com.itestra.eep.aspect;
 
+import com.itestra.eep.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException ex) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .body("File is too large! Max upload size exceeded.");
+    }
+
+    @ExceptionHandler({
+            EmployeeNotFoundException.class,
+            EventNotFoundException.class,
+            ParticipationNotFoundException.class,
+            ProjectNotFoundException.class,
+            SchematicsNotFoundException.class,
+            UserProfileNotFoundException.class,
+            EventCapacityExceededException.class})
+    public ResponseEntity<Object> handleCustomRuntimeException(RuntimeException exception) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exception.getMessage());
     }
 
     @ExceptionHandler({RuntimeException.class})
