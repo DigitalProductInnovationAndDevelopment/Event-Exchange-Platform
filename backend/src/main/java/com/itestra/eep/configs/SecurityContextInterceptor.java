@@ -93,8 +93,8 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
         // a fallback to Authorization header if no cookie found
         if (jwt == null) {
             String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                jwt = authHeader.substring(7);
+            if (authHeader != null) {
+                jwt = authHeader;
             }
         }
 
