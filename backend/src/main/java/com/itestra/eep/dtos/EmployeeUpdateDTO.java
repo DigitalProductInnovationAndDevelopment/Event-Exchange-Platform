@@ -5,8 +5,9 @@ import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class EmployeeUpdateDTO implements Serializable {
 
     @Nullable
+    @Valid
     ProfileUpdateDTO profile;
 
     @Nullable
@@ -44,25 +46,29 @@ public class EmployeeUpdateDTO implements Serializable {
 
         @Nullable
         @Size(max = 255)
-        @NotEmpty
+        @NotBlank(message = "Full name cannot be empty.")
         String fullName;
 
         @Nullable
         @Size(max = 255)
-        @NotEmpty
-        String lastName;
+        @NotBlank(message = "Gender cannot be empty.")
+        String gender;
 
         @Nullable
-        @Size(max = 255)
-        @NotEmpty
-        String gender;
+        @NotBlank(message = "GitLab username cannot be empty.")
+        String gitlabUsername;
+
+        @Nullable
+        @NotBlank(message = "Email cannot be empty.")
+        @Email(message = "Email should be valid.")
+        String email;
 
         @Nullable
         @JdbcTypeCode(SqlTypes.ARRAY)
         @Enumerated(EnumType.STRING)
         DietaryPreference[] dietTypes;
 
-        @NotNull(message = "Employee role cannot be empty.")
+        @Nullable
         @Enumerated(EnumType.STRING)
         private Set<Role> authorities;
     }
