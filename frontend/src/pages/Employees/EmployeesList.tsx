@@ -62,6 +62,10 @@ const columns = (
     title: 'Role',
     dataIndex: ['profile', 'authorities'],
     key: 'profile.authorities',
+    render: (authorities: string[] | undefined) => {
+      if (!authorities || authorities.length === 0) return '-';
+      return authorities.join(', ');
+    },
   },
   {
     title: 'Date Joined',

@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react';
-import {Button, Card, Descriptions, Form, Input, Select, Space, Table, Typography} from 'antd';
+import {Button, Card, DatePicker, Descriptions, Form, Input, Select, Space, Table, Typography} from 'antd';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ArrowLeftOutlined} from '@ant-design/icons';
-import {DietaryPreference, type Employee, Role} from "../../types/employee.ts";
+import {DietaryPreference, type Employee, EmploymentType, Role} from "../../types/employee.ts";
 import useApiService from "../../services/apiService.ts";
+import dayjs from 'dayjs';
 
 const {Title} = Typography;
 const {Option} = Select;
@@ -118,6 +119,7 @@ export const EmployeeDetails = () => {
         if (isNew) {
             try {
                 await createEmployee(values!);
+                handleBack();
             } catch (error) {
                 console.error('Error creating employee:', error);
             }
@@ -181,12 +183,12 @@ export const EmployeeDetails = () => {
                         <Form.Item
                             label="Role"
                             name={['profile', 'authorities']}
-                            rules={[{required: false, message: 'Please select at least one role!'}]}
+                            rules={[{required: true, message: 'Please select one role!'}]}
                         >
                             <Select
-                                disabled
                                 mode="multiple"
-                                placeholder="Enter roles"
+                                maxCount={1}
+                                placeholder="Enter role"
                                 options={Object.entries(Role).map(([key, value]) => ({
                                     label: value,
                                     value: key,
@@ -197,7 +199,7 @@ export const EmployeeDetails = () => {
                         <Form.Item
                             label="Dietary Preferences"
                             name={['profile', 'dietTypes']}
-                            rules={[{required: true, message: 'Please select at least one dietary preference!'}]}
+                            rules={[{required: false, message: 'Please select at least one dietary preference!'}]}
                         >
                             <Select
                                 mode="multiple"
@@ -213,13 +215,32 @@ export const EmployeeDetails = () => {
                             <Input placeholder="Enter location"/>
                         </Form.Item>
 
-                        <Form.Item label="Employment Type" name="employmentType">
-                            <Input placeholder="Enter employment type"/>
+                        <Form.Item label="Employment Type" name="employmentType"
+                                   rules={[{required: true, message: 'Please select employment type!'}]}
+                        >
+                            <Select
+                                placeholder="Select employment type"
+                                options={Object.entries(EmploymentType).map(([key, value]) => ({
+                                    label: value,
+                                    value: key,
+                                }))}
+                            />
+
                         </Form.Item>
 
-                        <Form.Item label="Date Joined" name="employmentStartDate">
-                            <Input placeholder="Enter date joined"/>
+                        <Form.Item
+                            label="Date Joined"
+                            name="employmentStartDate"
+                            getValueProps={(value) => ({value: value ? dayjs(value) : "",})}
+                            rules={[{required: true, message: 'Please select date joined'}]}
+                        >
+                            <DatePicker
+                                format="YYYY-MM-DD"
+                                style={{width: '100%'}}
+                                placeholder="Select date"
+                            />
                         </Form.Item>
+
                     </Form>
                 </Card>
             );
@@ -230,11 +251,9 @@ export const EmployeeDetails = () => {
                 <Descriptions column={2} bordered>
                     {basicFields.map(
                         (field) =>
-                            field.value && (
-                                <Descriptions.Item label={field.label} key={field.label}>
-                                    {field.value.toString()}
-                                </Descriptions.Item>
-                            )
+                            <Descriptions.Item label={field.label} key={field.label}>
+                                {field.value ? field.value.toString() : ""}
+                            </Descriptions.Item>
                     )}
                 </Descriptions>
             </Card>
@@ -249,7 +268,7 @@ export const EmployeeDetails = () => {
                     <Card title="Contact Information" style={{marginBottom: 24}}>
                         <Form form={form} layout="vertical" initialValues={employee || {}} onFinish={handleSave}>
                             <Form.Item label="Email" name={['profile', 'email']}>
-                                <Input placeholder="Enter email"/>
+                                <Input disabled={!isNew} placeholder="Enter email"/>
                             </Form.Item>
                         </Form>
                     </Card>

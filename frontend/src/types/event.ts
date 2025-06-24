@@ -21,6 +21,7 @@ export interface FileEntity {
 
 export interface SchematicsEntity {
   id: string;
+  overviewFileId: string;
   name: string;
 }
 
@@ -29,14 +30,14 @@ export interface Event {
   name: string;
   date: string;
   address: string;
-  participants: number;
+  participantCount: number;
   capacity: number;
-  status?: EventStatus;
+  status: EventStatus;
   eventType: EventType;
   engagement?: number;
   year: number;
   description: string;
   cost: number;
   fileEntities: FileEntity[];
-  schematics: SchematicsEntity[];
+  schematics: SchematicsEntity | null;
 }
