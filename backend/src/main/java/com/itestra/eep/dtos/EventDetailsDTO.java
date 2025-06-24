@@ -30,13 +30,15 @@ public class EventDetailsDTO implements Serializable {
 
     String address;
 
-    Long participants;
+    Long participantCount;
+
+    String status;
 
     LocalDateTime date;
 
     List<FileDetailsDTO> fileEntities = new ArrayList<>();
 
-    List<SchematicsDetailsDTO> schematics = new ArrayList<>();
+    SchematicsDetailsDTO schematics;
 
     @Getter
     @Setter

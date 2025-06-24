@@ -2,8 +2,11 @@ package com.itestra.eep.models;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import java.util.UUID;
 
@@ -11,6 +14,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(schema = "organization", name = "participation")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Participation {
 
     @Id
@@ -21,10 +26,16 @@ public class Participation {
 
     private boolean confirmed;
 
-    @ManyToOne
-    private Profile person;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     @ManyToOne
     private Event event;
+
+    @Nullable
+    @OneToOne
+    private com.itestra.eep.models.Table table;
+
 }
 

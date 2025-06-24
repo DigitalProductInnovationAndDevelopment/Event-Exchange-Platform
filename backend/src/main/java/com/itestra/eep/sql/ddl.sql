@@ -100,23 +100,22 @@ CREATE TABLE organization.event
 );
 
 
-CREATE TABLE organization.participation
-(
-    id          UUID PRIMARY KEY,
-    guest_count INTEGER,
-    confirmed   BOOLEAN,
-    person_id   UUID REFERENCES organization.Profile (id),
-    event_id UUID REFERENCES organization.Event (id),
-    CONSTRAINT unique_person_event UNIQUE (person_id, event_id)
-);
-
-
 CREATE TABLE organization.table
 (
     id       UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.Event (id)
 );
 
+CREATE TABLE organization.participation
+(
+    id          UUID PRIMARY KEY,
+    guest_count INTEGER,
+    confirmed   BOOLEAN,
+    employee_id UUID REFERENCES organization.employee (profile_id) NOT NULL,
+    event_id    UUID REFERENCES organization.Event (id),
+    table_id    UUID REFERENCES organization.table (id)            NULL,
+    CONSTRAINT unique_person_event UNIQUE (employee_id, event_id)
+);
 
 CREATE TABLE organization.chair
 (
@@ -126,12 +125,13 @@ CREATE TABLE organization.chair
 
 CREATE TABLE organization.schematics
 (
-    id       UUID PRIMARY KEY,
-    event_id UUID REFERENCES organization.event (id),
-    name     VARCHAR(255) NOT NULL,
+    id         UUID PRIMARY KEY,
+    event_id   UUID REFERENCES organization.event (id),
+    file_id    UUID REFERENCES organization.files (file_id),
     state      TEXT NOT NULL,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP,
+    CONSTRAINT unique_schematic_per_event UNIQUE (event_id)
 );
 
 CREATE TABLE organization.files

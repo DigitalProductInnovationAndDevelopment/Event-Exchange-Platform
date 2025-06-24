@@ -9,7 +9,6 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,10 +54,6 @@ public class Profile {
             columnDefinition = "organization.dietary_preference[]"
     )
     private DietaryPreference[] dietTypes;
-
-    @OneToMany(mappedBy = "person")
-    private List<Participation> participations;
-
 
     @PrePersist
     protected void onCreate() {
