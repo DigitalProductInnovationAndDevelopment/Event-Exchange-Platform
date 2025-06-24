@@ -2,6 +2,7 @@ import json
 import pandas as pd
 from ortools.sat.python import cp_model
 import math
+import sys
 
 # CP-SAT solver (other algo will be implemented in future)
 def assign_tables(employees_data, table_capacities, diversity_attributes, time_limit_sec=30.0):
@@ -129,9 +130,13 @@ def assign_tables(employees_data, table_capacities, diversity_attributes, time_l
 # --- Main Execution Block ---
 if __name__ == "__main__":
     # --- Configuration ---------------------------
-    #change here for input/output path
-    INPUT_JSON_PATH = 'input.json'
-    OUTPUT_JSON_PATH = 'output.json'
+    # Read input/output paths from command line arguments
+    if len(sys.argv) != 3:
+        print("Usage: python algo.py <input_json_path> <output_json_path>")
+        sys.exit(1)
+
+    INPUT_JSON_PATH = sys.argv[1]
+    OUTPUT_JSON_PATH = sys.argv[2]
     # ---------------------------------------------
 
 

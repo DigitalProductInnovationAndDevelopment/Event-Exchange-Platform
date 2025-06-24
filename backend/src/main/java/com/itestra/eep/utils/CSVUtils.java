@@ -1,6 +1,7 @@
 package com.itestra.eep.utils;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
+import com.itestra.eep.enums.Role;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -12,6 +13,7 @@ import java.io.InputStreamReader;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CSVUtils {
 
@@ -40,7 +42,7 @@ public class CSVUtils {
                 //EmploymentType employmentType = EmploymentType.valueOf(line[4]);
 
                 EmployeeCreateDTO employeeDTO = new EmployeeCreateDTO(
-                        new EmployeeCreateDTO.ProfileCreateDTO("%s %s".formatted(name, lastName), line[6], line[7], null, null),
+                        new EmployeeCreateDTO.ProfileCreateDTO("%s %s".formatted(name, lastName), line[6], line[7], null, null, Set.of(Role.EMPLOYEE)),
                         null,
                         null,
                         address
