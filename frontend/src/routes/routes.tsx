@@ -14,6 +14,11 @@ import {EmployeeDetails} from '../pages/Employees/EmployeeDetails';
 import {NotFound} from '../pages/NotFound';
 import {CanvasProvider} from "../components/canvas/contexts/CanvasContext.tsx";
 import KonvaCanvas from "../components/canvas/KonvaCanvas.tsx";
+import { EventParticipants } from '../pages/Events/EventParticipants.tsx';
+import { EventSeatPlan } from '../pages/Events/EventSeatPlan.tsx';
+import { EventSeatAllocation } from '../pages/Events/EventSeatAllocation.tsx';
+import {EmployeeEdit} from '../pages/Employees/EmployeeEdit';
+import {EmployeeCreate} from '../pages/Employees/EmployeeCreate';
 
 const routes: RouteObject[] = [
   // Public routes
@@ -60,12 +65,33 @@ const routes: RouteObject[] = [
         element: <EventEdit />,
       },
       {
+        path: 'events/:eventId/manage-participants',
+        element: <EventParticipants />,
+      },
+      {
+        path: 'events/:eventId/seat-plan/:schematicsId',
+        element: <EventSeatPlan />,
+      },
+      {
+        path: 'events/:eventId/seat-allocation',
+        element: <EventSeatAllocation />,
+      },
+      {
         path: 'employees',
         element: <EmployeesList />,
       },
       {
+        path: 'employees/new',
+        element: <EmployeeCreate />,
+      },
+      {
         path: 'employees/:employeeId',
         element: <EmployeeDetails />,
+      },
+      // TODO: Unnecessary route, remove it
+      {
+        path: 'employees/:employeeId/edit',
+        element: <EmployeeEdit />,
       },
       {
         path: 'canvas/:schematicsId',

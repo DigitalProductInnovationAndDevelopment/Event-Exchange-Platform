@@ -2,13 +2,11 @@ package com.itestra.eep.dtos;
 
 import com.itestra.eep.enums.DietaryPreference;
 import com.itestra.eep.enums.EmploymentType;
+import com.itestra.eep.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +15,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Getter
@@ -43,24 +42,27 @@ public class EmployeeCreateDTO implements Serializable {
     @AllArgsConstructor
     public static class ProfileCreateDTO implements Serializable {
 
-        @NotNull(message = "Full name cannot be empty.")
         @Size(max = 500)
-        @NotEmpty
+        @NotBlank(message = "Full name cannot be empty.")
         String fullName;
 
         @Size(max = 255)
-        @NotEmpty(message = "Gender cannot be empty.")
+        @NotBlank(message = "Gender cannot be empty.")
         String gender;
 
-        @NotNull
+        @NotBlank(message = "GitLab username cannot be empty.")
         String gitlabUsername;
 
-        @NotNull(message = "Email cannot be empty.")
-        @NotEmpty(message = "Email cannot be empty.")
+        @NotBlank(message = "Email cannot be empty.")
+        @Email(message = "Email should be valid.")
         String email;
 
         @JdbcTypeCode(SqlTypes.ARRAY)
         @Enumerated(EnumType.STRING)
         DietaryPreference[] dietTypes;
+
+        @NotNull(message = "Employee role cannot be empty.")
+        @Enumerated(EnumType.STRING)
+        private Set<Role> authorities;
     }
 }

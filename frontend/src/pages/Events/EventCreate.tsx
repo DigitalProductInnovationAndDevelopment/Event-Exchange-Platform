@@ -131,6 +131,18 @@ export const EventCreate = () => {
                   </Form.Item>
                 </Descriptions.Item>
 
+                <Descriptions.Item label="Capacity" span={3}>
+                  <Form.Item
+                    name="capacity"
+                    label=""
+                    rules={[{ required: true, message: 'Please enter event capacity' }]}
+                    initialValue={1}
+                    noStyle
+                  >
+                    <InputNumber min={1} className="w-full" />
+                  </Form.Item>
+                </Descriptions.Item>
+
                 <Descriptions.Item label="Description" span={3}>
                   <Form.Item
                     name="description"
@@ -141,29 +153,6 @@ export const EventCreate = () => {
                   </Form.Item>
                 </Descriptions.Item>
               </Descriptions>
-
-              <Card title="Participant Management" className="mb-6 mt-6">
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item
-                      name="participants"
-                      label="Current Participants"
-                      rules={[{ required: true, message: 'Please enter number of participants' }]}
-                    >
-                      <InputNumber min={0} className="w-full" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      name="capacity"
-                      label="Capacity"
-                      rules={[{ required: true, message: 'Please enter event capacity' }]}
-                    >
-                      <InputNumber min={1} className="w-full" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Card>
             </Form>
           </Card>
         </Col>

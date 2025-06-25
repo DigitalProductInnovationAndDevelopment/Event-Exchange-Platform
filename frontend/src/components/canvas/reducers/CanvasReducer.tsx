@@ -22,6 +22,8 @@ export interface AppState {
     buildMode: number;
     elements: ElementProperties[];
     groups: { id: string }[];
+    canvasPosition: { x: number; y: number };
+    scale: number;
 }
 
 
@@ -29,11 +31,15 @@ export class initialState implements AppState {
     buildMode: number;
     elements: ElementProperties[];
     groups: { id: string }[];
+    canvasPosition: { x: number; y: number };
+    scale: number;
 
     constructor() {
         this.buildMode = 0;
         this.elements = [];
         this.groups = [];
+        this.canvasPosition = {x: 0, y: 0};
+        this.scale = 1;
     }
 
 
@@ -126,6 +132,7 @@ export function reducer(state: AppState, action: Action) {
                 return updated;
             });
 
+            // eslint-disable-next-line
             // @ts-ignore
             action.setSelectedIds(Object.values(idMap));
 

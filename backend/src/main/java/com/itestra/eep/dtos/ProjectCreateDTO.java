@@ -2,7 +2,6 @@ package com.itestra.eep.dtos;
 
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ProjectCreateDTO {
 
-    @NotNull(message = "Project name is required")
     @NotBlank(message = "Project name is required")
     @Size(max = 255, message = "Project name must be at most 100 characters")
     private String projectName;

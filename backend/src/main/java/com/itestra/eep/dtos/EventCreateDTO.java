@@ -1,8 +1,12 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.models.Address;
 import com.itestra.eep.models.Event;
+import com.itestra.eep.serializers.LocalDateTimeDeserializer;
+import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
@@ -40,6 +44,8 @@ public class EventCreateDTO implements Serializable {
 
     @NotNull(message = "Event must have a specific date and time.")
     @FutureOrPresent(message = "Event cannot be in the past.")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
 
     /**

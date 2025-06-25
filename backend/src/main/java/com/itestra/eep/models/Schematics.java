@@ -19,15 +19,16 @@ public class Schematics {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Column(name = "state", nullable = false, length = Integer.MAX_VALUE)
     private String state;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id", nullable = false)
+    private FileEntity overview;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

@@ -1,6 +1,10 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.EventType;
+import com.itestra.eep.serializers.LocalDateTimeDeserializer;
+import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
@@ -12,17 +16,29 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ParticipationDetailsDTO implements Serializable {
 
+    UUID id;
+
+    UUID employeeId;
+
+    UUID eventId;
+
     int guestCount;
 
     boolean confirmed;
-
-    UUID eventId;
 
     String eventName;
 
     EventType eventType;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime eventDate;
 
     String eventAddress;
+
+    String fullName;
+
+    String gitlabUsername;
+
+    String email;
 }

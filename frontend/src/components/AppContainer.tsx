@@ -4,8 +4,9 @@ import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserO
 import {useAuth} from '../contexts/AuthContext';
 import useApiService from '../services/apiService.ts';
 import {useState} from "react";
+import itestraEventLogo from '../assets/itestra_event_logo.png';
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Sider, Content, Footer } = Layout;
 
 export const AppContainer = () => {
   const { logout, user } = useAuth();
@@ -64,39 +65,47 @@ export const AppContainer = () => {
     <Layout className="min-h-screen">
       <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0"
              onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 100, marginTop: 16, marginBottom: 4 }}>
+          <img
+            src={itestraEventLogo}
+            alt="itestra event planning logo"
+            style={{ height: '64px' }}
+          />
+        </div>
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[getBasePath(location.pathname)]}
           items={mainMenuItems}
           onClick={({ key }) => handleMenuClick(key)}
-          className="mt-10"
         />
-      </Sider>
-      <Layout className="flex flex-col min-h-screen"
-              style={{
-                marginLeft: collapsed ? 0 : 200,
-              }}>
-        <Header className="bg-white px-6 flex items-center justify-end shadow-sm">
+        {/* User profile at the bottom */}
+        <div style={{ position: 'absolute', bottom: 0, width: '100%', padding: '24px 0' }} className="flex flex-col items-center">
+
           <Dropdown
             menu={{
               items: userMenuItems,
               onClick: ({ key }) => handleMenuClick(key),
             }}
-            placement="bottomRight"
+            placement="topLeft"
           >
-            <div className="flex items-center cursor-pointer">
+            <div className="flex flex-col items-center cursor-pointer">
               <Avatar icon={<UserOutlined />} className="bg-blue-500" />
-              <span className="ml-2">{user?.name || user?.email || 'User'}</span>
+              <span className="mt-2 text-white text-sm">{user?.name || user?.email || 'User'}</span>
             </div>
           </Dropdown>
-        </Header>
+        </div>
+      </Sider>
+      <Layout className="flex flex-col min-h-screen"
+              style={{
+                marginLeft: collapsed ? 0 : 200,
+              }}>
         <Content className="bg-gray-50 flex-1 overflow-auto">
           <div className="p-6">
             <Outlet />
           </div>
         </Content>
-        <Footer className="text-center bg-white border-t border-gray-200">
+        <Footer className="text-center border-t border-gray-200" style={{ background: '#e6f4ff' }}>
           Event Exchange Platform ©{new Date().getFullYear()}
         </Footer>
       </Layout>

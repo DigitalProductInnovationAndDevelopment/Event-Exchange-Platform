@@ -5,6 +5,9 @@ public enum DietaryPreference {
     PESCATARIAN,
     HALAL,
     KOSHER,
-    VEGAN
+    VEGAN,
+    LACTOSE_FREE,
+    GLUTEN_FREE,
+    KETO
 }
 

@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Carousel,
   Col,
   DatePicker,
   Input,
@@ -12,22 +13,17 @@ import {
   Tag,
   Typography,
 } from 'antd';
-import {
-  AppstoreOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
+import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined, } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import type { ColumnsType } from 'antd/es/table';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import type { Event, EventStatus, EventType } from '../../types/event';
+import type { Event, EventStatus, EventType, FileEntity } from '../../types/event';
 import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
 import useApiService from '../../services/apiService.ts';
+import "./carousel_arrows.css";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -83,12 +79,14 @@ export const EventsList = () => {
       title: 'Event Name',
       dataIndex: 'name',
       key: 'name',
+      width: '30%',
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
+      width: '14%',
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       render: (date: string) => dayjs(date).format('YYYY-MM-DD HH:mm'),
     },
@@ -96,28 +94,28 @@ export const EventsList = () => {
       title: 'Type',
       dataIndex: 'eventType',
       key: 'eventType',
-      render: (type: EventType) => <Tag color={EVENT_TYPE_COLORS[type]}>{type.toUpperCase()}</Tag>,
+      width: '14%',
+      render: (type: EventType) => <Tag color={EVENT_TYPE_COLORS[type]}>{type.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ').toUpperCase()}</Tag>,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
-        text: type.replace(/-/g, ' '),
+        text: type.replace(/_/g, ' '),
         value: type,
       })),
       onFilter: (value, record) => record.eventType === value,
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
       title: 'Participants',
-      dataIndex: 'participants',
-      key: 'participants',
-      sorter: (a, b) => a.participants - b.participants,
+      dataIndex: 'participantCount',
+      key: 'participantCount',
+      width: '14%',
+      sorter: (a, b) => a.participantCount - b.participantCount,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      width: '14%',
       render: (status: EventStatus) => (
         <Tag color={EVENT_STATUS_COLORS[status]}>{status?.toUpperCase()}</Tag>
       ),
@@ -130,6 +128,7 @@ export const EventsList = () => {
     {
       title: 'Actions',
       key: 'actions',
+      width: '14%',
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => navigate(`/events/${record.id}`)}>
@@ -142,14 +141,10 @@ export const EventsList = () => {
 
   // Split events into upcoming/ongoing and past events
   const upcomingEvents = filteredEvents
-    // TODO
-    // .filter(event => event.status === 'upcoming' || event.status === 'ongoing')
     .filter(event => new Date(event.date).getTime() > new Date().getTime())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const pastEvents = filteredEvents
-    // TODO
-    // .filter(event => event.status === 'completed')
     .filter(event => new Date(event.date).getTime() < new Date().getTime())
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -198,7 +193,7 @@ export const EventsList = () => {
               options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
                 value,
                 label: value
-                  .split('-')
+                  .split('_')
                   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                   .join(' '),
               }))}
@@ -227,7 +222,6 @@ export const EventsList = () => {
               <Col xs={24} sm={12} md={8} lg={6} key={event.id}>
                 <Card
                   hoverable
-                  className="h-full"
                   actions={[
                     <Button
                       type="text"
@@ -243,20 +237,41 @@ export const EventsList = () => {
                     description={
                       <div className="space-y-2">
                         <div className="text-gray-600">
-                          <div>Date: {event.date}</div>
+                          <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participants}</div>
-                        </div>
-                        <Space>
-                          {/* TODO
+                          <div>Participants: {event.participantCount}</div>
+                          <div>
+                            {(() => {
+                              const filteredImages = event.fileEntities?.filter(
+                                (file: FileEntity) =>
+                                  file.contentType === "image/png" || file.contentType === "image/jpeg"
+                              );
+                              if (filteredImages && filteredImages.length > 0) {
+                                return (
+                                  <Carousel dots={false} arrows={filteredImages.length > 1}>
+                                    {filteredImages.map((file: FileEntity) => (
+                                      <div key={file.fileId} className="px-8"
+                                      >
+                                        <Card>
+                                          <img
+                                            src={`http://localhost:8000/files/${file.fileId}`}
+                                            alt="Event Image"
+                                            style={{
+                                              margin: 0,
+                                              maxWidth: 200, maxHeight: 100, objectFit: "cover"
+                                            }}
+                                          />
+                                        </Card>
 
-                                                    <Tag color={EVENT_STATUS_COLORS[event.status]}>
-                                                        {event.status.toUpperCase()}
-                                                    </Tag>
-                                                    <Tag color={EVENT_TYPE_COLORS[event.eventType]}>
-                                                        {event.eventType.toUpperCase()}
-                                                    </Tag>*/}
-                        </Space>
+                                      </div>
+                                    ))}
+                                  </Carousel>
+                                );
+                              }
+                              return <div />;
+                            })()}
+                          </div>
+                        </div>
                       </div>
                     }
                   />
@@ -301,20 +316,10 @@ export const EventsList = () => {
                     description={
                       <div className="space-y-2">
                         <div className="text-gray-600">
-                          <div>Date: {event.date}</div>
+                          <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participants}</div>
+                          <div>Participants: {event.participantCount}</div>
                         </div>
-                        <Space>
-                          {/* TODO
-
-                                                    <Tag color={EVENT_STATUS_COLORS[event.status]}>
-                                                        {event.status?.toUpperCase()}
-                                                    </Tag>
-                                                    <Tag color={EVENT_TYPE_COLORS[event.eventType]}>
-                                                        {event.eventType.toUpperCase()}
-                                                    </Tag>*/}
-                        </Space>
                       </div>
                     }
                   />

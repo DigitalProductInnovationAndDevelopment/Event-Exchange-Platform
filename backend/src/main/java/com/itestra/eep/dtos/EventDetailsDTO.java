@@ -1,6 +1,10 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.EventType;
+import com.itestra.eep.serializers.LocalDateTimeDeserializer;
+import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
@@ -30,13 +34,17 @@ public class EventDetailsDTO implements Serializable {
 
     String address;
 
-    Long participants;
+    Long participantCount;
 
+    String status;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime date;
 
     List<FileDetailsDTO> fileEntities = new ArrayList<>();
 
-    List<SchematicsDetailsDTO> schematics = new ArrayList<>();
+    SchematicsDetailsDTO schematics;
 
     @Getter
     @Setter

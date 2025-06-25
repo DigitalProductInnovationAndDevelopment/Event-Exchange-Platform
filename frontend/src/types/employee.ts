@@ -23,6 +23,8 @@ export interface Project {
 }
 
 export interface ParticipationDetails {
+  id: string;
+  employeeId: string;
   eventId: string;
   guestCount: number;
   confirmed: boolean;
@@ -30,6 +32,9 @@ export interface ParticipationDetails {
   eventType: string;
   eventDate: string;
   eventAddress: string;
+  fullName: string;
+  gitlabUsername: string;
+  email: string;
 }
 
 export enum DietaryPreference {
@@ -38,6 +43,16 @@ export enum DietaryPreference {
   HALAL = 'Halal',
   KOSHER = 'Kosher',
   VEGAN = 'Vegan',
+  LACTOSE_FREE = 'Lactose free',
+  GLUTEN_FREE = 'Gluten free',
+  KETO = 'Keto'
+}
+
+export enum EmploymentType {
+  FULLTIME = "Full Time",
+  PARTTIME = "Part Time",
+  WORKING_STUDENT = "Working Student",
+  THESIS = "Thesis",
 }
 
 export enum Role {

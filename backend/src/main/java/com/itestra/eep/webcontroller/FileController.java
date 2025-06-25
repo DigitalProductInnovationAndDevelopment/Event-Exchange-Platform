@@ -4,6 +4,7 @@ import com.itestra.eep.dtos.FileDetailsDTO;
 import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.services.FileService;
+import com.itestra.eep.services.SchematicsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,15 +25,23 @@ import java.util.concurrent.TimeUnit;
 public class FileController {
 
     private final FileService fileService;
+    private final SchematicsService schematicsService;
     private final EventMapper eventMapper;
 
     @PostMapping("/upload")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<FileDetailsDTO> uploadFile(@RequestParam("file") MultipartFile file,
-                                                     @RequestParam("eventId") UUID eventId) throws IOException {
+                                                     @RequestParam(value = "eventId", required = false) UUID eventId,
+                                                     @RequestParam(value = "schematicsId", required = false) UUID schematicsId) throws IOException {
 
-        FileEntity savedFile = fileService.storeFile(file, eventId);
-        return new ResponseEntity<>(eventMapper.toFileDetailsDto(savedFile), HttpStatus.OK);
+        if (eventId != null) {
+            FileEntity savedFile = fileService.storeFile(file, eventId);
+            return new ResponseEntity<>(eventMapper.toFileDetailsDto(savedFile), HttpStatus.OK);
+        } else if (schematicsId != null) {
+            schematicsService.updateSchematicOverview(schematicsId, file);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
     }
 
