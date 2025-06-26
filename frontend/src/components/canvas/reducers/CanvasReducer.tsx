@@ -49,7 +49,7 @@ export function reducer(state: AppState, action: Action) {
     switch (action.type) {
 
         case SET_STATE:
-            if (action.payload) return {...JSON.parse(action.payload)};
+            if (action.payload) return {...action.payload};
             else return {...state};
         case ADD_ELEMENT:
             return {...state, elements: [...state.elements, action.payload]};

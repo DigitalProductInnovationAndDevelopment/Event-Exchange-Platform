@@ -21,7 +21,7 @@ function downloadURI(uri: string, name: string) {
     document.body.removeChild(link);
 }
 
-const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
+export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
 
     if (!stageRef.current) return;
 
@@ -65,18 +65,40 @@ const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
         height: contentRect.height + (padding * 2),
     };
 
+    // Get stage position to account for any offset
+    const stagePosition = stage.getPosition();
+    const stageSize = stage.getSize();
+
+    // Create a new layer with white background rectangle
+    const backgroundLayer = new Konva.Layer();
+    const exportRectangle = new Konva.Rect({
+        x: -stagePosition.x,
+        y: -stagePosition.y - (padding * 2),
+        width: stageSize.width / stageRef.current.scaleX(),
+        height: stageSize.height / stageRef.current.scaleY(),
+        fill: 'white',
+        listening: false,
+    });
+
+    backgroundLayer.add(exportRectangle);
+    stage.add(backgroundLayer);
+    backgroundLayer.moveToBottom(); // Make it the first layer
+
     try {
-        const uri = stage.toDataURL({
+        return stage.toDataURL({
             x: exportRect.x,
             y: exportRect.y,
             width: exportRect.width,
             height: exportRect.height,
             pixelRatio: 2,
+            mimeType: 'image/jpeg',
         });
 
-        downloadURI(uri, 'stage.png');
     } catch (error) {
         console.error('Export failed:', error);
+    } finally {
+        // Clean up: remove the background layer
+        backgroundLayer.destroy();
     }
 };
 
@@ -143,7 +165,10 @@ function Toolbox({dispatch, stageRef, state}: {
                         </Group>
                     ))}
 
-                    <Group y={400} onClick={() => handleExport(stageRef)}>
+                    <Group y={400} onClick={() => {
+                        const uri = handleExport(stageRef);
+                        downloadURI(uri!, 'stage.jpeg');
+                    }}>
                         <Rect
                             width={80}
                             height={50}
@@ -153,7 +178,7 @@ function Toolbox({dispatch, stageRef, state}: {
                             stroke="#900"
                             strokeWidth={1}
                         />
-                        <Text text="Export PDF" x={25} y={15} fill="white" fontSize={10} fontStyle="bold"/>
+                        <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold"/>
                     </Group>
 
                     <Group y={460} onClick={() =>
