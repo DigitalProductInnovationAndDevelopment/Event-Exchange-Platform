@@ -51,5 +51,18 @@ public class Event {
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
 
+    @Transient
+    public int getParticipantCount() {
+        return getParticipantCount(null);
+    }
+
+    @Transient
+    public int getParticipantCount(Participation excludeParticipation) {
+        return participations.stream()
+                .filter(p -> excludeParticipation == null || !p.getId().equals(excludeParticipation.getId()))
+                .mapToInt(p -> p.getGuestCount() + 1)
+                .sum();
+    }
+
 }
 
