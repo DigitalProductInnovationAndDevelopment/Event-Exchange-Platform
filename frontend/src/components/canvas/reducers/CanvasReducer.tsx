@@ -49,8 +49,14 @@ export function reducer(state: AppState, action: Action) {
     switch (action.type) {
 
         case SET_STATE:
-            if (action.payload) return {...JSON.parse(action.payload)};
-            else return {...state};
+            if (action.payload) {
+                // If payload is a string, parse it; if it's already an object, use it directly
+                if (typeof action.payload === 'string') {
+                    return { ...JSON.parse(action.payload) };
+                } else {
+                    return { ...action.payload };
+                }
+            } else return { ...state };
         case ADD_ELEMENT:
             return {...state, elements: [...state.elements, action.payload]};
         case REMOVE_ELEMENT:
