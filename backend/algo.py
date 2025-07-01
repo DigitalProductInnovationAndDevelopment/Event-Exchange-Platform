@@ -2,24 +2,22 @@ import json
 import pandas as pd
 from ortools.sat.python import cp_model
 import math
-import sys
 
-# CP-SAT solver (other algo will be implemented in future)
-def assign_tables(employees_data, table_capacities, diversity_attributes, time_limit_sec=30.0):
+
+def assign_tables(employees_data, tables_data, diversity_attributes, time_limit_sec=30.0):
     """
-    Assigns employees to tables to maximize diversity using Google OR-Tools.
+    Assigns employee groups to tables to maximize diversity using Google OR-Tools.
+    Handles groups of people represented by a single employee record with an "Anzahl" > 1.
 
     Args:
-        employees_data (list): A list of dictionaries, where each dictionary represents an employee.
-                               Must match the keys in the diversity_attributes.
-        table_capacities (list): A list of integers representing the capacity of each table.
+        employees_data (list): A list of dictionaries representing employee groups.
+        tables_data (list): A list of dictionaries representing tables, each with 'table_id' and 'Anzahl'.
         diversity_attributes (list): A list of string keys from the employee dictionaries
                                      to use for maximizing diversity.
         time_limit_sec (float): The maximum time in seconds to let the solver run.
 
     Returns:
-        list: The original list of employee dictionaries, with the 'TableNr' key updated
-              with the assigned table number. Returns the original data if no solution is found.
+        list: The original list of employee dictionaries, with the 'TableNr' key updated.
     """
     if not employees_data:
         print("Warning: The list of employees is empty. Nothing to assign.")
@@ -27,69 +25,69 @@ def assign_tables(employees_data, table_capacities, diversity_attributes, time_l
 
     # --- 1. Prepare Data using Pandas ---
     df_employees = pd.DataFrame(employees_data)
-    num_employees = len(df_employees)
+    # Ensure 'Anzahl' is a valid number, defaulting to 1 if missing or invalid.
+    df_employees['Anzahl'] = pd.to_numeric(df_employees['Anzahl'], errors='coerce').fillna(1).astype(int)
+    num_groups = len(df_employees)  # Each employee record is now treated as a "group"
 
-    # Create a list of all available table slots
-    slots = []
-    slot_idx = 0
-    for i, capacity in enumerate(table_capacities):
-        table_nr = i + 1
-        for _ in range(capacity):
-            slots.append({'solver_slot_idx': slot_idx, 'TableNr': table_nr})
-            slot_idx += 1
-    num_slots = len(slots)
+    df_tables = pd.DataFrame(tables_data)
+    # Rename table columns for clarity and consistency.
+    df_tables.rename(columns={'table_id': 'TableNr', 'Anzahl': 'Capacity'}, inplace=True)
+    num_tables = len(df_tables)
 
-    print(f"Assigning {num_employees} employees to {num_slots} slots across {len(table_capacities)} tables.")
+    total_seats_required = df_employees['Anzahl'].sum()
+    total_capacity = df_tables['Capacity'].sum()
 
-    if num_employees > num_slots:
-        print(f"Error: Not enough table slots ({num_slots}) for all employees ({num_employees}).")
+    print(
+        f"Assigning {num_groups} groups ({total_seats_required} people) to {num_tables} tables with a total capacity of {total_capacity}.")
+
+    if total_seats_required > total_capacity:
+        print(f"Error: Not enough capacity ({total_capacity}) for all people ({total_seats_required}).")
         return employees_data
 
     # --- 2. Create the CP-SAT Model ---
     model = cp_model.CpModel()
 
-    # Create assignment variables: assignment[(e, s)] is true if employee e is in slot s.
+    # Create assignment variables: assignment[(g, t)] is true if group g is assigned to table t.
     assignment = {}
-    for e_idx in range(num_employees):
-        for s_idx in range(num_slots):
-            assignment[(e_idx, s_idx)] = model.NewBoolVar(f'assign_e{e_idx}_s{s_idx}')
+    for g_idx in range(num_groups):
+        for t_idx in range(num_tables):
+            assignment[(g_idx, t_idx)] = model.NewBoolVar(f'assign_g{g_idx}_t{t_idx}')
 
     # --- 3. Add Core Constraints ---
-    # Each employee must be assigned to exactly one slot.
-    for e_idx in range(num_employees):
-        model.AddExactlyOne([assignment[(e_idx, s_idx)] for s_idx in range(num_slots)])
+    # Each group must be assigned to exactly one table.
+    for g_idx in range(num_groups):
+        model.AddExactlyOne([assignment[(g_idx, t_idx)] for t_idx in range(num_tables)])
 
-    # Each slot can have at most one employee.
-    for s_idx in range(num_slots):
-        model.AddAtMostOne([assignment[(e_idx, s_idx)] for e_idx in range(num_employees)])
+    # The total size of all groups at a table cannot exceed its capacity.
+    for t_idx in range(num_tables):
+        table_capacity = df_tables.loc[t_idx, 'Capacity']
+        # Create a list of terms (group_size * assignment_variable) for the sum.
+        groups_at_table = []
+        for g_idx in range(num_groups):
+            group_size = df_employees.loc[g_idx, 'Anzahl']
+            groups_at_table.append(group_size * assignment[(g_idx, t_idx)])
+        # Add the constraint that the sum of sizes of groups at this table is <= capacity.
+        model.Add(cp_model.LinearExpr.Sum(groups_at_table) <= table_capacity)
 
     # --- 4. Define the Diversity Objective ---
-    # The goal is to maximize the number of unique attribute values present at each table.
     total_diversity_terms = []
-    for table_nr in range(1, len(table_capacities) + 1):
-        # Find all slot indices that belong to the current table
-        table_slots_indices = [s['solver_slot_idx'] for s in slots if s['TableNr'] == table_nr]
-        if not table_slots_indices:
-            continue
+    for t_idx in range(num_tables):
+        table_id = df_tables.loc[t_idx, 'TableNr']
 
-        # For each diversity attribute (e.g., 'Standort', 'Projekt')
         for attr in diversity_attributes:
             if attr not in df_employees.columns:
                 print(f"Warning: Diversity attribute '{attr}' not found in employee data. Skipping.")
                 continue
 
-            # For each possible value of that attribute (e.g., 'München', 'Hannover')
             for value in df_employees[attr].unique():
-                is_value_present_at_table = model.NewBoolVar(f'attr_{attr}_val_{str(value)}_table_{table_nr}')
+                is_value_present_at_table = model.NewBoolVar(f'attr_{attr}_val_{str(value)}_table_{table_id}')
 
-                employees_with_value_indices = df_employees[df_employees[attr] == value].index.tolist()
+                # Find all groups that have this attribute value.
+                groups_with_value_indices = df_employees[df_employees[attr] == value].index.tolist()
 
-                assignments_for_value_at_table = []
-                for e_idx in employees_with_value_indices:
-                    for s_idx in table_slots_indices:
-                        assignments_for_value_at_table.append(assignment[(e_idx, s_idx)])
+                # Link the boolean variable: is_value_present is true if any group with this value is assigned to this table.
+                assignments_for_value_at_table = [assignment[(g_idx, t_idx)] for g_idx in groups_with_value_indices]
 
-                # Use AddMaxEquality to link the boolean variable
                 if assignments_for_value_at_table:
                     model.AddMaxEquality(is_value_present_at_table, assignments_for_value_at_table)
                 else:
@@ -100,7 +98,7 @@ def assign_tables(employees_data, table_capacities, diversity_attributes, time_l
     if total_diversity_terms:
         model.Maximize(sum(total_diversity_terms))
     else:
-        print("Warning: No diversity terms were created. The solver will find any valid assignment.")
+        print("Warning: No diversity terms were created.")
 
     # --- 5. Solve the Model ---
     solver = cp_model.CpSolver()
@@ -114,11 +112,21 @@ def assign_tables(employees_data, table_capacities, diversity_attributes, time_l
         if total_diversity_terms:
             print(f"Total diversity score achieved: {solver.ObjectiveValue()}")
 
-        for e_idx in range(num_employees):
-            for s_idx in range(num_slots):
-                if solver.Value(assignment[(e_idx, s_idx)]) == 1:
-                    assigned_table = slots[s_idx]['TableNr']
-                    employees_data[e_idx]['TableNr'] = assigned_table
+        for g_idx in range(num_groups):
+            for t_idx in range(num_tables):
+                if solver.Value(assignment[(g_idx, t_idx)]) == 1:
+                    assigned_table_id = df_tables.loc[t_idx, 'TableNr']
+                    group_size = df_employees.loc[g_idx, 'Anzahl']
+
+                    # Create a list representing the seats for THIS event
+                    current_event_assignment = [assigned_table_id] * group_size
+
+                    # Ensure 'TableNr' is a list of lists before appending
+                    if not isinstance(employees_data[g_idx].get('TableNr'), list):
+                        employees_data[g_idx]['TableNr'] = []
+
+                    # Append the new list of seats to the history
+                    employees_data[g_idx]['TableNr'].append(current_event_assignment)
                     break
         return employees_data
     else:
@@ -129,61 +137,103 @@ def assign_tables(employees_data, table_capacities, diversity_attributes, time_l
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    # --- Configuration ---------------------------
-    # Read input/output paths from command line arguments
-    if len(sys.argv) != 3:
-        print("Usage: python algo.py <input_json_path> <output_json_path>")
-        sys.exit(1)
+    # --- Configuration ---
+    EMPLOYEES_JSON_PATH = 'input.json'
 
-    INPUT_JSON_PATH = sys.argv[1]
-    OUTPUT_JSON_PATH = sys.argv[2]
-    # ---------------------------------------------
+    #example employee input format
+    # [
+    #     {
+    #         "Nachname": "Wende",
+    #         "Vorname": "Marzena",
+    #         "Standort": "Hannover",
+    #         "Zugehörigkeit": "Feb 25",
+    #         "Anzahl": 3,
+    #         "Anstellung": "Festanstellung",
+    #         "Projekt": "A5MW2QI0",
+    #         "Geschlecht": "m",
+    #         "TableNr": []
+    #     },
+    #     {
+    #         "Nachname": "Hermann",
+    #         "Vorname": "Hagen",
+    #         "Standort": "Hannover",
+    #         "Zugehörigkeit": "Okt 23",
+    #         "Anzahl": 1,
+    #         "Anstellung": "Festanstellung",
+    #         "Projekt": "8E9UMCTK",
+    #         "Geschlecht": "m",
+    #         "TableNr": []
+    #     }]
+    TABLES_JSON_PATH = 'table.json'
 
-
-    # Define the structure of your tables here
-    # (this will be input in the future)
-    TABLE_CAPACITIES = [4, 4]
-    # ---------------------------------------------
+    # example table input format
+    # [
+    #     {
+    #         "table_id": 1,
+    #         "Anzahl": 6
+    #     },
+    #     {
+    #         "table_id": 2,
+    #         "Anzahl": 6
+    #     },
+    # ]
+    # OUTPUT_JSON_PATH = 'output.json'
 
     # Define which employee attributes you want to make diverse
-    # (this will be input in the future)
     DIVERSITY_ATTRIBUTES = ['Standort', 'Projekt', 'Anstellung', 'Geschlecht']
-    # ---------------------------------------------
 
     # Set a time limit for the solver
-    # (this will be input in the future)
     SOLVER_TIME_LIMIT = 60.0
-    # ---------------------------------------------
-
 
     print("--- Starting Table Assignment from File ---")
     try:
-        with open(INPUT_JSON_PATH, 'r', encoding='utf-8') as f:
+        with open(EMPLOYEES_JSON_PATH, 'r', encoding='utf-8') as f:
             employee_list = json.load(f)
+
+        with open(TABLES_JSON_PATH, 'r', encoding='utf-8') as f:
+            table_list = json.load(f)
 
         assigned_employees = assign_tables(
             employees_data=employee_list,
-            table_capacities=TABLE_CAPACITIES,
+            tables_data=table_list,
             diversity_attributes=DIVERSITY_ATTRIBUTES,
             time_limit_sec=SOLVER_TIME_LIMIT
         )
 
         if assigned_employees and all('TableNr' in r for r in assigned_employees):
             print(f"\nAssignment complete. Saving results to '{OUTPUT_JSON_PATH}'")
+
+            # Convert numpy types to standard Python types for JSON serialization
+            for employee in assigned_employees:
+                if 'Anzahl' in employee and pd.notna(employee['Anzahl']):
+                    employee['Anzahl'] = int(employee['Anzahl'])
+                # Convert the nested list of tables to standard integers
+                if 'TableNr' in employee and isinstance(employee['TableNr'], list):
+                    employee['TableNr'] = [[int(t) for t in event] for event in employee['TableNr']]
+
             with open(OUTPUT_JSON_PATH, 'w', encoding='utf-8') as f:
                 json.dump(assigned_employees, f, ensure_ascii=False, indent=2)
 
             print("\n--- File-based Assignment Summary ---")
             df_results = pd.DataFrame(assigned_employees)
-            if not df_results['TableNr'].isnull().all():
-                print("Employees per table:")
-                print(df_results['TableNr'].value_counts().sort_index().to_string())
-                print("\n--- Detailed Results ---")
-                print(df_results[['Vorname', 'Nachname', 'Standort', 'Projekt', 'TableNr']].to_string())
+
+            if not df_results['TableNr'].empty:
+                # Create temporary columns for summary of the latest assignment
+                df_results['CurrentAssignmentList'] = df_results['TableNr'].apply(lambda x: x[-1] if x else [])
+                df_results['CurrentAssignment'] = df_results['CurrentAssignmentList'].apply(
+                    lambda x: x[0] if x else None)
+
+                print("Seats used per table (Current Event):")
+                print(df_results.groupby('CurrentAssignment')['Anzahl'].sum())
+                print("\n--- Detailed Results (Current Event) ---")
+                print(df_results[
+                          ['Vorname', 'Nachname', 'Anzahl', 'Standort', 'Projekt', 'CurrentAssignment']].to_string())
             else:
                 print("Could not assign tables. Please check logs for errors.")
 
-    except FileNotFoundError:
-        print(f"Error: Input file not found at '{INPUT_JSON_PATH}'")
+    except FileNotFoundError as e:
+        print(
+            f"Error: Input file not found. Please ensure both '{EMPLOYEES_JSON_PATH}' and '{TABLES_JSON_PATH}' exist.")
+        print(f"Details: {e}")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
