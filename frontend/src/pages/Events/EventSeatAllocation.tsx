@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  Col,
-  Row,
-  Space,
-  Typography,
-  List,
-  Avatar,
-  message,
-} from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import useApiService from '../../services/apiService';
-import { CanvasProvider, useCanvas } from '../../components/canvas/contexts/CanvasContext';
-import KonvaCanvas from '../../components/canvas/KonvaCanvas';
-import type { ParticipationDetails } from 'types/employee';
-import type { AppState } from 'components/canvas/reducers/CanvasReducer';
-import { setState } from '../../components/canvas/actions/actions';
+import React, { useEffect, useState } from "react";
+import { Button, Card, Col, Row, Space, Typography, List, Avatar, message } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { Breadcrumb } from "../../components/Breadcrumb";
+import useApiService from "../../services/apiService";
+import { CanvasProvider, useCanvas } from "../../components/canvas/contexts/CanvasContext";
+import KonvaCanvas from "../../components/canvas/KonvaCanvas";
+import type { ParticipationDetails } from "types/employee";
+import type { AppState } from "components/canvas/reducers/CanvasReducer";
+import { setState } from "../../components/canvas/actions/actions";
 
 const { Title } = Typography;
 
 type SchematicsType = { id: string; name: string; state: AppState } | null;
 
 // Main content component for seat allocation
-const SeatAllocationContent = ({ eventId, eventName, schematics, participants }: {
+const SeatAllocationContent = ({
+  eventId,
+  eventName,
+  schematics,
+  participants,
+}: {
   eventId: string;
   eventName: string;
   schematics: SchematicsType;
@@ -40,7 +35,9 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
   useEffect(() => {
     if (!participants || !state) return;
     const allocatedIds = new Set(
-      state.elements?.filter((e: any) => e.type === 'chair' && e.employeeId).map((e: any) => e.employeeId)
+      state.elements
+        ?.filter((e: any) => e.type === "chair" && e.employeeId)
+        .map((e: any) => e.employeeId)
     );
     setUnallocated(participants.filter(p => !allocatedIds.has(p.employeeId)));
   }, [participants, state]);
@@ -49,10 +46,12 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
   const handleGenerate = () => {
     if (!state || !participants) return;
     const newElements = state.elements.map((el: any) => {
-      if (el.type === 'chair') {
+      if (el.type === "chair") {
         if (!el.employeeId) {
           const next = participants.find(p => {
-            return !state.elements.some((e: any) => e.type === 'chair' && e.employeeId === p.employeeId);
+            return !state.elements.some(
+              (e: any) => e.type === "chair" && e.employeeId === p.employeeId
+            );
           });
           if (next) {
             return { ...el, employeeId: next.employeeId };
@@ -62,7 +61,7 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
       return el;
     });
     dispatch(setState({ ...state, elements: newElements }));
-    message.success('Initial allocation generated. You can drag and adjust!');
+    message.success("Initial allocation generated. You can drag and adjust!");
   };
 
   // Save the current seat allocation to the backend
@@ -71,7 +70,7 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
     setLoading(true);
     await updateSchematics(schematics.id, state, null as any);
     setLoading(false);
-    message.success('Allocation saved!');
+    message.success("Allocation saved!");
   };
 
   return (
@@ -79,9 +78,9 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
       {/* Breadcrumb navigation */}
       <Breadcrumb
         items={[
-          { path: '/events', label: 'Events' },
-          { path: `/events/${eventId}`, label: eventName || 'Event' },
-          { path: `/events/${eventId}/seat-allocation`, label: 'Manage Seat Allocation' },
+          { path: "/events", label: "Events" },
+          { path: `/events/${eventId}`, label: eventName || "Event" },
+          { path: `/events/${eventId}/seat-allocation`, label: "Manage Seat Allocation" },
         ]}
       />
       {/* Page title and action buttons */}
@@ -89,9 +88,13 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
         <Title level={2}>Seat Allocation</Title>
         <Space>
           {/* Generate button on the left */}
-          <Button type="primary" onClick={handleGenerate} disabled={loading}>Generate</Button>
+          <Button type="primary" onClick={handleGenerate} disabled={loading}>
+            Generate
+          </Button>
           {/* Save button in the middle */}
-          <Button type="primary" onClick={handleSave} loading={loading}>Save</Button>
+          <Button type="primary" onClick={handleSave} loading={loading}>
+            Save
+          </Button>
           {/* Back to Event button on the right */}
           <Button onClick={() => navigate(`/events/${eventId}`)}>Back to Event</Button>
         </Space>
@@ -130,7 +133,7 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
 export const EventSeatAllocation = () => {
   const { eventId } = useParams();
   const { getEventById, getEventParticipants, getSchematics } = useApiService();
-  const [eventName, setEventName] = useState('');
+  const [eventName, setEventName] = useState("");
   const [participants, setParticipants] = useState<ParticipationDetails[]>([]);
   const [schematics, setSchematics] = useState<SchematicsType>(null);
   const [loading, setLoading] = useState(false);
@@ -164,4 +167,4 @@ export const EventSeatAllocation = () => {
       />
     </CanvasProvider>
   );
-}; 
+};
