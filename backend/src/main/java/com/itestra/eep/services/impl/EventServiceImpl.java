@@ -58,6 +58,11 @@ public class EventServiceImpl implements EventService {
     public Event update(UUID id, EventUpdateDTO dto) {
         Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
         eventMapper.updateEventFromDto(dto, event);
+
+        if (event.getCapacity() < participationRepository.sumGuestCounts(event, null)) {
+            throw new EventCapacityExceededException();
+        }
+
         return eventRepository.save(event);
     }
 
@@ -102,10 +107,9 @@ public class EventServiceImpl implements EventService {
 
     private void validateCapacity(Event event, int guestCount, Participation excludeParticipation) {
 
-        int currentTotal = event.getParticipations().stream()
-                .filter(p -> excludeParticipation == null || !p.getId().equals(excludeParticipation.getId()))
-                .mapToInt(p -> p.getGuestCount() + 1)
-                .sum();
+        Integer total = participationRepository.sumGuestCounts(event, excludeParticipation == null ? null : excludeParticipation.getId());
+
+        int currentTotal = total != null ? total : 0;
 
         int newTotal = currentTotal + guestCount + 1;
 

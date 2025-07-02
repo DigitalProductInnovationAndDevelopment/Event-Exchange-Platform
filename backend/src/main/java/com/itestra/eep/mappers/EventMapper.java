@@ -36,8 +36,10 @@ public interface EventMapper {
     FileDetailsDTO toFileDetailsDto(FileEntity file);
 
     @Named("countConfirmed")
-    default Long map(List<Participation> participations) {
-        return participations.stream().filter(Participation::isConfirmed).count();
+    default int map(List<Participation> participations) {
+        return participations.stream().filter(Participation::isConfirmed)
+                .mapToInt(p -> p.getGuestCount() + 1)
+                .sum();
     }
 
     @Named("status")
