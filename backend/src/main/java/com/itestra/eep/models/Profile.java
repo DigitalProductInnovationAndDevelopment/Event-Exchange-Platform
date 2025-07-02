@@ -1,10 +1,9 @@
 package com.itestra.eep.models;
 
 import com.itestra.eep.enums.DietaryPreference;
+import com.itestra.eep.serializers.DietaryPreferenceArrayConverter;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -46,9 +45,8 @@ public class Profile {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Enumerated(EnumType.STRING)
     @Column(name = "diet_types")
+    @Convert(converter = DietaryPreferenceArrayConverter.class)
     private DietaryPreference[] dietTypes;
 
     @PrePersist

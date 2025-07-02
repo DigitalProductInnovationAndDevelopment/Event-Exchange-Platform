@@ -37,7 +37,7 @@ CREATE TABLE organization.profile
     email           VARCHAR(255)  NULL UNIQUE,
     full_name       VARCHAR(500)  NOT NULL,
     gender          VARCHAR(255)  NULL,
-    diet_types      VARCHAR(55)[] NULL,
+    diet_types VARCHAR NULL,
     created_at      TIMESTAMP,
     updated_at      TIMESTAMP
 );
