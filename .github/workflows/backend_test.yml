@@ -3,7 +3,7 @@ name: Run Spring Boot Unit Tests on Merge to Main
 on:
   push:
     branches:
-      - backend_testing
+      - main
   pull_request:
     branches:
       - main
