@@ -1,6 +1,5 @@
 package com.itestra.eep.services;
 
-import com.itestra.eep.dtos.EventCreateDTO;
 import com.itestra.eep.dtos.ParticipationUpsertDTO;
 import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.Employee;
@@ -8,77 +7,92 @@ import com.itestra.eep.models.Event;
 import com.itestra.eep.models.Participation;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
-import com.itestra.eep.repositories.ParticipationRepository;
-import com.itestra.eep.services.impl.EventServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import com.itestra.utils.RandomEntityGenerator;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Optional;
-import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+
+@SpringBootTest
+@Import(value = RandomEntityGenerator.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class EventServiceTest {
-    @Mock
+
+    @Autowired
     private EventRepository eventRepository;
-    @Mock
+    @Autowired
     private EmployeeRepository employeeRepository;
-    @Mock
-    private ParticipationRepository participationRepository;
-    @Mock
+    @Autowired
     private EventMapper eventMapper;
-
-    @InjectMocks
-    private EventServiceImpl eventService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @Autowired
+    private EventService eventService;
+    @Autowired
+    private RandomEntityGenerator randomEntityGenerator;
 
     @Test
     void testFindByIdReturnsEvent() {
-        UUID eventId = UUID.randomUUID();
-        Event event = new Event();
-        event.setId(eventId);
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        Event result = eventService.findById(eventId);
+        Event event = randomEntityGenerator.generate(Event.class);
+        event = eventRepository.save(event);
+
+        Event result = eventService.findById(event.getId());
         assertNotNull(result);
-        assertEquals(eventId, result.getId());
+
+        assertEquals(event.getId(), result.getId());
     }
 
     @Test
     void testCreateEvent() {
-        EventCreateDTO dto = new EventCreateDTO();
-        Event event = new Event();
-        when(eventRepository.save(any(Event.class))).thenReturn(event);
-        doNothing().when(eventMapper).createEventFromDto(dto, event);
-        Event result = eventService.create(dto);
+        Event event = randomEntityGenerator.generate(Event.class);
+        Event result = eventService.create(eventMapper.toCreateDto(event));
+
+        Event savedEvent = (Event) Hibernate.unproxy(eventRepository.findById(result.getId()).get());
         assertNotNull(result);
+
+        assertEquals(savedEvent.getId(), result.getId());
+        assertEquals(savedEvent.getCapacity(), result.getCapacity());
+        assertEquals(savedEvent.getDate(), result.getDate());
+        assertEquals(savedEvent.getDescription(), result.getDescription());
+        assertEquals(savedEvent.getEventType(), result.getEventType());
+        assertEquals(savedEvent.getName(), result.getName());
     }
 
     @Test
     void testAddParticipant() {
-        UUID employeeId = UUID.randomUUID();
-        UUID eventId = UUID.randomUUID();
-        Employee employee = new Employee();
-        employee.setId(employeeId);
-        Event event = new Event();
-        event.setId(eventId);
+        Employee employee = randomEntityGenerator.generate(Employee.class);
+        employee = employeeRepository.save(employee);
+
+        Event event = randomEntityGenerator.generate(Event.class);
         event.setCapacity(10);
+        event = eventRepository.save(event);
         int guestCount = 1;
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employeeId, eventId);
-        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        when(participationRepository.save(any(Participation.class))).thenAnswer(i -> i.getArgument(0));
+
+        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId(), event.getId());
         Participation participation = eventService.addParticipant(dto);
+
         assertNotNull(participation);
-        assertEquals(employee, participation.getEmployee());
-        assertEquals(event, participation.getEvent());
+        assertEquals(employee.getId(), participation.getEmployee().getId());
+        assertEquals(event.getId(), participation.getEvent().getId());
         assertEquals(guestCount, participation.getGuestCount());
     }
+
+    @Test
+    void testAddParticipantWithCapacityExceed() {
+
+        Employee employee = randomEntityGenerator.generate(Employee.class);
+        employee = employeeRepository.save(employee);
+
+        Event event = randomEntityGenerator.generate(Event.class);
+        event.setCapacity(10);
+        event = eventRepository.save(event);
+        int guestCount = 10;
+
+        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId(), event.getId());
+        assertThrows(com.itestra.eep.exceptions.EventCapacityExceededException.class, () -> eventService.addParticipant(dto));
+    }
+
 } 

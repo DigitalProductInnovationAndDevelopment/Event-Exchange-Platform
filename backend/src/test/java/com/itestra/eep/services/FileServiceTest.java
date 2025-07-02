@@ -4,59 +4,91 @@ import com.itestra.eep.models.Event;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.repositories.FileRepository;
-import com.itestra.eep.services.impl.FileServiceImpl;
+import com.itestra.utils.RandomEntityGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@Import(value = RandomEntityGenerator.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FileServiceTest {
-    @Mock private FileRepository fileRepository;
-    @Mock private EventRepository eventRepository;
-    @Mock private MultipartFile multipartFile;
-    @InjectMocks private FileServiceImpl fileService;
+
+    public static final String FILE_NAME = "file.txt";
+    public static final String CONTENT_TYPE = "text/plain";
+    public static final byte[] BYTES = {1, 2, 3};
+
+    @Autowired
+    private FileRepository fileRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private RandomEntityGenerator randomEntityGenerator;
+
+    @Mock
+    private MultipartFile multipartFile;
 
     @BeforeEach
-    void setUp() { MockitoAnnotations.openMocks(this); }
+    void setUp() throws IOException {
+        when(multipartFile.getOriginalFilename()).thenReturn(FILE_NAME);
+        when(multipartFile.getContentType()).thenReturn(CONTENT_TYPE);
+        when(multipartFile.getBytes()).thenReturn(BYTES);
+    }
+
 
     @Test
     void testStoreFile() throws IOException {
-        UUID eventId = UUID.randomUUID();
-        Event event = new Event();
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        when(multipartFile.getOriginalFilename()).thenReturn("file.txt");
-        when(multipartFile.getContentType()).thenReturn("text/plain");
-        when(multipartFile.getBytes()).thenReturn(new byte[]{1,2,3});
-        when(fileRepository.save(any(FileEntity.class))).thenAnswer(i -> i.getArgument(0));
-        FileEntity result = fileService.storeFile(multipartFile, eventId);
+
+        Event event = randomEntityGenerator.generate(Event.class);
+        event = eventRepository.save(event);
+
+        FileEntity result = fileService.storeFile(multipartFile, event.getId());
+
         assertNotNull(result);
-        assertEquals("file.txt", result.getName());
+        assertEquals(FILE_NAME, result.getName());
+        assertEquals(CONTENT_TYPE, result.getContentType());
+        assertArrayEquals(BYTES, result.getContent());
     }
 
     @Test
-    void testDeleteFile() {
-        UUID id = UUID.randomUUID();
-        doNothing().when(fileRepository).deleteById(id);
-        fileService.deleteFile(id);
-        verify(fileRepository).deleteById(id);
+    void testDeleteFile() throws IOException {
+        Event event = randomEntityGenerator.generate(Event.class);
+        event = eventRepository.save(event);
+
+        assertEquals(0, fileRepository.count());
+        FileEntity result = fileService.storeFile(multipartFile, event.getId());
+        assertEquals(1, fileRepository.count());
+        fileService.deleteFile(result.getFileId());
+        assertEquals(0, fileRepository.count());
+
     }
 
     @Test
-    void testGetFile() {
-        UUID id = UUID.randomUUID();
-        FileEntity fileEntity = new FileEntity();
-        when(fileRepository.findById(id)).thenReturn(Optional.of(fileEntity));
-        Optional<FileEntity> result = fileService.getFile(id);
-        assertTrue(result.isPresent());
-        assertEquals(fileEntity, result.get());
+    void testGetFile() throws IOException {
+        Event event = randomEntityGenerator.generate(Event.class);
+        event = eventRepository.save(event);
+
+        FileEntity file = fileService.storeFile(multipartFile, event.getId());
+
+        FileEntity result = fileService.getFile(file.getFileId()).get();
+        assertNotNull(result);
+        assertEquals(FILE_NAME, result.getName());
+        assertEquals(CONTENT_TYPE, result.getContentType());
+        assertArrayEquals(BYTES, result.getContent());
     }
 } 
