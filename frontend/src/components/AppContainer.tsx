@@ -1,10 +1,16 @@
-import {Avatar, Dropdown, Layout, Menu} from 'antd';
-import {Outlet, useLocation, useNavigate} from 'react-router-dom';
-import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined,} from '@ant-design/icons';
-import {useAuth} from '../contexts/AuthContext';
-import useApiService from '../services/apiService.ts';
-import {useState} from "react";
-import itestraEventLogo from '../assets/itestra_event_logo.png';
+import { Avatar, Dropdown, Layout, Menu } from "antd";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  CalendarOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { useAuth } from "../contexts/AuthContext";
+import useApiService from "../services/apiService.ts";
+import { useState } from "react";
+import itestraEventLogo from "../assets/itestra_event_logo.png";
 
 const { Sider, Content, Footer } = Layout;
 
@@ -17,24 +23,24 @@ export const AppContainer = () => {
 
   const mainMenuItems = [
     {
-      key: '/dashboard',
+      key: "/dashboard",
       icon: <DashboardOutlined />,
-      label: 'Dashboard',
+      label: "Dashboard",
     },
     {
-      key: '/events',
+      key: "/events",
       icon: <CalendarOutlined />,
-      label: 'Events',
+      label: "Events",
     },
     {
-      key: '/employees',
+      key: "/employees",
       icon: <TeamOutlined />,
-      label: 'Employees',
+      label: "Employees",
     },
   ];
 
   const handleMenuClick = (key: string) => {
-    if (key === 'logout') {
+    if (key === "logout") {
       logoutRequest().then(() => logout());
     } else {
       navigate(key);
@@ -43,33 +49,48 @@ export const AppContainer = () => {
 
   const userMenuItems = [
     {
-      key: '/profile',
+      key: "/profile",
       icon: <UserOutlined />,
-      label: 'Profile Settings',
+      label: "Profile Settings",
     },
     {
-      key: 'logout',
+      key: "logout",
       icon: <LogoutOutlined />,
-      label: 'Logout',
+      label: "Logout",
       danger: true,
     },
   ];
 
   // Get the base path for menu selection
   const getBasePath = (path: string) => {
-    const segments = path.split('/');
+    const segments = path.split("/");
     return `/${segments[1]}`;
   };
 
   return (
     <Layout className="min-h-screen">
-      <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0"
-             onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 100, marginTop: 16, marginBottom: 4 }}>
+      <Sider
+        theme="dark"
+        className="fixed h-full z-10"
+        breakpoint="lg"
+        collapsedWidth="0"
+        onCollapse={value => setCollapsed(value)}
+        onBreakpoint={broken => setCollapsed(broken)}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: 100,
+            marginTop: 16,
+            marginBottom: 4,
+          }}
+        >
           <img
             src={itestraEventLogo}
             alt="itestra event planning logo"
-            style={{ height: '64px' }}
+            style={{ height: "64px" }}
           />
         </div>
         <Menu
@@ -80,8 +101,10 @@ export const AppContainer = () => {
           onClick={({ key }) => handleMenuClick(key)}
         />
         {/* User profile at the bottom */}
-        <div style={{ position: 'absolute', bottom: 0, width: '100%', padding: '24px 0' }} className="flex flex-col items-center">
-
+        <div
+          style={{ position: "absolute", bottom: 0, width: "100%", padding: "24px 0" }}
+          className="flex flex-col items-center"
+        >
           <Dropdown
             menu={{
               items: userMenuItems,
@@ -91,21 +114,23 @@ export const AppContainer = () => {
           >
             <div className="flex flex-col items-center cursor-pointer">
               <Avatar icon={<UserOutlined />} className="bg-blue-500" />
-              <span className="mt-2 text-white text-sm">{user?.name || user?.email || 'User'}</span>
+              <span className="mt-2 text-white text-sm">{user?.name || user?.email || "User"}</span>
             </div>
           </Dropdown>
         </div>
       </Sider>
-      <Layout className="flex flex-col min-h-screen"
-              style={{
-                marginLeft: collapsed ? 0 : 200,
-              }}>
+      <Layout
+        className="flex flex-col min-h-screen"
+        style={{
+          marginLeft: collapsed ? 0 : 200,
+        }}
+      >
         <Content className="bg-gray-50 flex-1 overflow-auto">
           <div className="p-6">
             <Outlet />
           </div>
         </Content>
-        <Footer className="text-center border-t border-gray-200" style={{ background: '#e6f4ff' }}>
+        <Footer className="text-center border-t border-gray-200" style={{ background: "#e6f4ff" }}>
           Event Exchange Platform ©{new Date().getFullYear()}
         </Footer>
       </Layout>

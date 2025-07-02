@@ -1,4 +1,4 @@
-import {Button, Card, Col, Divider, List, Row, Space, Statistic, Tag, Typography} from 'antd';
+import { Button, Card, Col, Divider, List, Row, Space, Statistic, Tag, Typography } from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -7,12 +7,12 @@ import {
   FireOutlined,
   PlusOutlined,
   TeamOutlined,
-} from '@ant-design/icons';
-import {useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {type Event, EVENT_STATUS_COLORS, type EventStatus} from '../types/event';
-import useApiService from '../services/apiService.ts';
-import dayjs from 'dayjs';
+} from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { type Event, EVENT_STATUS_COLORS, type EventStatus } from "../types/event";
+import useApiService from "../services/apiService.ts";
+import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
@@ -33,7 +33,7 @@ export const Dashboard = () => {
         const data = await getEvents();
         setEvents(data ?? []);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error("Error fetching dashboard data:", error);
         // TODO: Handle error appropriately
       }
     };
@@ -42,7 +42,7 @@ export const Dashboard = () => {
   }, [getEvents]);
 
   const getStatusIcon = (status: EventStatus) => {
-    return status === 'completed' ? <CheckCircleOutlined/> : <ClockCircleOutlined/>;
+    return status === "completed" ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
   };
 
   return (
@@ -61,7 +61,7 @@ export const Dashboard = () => {
                 icon={<PlusOutlined />}
                 size="large"
                 block
-                onClick={() => navigate('/events/create')}
+                onClick={() => navigate("/events/create")}
               >
                 Create New Event
               </Button>
@@ -72,7 +72,7 @@ export const Dashboard = () => {
                 icon={<CalendarOutlined />}
                 size="large"
                 block
-                onClick={() => navigate('/events')}
+                onClick={() => navigate("/events")}
               >
                 Events
               </Button>
@@ -83,14 +83,14 @@ export const Dashboard = () => {
                 icon={<TeamOutlined />}
                 size="large"
                 block
-                onClick={() => navigate('/employees')}
+                onClick={() => navigate("/employees")}
               >
                 Employees
               </Button>
             </Col>
           </Row>
 
-          <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: '12px' }}>
+          <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: "12px" }}>
             <List
               dataSource={events
                 .filter(event => new Date(event.date).getTime() > new Date().getTime())
@@ -112,12 +112,14 @@ export const Dashboard = () => {
                     description={
                       <Space direction="vertical" size="small">
                         <Space>
-                          <CalendarOutlined /> {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}
+                          <CalendarOutlined /> {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}
                           <span style={{ marginLeft: 24 }} />
-                          <TeamOutlined/> {event.participantCount}/{event.capacity} participants
+                          <TeamOutlined /> {event.participantCount}/{event.capacity} participants
                         </Space>
                         <Space>
-                          <FireOutlined /> {Number(((event.participantCount / event.capacity) * 100).toFixed(2))} % engagement
+                          <FireOutlined />{" "}
+                          {Number(((event.participantCount / event.capacity) * 100).toFixed(2))} %
+                          engagement
                         </Space>
                       </Space>
                     }

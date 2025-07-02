@@ -1,7 +1,7 @@
-import {useState} from 'react';
-import {Button, message, Upload} from 'antd';
-import {UploadOutlined} from '@ant-design/icons';
-import useApiService from '../../../services/apiService.ts';
+import { useState } from "react";
+import { Button, message, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import useApiService from "../../../services/apiService.ts";
 import toast from "react-hot-toast";
 
 const FileUploadButton = ({ eventId, onUpload }) => {
@@ -11,7 +11,7 @@ const FileUploadButton = ({ eventId, onUpload }) => {
 
   const handleBeforeUpload = file => {
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size exceeds 10 MB');
+      toast.error("File size exceeds 10 MB");
       return false;
     }
     setFile(file);
@@ -20,20 +20,20 @@ const FileUploadButton = ({ eventId, onUpload }) => {
 
   const handleUpload = async () => {
     if (!file) {
-      message.warning('Please select a file first');
+      message.warning("Please select a file first");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('eventId', eventId);
+    formData.append("file", file);
+    formData.append("eventId", eventId);
 
     try {
       setUploading(true);
       const uploadedFile = await fileUpload(formData);
       onUpload(uploadedFile);
     } catch (error) {
-      message.error('Upload failed');
+      message.error("Upload failed");
     } finally {
       setUploading(false);
       setFile(null);
