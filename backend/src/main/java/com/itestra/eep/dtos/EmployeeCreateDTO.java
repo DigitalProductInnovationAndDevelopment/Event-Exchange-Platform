@@ -1,5 +1,9 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.itestra.eep.enums.DietaryPreference;
 import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.Role;
@@ -28,6 +32,8 @@ public class EmployeeCreateDTO implements Serializable {
 
     @NotNull(message = "Employment start date cannot be empty.")
     @PastOrPresent(message = "Employment start date cannot be in the future.")
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate employmentStartDate;
 
     @NotNull(message = "Employment type cannot be empty.")

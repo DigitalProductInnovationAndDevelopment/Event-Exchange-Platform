@@ -2,10 +2,7 @@ package com.itestra.eep.models;
 
 import com.itestra.eep.enums.EmploymentType;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -35,8 +32,7 @@ public class Employee {
     private String location;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "employment_type", columnDefinition = "organization.employment_type")
+    @Column(name = "employment_type")
     private EmploymentType employmentType;
 
     @OneToMany(mappedBy = "employee")

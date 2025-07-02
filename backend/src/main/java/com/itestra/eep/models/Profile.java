@@ -2,7 +2,6 @@ package com.itestra.eep.models;
 
 import com.itestra.eep.enums.DietaryPreference;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -49,10 +48,7 @@ public class Profile {
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
-    @Column(
-            name = "diet_types",
-            columnDefinition = "organization.dietary_preference[]"
-    )
+    @Column(name = "diet_types")
     private DietaryPreference[] dietTypes;
 
     @PrePersist
