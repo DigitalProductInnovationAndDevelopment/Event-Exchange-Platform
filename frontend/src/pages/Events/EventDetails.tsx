@@ -10,6 +10,8 @@ import {
   FileTextOutlined,
   TeamOutlined,
   UserAddOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from '@ant-design/icons';
 import {useEffect, useState} from 'react';
 import type {Event, FileEntity} from '../../types/event';
@@ -25,6 +27,7 @@ export const EventDetails = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -165,12 +168,9 @@ export const EventDetails = () => {
       </div>
 
       <Row gutter={16}>
-        <Col span={14}>
+        <Col span={16}>
           <Card className="mb-6">
             <Descriptions title="Event Information" bordered>
-              <Descriptions.Item label="Event Name" span={3}>
-                {event.name}
-              </Descriptions.Item>
               <Descriptions.Item label="Date" span={3}>
                 {new Date(event.date).toLocaleString(undefined, {
                   year: 'numeric',
@@ -201,25 +201,70 @@ export const EventDetails = () => {
             </Descriptions>
           </Card>
 
-          {imageFiles?.length > 0 && (
-            <Card title="Event Images">
-              <Image.PreviewGroup>
-                <Row gutter={[16, 16]}>
-                  {imageFiles.map(file => (
-                    <Col key={file.fileId} xs={24} sm={12} md={8} lg={6} xl={4}>
-                      <Image
-                        src={`http://localhost:8000/files/${file.fileId}`}
-                        alt="Event Image"
-                        style={{ maxWidth: '200', maxHeight: '100', objectFit: 'cover' }}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </Image.PreviewGroup>
-            </Card>
-          )}
-          <Card title="Event Statistics" className="mb-6 mt-6">
+          {/* Seat Layout Tile */}
+          <Card title="Seat Layout" className="mb-6">
             <Row gutter={16}>
+              <Col span={12}>
+                {event.schematics?.overviewFileId ? (
+                  <div
+                    className="flex justify-center items-center"
+                    style={{
+                      background: '#f5f5f5',
+                      borderRadius: 4,
+                      width: '100%',
+                      height: '200px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={`http://localhost:8000/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
+                      alt="Event Seat Plan Image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="flex justify-center items-center"
+                    style={{
+                      background: '#f5f5f5',
+                      borderRadius: 4,
+                      width: '100%',
+                      height: '200px',
+                      color: '#8c8c8c',
+                    }}
+                  >
+                    No seat layout available
+                  </div>
+                )}
+              </Col>
+              <Col span={12}>
+                <Space direction="vertical" className="w-full">
+                  <Button block icon={<UserAddOutlined />} onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
+                    Manage Participants
+                  </Button>
+                  <Button block icon={<EditOutlined />} onClick={() => {
+                    if (event?.schematics) {
+                      navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`)
+                    } else {
+                      handleCreate();
+                    }
+                  }}>
+                    Manage Seat Layout
+                  </Button>
+                  <Button block icon={<EditOutlined />} onClick={() => navigate(`/events/${eventId}/seat-allocation`)}>
+                    Manage Seat Allocation
+                  </Button>
+                </Space>
+              </Col>
+            </Row>
+          </Card>
+
+          <Card title="Event Statistics" className="mb-6">
+            <Row gutter={16} justify="center">
               <Col span={6}>
                 <Statistic
                   title="Participants"
@@ -243,71 +288,104 @@ export const EventDetails = () => {
           </Card>
         </Col>
 
-        <Col span={10}>
+        <Col span={8}>
           {/* Participants Tile */}
-          <Card title="Participants" className="mb-6">
+          <Card title="Export Information" className="mb-6">
             <Space direction="vertical" className="w-full">
-              <Button block icon={<UserAddOutlined />} onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
-                Manage Participants
-              </Button>
+              <Button block icon={<FileTextOutlined />}>Export Event Data</Button>
               <Button block icon={<FileTextOutlined />}>Export Participants List</Button>
-            </Space>
-          </Card>
-
-          {/* Seat Plan Tile */}
-          <Card title="Seat Plan" className="mb-6">
-            <Space direction="vertical" className="w-full">
-              <Button block icon={<EditOutlined />} onClick={() => {
-                if (event?.schematics) {
-                  navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`)
-                } else {
-                  handleCreate();
-                }
-              }}>
-                Manage Seat Plan
-              </Button>
-              {event.schematics?.overviewFileId &&
-                (
-                  <div className="flex flex-row w-full">
-                    <div
-                      className="flex justify-center items-center mt-2"
-                      style={{
-                        background: '#f5f5f5',
-                        borderRadius: 4,
-                        width: 200,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <Image
-                        src={`http://localhost:8000/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
-                        alt="Event Seat Plan Image"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                      />
-                    </div>
-                  </div>
-                )
-              }
-            </Space>
-          </Card>
-
-          {/* Seat Allocation Tile */}
-          <Card title="Seat Allocation" className="mb-6">
-            <Space direction="vertical" className="w-full">
-              <Button block icon={<EditOutlined />} onClick={() => navigate(`/events/${eventId}/seat-allocation`)}>
-                Manage Seat Allocation
-              </Button>
               <Button block icon={<FileTextOutlined />}>Export Seat Allocation</Button>
             </Space>
           </Card>
 
+          {imageFiles?.length > 0 && (
+            <Card title="Event Images" className="mb-6"> 
+              <Space direction="vertical" className="w-full">
+                <div style={{ position: 'relative' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      background: '#f5f5f5',
+                      borderRadius: 4,
+                      width: '100%',
+                      height: '200px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={`http://localhost:8000/files/${imageFiles[currentImageIndex].fileId}`}
+                      alt="Event Image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </div>
+                  {imageFiles.length > 1 && (
+                    <>
+                      <Button
+                        type="text"
+                        icon={<LeftOutlined />}
+                        style={{
+                          position: 'absolute',
+                          left: 8,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          zIndex: 1,
+                          color: 'white',
+                          fontSize: '18px',
+                          background: 'rgba(0, 0, 0, 0.5)',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '32px',
+                          height: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        onClick={() => {
+                          console.log('Left button clicked, current index:', currentImageIndex);
+                          setCurrentImageIndex((currentImageIndex - 1 + imageFiles.length) % imageFiles.length);
+                        }}
+                      />
+                      <Button
+                        type="text"
+                        icon={<RightOutlined />}
+                        style={{
+                          position: 'absolute',
+                          right: 8,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          zIndex: 1,
+                          color: 'white',
+                          fontSize: '18px',
+                          background: 'rgba(0, 0, 0, 0.5)',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '32px',
+                          height: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        onClick={() => {
+                          console.log('Right button clicked, current index:', currentImageIndex);
+                          setCurrentImageIndex((currentImageIndex + 1) % imageFiles.length);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
+                </Space>
+            </Card>
+          )}
+
           {/* Existing Management Actions Tile */}
-          <Card title="Management Actions">
+          <Card title="File Management">
             <Space direction="vertical" className="w-full">
-              <Button block>Export Event Data</Button>
               <div className="space-y-4">
                 <FileListDisplay
                   files={event.fileEntities}
@@ -318,6 +396,7 @@ export const EventDetails = () => {
               </div>
             </Space>
           </Card>
+          
         </Col>
       </Row>
     </div>
