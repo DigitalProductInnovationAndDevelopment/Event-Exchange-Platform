@@ -11,7 +11,6 @@ import {
   Space,
   Switch,
   Table,
-  Tag,
   Typography,
 } from 'antd';
 import {AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined,} from '@ant-design/icons';
@@ -25,6 +24,8 @@ import type {Event, EventStatus, EventType, FileEntity} from '../../types/event'
 import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import "./carousel_arrows.css";
+import {EventTypeTag} from "../../components/EventTypeTag.tsx";
+import {EventStatusTag} from "../../components/EventStatusTag.tsx";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -96,9 +97,7 @@ export const EventsList = () => {
       dataIndex: 'eventType',
       key: 'eventType',
       width: '14%',
-      render: (type: EventType) => <Tag color={EVENT_TYPE_COLORS[type]}>{type.split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ').toUpperCase()}</Tag>,
+      render: (type: EventType) => <EventTypeTag type={type}/>,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
         text: type.replace(/_/g, ' '),
         value: type,
@@ -117,9 +116,7 @@ export const EventsList = () => {
       dataIndex: 'status',
       key: 'status',
       width: '14%',
-      render: (status: EventStatus) => (
-        <Tag color={EVENT_STATUS_COLORS[status]}>{status?.toUpperCase()}</Tag>
-      ),
+      render: (status: EventStatus) => <EventStatusTag status={status}/>,
       filters: Object.entries(EVENT_STATUS_COLORS).map(([status, _]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
         value: status,

@@ -1,11 +1,14 @@
 import {useEffect, useState} from 'react';
-import {Button, Card, Descriptions, Space, Table, Typography, Modal, message, Tag} from 'antd';
+import {Button, Card, Descriptions, message, Modal, Space, Table, Typography} from 'antd';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import {ArrowLeftOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {type Employee} from "../../types/employee.ts";
 import useApiService from "../../services/apiService.ts";
 import {Breadcrumb} from '../../components/Breadcrumb';
-import { DIET_TYPES, EMPLOYMENT_TYPES, EMPLOYMENT_TYPE_COLORS } from './EmployeeForm';
+import {DIET_TYPES} from './EmployeeForm';
+import type {EventType} from "types/event.ts";
+import {EventTypeTag} from "../../components/EventTypeTag.tsx";
+import {EmployeeTypeTag} from "../../components/EmployeeTypeTag.tsx";
 
 const {Title} = Typography;
 
@@ -32,6 +35,7 @@ const eventColumns = [
         title: 'Type',
         dataIndex: 'eventType',
         key: 'eventType',
+        render: (type: EventType) => <EventTypeTag type={type}/>,
     },
     {
         title: 'Address',
@@ -90,8 +94,7 @@ export const EmployeeDetails = () => {
         {
             label: 'Employment Type',
             value: employee?.employmentType
-                ? (EMPLOYMENT_TYPES.find(t => t.value === employee.employmentType)?.label ||
-                    <Tag color={EMPLOYMENT_TYPE_COLORS[employee.employmentType]}>{employee.employmentType}</Tag>)
+                ? <EmployeeTypeTag type={employee.employmentType}/>
                 : undefined
         },
         {label: 'Date Joined', value: employee?.employmentStartDate},

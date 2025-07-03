@@ -1,6 +1,8 @@
 import React from 'react';
-import { Form, Input, Select, Button, Space, Tag } from 'antd';
-import { DietaryPreference, EmploymentType, Role } from '../../types/employee';
+import {Form, Input, Select} from 'antd';
+import {DietaryPreference, EmploymentType, Role} from '../../types/employee';
+import {EmployeeTypeTag} from "../../components/EmployeeTypeTag.tsx";
+import {DietTypeTag} from "../../components/DietTypeTag.tsx";
 
 const { Option } = Select;
 
@@ -10,30 +12,15 @@ type EmployeeFormProps = {
   form: any;
 };
 
-export const DIET_TYPE_COLORS: Record<string, string> = {
-  VEGETARIAN: 'green',
-  PESCATARIAN: 'blue',
-  HALAL: 'orange',
-  KOSHER: 'purple',
-  VEGAN: 'magenta',
-  LACTOSE_FREE: 'cyan',
-  GLUTEN_FREE: 'lime',
-  KETO: 'gold',
-};
+
 export const DIET_TYPES = Object.entries(DietaryPreference).map(([key, label]) => ({
-  label: <Tag color={DIET_TYPE_COLORS[key]}>{label}</Tag>,
+  label: <DietTypeTag type={key}/>,
   value: key,
 }));
 
-export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
-  FULLTIME: 'green',
-  PARTTIME: 'blue',
-  WORKING_STUDENT: 'orange',
-  THESIS: 'purple',
-};
 
 export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key, label]) => ({
-  label: <Tag color={EMPLOYMENT_TYPE_COLORS[key]}>{label}</Tag>,
+  label: <EmployeeTypeTag type={key}/>,
   value: key,
 }));
 

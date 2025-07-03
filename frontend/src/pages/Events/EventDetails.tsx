@@ -1,4 +1,4 @@
-import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Tag, Typography,} from 'antd';
+import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Typography,} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Breadcrumb} from '../../components/Breadcrumb';
 import {
@@ -8,18 +8,19 @@ import {
   EnvironmentOutlined,
   ExclamationCircleOutlined,
   FileTextOutlined,
-  TeamOutlined,
-  UserAddOutlined,
   LeftOutlined,
   RightOutlined,
+  TeamOutlined,
+  UserAddOutlined,
 } from '@ant-design/icons';
 import {useEffect, useState} from 'react';
 import type {Event, FileEntity} from '../../types/event';
-import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import FileUploadButton from './components/FileUploadButton.tsx';
 import FileListDisplay from './components/FileListComponent.tsx';
 import toast from "react-hot-toast";
+import {EventStatusTag} from "../../components/EventStatusTag.tsx";
+import {EventTypeTag} from "../../components/EventTypeTag.tsx";
 
 const { Title } = Typography;
 
@@ -128,9 +129,9 @@ export const EventDetails = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <Title level={2} className="mb-0 max-w-xl">{event.name}</Title>
-          <Tag color={EVENT_STATUS_COLORS[event.status]} className="text-lg px-4 py-2">
-            {event.status.toUpperCase()}
-          </Tag>
+          <div className="px-4 py-2">
+            <EventStatusTag status={event.status} size="big"/>
+          </div>
         </div>
         <Space>
           <Button
@@ -188,12 +189,7 @@ export const EventDetails = () => {
                 </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Type" span={3}>
-                <Tag color={EVENT_TYPE_COLORS[event.eventType]}>
-                  {event.eventType
-                    .split('_')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ')}
-                </Tag>
+                <EventTypeTag type={event.eventType}/>
               </Descriptions.Item>
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
