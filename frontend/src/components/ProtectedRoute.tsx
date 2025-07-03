@@ -1,6 +1,6 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Spin } from 'antd';
+import {Navigate, useLocation} from "react-router-dom";
+import {useAuth} from "../contexts/AuthContext";
+import {Spin} from "antd";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -14,10 +14,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return (
       <div
         style={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
         }}
       >
         <Spin size="large" />

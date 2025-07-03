@@ -1,55 +1,55 @@
-import {useEffect, useState} from 'react';
-import {Button, Card, Descriptions, Space, Table, Typography, Modal, message, Tag} from 'antd';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import {ArrowLeftOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
+import {useEffect, useState} from "react";
+import {Button, Card, Descriptions, message, Modal, Space, Table, Tag, Typography} from "antd";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {DeleteOutlined, EditOutlined, ExclamationCircleOutlined,} from "@ant-design/icons";
 import {type Employee} from "../../types/employee.ts";
 import useApiService from "../../services/apiService.ts";
-import {Breadcrumb} from '../../components/Breadcrumb';
-import { DIET_TYPES, EMPLOYMENT_TYPES, EMPLOYMENT_TYPE_COLORS } from './EmployeeForm';
+import {Breadcrumb} from "../../components/Breadcrumb";
+import {DIET_TYPES, EMPLOYMENT_TYPE_COLORS, EMPLOYMENT_TYPES} from "./EmployeeForm";
 
 const {Title} = Typography;
 
 // Table columns for attended events
 const eventColumns = [
     {
-        title: 'Event Name',
-        dataIndex: 'eventName',
-        key: 'eventName',
+        title: "Event Name",
+        dataIndex: "eventName",
+        key: "eventName",
     },
     {
-        title: 'Date',
-        dataIndex: 'eventDate',
-        key: 'eventDate',
+        title: "Date",
+        dataIndex: "eventDate",
+        key: "eventDate",
         render: (_: any, record: any) => {
-            return new Date(record.eventDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            })
-        }
+            return new Date(record.eventDate).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            });
+        },
     },
     {
-        title: 'Type',
-        dataIndex: 'eventType',
-        key: 'eventType',
+        title: "Type",
+        dataIndex: "eventType",
+        key: "eventType",
     },
     {
-        title: 'Address',
-        dataIndex: 'eventAddress',
-        key: 'eventAddress',
+        title: "Address",
+        dataIndex: "eventAddress",
+        key: "eventAddress",
     },
     {
-        title: 'Guest Count',
-        dataIndex: 'guestCount',
-        key: 'guestCount',
+        title: "Guest Count",
+        dataIndex: "guestCount",
+        key: "guestCount",
     },
     {
-        title: 'Status',
-        dataIndex: 'confirmed',
-        key: 'confirmed',
+        title: "Status",
+        dataIndex: "confirmed",
+        key: "confirmed",
         render: (_: any, record: any) => {
-            return record.confirmed ? 'Confirmed' : 'Not Confirmed'
-        }
+            return record.confirmed ? "Confirmed" : "Not Confirmed";
+        },
     },
 ];
 
@@ -67,46 +67,58 @@ export const EmployeeDetails = () => {
                 const data = await getEmployeeById(employeeId!);
                 setEmployee(data!);
             } catch (err) {
-                console.error('Failed to fetch employee:', err);
+                console.error("Failed to fetch employee:", err);
             }
         })();
     }, [employeeId, getEmployeeById]);
 
     const basicFields = [
-        {label: 'Full Name', value: employee?.profile.fullName},
-        {label: 'Gitlab Username', value: employee?.profile.gitlabUsername},
-        {label: 'Gender', value: employee?.profile.gender ? employee.profile.gender.charAt(0).toUpperCase() + employee.profile.gender.slice(1).toLowerCase() : undefined},
-        {label: 'Role', value: employee?.profile.authorities?.map((role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase())},
+        {label: "Full Name", value: employee?.profile.fullName},
+        {label: "Gitlab Username", value: employee?.profile.gitlabUsername},
         {
-            label: 'Dietary Preferences',
+            label: "Gender",
+            value: employee?.profile.gender
+                ? employee.profile.gender.charAt(0).toUpperCase() +
+                employee.profile.gender.slice(1).toLowerCase()
+                : undefined,
+        },
+        {
+            label: "Role",
+            value: employee?.profile.authorities?.map(
+                (role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
+            ),
+        },
+        {
+            label: "Dietary Preferences",
             value: employee?.profile.dietTypes?.length
                 ? employee.profile.dietTypes.map(type => {
                     const typeObj = DIET_TYPES.find(t => t.value === type);
                     return typeObj ? typeObj.label : type;
-                  })
-                : undefined
+                })
+                : undefined,
         },
-        {label: 'Location', value: employee?.location},
+        {label: "Location", value: employee?.location},
         {
-            label: 'Employment Type',
+            label: "Employment Type",
             value: employee?.employmentType
-                ? (EMPLOYMENT_TYPES.find(t => t.value === employee.employmentType)?.label ||
-                    <Tag color={EMPLOYMENT_TYPE_COLORS[employee.employmentType]}>{employee.employmentType}</Tag>)
-                : undefined
+                ? EMPLOYMENT_TYPES.find(t => t.value === employee.employmentType)?.label || (
+                <Tag color={EMPLOYMENT_TYPE_COLORS[employee.employmentType]}>
+                    {employee.employmentType}
+                </Tag>
+            )
+                : undefined,
         },
-        {label: 'Date Joined', value: employee?.employmentStartDate},
+        {label: "Date Joined", value: employee?.employmentStartDate},
     ];
 
-    const contactFields = [
-        {label: 'Email', value: employee?.profile.email},
-    ];
+    const contactFields = [{label: "Email", value: employee?.profile.email}];
 
     // Scroll to events section if hash is #events
     useEffect(() => {
-        if (location.hash === '#events') {
-            const el = document.getElementById('events-section');
+        if (location.hash === "#events") {
+            const el = document.getElementById("events-section");
             if (el) {
-                el.scrollIntoView({behavior: 'smooth'});
+                el.scrollIntoView({behavior: "smooth"});
             }
         }
     }, [location.hash]);
@@ -118,11 +130,11 @@ export const EmployeeDetails = () => {
     const handleDeleteConfirm = async () => {
         try {
             await deleteEmployee(employeeId!);
-            message.success('Employee deleted successfully');
-            navigate('/employees');
+            message.success("Employee deleted successfully");
+            navigate("/employees");
         } catch (error) {
-            message.error('Failed to delete employee');
-            console.error('Error deleting employee:', error);
+            message.error("Failed to delete employee");
+            console.error("Error deleting employee:", error);
         } finally {
             setDeleteModalOpen(false);
         }
@@ -136,32 +148,33 @@ export const EmployeeDetails = () => {
         <div>
             <Breadcrumb
                 items={[
-                    { path: '/employees', label: 'Employees' },
-                    { path: `/employees/${employeeId}`, label: employee?.profile?.fullName || 'Employee Details' }
+                    {path: "/employees", label: "Employees"},
+                    {
+                        path: `/employees/${employeeId}`,
+                        label: employee?.profile?.fullName || "Employee Details",
+                    },
                 ]}
             />
             {/* Page Title */}
             <div className="flex justify-between items-center mb-6">
-                <Title level={2} className="m-0">{employee?.profile?.fullName || 'Employee Details'}</Title>
+                <Title level={2} className="m-0">
+                    {employee?.profile?.fullName || "Employee Details"}
+                </Title>
                 <Space>
                     <Button
                         type="primary"
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         onClick={() => navigate(`/employees/${employeeId}/edit`)}
                     >
                         Edit
                     </Button>
-                    <Button
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={showDeleteModal}
-                    >
+                    <Button danger icon={<DeleteOutlined/>} onClick={showDeleteModal}>
                         Delete
                     </Button>
                     <Modal
                         title={
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <ExclamationCircleOutlined style={{ color: '#faad14' }} />
+                            <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                                <ExclamationCircleOutlined style={{color: "#faad14"}}/>
                                 Confirm Delete
                             </div>
                         }
@@ -171,11 +184,11 @@ export const EmployeeDetails = () => {
                         onCancel={handleDeleteCancel}
                         okText="Yes, Delete"
                         cancelText="Cancel"
-                        okButtonProps={{ danger: true }}
+                        okButtonProps={{danger: true}}
                         width={400}
                     >
                         <p>Are you sure you want to delete this employee?</p>
-                        <p style={{ color: '#8c8c8c', fontSize: '14px' }}>This action cannot be undone.</p>
+                        <p style={{color: "#8c8c8c", fontSize: "14px"}}>This action cannot be undone.</p>
                     </Modal>
                 </Space>
             </div>
@@ -183,14 +196,17 @@ export const EmployeeDetails = () => {
             {/* Basic Information Section (view only) */}
             <Card title="Basic Information" style={{marginBottom: 24}}>
                 <Descriptions column={2} bordered>
-                    {basicFields.map(
-                        (field) =>
-                            <Descriptions.Item label={field.label} key={field.label}>
-                                {Array.isArray(field.value)
-                                    ? field.value.map((v, i) => <span key={i} style={{ marginRight: 4 }}>{v}</span>)
-                                    : field.value || ""}
-                            </Descriptions.Item>
-                    )}
+                    {basicFields.map(field => (
+                        <Descriptions.Item label={field.label} key={field.label}>
+                            {Array.isArray(field.value)
+                                ? field.value.map((v, i) => (
+                                    <span key={i} style={{marginRight: 4}}>
+                      {v}
+                    </span>
+                                ))
+                                : field.value || ""}
+                        </Descriptions.Item>
+                    ))}
                 </Descriptions>
             </Card>
 
@@ -198,7 +214,7 @@ export const EmployeeDetails = () => {
             <Card title="Contact Information" style={{marginBottom: 24}}>
                 <Descriptions column={1} bordered>
                     {contactFields.map(
-                        (field) =>
+                        field =>
                             field.value && (
                                 <Descriptions.Item label={field.label} key={field.label}>
                                     {field.value}

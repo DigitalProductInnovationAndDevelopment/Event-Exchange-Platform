@@ -1,7 +1,6 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +17,6 @@ public class Chair {
     private UUID id;
 
     @ManyToOne
-    private com.itestra.eep.models.Table table;
+    private TableEntity table;
 
 }

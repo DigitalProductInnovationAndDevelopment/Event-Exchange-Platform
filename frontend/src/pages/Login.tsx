@@ -1,25 +1,25 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Button, Card, message} from 'antd';
-import {useAuth} from '../contexts/AuthContext';
-import logo from '../assets/itestra_logo.png';
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {Button, Card, message} from "antd";
+import {useAuth} from "../contexts/AuthContext";
+import logo from "../assets/itestra_logo.png";
 
 export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [, setIsLoading] = useState(false);
 
-  const from = '/login_success';
+  const from = "/login_success";
 
   const onVisitorLogin = async () => {
     setIsLoading(true);
-    const values = { email: '', name: 'Visitor', roles: ['VISITOR'] };
+    const values = {email: "", name: "Visitor", roles: ["VISITOR"]};
     try {
       await login(values);
-      message.success('Welcome!');
+      message.success("Welcome!");
       navigate(from, { replace: true });
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Login failed. Please try again.');
+      message.error(error instanceof Error ? error.message : "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +34,7 @@ export const Login = () => {
             type="primary"
             className="w-48"
             onClick={() =>
-              (window.location.href = 'http://localhost:8000/oauth2/authorization/gitlab')
+                (window.location.href = "http://localhost:8000/oauth2/authorization/gitlab")
             }
           >
             Employee Login

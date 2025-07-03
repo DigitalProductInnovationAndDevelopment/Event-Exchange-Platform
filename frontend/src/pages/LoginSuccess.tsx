@@ -1,8 +1,8 @@
-import {useLocation, useNavigate} from 'react-router-dom';
-import {message} from 'antd';
-import {useAuth} from '../contexts/AuthContext';
-import {useEffect} from 'react';
-import useApiService from '../services/apiService';
+import {useLocation, useNavigate} from "react-router-dom";
+import {message} from "antd";
+import {useAuth} from "../contexts/AuthContext";
+import {useEffect} from "react";
+import useApiService from "../services/apiService";
 
 export const LoginSuccess = () => {
   const navigate = useNavigate();
@@ -10,24 +10,24 @@ export const LoginSuccess = () => {
   const { login, isAuthenticated } = useAuth();
   const { getOwnProfile } = useApiService();
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
 
   useEffect(() => {
     const doLogin = async () => {
       const ownProfile = await getOwnProfile();
 
       const values = {
-        name: ownProfile!.fullName || '',
-        email: ownProfile!.email || '',
+          name: ownProfile!.fullName || "",
+          email: ownProfile!.email || "",
         roles: ownProfile!.authorities || [],
       };
 
       try {
         await login(values);
-        message.success('Welcome!');
+          message.success("Welcome!");
         navigate(from, { replace: true });
       } catch (err) {
-        message.error('Login failed');
+          message.error("Login failed");
         console.error(err);
       }
     };

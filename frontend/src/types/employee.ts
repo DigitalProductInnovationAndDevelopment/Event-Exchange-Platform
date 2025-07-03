@@ -3,7 +3,7 @@ export interface Employee {
   employmentStartDate: string;
   employmentType: string;
   location: string;
-  projects: Project[],
+    projects: Project[];
   participations?: ParticipationDetails[];
 }
 
@@ -38,14 +38,14 @@ export interface ParticipationDetails {
 }
 
 export enum DietaryPreference {
-  VEGETARIAN = 'Vegetarian',
-  PESCATARIAN = 'Pescatarian',
-  HALAL = 'Halal',
-  KOSHER = 'Kosher',
-  VEGAN = 'Vegan',
-  LACTOSE_FREE = 'Lactose free',
-  GLUTEN_FREE = 'Gluten free',
-  KETO = 'Keto'
+    VEGETARIAN = "Vegetarian",
+    PESCATARIAN = "Pescatarian",
+    HALAL = "Halal",
+    KOSHER = "Kosher",
+    VEGAN = "Vegan",
+    LACTOSE_FREE = "Lactose free",
+    GLUTEN_FREE = "Gluten free",
+    KETO = "Keto",
 }
 
 export enum EmploymentType {
@@ -56,7 +56,7 @@ export enum EmploymentType {
 }
 
 export enum Role {
-  ADMIN = 'ADMIN',
-  EMPLOYEE = 'EMPLOYEE',
-  VISITOR = 'VISITOR',
+    ADMIN = "ADMIN",
+    EMPLOYEE = "EMPLOYEE",
+    VISITOR = "VISITOR",
 }

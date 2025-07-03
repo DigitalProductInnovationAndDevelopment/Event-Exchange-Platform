@@ -3,7 +3,6 @@ package com.itestra.eep.configs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,14 +25,15 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final Environment environment;
     private final AuthenticationSuccessHandler gitlabOAuth2SuccessHandler;
     private final OncePerRequestFilter securityContextInterceptor;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        if (Arrays.asList(environment.getActiveProfiles()).contains("local")) {
+        String profiles = System.getProperty("spring.profiles.active");
+
+        if (profiles != null && Arrays.asList(profiles.split(",")).contains("local")) {
             //  we disable auth
             http
                     .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())

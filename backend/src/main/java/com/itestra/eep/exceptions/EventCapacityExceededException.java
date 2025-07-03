@@ -6,7 +6,7 @@ import lombok.Getter;
 public class EventCapacityExceededException extends RuntimeException {
 
     public EventCapacityExceededException() {
-        super("Event capacity exceeded. There are more participants than event capacity.");
+        super("Event has more participants than its capacity!");
     }
 
     public EventCapacityExceededException(int emptySlots) {

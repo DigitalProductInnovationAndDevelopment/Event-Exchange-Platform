@@ -3,7 +3,6 @@ import {Room, RoomRender} from "../elements/Room.tsx";
 import {Wall, WallRender} from "../elements/Wall.tsx";
 import {Chair, ChairRender} from "../elements/Chair.tsx";
 
-
 export interface ElementProperties {
     id: string;
     type: string;
@@ -23,7 +22,7 @@ export interface ElementProperties {
     attachedTo?: string;
     rotation?: number;
     draggable?: boolean;
-    offset?: { dx?: number, dy?: number };
+    offset?: { dx?: number; dy?: number };
 }
 
 export const TOOLBOX_ITEMS = [
@@ -54,14 +53,16 @@ export const renderElement = (el: ElementProperties, areTextsEnabled: boolean) =
     }
 };
 
-export const getEditableParameters = (el: ElementProperties): { [key: string]: string | string[] } => {
+export const getEditableParameters = (
+    el: ElementProperties
+): { [key: string]: string | string[] } => {
     switch (el.type) {
         case "chair":
             return {
                 x: "number",
                 y: "number",
                 radius: "number",
-                color: "string"
+                color: "string",
             };
         case "rectTable":
             return {
@@ -72,8 +73,8 @@ export const getEditableParameters = (el: ElementProperties): { [key: string]: s
                 width: "number",
                 height: "number",
                 rotation: "number",
-                color: "string"
-            }
+                color: "string",
+            };
         case "circleTable":
             return {
                 name: "string",
@@ -82,7 +83,7 @@ export const getEditableParameters = (el: ElementProperties): { [key: string]: s
                 y: "number",
                 radius: "number",
                 rotation: "number",
-                color: "string"
+                color: "string",
             };
         case "wall":
             return {
@@ -90,7 +91,7 @@ export const getEditableParameters = (el: ElementProperties): { [key: string]: s
                 y1: "number",
                 x2: "number",
                 y2: "number",
-                color: "string"
+                color: "string",
             };
         case "room":
             return {
@@ -100,7 +101,7 @@ export const getEditableParameters = (el: ElementProperties): { [key: string]: s
                 width: "number",
                 height: "number",
                 rotation: "number",
-                color: "string"
+                color: "string",
             };
         default:
             return {};

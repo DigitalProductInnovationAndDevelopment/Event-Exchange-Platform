@@ -11,9 +11,8 @@ import useApiService from "../../../services/apiService.ts";
 import {useParams} from "react-router-dom";
 import {addElement, changeBuildMode} from "../actions/actions.tsx";
 
-
 function downloadURI(uri: string, name: string) {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.download = name;
     link.href = uri;
     document.body.appendChild(link);
@@ -30,7 +29,7 @@ export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
 
     // Check if there are any layers with content
     if (layers.length === 0) {
-        console.warn('No layers found');
+        console.warn("No layers found");
         return;
     }
 
@@ -40,7 +39,7 @@ export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
         .filter(rect => rect.width > 0 && rect.height > 0);
 
     if (layerRects.length === 0) {
-        console.warn('No visible content found');
+        console.warn("No visible content found");
         return;
     }
 
@@ -61,8 +60,8 @@ export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
     const exportRect = {
         x: contentRect.x - padding,
         y: contentRect.y - padding,
-        width: contentRect.width + (padding * 2),
-        height: contentRect.height + (padding * 2),
+        width: contentRect.width + padding * 2,
+        height: contentRect.height + padding * 2,
     };
 
     // Get stage position to account for any offset
@@ -102,41 +101,36 @@ export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
     }
 };
 
-const handleToolboxClick =
-    (type: string, dispatch: (arg0: {
-        type: string;
-        payload: number | Chair | Table | Wall | Room | null;
-    }) => void) => {
-        const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
-        if (!toolItem) return;
+const handleToolboxClick = (
+    type: string,
+    dispatch: (arg0: { type: string; payload: number | Chair | Table | Wall | Room | null }) => void
+) => {
+    const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
+    if (!toolItem) return;
 
-        if (type === "quickWall") {
-            dispatch(changeBuildMode(1));
-        } else {
-            dispatch(addElement(shapeFactory(type)));
-        }
+    if (type === "quickWall") {
+        dispatch(changeBuildMode(1));
+    } else {
+        dispatch(addElement(shapeFactory(type)));
+    }
+};
 
-    };
-
-
-function Toolbox({dispatch, stageRef, state}: {
-    dispatch: (action: { type: string; payload: any }) => void,
-    stageRef: React.RefObject<Konva.Stage | null>,
-    state: AppState
+function Toolbox({
+                     dispatch,
+                     stageRef,
+                     state,
+                 }: {
+    dispatch: (action: { type: string; payload: any }) => void;
+    stageRef: React.RefObject<Konva.Stage | null>;
+    state: AppState;
 }) {
     const {updateSchematics} = useApiService();
     const {schematicsId} = useParams();
 
     return (
-        <Stage
-            scaleX={1}
-            scaleY={1}
-            width={150}
-            height={window.innerHeight}
-        >
+        <Stage scaleX={1} scaleY={1} width={150} height={window.innerHeight}>
             <Layer>
                 <Group x={TOOLBOX_X} y={TOOLBOX_Y}>
-
                     <Rect
                         width={100}
                         height={TOOLBOX_ITEMS.length * 65}
@@ -149,8 +143,14 @@ function Toolbox({dispatch, stageRef, state}: {
                         shadowOffset={{x: 2, y: 2}}
                         shadowOpacity={0.3}
                     />
-                    <Text text={state.buildMode === 0 ? "Toolbox" : "Quick Wall"} x={10} y={10} fontSize={16}
-                          fontStyle="bold" fill="black"/>
+                    <Text
+                        text={state.buildMode === 0 ? "Toolbox" : "Quick Wall"}
+                        x={10}
+                        y={10}
+                        fontSize={16}
+                        fontStyle="bold"
+                        fill="black"
+                    />
 
                     {TOOLBOX_ITEMS.map((item, i) => (
                         <Group
@@ -181,17 +181,20 @@ function Toolbox({dispatch, stageRef, state}: {
                         <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold"/>
                     </Group>
 
-                    <Group y={460} onClick={() =>
-                        updateSchematics(
-                            schematicsId!,
-                            {
-                                ...state,
-                                canvasPosition: stageRef!.current!.getPosition(),
-                                scale: stageRef!.current!.scaleX()
-                            },
-                            stageRef
-                        )
-                    }>
+                    <Group
+                        y={460}
+                        onClick={() =>
+                            updateSchematics(
+                                schematicsId!,
+                                {
+                                    ...state,
+                                    canvasPosition: stageRef!.current!.getPosition(),
+                                    scale: stageRef!.current!.scaleX(),
+                                },
+                                stageRef
+                            )
+                        }
+                    >
                         <Rect
                             width={80}
                             height={50}
@@ -204,13 +207,9 @@ function Toolbox({dispatch, stageRef, state}: {
                         <Text text="Save" x={25} y={15} fill="white" fontSize={10} fontStyle="bold"/>
                     </Group>
                 </Group>
-
-
             </Layer>
         </Stage>
     );
 }
 
 export default Toolbox;
-
-

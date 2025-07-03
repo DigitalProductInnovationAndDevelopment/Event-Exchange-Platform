@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type {Employee, ParticipationDetails, Profile} from 'types/employee.ts';
-import type {Event, FileEntity, SchematicsEntity} from 'types/event.ts';
-import toast from 'react-hot-toast';
-import React, {useCallback} from 'react';
-import {useAuth} from '../contexts/AuthContext.tsx';
+import type {Employee, ParticipationDetails, Profile} from "types/employee.ts";
+import type {Event, FileEntity, SchematicsEntity} from "types/event.ts";
+import toast from "react-hot-toast";
+import React, {useCallback} from "react";
+import {useAuth} from "../contexts/AuthContext.tsx";
 import type {AppState} from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
 import {handleExport} from "../components/canvas/elements/Toolbox.tsx";
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = "http://localhost:8000";
 
 export default function useApiService() {
     const {logout} = useAuth();
@@ -22,10 +22,10 @@ export default function useApiService() {
 
             const config: RequestInit = {
                 headers: {
-                    ...(isFormData ? {} : {'Content-Type': 'application/json'}),
+                    ...(isFormData ? {} : {"Content-Type": "application/json"}),
                     ...(options.headers || {}),
                 },
-                credentials: 'include',
+                credentials: "include",
                 ...options,
             };
 
@@ -34,37 +34,37 @@ export default function useApiService() {
             try {
                 response = await fetch(url, config);
             } catch (error) {
-                console.error('API request failed:', error);
+                console.error("API request failed:", error);
                 throw error;
             }
 
             if (response.status === 400) {
                 toast.error(await response.text());
-                throw new Error('Bad request');
+                throw new Error("Bad request");
             } else if (response.status === 401) {
-                toast.error('Access denied. You are logged out.');
+                toast.error("Access denied. You are logged out.");
                 logout();
-                throw new Error('Access denied. You are logged out.');
+                throw new Error("Access denied. You are logged out.");
             } else if (response.status === 403) {
                 toast.error("Access denied. You don't have permission for this action.");
                 throw new Error("Access denied. You don't have permission for this action.");
             } else if (response.status >= 500 || response.status === 409) {
                 const errorMessage = await response.text();
                 toast.error(errorMessage);
-                throw new Error('Server error. Please try again later.');
+                throw new Error("Server error. Please try again later.");
             }
 
-            const contentType = response.headers.get('Content-Type') ?? '';
+            const contentType = response.headers.get("Content-Type") ?? "";
 
-            if (contentType.includes('application/json')) {
+            if (contentType.includes("application/json")) {
                 return (await response.json()) as T;
             }
 
             if (
-                contentType.includes('application/octet-stream') ||
-                contentType.startsWith('application/') ||
-                contentType.startsWith('image/') ||
-                contentType.startsWith('video/')
+                contentType.includes("application/octet-stream") ||
+                contentType.startsWith("application/") ||
+                contentType.startsWith("image/") ||
+                contentType.startsWith("video/")
             ) {
                 return (await response.blob()) as T;
             }
@@ -76,12 +76,12 @@ export default function useApiService() {
 
     const logoutRequest = useCallback(async () => {
         return await request(`/profile/logout`, {
-            method: 'POST',
+            method: "POST",
         });
     }, [request]);
 
     const getOwnProfile = useCallback(async (): Promise<Profile> => {
-        return await request<Profile>('/profile/own');
+        return await request<Profile>("/profile/own");
     }, [request]);
 
     const getEventById = useCallback(
@@ -108,14 +108,14 @@ export default function useApiService() {
     const createEvent = useCallback(
         async (eventData: Event): Promise<Event | null> => {
             try {
-                const response = await request<Event>('/events', {
-                    method: 'POST',
+                const response = await request<Event>("/events", {
+                    method: "POST",
                     body: JSON.stringify(eventData),
                 });
-                toast.success('Event created successfully!');
+                toast.success("Event created successfully!");
                 return response;
             } catch (error) {
-                console.error('Failed to create event', error);
+                console.error("Failed to create event", error);
                 return null;
             }
         },
@@ -126,13 +126,13 @@ export default function useApiService() {
         async (id: string, eventData: Event): Promise<Event | null> => {
             try {
                 const response = await request<Event>(`/events/${id}`, {
-                    method: 'PUT',
+                    method: "PUT",
                     body: JSON.stringify(eventData),
                 });
-                toast.success('Event edited successfully!');
+                toast.success("Event edited successfully!");
                 return response;
             } catch (error) {
-                console.error('Failed to update event', error);
+                console.error("Failed to update event", error);
                 return null;
             }
         },
@@ -143,12 +143,12 @@ export default function useApiService() {
         async (id: string) => {
             try {
                 const response = await request(`/events/${id}`, {
-                    method: 'DELETE',
+                    method: "DELETE",
                 });
-                toast.success('Event is deleted successfully!');
+                toast.success("Event is deleted successfully!");
                 return response;
             } catch (err) {
-                toast.error('Event deletion failed');
+                toast.error("Event deletion failed");
             }
         },
         [request]
@@ -157,14 +157,14 @@ export default function useApiService() {
     const fileUpload = useCallback(
         async (formData: FormData) => {
             try {
-                const response = await request<string>('/files/upload', {
-                    method: 'POST',
+                const response = await request<string>("/files/upload", {
+                    method: "POST",
                     body: formData,
                 });
-                toast.success('File upload is successful!');
+                toast.success("File upload is successful!");
                 return response;
             } catch (err) {
-                toast.error('File upload failed');
+                toast.error("File upload failed");
             }
         },
         [request]
@@ -176,16 +176,16 @@ export default function useApiService() {
                 const blob = await request<Blob>(`/files/${file.fileId}`);
 
                 const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
+                const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute('download', file.name);
+                link.setAttribute("download", file.name);
                 document.body.appendChild(link);
                 link.click();
                 link.remove();
                 window.URL.revokeObjectURL(url);
             } catch (err) {
                 console.error(err);
-                toast.error('Failed to download file');
+                toast.error("Failed to download file");
             }
         },
         [request]
@@ -195,12 +195,12 @@ export default function useApiService() {
         async (id: string) => {
             try {
                 const response = await request(`/files/${id}`, {
-                    method: 'DELETE',
+                    method: "DELETE",
                 });
-                toast.success('File is deleted successfully!');
+                toast.success("File is deleted successfully!");
                 return response;
             } catch (err) {
-                toast.error('File deletion failed');
+                toast.error("File deletion failed");
             }
         },
         [request]
@@ -215,29 +215,31 @@ export default function useApiService() {
         }
     }, [request]);
 
-
-    const initiateSchematics = useCallback(async (eventId: string): Promise<SchematicsEntity | null> => {
-        try {
-            const response = await request(`/schematics`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    eventId: eventId,
-                    state: JSON.stringify({
-                        buildMode: 0,
-                        elements: [],
-                        groups: [],
-                        canvasPosition: {x: 0, y: 0},
-                        scale: 1
-                    } as AppState),
-                }),
-            });
-            toast.success('Schematics saved successfully!');
-            return response;
-        } catch (err) {
-            toast.error('Schematics save failed');
-            return null;
-        }
-    }, [request]);
+    const initiateSchematics = useCallback(
+        async (eventId: string): Promise<SchematicsEntity | null> => {
+            try {
+                const response = await request(`/schematics`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        eventId: eventId,
+                        state: JSON.stringify({
+                            buildMode: 0,
+                            elements: [],
+                            groups: [],
+                            canvasPosition: {x: 0, y: 0},
+                            scale: 1,
+                        } as AppState),
+                    }),
+                });
+                toast.success("Schematics saved successfully!");
+                return response;
+            } catch (err) {
+                toast.error("Schematics save failed");
+                return null;
+            }
+        },
+        [request]
+    );
 
     const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null>): Promise<SchematicsEntity | null> => {
         try {
@@ -290,33 +292,36 @@ export default function useApiService() {
         [request]
     );
 
-    const getEmployeeById = useCallback(async (id: string) => {
-        try {
-            return await request<Employee>(`/profile/employee/${id}`);
-        } catch (err) {
-            toast.error('Employee fetch failed');
-        }
-    }, [request]);
+    const getEmployeeById = useCallback(
+        async (id: string) => {
+            try {
+                return await request<Employee>(`/profile/employee/${id}`);
+            } catch (err) {
+                toast.error("Employee fetch failed");
+            }
+        },
+        [request]
+    );
 
     const getEmployees = useCallback(async () => {
         try {
             return await request<Employee[]>(`/profile/employees`);
         } catch (err) {
-            toast.error('Employee fetch all operation failed');
+            toast.error("Employee fetch all operation failed");
         }
     }, [request]);
 
     const createEmployee = useCallback(
         async (employeeData: Employee): Promise<Employee | null> => {
             try {
-                const response = await request<Employee>('/profile/employee', {
-                    method: 'POST',
+                const response = await request<Employee>("/profile/employee", {
+                    method: "POST",
                     body: JSON.stringify(employeeData),
                 });
-                toast.success('Employee created successfully!');
+                toast.success("Employee created successfully!");
                 return response;
             } catch (error) {
-                console.error('Failed to create employee', error);
+                console.error("Failed to create employee", error);
                 return null;
             }
         },
@@ -327,13 +332,13 @@ export default function useApiService() {
         async (id: string, employeeData: Employee): Promise<Employee | null> => {
             try {
                 const response = await request<Employee>(`/profile/employee/${id}`, {
-                    method: 'PUT',
+                    method: "PUT",
                     body: JSON.stringify(employeeData),
                 });
-                toast.success('Employee edited successfully!');
+                toast.success("Employee edited successfully!");
                 return response;
             } catch (error) {
-                console.error('Failed to update employee data', error);
+                console.error("Failed to update employee data", error);
                 return null;
             }
         },
@@ -344,41 +349,46 @@ export default function useApiService() {
         async (id: string) => {
             try {
                 const response = await request(`/profile/employee/${id}`, {
-                    method: 'DELETE',
+                    method: "DELETE",
                 });
-                toast.success('Employee is deleted successfully!');
+                toast.success("Employee is deleted successfully!");
                 return response;
             } catch (err) {
-                toast.error('Employee deletion failed');
+                toast.error("Employee deletion failed");
             }
         },
         [request]
     );
 
-
-    const getEventParticipants = useCallback(async (eventId: string) => {
-        try {
-            return await request<ParticipationDetails[]>(`/events/${eventId}/participants`);
-        } catch (err) {
-            toast.error('Fetch operation for the participants of the event failed');
-        }
-    }, [request]);
+    const getEventParticipants = useCallback(
+        async (eventId: string) => {
+            try {
+                return await request<ParticipationDetails[]>(`/events/${eventId}/participants`);
+            } catch (err) {
+                toast.error("Fetch operation for the participants of the event failed");
+            }
+        },
+        [request]
+    );
 
     const addParticipant = useCallback(
         async (participation: {
-            guestCount: number,
-            eventId: string,
-            employeeId: string
+            guestCount: number;
+            eventId: string;
+            employeeId: string;
         }): Promise<ParticipationDetails | null> => {
             try {
-                const response = await request<ParticipationDetails>(`/events/${participation.eventId}/participants`, {
-                    method: 'POST',
-                    body: JSON.stringify(participation),
-                });
-                toast.success('Participant added successfully!');
+                const response = await request<ParticipationDetails>(
+                    `/events/${participation.eventId}/participants`,
+                    {
+                        method: "POST",
+                        body: JSON.stringify(participation),
+                    }
+                );
+                toast.success("Participant added successfully!");
                 return response;
             } catch (error) {
-                console.error('Failed to add participant to the event', error);
+                console.error("Failed to add participant to the event", error);
                 return null;
             }
         },
@@ -387,19 +397,22 @@ export default function useApiService() {
 
     const updateParticipant = useCallback(
         async (participation: {
-            guestCount: number,
-            eventId: string,
-            employeeId: string
+            guestCount: number;
+            eventId: string;
+            employeeId: string;
         }): Promise<ParticipationDetails | null> => {
             try {
-                const response = await request<ParticipationDetails>(`/events/${participation.eventId}/participants`, {
-                    method: 'PUT',
-                    body: JSON.stringify(participation),
-                });
-                toast.success('Participant updated successfully!');
+                const response = await request<ParticipationDetails>(
+                    `/events/${participation.eventId}/participants`,
+                    {
+                        method: "PUT",
+                        body: JSON.stringify(participation),
+                    }
+                );
+                toast.success("Participant updated successfully!");
                 return response;
             } catch (error) {
-                console.error('Failed to update participant to the event', error);
+                console.error("Failed to update participant to the event", error);
                 return null;
             }
         },
@@ -410,12 +423,12 @@ export default function useApiService() {
         async (id: string) => {
             try {
                 const response = await request(`/events/participants/${id}`, {
-                    method: 'DELETE',
+                    method: "DELETE",
                 });
-                toast.success('Event participant is deleted successfully!');
+                toast.success("Event participant is deleted successfully!");
                 return response;
             } catch (err) {
-                toast.error('Event participant deletion failed');
+                toast.error("Event participant deletion failed");
             }
         },
         [request]
@@ -445,6 +458,6 @@ export default function useApiService() {
         getEventParticipants,
         addParticipant,
         updateParticipant,
-        deleteParticipation
+        deleteParticipation,
     };
 }

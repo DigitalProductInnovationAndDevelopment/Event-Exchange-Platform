@@ -2,17 +2,18 @@ import type {AppState} from "../reducers/CanvasReducer.tsx";
 import React from "react";
 import {getEditableParameters} from "../utils/constants.tsx";
 import {updateElementSpecificField} from "../../../components/canvas/actions/actions.tsx";
-import "./ElementInspector.css"
+import "./ElementInspector.css";
 
-
-export function ElementInspector({dispatch, state, selectedIds}:
-                                 {
-                                     dispatch: (action: { type: string; payload: object }) => void,
-                                     state: AppState,
-                                     selectedIds: string[],
-                                     setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>
-                                 }) {
-
+export function ElementInspector({
+                                     dispatch,
+                                     state,
+                                     selectedIds,
+                                 }: {
+    dispatch: (action: { type: string; payload: object }) => void;
+    state: AppState;
+    selectedIds: string[];
+    setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
     return (
         <div
             style={{
@@ -27,7 +28,7 @@ export function ElementInspector({dispatch, state, selectedIds}:
                 borderRadius: "8px",
                 padding: "12px",
                 zIndex: 1000,
-                boxShadow: "0px 0px 10px rgba(0,0,0,0.1)"
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
             }}
         >
             <h4 style={{marginTop: 0}}>Edit Element</h4>
@@ -52,7 +53,7 @@ export function ElementInspector({dispatch, state, selectedIds}:
                                                 <select
                                                     className="selectStyle"
                                                     value={value as string}
-                                                    onChange={(e) =>
+                                                    onChange={e =>
                                                         dispatch(
                                                             updateElementSpecificField({
                                                                 id: selectedIds[0],
@@ -79,12 +80,15 @@ export function ElementInspector({dispatch, state, selectedIds}:
                                                 className="inputStyle"
                                                 type={paramType}
                                                 value={value}
-                                                onChange={(e) =>
+                                                onChange={e =>
                                                     dispatch(
                                                         updateElementSpecificField({
                                                             id: selectedIds[0],
                                                             key,
-                                                            value: paramType === "number" ? parseFloat(e.target.value) : e.target.value,
+                                                            value:
+                                                                paramType === "number"
+                                                                    ? parseFloat(e.target.value)
+                                                                    : e.target.value,
                                                         })
                                                     )
                                                 }
@@ -98,7 +102,6 @@ export function ElementInspector({dispatch, state, selectedIds}:
                     </div>
                 );
             })()}
-
         </div>
     );
 }

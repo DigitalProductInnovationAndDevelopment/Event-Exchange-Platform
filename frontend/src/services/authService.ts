@@ -1,6 +1,6 @@
-import type { User } from '../types/auth';
+import type {User} from "../types/auth";
 
-const AUTH_KEY = 'auth_user';
+const AUTH_KEY = "auth_user";
 
 export const authService = {
   login: async (user: User): Promise<User> => {

@@ -34,4 +34,3 @@ export const WallRender = (wall: Wall) => {
         />
     );
 };
-

@@ -1,7 +1,7 @@
-import React from 'react';
-import {Button, List, Popconfirm, Space, Typography} from 'antd';
-import {DeleteOutlined, DownloadOutlined} from '@ant-design/icons';
-import type {FileEntity} from 'types/event.ts';
+import React from "react";
+import {Button, List, Popconfirm, Space, Typography} from "antd";
+import {DeleteOutlined, DownloadOutlined} from "@ant-design/icons";
+import type {FileEntity} from "types/event.ts";
 
 const { Text } = Typography;
 

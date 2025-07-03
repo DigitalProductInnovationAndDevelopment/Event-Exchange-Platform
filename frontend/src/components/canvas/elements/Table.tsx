@@ -16,7 +16,7 @@ export const TABLE_TYPES = {
         label: "Rect Table",
         color: "#8B4513",
         width: 80,
-        height: 50
+        height: 50,
     },
     CIRCLE: {
         id: "",
@@ -31,8 +31,8 @@ export const TABLE_TYPES = {
         type: "circleTable",
         label: "Circle Table",
         color: "#A0522D",
-        radius: 40
-    }
+        radius: 40,
+    },
 };
 
 export class Table implements ElementProperties {
@@ -67,15 +67,13 @@ export class Table implements ElementProperties {
         this.attachedChairs = [];
         this.rotation = 0;
     }
-
-
 }
 
 export function TableRender(table: Table, areTextsEnabled: boolean) {
     return table.type === "circleTable" ? (
         <Group>
             <Circle radius={table.radius} fill={table.color || "#8B4513"}/>
-            {areTextsEnabled &&
+            {areTextsEnabled && (
                 <Text
                     text={`name: ${table.name}\nr: ${table.radius?.toFixed(2)}\nChairs: ${table.attachedChairs.length}`}
                     fill="white"
@@ -83,17 +81,12 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
                     x={-(table.radius ?? 0) / 2}
                     y={-(table.radius ?? 0) / 2}
                 />
-            }
+            )}
         </Group>
-
     ) : (
         <Group>
-            <Rect
-                width={table.width}
-                height={table.height}
-                fill={table.color || "#8B4513"}
-            />
-            {areTextsEnabled &&
+            <Rect width={table.width} height={table.height} fill={table.color || "#8B4513"}/>
+            {areTextsEnabled && (
                 <Text
                     text={`name: ${table.name}\nw: ${table.width?.toFixed(2)}\nh: ${table.height?.toFixed(2)}\nChairs: ${table.attachedChairs.length}`}
                     fill="white"
@@ -102,8 +95,7 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
                     width={table.width}
                     padding={4}
                 />
-            }
+            )}
         </Group>
-
     );
 }
