@@ -21,7 +21,7 @@ public class Employee {
     private UUID id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
@@ -35,7 +35,7 @@ public class Employee {
     @Column(name = "employment_type")
     private EmploymentType employmentType;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", orphanRemoval = true)
     private List<Participation> participations = new LinkedList<>();
 
     @ManyToMany
