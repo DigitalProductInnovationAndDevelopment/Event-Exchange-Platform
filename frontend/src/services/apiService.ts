@@ -248,7 +248,7 @@ export default function useApiService() {
                 }),
             });
             if (stageRef && stageRef!.current) {
-                const dataUrl = handleExport(stageRef);
+                const dataUrl = await handleExport(stageRef);
                 const arr = dataUrl!.split(',');
                 const mime = arr[0].match(/:(.*?);/)![1];
                 const bstr = atob(arr[1]);

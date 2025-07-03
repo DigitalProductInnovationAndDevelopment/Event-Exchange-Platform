@@ -12,14 +12,15 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import { useEffect, useState } from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Breadcrumb} from '../../components/Breadcrumb';
+import React, {useEffect, useState} from 'react';
 
-import type { Event } from '../../types/event';
-import { EVENT_TYPE_COLORS } from '../../types/event';
+import type {Event, EventType} from '../../types/event';
+import {EVENT_TYPE_COLORS} from '../../types/event';
 import dayjs from 'dayjs';
 import useApiService from '../../services/apiService.ts';
+import {EventTypeTag} from "../../components/EventTypeTag.tsx";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -128,12 +129,9 @@ export const EventEdit = () => {
                     noStyle
                   >
                     <Select
-                      options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
-                        value,
-                        label: value
-                          .split('-')
-                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                          .join(' '),
+                        options={Object.entries(EVENT_TYPE_COLORS).map(([key, value]) => ({
+                          label: <EventTypeTag type={key as EventType}/>,
+                          value: key,
                       }))}
                     />
                   </Form.Item>

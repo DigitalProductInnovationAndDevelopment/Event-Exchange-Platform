@@ -80,7 +80,7 @@ export const AppContainer = () => {
               colorTextBase: darkMode ? '#ffffff' : '#000000',
               colorBgLayout: darkMode ? '#000000' : '#ffffff',
               fontFamily: 'Inter, sans-serif',
-              borderRadius: 6,
+              borderRadius: 16,
             },
 
             components: {

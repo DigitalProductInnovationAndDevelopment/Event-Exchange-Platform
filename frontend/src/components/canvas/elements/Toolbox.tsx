@@ -12,6 +12,47 @@ import {useParams} from "react-router-dom";
 import {addElement, changeBuildMode} from "../actions/actions.tsx";
 
 
+function makeBackgroundWhite(uri: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+
+        img.onload = function () {
+            console.log("Image loaded", img.width, img.height);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                return reject(new Error("Failed to get canvas context"));
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.drawImage(img, 0, 0);
+
+            try {
+                const jpegUri = canvas.toDataURL('image/jpeg', 2);
+                console.log("Generated JPEG length:", jpegUri.length);
+                resolve(jpegUri);
+            } catch (e) {
+                reject(e);
+            }
+        };
+
+        img.onerror = function (err) {
+            console.error("Image failed to load", err);
+            reject(new Error("Failed to load image"));
+        };
+
+        img.src = uri;
+    });
+}
+
+
 function downloadURI(uri: string, name: string) {
     const link = document.createElement('a');
     link.download = name;
@@ -21,7 +62,7 @@ function downloadURI(uri: string, name: string) {
     document.body.removeChild(link);
 }
 
-export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
+export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>) => {
 
     if (!stageRef.current) return;
 
@@ -65,39 +106,24 @@ export const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
         height: contentRect.height + (padding * 2),
     };
 
-    // Get stage position to account for any offset
-    const stagePosition = stage.getPosition();
-    const stageSize = stage.getSize();
-
-    // Create a new layer with white background rectangle
-    const backgroundLayer = new Konva.Layer();
-    const exportRectangle = new Konva.Rect({
-        x: -stagePosition.x - (padding * 2),
-        y: -stagePosition.y - (padding * 2),
-        width: stageSize.width / stageRef.current.scaleX(),
-        height: stageSize.height / stageRef.current.scaleY(),
-        fill: 'white',
-        listening: false,
-    });
-
-    backgroundLayer.add(exportRectangle);
-    stage.add(backgroundLayer);
-    backgroundLayer.moveToBottom(); // Make it the first layer
-
     try {
-        return stage.toDataURL({
+        return await makeBackgroundWhite(stage.toDataURL({
             x: exportRect.x,
             y: exportRect.y,
             width: exportRect.width,
             height: exportRect.height,
             pixelRatio: 2,
-        });
+        }))
+            .then((jpegUri) => {
+                console.log("Converted image URI:", jpegUri);
+                return jpegUri;
+            })
+            .catch((err) => {
+                console.error("Error processing image:", err);
+            });
 
     } catch (error) {
         console.error('Export failed:', error);
-    } finally {
-        // remove the background layer
-        backgroundLayer.destroy();
     }
 };
 
@@ -166,8 +192,8 @@ function Toolbox({dispatch, stageRef, state}: {
                         </Group>
                     ))}
 
-                    <Group y={400} onClick={() => {
-                        const uri = handleExport(stageRef);
+                    <Group y={400} onClick={async () => {
+                        const uri = await handleExport(stageRef);
                         downloadURI(uri!, 'stage.jpeg');
                     }}>
                         <Rect
