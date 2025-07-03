@@ -27,7 +27,9 @@ const {Title} = Typography;
 function KonvaCanvas() {
     const {state, dispatch} = useCanvas();
     const stageRef = useRef<Konva.Stage | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
     const [scale, setScale] = useState(1);
+    const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
     const [quickWallCoordinates, setQuickWallCoordinates] = useState<{
         x1?: number;
         y1?: number;
@@ -64,6 +66,23 @@ function KonvaCanvas() {
 
     useEffect(() => {
         window.scrollTo(0, 0); // we have to scroll to top-left corner of the page, otherwise it looks bad
+    }, []);
+
+    // Measure container size
+    useEffect(() => {
+        const updateContainerSize = () => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setContainerSize({
+                    width: rect.width,
+                    height: rect.height
+                });
+            }
+        };
+
+        updateContainerSize();
+        window.addEventListener('resize', updateContainerSize);
+        return () => window.removeEventListener('resize', updateContainerSize);
     }, []);
 
     const isSelecting = useRef(false);
@@ -444,80 +463,82 @@ function KonvaCanvas() {
                 <Toolbox dispatch={dispatch} stageRef={stageRef} state={state}/>
 
                 {/* main Canvas */}
-                <Stage
-                    scaleX={scale}
-                    scaleY={scale}
-                    onWheel={handleWheel}
-                    draggable={!isSelecting.current}
-                    ref={stageRef}
-                    width={window.innerWidth - 150}
-                    height={window.innerHeight}
-                    onMouseDown={handleMouseDown}
-                    onMousemove={handleMouseMove}
-                    onMouseup={handleMouseUp}
-                >
+                <div ref={containerRef} style={{ flex: 1, position: 'relative' }}>
+                    <Stage
+                        scaleX={scale}
+                        scaleY={scale}
+                        onWheel={handleWheel}
+                        draggable={!isSelecting.current}
+                        ref={stageRef}
+                        width={containerSize.width}
+                        height={containerSize.height}
+                        onMouseDown={handleMouseDown}
+                        onMousemove={handleMouseMove}
+                        onMouseup={handleMouseUp}
+                    >
 
-                    <Layer>
+                        <Layer>
 
-                        {/* this is where we display elements */}
-                        {state.elements?.map((el) => {
-                            return (
-                                <Group
-                                    key={el.id}
-                                    id={el.id}
-                                    x={el.x}
-                                    y={el.y}
-                                    draggable={el.draggable}
-                                    rotation={el.rotation}
-                                    onDblClick={(e) => handleDoubleClickOnElement(e, el)}
-                                    onDragMove={(e) => handleDragMove(e, el)}
-                                    onDragEnd={(e) => handleDragEnd(e, el)}
-                                    ref={node => {
-                                        if (node) {
-                                            rectRefs.current.set(el.id, node);
-                                        }
-                                    }}
-                                >
-                                    {renderElement(el, true)}
+                            {/* this is where we display elements */}
+                            {state.elements?.map((el) => {
+                                return (
+                                    <Group
+                                        key={el.id}
+                                        id={el.id}
+                                        x={el.x}
+                                        y={el.y}
+                                        draggable={el.draggable}
+                                        rotation={el.rotation}
+                                        onDblClick={(e) => handleDoubleClickOnElement(e, el)}
+                                        onDragMove={(e) => handleDragMove(e, el)}
+                                        onDragEnd={(e) => handleDragEnd(e, el)}
+                                        ref={node => {
+                                            if (node) {
+                                                rectRefs.current.set(el.id, node);
+                                            }
+                                        }}
+                                    >
+                                        {renderElement(el, true)}
+                                    </Group>
+                                );
+                            })}
+
+                            {/* transformer for all selected shapes. this is what we use to scale up or shrink the shapes */}
+                            <Transformer
+                                ref={transformerRef}
+                                boundBoxFunc={(_oldBox, newBox) => {
+                                    return newBox;
+                                }}
+                                onTransformEnd={handleTransformEnd}
+                            />
+
+                            {/* Selection rectangle */}
+                            {selectionRectangle.visible && (
+                                <Group>
+                                    <Rect
+                                        x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                                        y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                                        width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                                        height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                                        fill="rgba(0,0,255,0.5)"
+                                    />
+                                    <Text
+                                        text={`start: ${selectionRectangle.x1.toFixed(2)}:${selectionRectangle.y1.toFixed(2)}\nend: ${selectionRectangle.x2.toFixed(2)}:${selectionRectangle.y2.toFixed(2)}`}
+                                        x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                                        y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                                        width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                                        height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                                        fill="white"
+                                        fontSize={12}
+                                        align="center"
+                                        verticalAlign="middle"
+                                    />
                                 </Group>
-                            );
-                        })}
+                            )}
 
-                        {/* transformer for all selected shapes. this is what we use to scale up or shrink the shapes */}
-                        <Transformer
-                            ref={transformerRef}
-                            boundBoxFunc={(_oldBox, newBox) => {
-                                return newBox;
-                            }}
-                            onTransformEnd={handleTransformEnd}
-                        />
-
-                        {/* Selection rectangle */}
-                        {selectionRectangle.visible && (
-                            <Group>
-                                <Rect
-                                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                    fill="rgba(0,0,255,0.5)"
-                                />
-                                <Text
-                                    text={`start: ${selectionRectangle.x1.toFixed(2)}:${selectionRectangle.y1.toFixed(2)}\nend: ${selectionRectangle.x2.toFixed(2)}:${selectionRectangle.y2.toFixed(2)}`}
-                                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                    fill="white"
-                                    fontSize={12}
-                                    align="center"
-                                    verticalAlign="middle"
-                                />
-                            </Group>
-                        )}
-
-                    </Layer>
-                </Stage>
+                        </Layer>
+                    </Stage>
+                </div>
 
                 {/*<StagePreview state={state} mainStage={stageRef.current!}></StagePreview>*/}
 

@@ -75,7 +75,7 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       {/* Breadcrumb navigation */}
       <Breadcrumb
         items={[
@@ -99,9 +99,12 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
       {/* Main content: seat map and unallocated employees list */}
       <Row gutter={16}>
         <Col span={18}>
-          <Card title="Seat Map (Drag to Adjust)" className="mb-6">
-            {/* Visual seat map, supports drag and drop if implemented in KonvaCanvas */}
-            <KonvaCanvas />
+        <Card className="mb-6">
+            <div style={{ height: '600px', overflow: 'hidden' }}>
+              <CanvasProvider initialState={schematics.state}>
+                <KonvaCanvas />
+              </CanvasProvider>
+            </div>
           </Card>
         </Col>
         <Col span={6}>
