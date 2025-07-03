@@ -101,9 +101,7 @@ const SeatAllocationContent = ({ eventId, eventName, schematics, participants }:
         <Col span={18}>
         <Card className="mb-6">
             <div style={{ height: '600px', overflow: 'hidden' }}>
-              <CanvasProvider initialState={schematics.state}>
-                <KonvaCanvas />
-              </CanvasProvider>
+              <KonvaCanvas />
             </div>
           </Card>
         </Col>

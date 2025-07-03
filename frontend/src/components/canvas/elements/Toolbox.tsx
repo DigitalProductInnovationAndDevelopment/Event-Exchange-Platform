@@ -84,12 +84,14 @@ const handleToolboxClick =
     (type: string, dispatch: (arg0: {
         type: string;
         payload: number | Chair | Table | Wall | Room | null;
-    }) => void) => {
+    }) => void, currentBuildMode: number) => {
         const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
         if (!toolItem) return;
 
         if (type === "quickWall") {
-            dispatch(changeBuildMode(1));
+            // Toggle quickwall mode: if already in build mode 1, switch back to 0
+            const newBuildMode = currentBuildMode === 1 ? 0 : 1;
+            dispatch(changeBuildMode(newBuildMode));
         } else {
             dispatch(addElement(shapeFactory(type)));
         }
@@ -135,7 +137,7 @@ function Toolbox({dispatch, stageRef, state}: {
                             key={item.type}
                             x={10}
                             y={i * 60 + 40}
-                            onClick={() => handleToolboxClick(item.type, dispatch)}
+                            onClick={() => handleToolboxClick(item.type, dispatch, state.buildMode)}
                             cursor="pointer"
                         >
                             <Rect width={80} height={40} fill="#ddd" stroke="#999" cornerRadius={6}/>

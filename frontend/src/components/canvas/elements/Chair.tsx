@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import {Circle} from "react-konva";
+import {Circle, Text} from "react-konva";
 import type {ElementProperties} from "components/canvas/utils/constants.tsx";
 
 export class Chair implements ElementProperties {
@@ -12,6 +12,8 @@ export class Chair implements ElementProperties {
     attachedTo: string | undefined;
     draggable: boolean;
     offset: { dx: number; dy: number };
+    employeeId?: string;
+    employeeName?: string;
 
     constructor() {
         this.id = uuidv4();
@@ -23,16 +25,31 @@ export class Chair implements ElementProperties {
         this.attachedTo = undefined;
         this.draggable = true;
         this.offset = {dx: 0, dy: 0};
+        this.employeeId = undefined;
+        this.employeeName = undefined;
     }
 
 }
 
 export function ChairRender(chair: Chair) {
     return (
-        <Circle
-            radius={chair.radius || 10}
-            fill={chair.color || "#888"}
-        />
+        <>
+            <Circle
+                radius={chair.radius || 10}
+                fill={chair.color || "#888"}
+            />
+            {chair.employeeName && (
+                <Text
+                    text={chair.employeeName}
+                    x={-chair.radius - 5}
+                    y={-chair.radius - 15}
+                    fontSize={10}
+                    fill="black"
+                    align="center"
+                    width={chair.radius * 2 + 10}
+                />
+            )}
+        </>
     );
 }
 

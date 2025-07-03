@@ -61,7 +61,9 @@ export const getEditableParameters = (el: ElementProperties): { [key: string]: s
                 x: "number",
                 y: "number",
                 radius: "number",
-                color: "string"
+                color: "string",
+                employeeId: "string",
+                employeeName: "string"
             };
         case "rectTable":
             return {
