@@ -53,7 +53,6 @@ public class EventUpdateDTO implements Serializable {
     @Getter
     @Setter
     public static class AddressCreateDTO implements Serializable {
-        @Nullable
         @PositiveOrZero
         int postalCode;
 
@@ -65,10 +64,8 @@ public class EventUpdateDTO implements Serializable {
         @Size(message = "City field should be shorter than 255 characters", max = 255)
         String city;
 
-        @Nullable
         double latitude;
 
-        @Nullable
         double longitude;
 
         @Nullable

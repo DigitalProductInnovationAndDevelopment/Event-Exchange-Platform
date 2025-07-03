@@ -1,7 +1,6 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +34,7 @@ public class Participation {
 
     @Nullable
     @OneToOne
-    private com.itestra.eep.models.Table table;
+    private TableEntity table;
 
 }
 
