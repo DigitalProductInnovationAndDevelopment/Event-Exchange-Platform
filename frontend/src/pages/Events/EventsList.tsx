@@ -4,6 +4,7 @@ import {
   Carousel,
   Col,
   DatePicker,
+  Image,
   Input,
   Row,
   Select,
@@ -13,15 +14,15 @@ import {
   Tag,
   Typography,
 } from 'antd';
-import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined, } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import type { ColumnsType } from 'antd/es/table';
-import type { Dayjs } from 'dayjs';
+import {AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined,} from '@ant-design/icons';
+import {useNavigate} from 'react-router-dom';
+import {useEffect, useMemo, useState} from 'react';
+import {Breadcrumb} from '../../components/Breadcrumb';
+import type {ColumnsType} from 'antd/es/table';
+import type {Dayjs} from 'dayjs';
 import dayjs from 'dayjs';
-import type { Event, EventStatus, EventType, FileEntity } from '../../types/event';
-import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from '../../types/event';
+import type {Event, EventStatus, EventType, FileEntity} from '../../types/event';
+import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService.ts';
 import "./carousel_arrows.css";
 
@@ -250,19 +251,28 @@ export const EventsList = () => {
                                 return (
                                   <Carousel dots={false} arrows={filteredImages.length > 1}>
                                     {filteredImages.map((file: FileEntity) => (
-                                      <div key={file.fileId} className="px-8"
-                                      >
-                                        <Card>
-                                          <img
-                                            src={`http://localhost:8000/files/${file.fileId}`}
-                                            alt="Event Image"
-                                            style={{
-                                              margin: 0,
-                                              maxWidth: 200, maxHeight: 100, objectFit: "cover"
-                                            }}
+                                        <div key={file.fileId} className="px-8">
+                                          <div
+                                              style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                borderRadius: 4,
+                                                width: '100%',
+                                                height: '200px',
+                                                overflow: 'hidden',
+                                              }}
+                                          >
+                                            <Image
+                                                src={`http://localhost:8000/files/${file.fileId}`}
+                                                alt="Event Image"
+                                                style={{
+                                                  width: '100%',
+                                                  height: '100%',
+                                                  objectFit: 'contain',
+                                                }}
                                           />
-                                        </Card>
-
+                                          </div>
                                       </div>
                                     ))}
                                   </Carousel>

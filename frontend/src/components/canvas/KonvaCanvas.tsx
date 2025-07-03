@@ -20,9 +20,7 @@ import {
 } from "./actions/actions.tsx";
 import useApiService from "../../services/apiService.ts";
 import {useParams} from "react-router-dom";
-import {Typography} from "antd";
 
-const {Title} = Typography;
 
 function KonvaCanvas() {
     const {state, dispatch} = useCanvas();
@@ -53,7 +51,7 @@ function KonvaCanvas() {
             if (!initiated && schematicsId) {
                 const fetchedAppState = await getSchematics(schematicsId);
                 if (fetchedAppState && !initiated) {
-                    dispatch(setState(fetchedAppState.state));
+                    dispatch(setState({...fetchedAppState, buildMode: 0}));
                 }
             }
         };
@@ -408,7 +406,7 @@ function KonvaCanvas() {
     const handleMouseMove = (e: { evt: MouseEvent, target: Konva.Stage }) => {
 
         const container = stageRef!.current!.container();
-        if (isShiftPressed) {
+        if (isShiftPressed || state.buildMode === 1) {
             container.style.cursor = 'default';
         } else {
             container.style.cursor = 'grab';
@@ -458,7 +456,8 @@ function KonvaCanvas() {
     return (
 
         <div className="space-y-6">
-            <div className="App" style={{display: "flex", border: "1px solid #e0e0e0", flexDirection: "row"}}>
+            <div className="App overflow-hidden bg-white"
+                 style={{display: "flex", border: "1px solid #e0e0e0", flexDirection: "row"}}>
 
                 <Toolbox dispatch={dispatch} stageRef={stageRef} state={state}/>
 

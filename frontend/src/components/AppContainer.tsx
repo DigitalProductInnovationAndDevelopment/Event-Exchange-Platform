@@ -99,7 +99,8 @@ export const AppContainer = () => {
                 itemActiveBg: '#36C5F0',
                 popupBg: darkMode ? '#0e1a26' : '#ffffff',
                 horizontalItemHoverColor: '#36C5F0',
-                itemMarginInline: 0,
+                itemMarginInline: 16,
+                itemBorderRadius: 16
               },
               Button: {
                 colorPrimary: primaryColor,
@@ -134,8 +135,13 @@ export const AppContainer = () => {
           }}
       >
         <Layout className="min-h-screen">
-          <Sider theme="dark" className="fixed h-full z-10" breakpoint="lg" collapsedWidth="0"
-                 onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
+          <Sider
+              style={{backgroundColor: "rgba(210,230,248,0.55)"}}
+              className="fixed top-1/2 -translate-y-1/2 h-[95%] z-10 rounded-2xl ml-4 shadow-lg "
+              breakpoint="lg"
+              collapsedWidth="0"
+              onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
+
             <div style={{
               display: 'flex',
               justifyContent: 'center',
@@ -176,7 +182,8 @@ export const AppContainer = () => {
               </Dropdown>
             </div>
           </Sider>
-          <Layout className="flex flex-col min-h-screen"
+
+          <Layout className="flex flex-col min-h-screen pl-5"
                   style={{
                     marginLeft: collapsed ? 0 : 200,
                   }}>

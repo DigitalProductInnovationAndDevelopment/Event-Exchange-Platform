@@ -7,6 +7,7 @@ import React, {useCallback} from 'react';
 import {useAuth} from '../contexts/AuthContext.tsx';
 import type {AppState} from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
+import {handleExport} from "../components/canvas/elements/Toolbox.tsx";
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -205,9 +206,10 @@ export default function useApiService() {
         [request]
     );
 
-    const getSchematics = useCallback(async (id: string) => {
+    const getSchematics: (id: string) => Promise<AppState> = useCallback(async (id: string) => {
         try {
-            return await request<{ id: string, name: string, state: AppState }>(`/schematics/${id}`);
+            const response = await request<{ state: string }>(`/schematics/${id}`);
+            return JSON.parse(response.state);
         } catch (err) {
             toast.error('Schematics fetch failed');
         }
@@ -246,8 +248,8 @@ export default function useApiService() {
                 }),
             });
             if (stageRef && stageRef!.current) {
-                const dataUrl = stageRef!.current!.toDataURL({pixelRatio: 2});
-                const arr = dataUrl.split(',');
+                const dataUrl = handleExport(stageRef);
+                const arr = dataUrl!.split(',');
                 const mime = arr[0].match(/:(.*?);/)![1];
                 const bstr = atob(arr[1]);
                 let n = bstr.length;

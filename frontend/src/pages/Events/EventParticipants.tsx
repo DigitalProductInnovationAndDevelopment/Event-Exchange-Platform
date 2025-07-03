@@ -313,7 +313,7 @@ export const EventParticipants = () => {
                   icon={<UserAddOutlined />}
                   onClick={() => handleAddParticipant({
                     guestCount: record.guestCount,
-                    eventId: eventId,
+                      eventId: eventId!,
                     employeeId: record.profile.id
                   })}
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
