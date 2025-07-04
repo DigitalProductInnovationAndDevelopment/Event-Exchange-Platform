@@ -12,20 +12,20 @@ import {
   Switch,
   Table,
   Typography,
-} from 'antd';
-import {AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined,} from '@ant-design/icons';
-import {useNavigate} from 'react-router-dom';
-import {useEffect, useMemo, useState} from 'react';
-import {Breadcrumb} from '../../components/Breadcrumb';
-import type {ColumnsType} from 'antd/es/table';
-import type {Dayjs} from 'dayjs';
-import dayjs from 'dayjs';
-import type {Event, EventStatus, EventType, FileEntity} from '../../types/event';
-import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
-import useApiService, {BASE_URL} from '../../services/apiService.ts';
+} from "antd";
+import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Breadcrumb } from "../../components/Breadcrumb";
+import type { ColumnsType } from "antd/es/table";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import type { Event, EventStatus, EventType, FileEntity } from "../../types/event";
+import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "../../types/event";
+import useApiService, { BASE_URL } from "../../services/apiService.ts";
 import "./carousel_arrows.css";
-import {EventTypeTag} from "../../components/EventTypeTag.tsx";
-import {EventStatusTag} from "../../components/EventStatusTag.tsx";
+import { EventTypeTag } from "../../components/EventTypeTag.tsx";
+import { EventStatusTag } from "../../components/EventStatusTag.tsx";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -33,7 +33,7 @@ const { RangePicker } = DatePicker;
 export const EventsList = () => {
   const navigate = useNavigate();
   const [isTableView, setIsTableView] = useState(true);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [selectedType, setSelectedType] = useState<EventType | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
   const [fetchedEvents, setEvents] = useState<Event[]>([]);
@@ -45,7 +45,7 @@ export const EventsList = () => {
         const data = await getEvents();
         setEvents(data ?? []);
       } catch (err) {
-        console.error('Failed to fetch events:', err);
+        console.error("Failed to fetch events:", err);
       }
     })();
   }, [getEvents]);
@@ -57,7 +57,7 @@ export const EventsList = () => {
     return events.filter(event => {
       // Search text filter
       const matchesSearch =
-        searchText === '' ||
+        searchText === "" ||
         event.name.toLowerCase().includes(searchText.toLowerCase()) ||
         event.address.toLowerCase().includes(searchText.toLowerCase());
 
@@ -78,19 +78,19 @@ export const EventsList = () => {
 
   const columns: ColumnsType<Event> = [
     {
-      title: 'Event Name',
-      dataIndex: 'name',
-      key: 'name',
-      width: '30%',
+      title: "Event Name",
+      dataIndex: "name",
+      key: "name",
+      width: "30%",
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      width: '14%',
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      width: "14%",
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-      render: (date: string) => dayjs(date).format('YYYY-MM-DD HH:mm'),
+      render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm"),
     },
     {
       title: 'Type',
@@ -99,16 +99,16 @@ export const EventsList = () => {
       width: '14%',
       render: (type: EventType) => <EventTypeTag type={type}/>,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
-        text: type.replace(/_/g, ' '),
+        text: type.replace(/_/g, " "),
         value: type,
       })),
       onFilter: (value, record) => record.eventType === value,
     },
     {
-      title: 'Participants',
-      dataIndex: 'participantCount',
-      key: 'participantCount',
-      width: '14%',
+      title: "Participants",
+      dataIndex: "participantCount",
+      key: "participantCount",
+      width: "14%",
       sorter: (a, b) => a.participantCount - b.participantCount,
     },
     {
@@ -124,9 +124,9 @@ export const EventsList = () => {
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Actions',
-      key: 'actions',
-      width: '14%',
+      title: "Actions",
+      key: "actions",
+      width: "14%",
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => navigate(`/events/${record.id}`)}>
@@ -148,7 +148,7 @@ export const EventsList = () => {
 
   return (
     <div>
-      <Breadcrumb items={[{ path: '/events', label: 'Events' }]} />
+      <Breadcrumb items={[{ path: "/events", label: "Events" }]} />
 
       <div className="flex justify-between items-center mb-6">
         <Title level={2} className="m-0">
@@ -156,15 +156,15 @@ export const EventsList = () => {
         </Title>
         <div className="flex items-center gap-4">
           <Space>
-            <UnorderedListOutlined className={isTableView ? 'text-blue-500' : 'text-gray-400'} />
+            <UnorderedListOutlined className={isTableView ? "text-blue-500" : "text-gray-400"} />
             <Switch
               checked={!isTableView}
               onChange={checked => setIsTableView(!checked)}
               className="bg-gray-200"
             />
-            <AppstoreOutlined className={!isTableView ? 'text-blue-500' : 'text-gray-400'} />
+            <AppstoreOutlined className={!isTableView ? "text-blue-500" : "text-gray-400"} />
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/events/create')}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/events/create")}>
             Create Event
           </Button>
         </div>
@@ -184,22 +184,22 @@ export const EventsList = () => {
           <Col span={8}>
             <Select
               placeholder="Event Type"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               allowClear
               value={selectedType}
               onChange={setSelectedType}
               options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
                 value,
                 label: value
-                  .split('_')
+                  .split("_")
                   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' '),
+                  .join(" "),
               }))}
             />
           </Col>
           <Col span={8}>
             <RangePicker
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               value={dateRange}
               onChange={dates => setDateRange(dates)}
             />
@@ -235,14 +235,15 @@ export const EventsList = () => {
                     description={
                       <div className="space-y-2">
                         <div className="text-gray-600">
-                          <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
+                          <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participantCount}</div>
                           <div>
                             {(() => {
                               const filteredImages = event.fileEntities?.filter(
                                 (file: FileEntity) =>
-                                  file.contentType === "image/png" || file.contentType === "image/jpeg"
+                                  file.contentType === "image/png" ||
+                                  file.contentType === "image/jpeg"
                               );
                               if (filteredImages && filteredImages.length > 0) {
                                 return (
@@ -323,7 +324,7 @@ export const EventsList = () => {
                     description={
                       <div className="space-y-2">
                         <div className="text-gray-600">
-                          <div>Date: {dayjs(event.date).format('MMMM D, YYYY, HH:mm')}</div>
+                          <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
                           <div>Participants: {event.participantCount}</div>
                         </div>

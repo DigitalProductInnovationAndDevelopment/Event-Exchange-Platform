@@ -9,11 +9,6 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA organization
     GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO organization_user;
 
 
-CREATE TYPE organization.event_type AS ENUM ( 'WINTER_EVENT', 'SUMMER_EVENT', 'YEAR_END_PARTY');
-CREATE TYPE organization.dietary_preference AS ENUM ('VEGETARIAN', 'PESCATARIAN', 'HALAL', 'KOSHER', 'VEGAN', 'LACTOSE_FREE', 'GLUTEN_FREE', 'KETO');
-CREATE TYPE organization.employment_type AS ENUM ('FULLTIME', 'PARTTIME', 'WORKING_STUDENT', 'THESIS');
-
-
 CREATE TABLE organization.audit_log
 (
     id             BIGSERIAL PRIMARY KEY,
@@ -35,7 +30,6 @@ CREATE TABLE organization.address
     address_line2 TEXT         NULL
 );
 
-
 CREATE TABLE organization.profile
 (
     id              UUID PRIMARY KEY,
@@ -43,7 +37,7 @@ CREATE TABLE organization.profile
     email           VARCHAR(255)  NULL UNIQUE,
     full_name       VARCHAR(500)  NOT NULL,
     gender          VARCHAR(255)  NULL,
-    diet_types      VARCHAR(55)[] NULL,
+    diet_types VARCHAR NULL,
     created_at      TIMESTAMP,
     updated_at      TIMESTAMP
 );
@@ -56,11 +50,10 @@ CREATE TABLE organization.user_roles
     FOREIGN KEY (profile_id) REFERENCES organization.profile (id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE organization.employee
 (
-    profile_id            UUID PRIMARY KEY REFERENCES organization.Profile (id),
-    employment_type       organization.employment_type,
+    profile_id      UUID PRIMARY KEY REFERENCES organization.profile (id),
+    employment_type varchar,
     location VARCHAR(255) NOT NULL,
     employment_start_date DATE
 );
@@ -72,7 +65,6 @@ CREATE TABLE organization.project
     abbreviation VARCHAR(10)  NULL
 );
 
-
 CREATE TABLE organization.employee_project
 (
     employee_id UUID REFERENCES organization.Employee (profile_id),
@@ -80,13 +72,11 @@ CREATE TABLE organization.employee_project
     PRIMARY KEY (employee_id, project_id)
 );
 
-
 CREATE TABLE organization.previous_matches
 (
     id        UUID PRIMARY KEY,
-    person_id UUID REFERENCES organization.Profile (id)
+    person_id UUID REFERENCES organization.profile (id)
 );
-
 
 CREATE TABLE organization.event
 (
@@ -95,15 +85,14 @@ CREATE TABLE organization.event
     description VARCHAR(10000) NOT NULL,
     date    TIMESTAMP     NULL,
     capacity    INT            NOT NULL,
-    event_type  organization.event_type,
+    event_type VARCHAR,
     address VARCHAR(1000) NOT NULL
 );
 
-
-CREATE TABLE organization.table
+CREATE TABLE organization.tables
 (
     id       UUID PRIMARY KEY,
-    event_id UUID REFERENCES organization.Event (id)
+    event_id UUID REFERENCES organization.event (id)
 );
 
 CREATE TABLE organization.participation
@@ -113,14 +102,14 @@ CREATE TABLE organization.participation
     confirmed   BOOLEAN,
     employee_id UUID REFERENCES organization.employee (profile_id) NOT NULL,
     event_id    UUID REFERENCES organization.Event (id),
-    table_id    UUID REFERENCES organization.table (id)            NULL,
+    table_id UUID REFERENCES organization.tables (id) NULL,
     CONSTRAINT unique_person_event UNIQUE (employee_id, event_id)
 );
 
 CREATE TABLE organization.chair
 (
     id       UUID PRIMARY KEY,
-    table_id UUID REFERENCES organization.table (id)
+    table_id UUID REFERENCES organization.tables (id)
 );
 
 CREATE TABLE organization.files
@@ -144,7 +133,6 @@ CREATE TABLE organization.schematics
     updated_at TIMESTAMP,
     CONSTRAINT unique_schematic_per_event UNIQUE (event_id)
 );
-
 
 GRANT USAGE, SELECT ON SEQUENCE organization.user_roles_id_seq TO organization_user;
 GRANT USAGE, SELECT ON SEQUENCE organization.audit_log_id_seq TO organization_user;

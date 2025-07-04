@@ -28,7 +28,7 @@ public class SchematicsController {
     private final SchematicsMapper schematicsMapper;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<SchematicsCreateDTO> getSchematics(@PathVariable UUID id) {
         Schematics schematics = schematicsService.findById(id);
         return new ResponseEntity<>(schematicsMapper.toSchematicsCreateDTO(schematics), HttpStatus.OK);

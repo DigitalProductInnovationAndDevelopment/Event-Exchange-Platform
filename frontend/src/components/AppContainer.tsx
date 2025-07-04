@@ -1,10 +1,10 @@
-import {Avatar, ConfigProvider, Dropdown, Layout, Menu, theme as antdTheme} from 'antd';
-import {Outlet, useLocation, useNavigate} from 'react-router-dom';
-import {CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined,} from '@ant-design/icons';
-import {useAuth} from '../contexts/AuthContext';
-import useApiService from '../services/apiService.ts';
-import {useState} from "react";
-import itestraEventLogo from '../assets/itestra_event_logo.png';
+import { Avatar, ConfigProvider, Dropdown, Layout, Menu, theme as antdTheme } from "antd";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { useAuth } from "../contexts/AuthContext";
+import useApiService from "../services/apiService.ts";
+import { useState } from "react";
+import itestraEventLogo from "../assets/itestra_event_logo.png";
 
 const { Sider, Content, Footer } = Layout;
 
@@ -18,24 +18,24 @@ export const AppContainer = () => {
 
   const mainMenuItems = [
     {
-      key: '/dashboard',
+      key: "/dashboard",
       icon: <DashboardOutlined />,
-      label: 'Dashboard',
+      label: "Dashboard",
     },
     {
-      key: '/events',
+      key: "/events",
       icon: <CalendarOutlined />,
-      label: 'Events',
+      label: "Events",
     },
     {
-      key: '/employees',
+      key: "/employees",
       icon: <TeamOutlined />,
-      label: 'Employees',
+      label: "Employees",
     },
   ];
 
   const handleMenuClick = (key: string) => {
-    if (key === 'logout') {
+    if (key === "logout") {
       logoutRequest().then(() => logout());
     } else {
       navigate(key);
@@ -44,21 +44,21 @@ export const AppContainer = () => {
 
   const userMenuItems = [
     {
-      key: '/profile',
+      key: "/profile",
       icon: <UserOutlined />,
-      label: 'Profile Settings',
+      label: "Profile Settings",
     },
     {
-      key: 'logout',
+      key: "logout",
       icon: <LogoutOutlined />,
-      label: 'Logout',
+      label: "Logout",
       danger: true,
     },
   ];
 
   // Get the base path for menu selection
   const getBasePath = (path: string) => {
-    const segments = path.split('/');
+    const segments = path.split("/");
     return `/${segments[1]}`;
   };
 

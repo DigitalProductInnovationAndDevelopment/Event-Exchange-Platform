@@ -1,10 +1,10 @@
-import {Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography,} from 'antd';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Breadcrumb} from '../../components/Breadcrumb';
-import {useEffect, useState} from 'react';
-import useApiService from '../../services/apiService';
-import {DeleteOutlined, UploadOutlined, UserAddOutlined} from '@ant-design/icons';
-import type {Employee, ParticipationDetails} from "types/employee.ts";
+import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { Breadcrumb } from "../../components/Breadcrumb";
+import { useEffect, useState } from "react";
+import useApiService from "../../services/apiService";
+import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
+import type { Employee, ParticipationDetails } from "types/employee.ts";
 
 const { Title } = Typography;
 
@@ -16,13 +16,13 @@ export const EventParticipants = () => {
     getEmployees,
     addParticipant,
     updateParticipant,
-    deleteParticipation
+    deleteParticipation,
   } = useApiService();
   const [participants, setParticipants] = useState([] as ParticipationDetails[]);
   const [allEmployees, setAllEmployees] = useState([] as Employee[]);
   const [addModalOpen, setAddModalOpen] = useState(false);
-  const [participantSearch, setParticipantSearch] = useState('');
-  const [employeeSearch, setEmployeeSearch] = useState('');
+  const [participantSearch, setParticipantSearch] = useState("");
+  const [employeeSearch, setEmployeeSearch] = useState("");
   const [employeeGuests, setEmployeeGuests] = useState<{ [id: string]: number }>({});
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -33,7 +33,7 @@ export const EventParticipants = () => {
         const data = await getEventParticipants(eventId!);
         setParticipants(data ?? []);
       } catch (err) {
-        console.error('Failed to fetch participants of the event:', err);
+        console.error("Failed to fetch participants of the event:", err);
       }
     })();
   }, [eventId, getEventParticipants]);
@@ -44,11 +44,10 @@ export const EventParticipants = () => {
         const data = await getEmployees();
         setAllEmployees(data ?? []);
       } catch (err) {
-        console.error('Failed to fetch all employees in the system:', err);
+        console.error("Failed to fetch all employees in the system:", err);
       }
     })();
   }, [getEmployees]);
-
 
   const allEmployeesFiltered = allEmployees
     .filter(
@@ -64,24 +63,36 @@ export const EventParticipants = () => {
     if (result) {
       setParticipants(prev => prev.filter(p => p.id !== id));
     }
-
   };
 
-  const handleGuestsChange = async (participationId: string, values: {
-    guestCount: number,
-    eventId: string,
-    employeeId: string
-  }) => {
+  const handleGuestsChange = async (
+    participationId: string,
+    values: {
+      guestCount: number;
+      eventId: string;
+      employeeId: string;
+    },
+  ) => {
     const participant = await updateParticipant(values);
     if (participant) {
-      setParticipants(prev => prev.map(p => p.id === participationId ? {
-        ...p,
-        guestCount: values.guestCount ?? 0
-      } : p));
+      setParticipants(prev =>
+        prev.map(p =>
+          p.id === participationId
+            ? {
+              ...p,
+              guestCount: values.guestCount ?? 0,
+            }
+            : p,
+        ),
+      );
     }
   };
 
-  const handleAddParticipant = async (values: { guestCount: number, eventId: string, employeeId: string }) => {
+  const handleAddParticipant = async (values: {
+    guestCount: number;
+    eventId: string;
+    employeeId: string;
+  }) => {
     const participant = await addParticipant(values);
     if (participant) {
       participants.push(participant);
@@ -97,31 +108,34 @@ export const EventParticipants = () => {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'fullName',
-      key: 'fullName',
-      sorter: (a: Employee, b: Employee) => (a.profile?.fullName ?? '').localeCompare(b.profile?.fullName ?? ''),
+      title: "Name",
+      dataIndex: "fullName",
+      key: "fullName",
+      sorter: (a: Employee, b: Employee) =>
+        (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
     },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: "Email", dataIndex: "email", key: "email" },
     {
-      title: 'Guests',
-      dataIndex: 'guestCount',
-      key: 'guestCount',
+      title: "Guests",
+      dataIndex: "guestCount",
+      key: "guestCount",
       render: (guestCount: number, participant: ParticipationDetails) => (
         <InputNumber
           min={0}
           value={guestCount}
-          onChange={value => handleGuestsChange(participant.id, {
-            guestCount: value!,
-            eventId: eventId!,
-            employeeId: participant.employeeId
-          })}
+          onChange={value =>
+            handleGuestsChange(participant.id, {
+              guestCount: value!,
+              eventId: eventId!,
+              employeeId: participant.employeeId,
+            })
+          }
         />
       ),
     },
     {
-      title: '',
-      key: 'actions',
+      title: "",
+      key: "actions",
       render: (_: never, record: ParticipationDetails) => (
         <Popconfirm
           placement="right"
@@ -130,7 +144,9 @@ export const EventParticipants = () => {
           cancelText="No"
           onConfirm={() => handleDelete(record.id)}
         >
-          <Button danger icon={<DeleteOutlined />}>Delete </Button>
+          <Button danger icon={<DeleteOutlined />}>
+            Delete{" "}
+          </Button>
         </Popconfirm>
       ),
     },
@@ -140,9 +156,9 @@ export const EventParticipants = () => {
     <div className="space-y-6">
       <Breadcrumb
         items={[
-          { path: '/events', label: 'Events' },
-          { path: `/events/${eventId}`, label: eventName || 'Event' },
-          { path: `/events/${eventId}/manage-participants`, label: 'Manage Participants' },
+          { path: "/events", label: "Events" },
+          { path: `/events/${eventId}`, label: eventName || "Event" },
+          { path: `/events/${eventId}/manage-participants`, label: "Manage Participants" },
         ]}
       />
 
@@ -180,16 +196,16 @@ export const EventParticipants = () => {
 
       <Modal
         width={{
-          xs: '90%',
-          sm: '80%',
-          md: '70%',
-          lg: '60%',
-          xl: '50%',
-          xxl: '40%',
+          xs: "90%",
+          sm: "80%",
+          md: "70%",
+          lg: "60%",
+          xl: "50%",
+          xxl: "40%",
         }}
         style={{
-          maxHeight: '70vh',
-          overflow: 'auto',
+          maxHeight: "70vh",
+          overflow: "auto",
         }}
         centered
         title="Add Participants"
@@ -206,34 +222,38 @@ export const EventParticipants = () => {
         <Table
           rowKey={r => r.profile.id}
           columns={[
-            { title: 'Name', dataIndex: ['profile', 'fullName'], key: 'fullName' },
-            { title: 'Email', dataIndex: ['profile', 'email'], key: 'email' },
+            { title: "Name", dataIndex: ["profile", "fullName"], key: "fullName" },
+            { title: "Email", dataIndex: ["profile", "email"], key: "email" },
             {
-              title: 'Guests',
-              dataIndex: 'guestCount',
-              key: 'guestCount',
+              title: "Guests",
+              dataIndex: "guestCount",
+              key: "guestCount",
               render: (guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
                   value={employeeGuests[record.profile.id] ?? 0}
-                  onChange={value => setEmployeeGuests(prev => ({ ...prev, [record.profile.id]: value ?? 0 }))}
+                  onChange={value =>
+                    setEmployeeGuests(prev => ({ ...prev, [record.profile.id]: value ?? 0 }))
+                  }
                   style={{ width: 80 }}
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
                 />
               ),
             },
             {
-              title: '',
-              key: 'actions',
+              title: "",
+              key: "actions",
               render: (_: any, record: Employee & { id: string }) => (
                 <Button
                   type="primary"
                   icon={<UserAddOutlined />}
-                  onClick={() => handleAddParticipant({
+                  onClick={() =>
+                    handleAddParticipant({
                       guestCount: employeeGuests[record.profile.id],
-                    eventId: eventId!,
-                    employeeId: record.profile.id
-                  })}
+                      eventId: eventId!,
+                      employeeId: record.profile.id,
+                    })
+                  }
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
                 >
                   Add
@@ -248,16 +268,16 @@ export const EventParticipants = () => {
 
       <Modal
         width={{
-          xs: '90%',
-          sm: '80%',
-          md: '70%',
-          lg: '60%',
-          xl: '50%',
-          xxl: '40%',
+          xs: "90%",
+          sm: "80%",
+          md: "70%",
+          lg: "60%",
+          xl: "50%",
+          xxl: "40%",
         }}
         style={{
-          maxHeight: '70vh',
-          overflow: 'auto',
+          maxHeight: "70vh",
+          overflow: "auto",
         }}
         centered
         title="Import Participants"
@@ -266,7 +286,7 @@ export const EventParticipants = () => {
         footer={[
           <Button key="addall" type="primary" onClick={() => setImportModalOpen(false)}>
             Add All
-          </Button>
+          </Button>,
         ]}
       >
         <Input
@@ -275,9 +295,7 @@ export const EventParticipants = () => {
           onChange={e => setImportFile(e.target.files?.[0] || null)}
           className="mb-4"
         />
-        {importFile && (
-          <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>
-        )}
+        {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
 
         <Input.Search
           placeholder="Search employees..."
@@ -288,32 +306,34 @@ export const EventParticipants = () => {
         <Table
           rowKey={r => r.profile.id}
           columns={[
-            { title: 'Name', dataIndex: ['profile', 'fullName'], key: 'fullName' },
-            { title: 'Email', dataIndex: ['profile', 'email'], key: 'email' },
+            { title: "Name", dataIndex: ["profile", "fullName"], key: "fullName" },
+            { title: "Email", dataIndex: ["profile", "email"], key: "email" },
             {
-              title: 'Guests',
-              dataIndex: 'guestCount',
-              key: 'guestCount',
+              title: "Guests",
+              dataIndex: "guestCount",
+              key: "guestCount",
               render: (guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
                   value={employeeGuests[record.profile.id] ?? 0}
-                  onChange={value => setEmployeeGuests(prev => ({ ...prev, [record.profile.id]: value ?? 0 }))}
+                  onChange={value =>
+                    setEmployeeGuests(prev => ({ ...prev, [record.profile.id]: value ?? 0 }))
+                  }
                   style={{ width: 80 }}
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
                 />
               ),
             },
             {
-              title: '',
-              key: 'actions',
+              title: "",
+              key: "actions",
               render: (_: any, record: any) => (
                 <Button
                   type="primary"
                   icon={<UserAddOutlined />}
                   onClick={() => handleAddParticipant({
                     guestCount: record.guestCount,
-                      eventId: eventId!,
+                    eventId: eventId!,
                     employeeId: record.profile.id
                   })}
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
@@ -329,4 +349,4 @@ export const EventParticipants = () => {
       </Modal>
     </div>
   );
-}; 
+};

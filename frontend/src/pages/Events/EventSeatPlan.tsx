@@ -1,25 +1,18 @@
-import {
-  Button,
-  Card,
-  Col,
-  Row,
-  Space,
-  Typography,
-} from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import { useEffect, useState } from 'react';
-import useApiService from '../../services/apiService';
-import KonvaCanvas from '../../components/canvas/KonvaCanvas';
-import { CanvasProvider } from '../../components/canvas/contexts/CanvasContext';
-import type { AppState } from '../../components/canvas/reducers/CanvasReducer';
+import { Button, Card, Col, Row, Space, Typography } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { Breadcrumb } from "../../components/Breadcrumb";
+import { useEffect, useState } from "react";
+import useApiService from "../../services/apiService";
+import KonvaCanvas from "../../components/canvas/KonvaCanvas";
+import { CanvasProvider } from "../../components/canvas/contexts/CanvasContext";
+import type { AppState } from "../../components/canvas/reducers/CanvasReducer";
 
 const { Title } = Typography;
 
 export const EventSeatPlan = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const [eventName, setEventName] = useState('');
+  const [eventName, setEventName] = useState("");
   const { getEventById, getSchematics } = useApiService();
   const [initialState, setInitialState] = useState<AppState | null>(null);
 
@@ -44,9 +37,9 @@ export const EventSeatPlan = () => {
     <div className="space-y-2">
       <Breadcrumb
         items={[
-          { path: '/events', label: 'Events' },
-          { path: `/events/${eventId}`, label: eventName || 'Event' },
-          { path: `/events/${eventId}/seat-plan`, label: 'Manage Seat Plan' },
+          { path: "/events", label: "Events" },
+          { path: `/events/${eventId}`, label: eventName || "Event" },
+          { path: `/events/${eventId}/seat-plan`, label: "Manage Seat Plan" },
         ]}
       />
 
@@ -70,4 +63,4 @@ export const EventSeatPlan = () => {
       </Row>
     </div>
   );
-}; 
+};

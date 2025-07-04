@@ -1,27 +1,27 @@
-import {Line, Rect} from "react-konva";
-import {v4 as uuidv4} from "uuid";
-import type {ElementProperties} from "components/canvas/utils/constants.tsx";
+import { Line, Rect } from "react-konva";
+import { v4 as uuidv4 } from "uuid";
+import type { ElementProperties } from "components/canvas/utils/constants.tsx";
 
 export class Wall implements ElementProperties {
-    id: string;
-    type: string;
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    color: string;
-    draggable: boolean;
+  id: string;
+  type: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  color: string;
+  draggable: boolean;
 
-    constructor() {
-        this.id = uuidv4();
-        this.type = "wall";
-        this.x1 = 200;
-        this.y1 = 100;
-        this.x2 = 350;
-        this.y2 = 100;
-        this.color = "#444";
-        this.draggable = true;
-    }
+  constructor() {
+    this.id = uuidv4();
+    this.type = "wall";
+    this.x1 = 200;
+    this.y1 = 100;
+    this.x2 = 350;
+    this.y2 = 100;
+    this.color = "#444";
+    this.draggable = true;
+  }
 }
 
 export const WallRender = (wall: Wall) => {
@@ -30,14 +30,14 @@ export const WallRender = (wall: Wall) => {
     const dx = wall.x2 - wall.x1;
     const dy = wall.y2 - wall.y1;
     const length = Math.sqrt(dx * dx + dy * dy);
-    
-    // Calculate the bounding box for the selection area
+
+  // Calculate the bounding box for the selection area
     const minX = Math.min(wall.x1, wall.x2) - selectionPadding;
     const maxX = Math.max(wall.x1, wall.x2) + selectionPadding;
     const minY = Math.min(wall.y1, wall.y2) - selectionPadding;
     const maxY = Math.max(wall.y1, wall.y2) + selectionPadding;
-    
-    return (
+
+  return (
         <>
             {/* Invisible selection area */}
             <Rect
@@ -59,4 +59,3 @@ export const WallRender = (wall: Wall) => {
         </>
     );
 };
-

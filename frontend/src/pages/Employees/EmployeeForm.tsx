@@ -1,8 +1,8 @@
-import React from 'react';
-import {Form, Input, Select} from 'antd';
-import {DietaryPreference, EmploymentType, Role} from '../../types/employee';
-import {EmployeeTypeTag} from "../../components/EmployeeTypeTag.tsx";
-import {DietTypeTag} from "../../components/DietTypeTag.tsx";
+import React from "react";
+import { Form, Input, Select } from "antd";
+import { DietaryPreference, EmploymentType, Role } from "../../types/employee";
+import { EmployeeTypeTag } from "../../components/EmployeeTypeTag.tsx";
+import { DietTypeTag } from "../../components/DietTypeTag.tsx";
 
 const { Option } = Select;
 
@@ -35,54 +35,70 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      initialValues={initialValues}
-      onFinish={handleFinish}
-    >
-      <Form.Item label="GitLab Username" name={["profile", "gitlabUsername"]} rules={[{ required: true, message: 'Please enter GitLab Username' }]}> 
+    <Form form={form} layout="vertical" initialValues={initialValues} onFinish={handleFinish}>
+      <Form.Item
+        label="GitLab Username"
+        name={["profile", "gitlabUsername"]}
+        rules={[{ required: true, message: "Please enter GitLab Username" }]}
+      >
         <Input placeholder="Enter GitLab Username" maxLength={500} />
       </Form.Item>
-      <Form.Item label="Full Name" name={["profile", "fullName"]} rules={[{ required: true, message: 'Please enter full name' }]}> 
+      <Form.Item
+        label="Full Name"
+        name={["profile", "fullName"]}
+        rules={[{ required: true, message: "Please enter full name" }]}
+      >
         <Input placeholder="Enter full name" maxLength={250} />
       </Form.Item>
-      <Form.Item label="Gender" name={["profile", "gender"]} rules={[{ required: true, message: 'Please select gender' }]}> 
+      <Form.Item
+        label="Gender"
+        name={["profile", "gender"]}
+        rules={[{ required: true, message: "Please select gender" }]}
+      >
         <Select placeholder="Select gender" maxLength={255}>
           <Option value="Male">Male</Option>
           <Option value="Female">Female</Option>
           <Option value="Diverse">Diverse</Option>
         </Select>
       </Form.Item>
-      <Form.Item label="Email" name={["profile", "email"]} rules={[{ required: true, message: 'Please enter email' }]}> 
+      <Form.Item
+        label="Email"
+        name={["profile", "email"]}
+        rules={[{ required: true, message: "Please enter email" }]}
+      >
         <Input placeholder="Enter email" />
       </Form.Item>
       <Form.Item label="Dietary Preference" name={["profile", "dietTypes"]}>
-        <Select
-          placeholder="Select dietary preference"
-          options={DIET_TYPES}
-          mode="multiple"
-        />
+        <Select placeholder="Select dietary preference" options={DIET_TYPES} mode="multiple" />
       </Form.Item>
-      <Form.Item label="Employment Type" name="employmentType" rules={[{ required: true, message: 'Please select employment type' }]}> 
+      <Form.Item
+        label="Employment Type"
+        name="employmentType"
+        rules={[{ required: true, message: "Please select employment type" }]}
+      >
         <Select placeholder="Select employment type" options={EMPLOYMENT_TYPES} />
       </Form.Item>
-      <Form.Item label="Date Joined" name="employmentStartDate" rules={[{ required: true, message: 'Please enter employment start date' }]}> 
+      <Form.Item
+        label="Date Joined"
+        name="employmentStartDate"
+        rules={[{ required: true, message: "Please enter employment start date" }]}
+      >
         <Input placeholder="Enter date joined" type="date" />
       </Form.Item>
-      <Form.Item label="Location" name="location" rules={[{ required: true, message: 'Please enter location' }]}> 
+      <Form.Item
+        label="Location"
+        name="location"
+        rules={[{ required: true, message: "Please enter location" }]}
+      >
         <Input placeholder="Enter location" />
       </Form.Item>
-      <Form.Item 
-        label="Employee Role" 
-        name={["profile", "authorities"]} 
-        rules={[{ required: true, message: 'Please select a role' }]}
+      <Form.Item
+        label="Employee Role"
+        name={["profile", "authorities"]}
+        rules={[{ required: true, message: "Please select a role" }]}
         normalize={value => (Array.isArray(value) ? value : value ? [value] : [])}
-      > 
-        <Select
-          placeholder="Select role"
-          options={ROLE_OPTIONS}
-        />
+      >
+        <Select placeholder="Select role" options={ROLE_OPTIONS} />
       </Form.Item>
     </Form>
   );

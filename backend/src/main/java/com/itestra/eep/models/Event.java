@@ -2,11 +2,7 @@ package com.itestra.eep.models;
 
 import com.itestra.eep.enums.EventType;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +13,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(schema = "organization", name = "event")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
 
     @Id
@@ -27,7 +26,7 @@ public class Event {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "event_type")
     private EventType eventType;
 
     @Column(name = "date")
@@ -50,6 +49,19 @@ public class Event {
 
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
+
+    @Transient
+    public int getParticipantCount() {
+        return getParticipantCount(null);
+    }
+
+    @Transient
+    public int getParticipantCount(Participation excludeParticipation) {
+        return participations.stream()
+                .filter(p -> excludeParticipation == null || !p.getId().equals(excludeParticipation.getId()))
+                .mapToInt(p -> p.getGuestCount() + 1)
+                .sum();
+    }
 
 }
 

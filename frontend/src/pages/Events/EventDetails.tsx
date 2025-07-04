@@ -1,6 +1,6 @@
-import {Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Typography,} from 'antd';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Breadcrumb} from '../../components/Breadcrumb';
+import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Typography } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { Breadcrumb } from "../../components/Breadcrumb";
 import {
   BarChartOutlined,
   DeleteOutlined,
@@ -12,15 +12,15 @@ import {
   RightOutlined,
   TeamOutlined,
   UserAddOutlined,
-} from '@ant-design/icons';
-import {useEffect, useState} from 'react';
-import type {Event, FileEntity} from '../../types/event';
-import useApiService, {BASE_URL} from '../../services/apiService.ts';
-import FileUploadButton from './components/FileUploadButton.tsx';
-import FileListDisplay from './components/FileListComponent.tsx';
+} from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import type { Event, FileEntity } from "../../types/event";
+import useApiService, { BASE_URL } from "../../services/apiService.ts";
+import FileUploadButton from "./components/FileUploadButton.tsx";
+import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
-import {EventStatusTag} from "../../components/EventStatusTag.tsx";
-import {EventTypeTag} from "../../components/EventTypeTag.tsx";
+import { EventStatusTag } from "../../components/EventStatusTag.tsx";
+import { EventTypeTag } from "../../components/EventTypeTag.tsx";
 
 const { Title } = Typography;
 
@@ -38,7 +38,7 @@ export const EventDetails = () => {
         const data = await getEventById(eventId!);
         setEvent(data);
       } catch (err) {
-        console.error('Failed to fetch events:', err);
+        console.error("Failed to fetch events:", err);
       }
     })();
   }, [eventId, getEventById]);
@@ -50,7 +50,7 @@ export const EventDetails = () => {
         navigate(`/events`);
       }
     } catch (err) {
-      console.error('Failed to delete event:', err);
+      console.error("Failed to delete event:", err);
     }
   }
 
@@ -63,7 +63,7 @@ export const EventDetails = () => {
       await onDelete();
       setDeleteModalOpen(false);
     } catch (error) {
-      console.error('Delete failed:', error);
+      console.error("Delete failed:", error);
     }
   };
 
@@ -97,13 +97,12 @@ export const EventDetails = () => {
         setEvent({
           ...event!,
         });
-        navigate(`/canvas/${event!.schematics.id}`)
+        navigate(`/canvas/${event!.schematics.id}`);
       }
     } catch (error) {
       toast.error("Failed to create schematics.");
     }
   };
-
 
   const handleDownload = async (file: FileEntity) => {
     await fileDownload(file);
@@ -114,14 +113,14 @@ export const EventDetails = () => {
   }
 
   const imageFiles = event.fileEntities?.filter(
-    file => file.contentType === 'image/png' || file.contentType === 'image/jpeg'
+    file => file.contentType === "image/png" || file.contentType === "image/jpeg",
   );
 
   return (
     <div className="space-y-6">
       <Breadcrumb
         items={[
-          { path: '/events', label: 'Events' },
+          { path: "/events", label: "Events" },
           { path: `/events/${eventId}`, label: event.name },
         ]}
       />
@@ -148,8 +147,8 @@ export const EventDetails = () => {
 
           <Modal
             title={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ExclamationCircleOutlined style={{ color: '#faad14' }} />
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <ExclamationCircleOutlined style={{ color: "#faad14" }} />
                 Confirm Delete
               </div>
             }
@@ -163,7 +162,7 @@ export const EventDetails = () => {
             width={400}
           >
             <p>Are you sure you want to delete this event?</p>
-            <p style={{ color: '#8c8c8c', fontSize: '14px' }}>This action cannot be undone.</p>
+            <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone.</p>
           </Modal>
         </Space>
       </div>
@@ -174,11 +173,11 @@ export const EventDetails = () => {
             <Descriptions title="Event Information" bordered>
               <Descriptions.Item label="Date" span={3}>
                 {new Date(event.date).toLocaleString(undefined, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
                   hour12: true,
                 })}
               </Descriptions.Item>
@@ -295,7 +294,7 @@ export const EventDetails = () => {
           </Card>
 
           {imageFiles?.length > 0 && (
-            <Card title="Event Images" className="mb-6"> 
+            <Card title="Event Images" className="mb-6">
               <Space direction="vertical" className="w-full">
                 <div style={{ position: 'relative' }}>
                   <div
@@ -392,7 +391,7 @@ export const EventDetails = () => {
               </div>
             </Space>
           </Card>
-          
+
         </Col>
       </Row>
     </div>

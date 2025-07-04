@@ -10,8 +10,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@jakarta.persistence.Table(schema = "organization", name = "table")
-public class Table {
+@Table(schema = "organization", name = "tables")
+public class TableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
