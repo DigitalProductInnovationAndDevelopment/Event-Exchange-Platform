@@ -12,12 +12,13 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { Breadcrumb } from '../../components/Breadcrumb';
-import { useState } from 'react';
-import type { Event, EventType } from '../../types/event';
-import { EVENT_TYPE_COLORS } from '../../types/event';
+import {useNavigate} from 'react-router-dom';
+import {Breadcrumb} from '../../components/Breadcrumb';
+import React, {useState} from 'react';
+import type {Event, EventType} from '../../types/event';
+import {EVENT_TYPE_COLORS} from '../../types/event';
 import useApiService from '../../services/apiService';
+import {EventTypeTag} from "../../components/EventTypeTag.tsx";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -120,13 +121,10 @@ export const EventCreate = () => {
                     noStyle
                   >
                     <Select
-                      options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
-                        value,
-                        label: value
-                          .split('_')
-                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                          .join(' '),
-                      }))}
+                        options={Object.entries(EVENT_TYPE_COLORS).map(([key, value]) => ({
+                          label: <EventTypeTag type={key as EventType}/>,
+                          value: key,
+                        }))}
                     />
                   </Form.Item>
                 </Descriptions.Item>

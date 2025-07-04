@@ -100,7 +100,8 @@ export const AppContainer = () => {
                 popupBg: darkMode ? '#0e1a26' : '#ffffff',
                 horizontalItemHoverColor: '#36C5F0',
                 itemMarginInline: 16,
-                itemBorderRadius: 16
+                itemBorderRadius: 16,
+                activeBarBorderWidth: 0,
               },
               Button: {
                 colorPrimary: primaryColor,
@@ -142,44 +143,53 @@ export const AppContainer = () => {
               collapsedWidth="0"
               onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
 
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 100,
-              marginTop: 16,
-              marginBottom: 4
-            }}>
-              <img
-                  src={itestraEventLogo}
-                  alt="itestra event planning logo"
-                  style={{height: '64px'}}
-              />
-            </div>
-            <Menu
-                mode="inline"
-                selectedKeys={[getBasePath(location.pathname)]}
-                items={mainMenuItems}
-                onClick={({key}) => handleMenuClick(key)}
-            />
-            {/* User profile at the bottom */}
-            <div style={{position: 'absolute', bottom: 0, width: '100%', padding: '24px 0'}}
-                 className="flex flex-col items-center">
+            <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                  padding: '16px 0',
+                }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 100,
+                marginTop: 16,
+                marginBottom: 4
+              }}>
+                <img
+                    src={itestraEventLogo}
+                    alt="itestra event planning logo"
+                    style={{height: '64px'}}
+                />
+              </div>
 
-              <Dropdown
-                  menu={{
-                    items: userMenuItems,
-                    onClick: ({key}) => handleMenuClick(key),
-                  }}
-                  placement="topLeft"
-              >
-                <div style={{backgroundColor: '#36C5F0'}}
-                     className="w-36 h-36 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
-                  <Avatar icon={<UserOutlined/>} className="bg-blue-200" size={48}/>
-                  <span
-                      className="mt-3 text-gray-800 text-sm font-medium text-center"> {user?.name || user?.email || 'User'} </span>
-                </div>
-              </Dropdown>
+              <Menu
+                  mode="inline"
+                  selectedKeys={[getBasePath(location.pathname)]}
+                  items={mainMenuItems}
+                  onClick={({key}) => handleMenuClick(key)}
+              />
+
+              <div style={{flexGrow: 1}}/>
+              <div style={{bottom: 0, width: '100%', padding: '24px 0'}} className="flex flex-col items-center">
+                <Dropdown
+                    menu={{
+                      items: userMenuItems,
+                      onClick: ({key}) => handleMenuClick(key),
+                    }}
+                    placement="topLeft"
+                >
+                  <div style={{backgroundColor: '#36C5F0'}}
+                       className="w-36 h-36 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
+                    <Avatar icon={<UserOutlined/>} className="bg-blue-200" size={48}/>
+                    <span
+                        className="mt-3 text-gray-800 text-sm font-medium text-center"> {user?.name || user?.email || 'User'} </span>
+                  </div>
+                </Dropdown>
+              </div>
+
             </div>
           </Sider>
 
