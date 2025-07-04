@@ -62,6 +62,13 @@ function downloadURI(uri: string, name: string) {
     document.body.removeChild(link);
 }
 
+function sanitize(value: number, fallback = 0) {
+    if (!Number.isFinite(value)) {
+        return fallback;
+    }
+    return value;
+}
+
 export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>) => {
 
     if (!stageRef.current) return;
@@ -79,11 +86,6 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
     const layerRects = layers
         .map(layer => layer.getClientRect({skipTransform: false}))
         .filter(rect => rect.width > 0 && rect.height > 0);
-
-    if (layerRects.length === 0) {
-        console.warn('No visible content found');
-        return;
-    }
 
     // Calculate bounding box
     const minX = Math.min(...layerRects.map(rect => rect.x));
@@ -108,10 +110,10 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
 
     try {
         return await makeBackgroundWhite(stage.toDataURL({
-            x: exportRect.x,
-            y: exportRect.y,
-            width: exportRect.width,
-            height: exportRect.height,
+            x: sanitize(exportRect.x),
+            y: sanitize(exportRect.y),
+            width: sanitize(exportRect.width),
+            height: sanitize(exportRect.height),
             pixelRatio: 2,
         }))
             .then((jpegUri) => {

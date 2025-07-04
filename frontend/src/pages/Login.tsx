@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {Button, Card, message} from 'antd';
 import {useAuth} from '../contexts/AuthContext';
 import logo from '../assets/itestra_logo.png';
+import {BASE_URL} from "../services/apiService.ts";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export const Login = () => {
             type="primary"
             className="w-48"
             onClick={() =>
-              (window.location.href = 'http://localhost:8000/oauth2/authorization/gitlab')
+                (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)
             }
           >
             Employee Login

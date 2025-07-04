@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 import {useEffect, useState} from 'react';
 import type {Event, FileEntity} from '../../types/event';
-import useApiService from '../../services/apiService.ts';
+import useApiService, {BASE_URL} from '../../services/apiService.ts';
 import FileUploadButton from './components/FileUploadButton.tsx';
 import FileListDisplay from './components/FileListComponent.tsx';
 import toast from "react-hot-toast";
@@ -213,7 +213,7 @@ export const EventDetails = () => {
                     }}
                   >
                     <Image
-                      src={`http://localhost:8000/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
+                        src={`${BASE_URL}/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
                       alt="Event Seat Plan Image"
                       style={{
                         width: '100%',
@@ -311,7 +311,7 @@ export const EventDetails = () => {
                     }}
                   >
                     <Image
-                      src={`http://localhost:8000/files/${imageFiles[currentImageIndex].fileId}`}
+                        src={`${BASE_URL}/files/${imageFiles[currentImageIndex].fileId}`}
                       alt="Event Image"
                       style={{
                         width: '100%',

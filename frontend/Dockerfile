@@ -16,7 +16,7 @@ RUN npm run prod
 # STAGE 2: Serve with NGINX
 FROM nginx:alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/templates/nginx.conf.template
 
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 

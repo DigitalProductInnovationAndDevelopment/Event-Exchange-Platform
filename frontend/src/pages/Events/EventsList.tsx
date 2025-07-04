@@ -22,7 +22,7 @@ import type {Dayjs} from 'dayjs';
 import dayjs from 'dayjs';
 import type {Event, EventStatus, EventType, FileEntity} from '../../types/event';
 import {EVENT_STATUS_COLORS, EVENT_TYPE_COLORS} from '../../types/event';
-import useApiService from '../../services/apiService.ts';
+import useApiService, {BASE_URL} from '../../services/apiService.ts';
 import "./carousel_arrows.css";
 import {EventTypeTag} from "../../components/EventTypeTag.tsx";
 import {EventStatusTag} from "../../components/EventStatusTag.tsx";
@@ -261,7 +261,7 @@ export const EventsList = () => {
                                               }}
                                           >
                                             <Image
-                                                src={`http://localhost:8000/files/${file.fileId}`}
+                                                src={`${BASE_URL}/files/${file.fileId}`}
                                                 alt="Event Image"
                                                 style={{
                                                   width: '100%',

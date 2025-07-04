@@ -9,7 +9,7 @@ import type {AppState} from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
 import {handleExport} from "../components/canvas/elements/Toolbox.tsx";
 
-const BASE_URL = 'http://localhost:8000';
+export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
 export default function useApiService() {
     const {logout} = useAuth();
@@ -249,22 +249,24 @@ export default function useApiService() {
             });
             if (stageRef && stageRef!.current) {
                 const dataUrl = await handleExport(stageRef);
-                const arr = dataUrl!.split(',');
-                const mime = arr[0].match(/:(.*?);/)![1];
-                const bstr = atob(arr[1]);
-                let n = bstr.length;
-                const u8arr = new Uint8Array(n);
+                if (dataUrl) {
+                    const arr = dataUrl!.split(',');
+                    const mime = arr[0].match(/:(.*?);/)![1];
+                    const bstr = atob(arr[1]);
+                    let n = bstr.length;
+                    const u8arr = new Uint8Array(n);
 
-                while (n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
+                    while (n--) {
+                        u8arr[n] = bstr.charCodeAt(n);
+                    }
+
+                    const file = new File([u8arr], id, {type: mime});
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('schematicsId', id);
+                    await fileUpload(formData);
                 }
-
-                const file = new File([u8arr], id, {type: mime});
-
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('schematicsId', id);
-                await fileUpload(formData);
             }
 
             toast.success('Schematics saved successfully!');
