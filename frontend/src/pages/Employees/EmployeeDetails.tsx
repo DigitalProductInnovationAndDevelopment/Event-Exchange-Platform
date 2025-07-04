@@ -76,29 +76,35 @@ export const EmployeeDetails = () => {
     })();
   }, [employeeId, getEmployeeById]);
 
-    const basicFields = [
-        {label: 'Full Name', value: employee?.profile.fullName},
-        {label: 'Gitlab Username', value: employee?.profile.gitlabUsername},
-        {label: 'Gender', value: employee?.profile.gender ? employee.profile.gender.charAt(0).toUpperCase() + employee.profile.gender.slice(1).toLowerCase() : undefined},
-        {label: 'Role', value: employee?.profile.authorities?.map((role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase())},
-        {
-            label: 'Dietary Preferences',
-            value: employee?.profile.dietTypes?.length
-                ? employee.profile.dietTypes.map(type => {
-                    const typeObj = DIET_TYPES.find(t => t.value === type);
-                    return typeObj ? typeObj.label : type;
-                  })
-                : undefined
-        },
-        {label: 'Location', value: employee?.location},
-        {
-            label: 'Employment Type',
-            value: employee?.employmentType
-                ? <EmployeeTypeTag type={employee.employmentType}/>
-                : undefined
-        },
-        {label: 'Date Joined', value: employee?.employmentStartDate},
-    ];
+  const basicFields = [
+    { label: "Full Name", value: employee?.profile.fullName },
+    { label: "Gitlab Username", value: employee?.profile.gitlabUsername },
+    {
+      label: "Gender",
+      value: employee?.profile.gender ? employee.profile.gender.charAt(0).toUpperCase() + employee.profile.gender.slice(1).toLowerCase() : undefined,
+    },
+    {
+      label: "Role",
+      value: employee?.profile.authorities?.map((role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()),
+    },
+    {
+      label: "Dietary Preferences",
+      value: employee?.profile.dietTypes?.length
+        ? employee.profile.dietTypes.map(type => {
+          const typeObj = DIET_TYPES.find(t => t.value === type);
+          return typeObj ? typeObj.label : type;
+        })
+        : undefined,
+    },
+    { label: "Location", value: employee?.location },
+    {
+      label: "Employment Type",
+      value: employee?.employmentType
+        ? <EmployeeTypeTag type={employee.employmentType} />
+        : undefined,
+    },
+    { label: "Date Joined", value: employee?.employmentStartDate },
+  ];
 
   const contactFields = [{ label: "Email", value: employee?.profile.email }];
 

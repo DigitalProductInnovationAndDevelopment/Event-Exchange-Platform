@@ -14,13 +14,13 @@ type EmployeeFormProps = {
 
 
 export const DIET_TYPES = Object.entries(DietaryPreference).map(([key, label]) => ({
-  label: <DietTypeTag type={key}/>,
+  label: <DietTypeTag type={key} />,
   value: key,
 }));
 
 
 export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key, label]) => ({
-  label: <EmployeeTypeTag type={key}/>,
+  label: <EmployeeTypeTag type={key} />,
   value: key,
 }));
 

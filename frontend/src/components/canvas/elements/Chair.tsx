@@ -31,24 +31,24 @@ export class Chair implements ElementProperties {
 }
 
 export function ChairRender(chair: Chair) {
-    return (
-        <>
-            <Circle
-                radius={chair.radius || 10}
-                fill={chair.color || "#888"}
-            />
-            {chair.employeeName && (
-                <Text
-                    text={chair.employeeName}
-                    x={-chair.radius - 5}
-                    y={-chair.radius - 15}
-                    fontSize={10}
-                    fill="black"
-                    align="center"
-                    width={chair.radius * 2 + 10}
-                />
-            )}
-        </>
-    );
+  return (
+    <>
+      <Circle
+        radius={chair.radius || 10}
+        fill={chair.color || "#888"}
+      />
+      {chair.employeeName && (
+        <Text
+          text={chair.employeeName}
+          x={-chair.radius - 5}
+          y={-chair.radius - 15}
+          fontSize={10}
+          fill="black"
+          align="center"
+          width={chair.radius * 2 + 10}
+        />
+      )}
+    </>
+  );
 }
 

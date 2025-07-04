@@ -121,10 +121,10 @@ export const EventCreate = () => {
                     noStyle
                   >
                     <Select
-                        options={Object.entries(EVENT_TYPE_COLORS).map(([key, value]) => ({
-                          label: <EventTypeTag type={key as EventType}/>,
-                          value: key,
-                        }))}
+                      options={Object.entries(EVENT_TYPE_COLORS).map(([key, value]) => ({
+                        label: <EventTypeTag type={key as EventType} />,
+                        value: key,
+                      }))}
                     />
                   </Form.Item>
                 </Descriptions.Item>

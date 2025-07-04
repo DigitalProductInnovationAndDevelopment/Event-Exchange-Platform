@@ -93,11 +93,11 @@ export const EventsList = () => {
       render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm"),
     },
     {
-      title: 'Type',
-      dataIndex: 'eventType',
-      key: 'eventType',
-      width: '14%',
-      render: (type: EventType) => <EventTypeTag type={type}/>,
+      title: "Type",
+      dataIndex: "eventType",
+      key: "eventType",
+      width: "14%",
+      render: (type: EventType) => <EventTypeTag type={type} />,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
         text: type.replace(/_/g, " "),
         value: type,
@@ -112,11 +112,11 @@ export const EventsList = () => {
       sorter: (a, b) => a.participantCount - b.participantCount,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: '14%',
-      render: (status: EventStatus) => <EventStatusTag status={status}/>,
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: "14%",
+      render: (status: EventStatus) => <EventStatusTag status={status} />,
       filters: Object.entries(EVENT_STATUS_COLORS).map(([status, _]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
         value: status,
@@ -243,34 +243,34 @@ export const EventsList = () => {
                               const filteredImages = event.fileEntities?.filter(
                                 (file: FileEntity) =>
                                   file.contentType === "image/png" ||
-                                  file.contentType === "image/jpeg"
+                                  file.contentType === "image/jpeg",
                               );
                               if (filteredImages && filteredImages.length > 0) {
                                 return (
                                   <Carousel dots={false} arrows={filteredImages.length > 1}>
                                     {filteredImages.map((file: FileEntity) => (
-                                        <div key={file.fileId} className="px-8">
-                                          <div
-                                              style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                borderRadius: 4,
-                                                width: '100%',
-                                                height: '200px',
-                                                overflow: 'hidden',
-                                              }}
-                                          >
-                                            <Image
-                                                src={`${BASE_URL}/files/${file.fileId}`}
-                                                alt="Event Image"
-                                                style={{
-                                                  width: '100%',
-                                                  height: '100%',
-                                                  objectFit: 'contain',
-                                                }}
+                                      <div key={file.fileId} className="px-8">
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            borderRadius: 4,
+                                            width: "100%",
+                                            height: "200px",
+                                            overflow: "hidden",
+                                          }}
+                                        >
+                                          <Image
+                                            src={`${BASE_URL}/files/${file.fileId}`}
+                                            alt="Event Image"
+                                            style={{
+                                              width: "100%",
+                                              height: "100%",
+                                              objectFit: "contain",
+                                            }}
                                           />
-                                          </div>
+                                        </div>
                                       </div>
                                     ))}
                                   </Carousel>

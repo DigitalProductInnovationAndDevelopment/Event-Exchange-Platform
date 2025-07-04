@@ -58,12 +58,12 @@ export const EmployeeEdit = () => {
   // Normalize gender to uppercase for initialValues
   const normalizedInitialValues = employee
     ? {
-        ...employee,
-        profile: {
-          ...employee.profile,
-          gender: employee.profile.gender?.toUpperCase() || undefined,
-        },
-      }
+      ...employee,
+      profile: {
+        ...employee.profile,
+        gender: employee.profile.gender?.toUpperCase() || undefined,
+      },
+    }
     : { profile: { gender: undefined } };
 
   return (

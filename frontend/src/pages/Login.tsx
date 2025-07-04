@@ -36,7 +36,7 @@ export const Login = () => {
             type="primary"
             className="w-48"
             onClick={() =>
-                (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)
+              (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)
             }
           >
             Employee Login

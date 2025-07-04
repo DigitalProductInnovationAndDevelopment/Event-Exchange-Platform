@@ -70,41 +70,41 @@ export class Table implements ElementProperties {
 }
 
 export function TableRender(table: Table, areTextsEnabled: boolean) {
-    return table.type === "circleTable" ? (
-        <Group>
-            <Circle radius={table.radius} fill={table.color || "#8B4513"}/>
-            {areTextsEnabled &&
-                <Text
-                    text={`${table.name}\n${table.attachedChairs.length} chairs`}
-                    fill="white"
-                    fontSize={12}
-                    x={-(table.radius ?? 0) / 2}
-                    y={-(table.radius ?? 0) / 2}
-                    width={table.radius ? table.radius * 2 : 0}
-                    verticalAlign="middle"
-                />
-            }
-        </Group>
+  return table.type === "circleTable" ? (
+    <Group>
+      <Circle radius={table.radius} fill={table.color || "#8B4513"} />
+      {areTextsEnabled &&
+        <Text
+          text={`${table.name}\n${table.attachedChairs.length} chairs`}
+          fill="white"
+          fontSize={12}
+          x={-(table.radius ?? 0) / 2}
+          y={-(table.radius ?? 0) / 2}
+          width={table.radius ? table.radius * 2 : 0}
+          verticalAlign="middle"
+        />
+      }
+    </Group>
 
-    ) : (
-        <Group>
-            <Rect
-                width={table.width}
-                height={table.height}
-                fill={table.color || "#8B4513"}
-            />
-            {areTextsEnabled &&
-                <Text
-                    text={`${table.name}\n${table.attachedChairs.length} chairs`}
-                    fill="white"
-                    fontSize={12}
-                    align="center"
-                    width={table.width}
-                    verticalAlign="middle"
-                    height={table.height}
-                />
-            }
-        </Group>
+  ) : (
+    <Group>
+      <Rect
+        width={table.width}
+        height={table.height}
+        fill={table.color || "#8B4513"}
+      />
+      {areTextsEnabled &&
+        <Text
+          text={`${table.name}\n${table.attachedChairs.length} chairs`}
+          fill="white"
+          fontSize={12}
+          align="center"
+          width={table.width}
+          verticalAlign="middle"
+          height={table.height}
+        />
+      }
+    </Group>
 
-    );
+  );
 }

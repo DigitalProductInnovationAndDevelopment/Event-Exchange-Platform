@@ -14,7 +14,7 @@ const { Title } = Typography;
 // Define table columns with correct types
 const columns = (
   onDelete: (key: string) => void,
-  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
+  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
 ): ColumnsType<Employee> => [
   {
     title: "Full Name",
@@ -33,10 +33,10 @@ const columns = (
     key: "location",
   },
   {
-    title: 'Employment Type',
-    dataIndex: 'employmentType',
-    key: 'employmentType',
-    render: (type: string) => <EmployeeTypeTag type={type}/>,
+    title: "Employment Type",
+    dataIndex: "employmentType",
+    key: "employmentType",
+    render: (type: string) => <EmployeeTypeTag type={type} />,
   },
   {
     title: "Date Joined",

@@ -25,20 +25,20 @@ import { Typography } from "antd";
 const { Title } = Typography;
 
 function KonvaCanvas() {
-    const {state, dispatch} = useCanvas();
-    const stageRef = useRef<Konva.Stage | null>(null);
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const [scale, setScale] = useState(1);
-    const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
-    const [quickWallCoordinates, setQuickWallCoordinates] = useState<{
-        x1?: number;
-        y1?: number;
-    }>({x1: undefined, y1: undefined});
-    const {getSchematics} = useApiService();
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [initiated, setInitiated] = useState(false);
-    const {schematicsId} = useParams();
-    const [isShiftPressed, setIsShiftPressed] = useState(false);
+  const { state, dispatch } = useCanvas();
+  const stageRef = useRef<Konva.Stage | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [scale, setScale] = useState(1);
+  const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
+  const [quickWallCoordinates, setQuickWallCoordinates] = useState<{
+    x1?: number;
+    y1?: number;
+  }>({ x1: undefined, y1: undefined });
+  const { getSchematics } = useApiService();
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [initiated, setInitiated] = useState(false);
+  const { schematicsId } = useParams();
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
 
   const [selectionRectangle, setSelectionRectangle] = useState({
     visible: false,
@@ -48,42 +48,42 @@ function KonvaCanvas() {
     y2: 0,
   });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!initiated && schematicsId) {
-                const fetchedAppState = await getSchematics(schematicsId);
-                if (fetchedAppState && !initiated) {
-                    dispatch(setState({...fetchedAppState, buildMode: 0}));
-                }
-            }
-        };
-        fetchData().then(() => {
-            stageRef.current?.setPosition(state.canvasPosition ? state.canvasPosition : {x: 0, y: 0});
-            setScale(state.scale)
-            setInitiated(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!initiated && schematicsId) {
+        const fetchedAppState = await getSchematics(schematicsId);
+        if (fetchedAppState && !initiated) {
+          dispatch(setState({ ...fetchedAppState, buildMode: 0 }));
+        }
+      }
+    };
+    fetchData().then(() => {
+      stageRef.current?.setPosition(state.canvasPosition ? state.canvasPosition : { x: 0, y: 0 });
+      setScale(state.scale);
+      setInitiated(true);
+    });
+  }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // we have to scroll to top-left corner of the page, otherwise it looks bad
+  }, []);
+
+  // Measure container size
+  useEffect(() => {
+    const updateContainerSize = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerSize({
+          width: rect.width,
+          height: rect.height,
         });
-    }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
+      }
+    };
 
-    useEffect(() => {
-        window.scrollTo(0, 0); // we have to scroll to top-left corner of the page, otherwise it looks bad
-    }, []);
-
-    // Measure container size
-    useEffect(() => {
-        const updateContainerSize = () => {
-            if (containerRef.current) {
-                const rect = containerRef.current.getBoundingClientRect();
-                setContainerSize({
-                    width: rect.width,
-                    height: rect.height
-                });
-            }
-        };
-
-        updateContainerSize();
-        window.addEventListener('resize', updateContainerSize);
-        return () => window.removeEventListener('resize', updateContainerSize);
-    }, []);
+    updateContainerSize();
+    window.addEventListener("resize", updateContainerSize);
+    return () => window.removeEventListener("resize", updateContainerSize);
+  }, []);
 
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -344,17 +344,17 @@ function KonvaCanvas() {
           }
           : el.type !== "wall"
             ? {
-                id,
-                width: el.width ? Math.max(10, el.width * scaleX) : undefined,
-                height: el.height ? Math.max(10, el.height * scaleY) : undefined,
-                rotation: node.rotation(),
+              id,
+              width: el.width ? Math.max(10, el.width * scaleX) : undefined,
+              height: el.height ? Math.max(10, el.height * scaleY) : undefined,
+              rotation: node.rotation(),
             }
             : {
-                id,
-                x1: el.x1! * scaleX,
-                y1: el.y1! * scaleY,
-                x2: el.x2! * scaleX,
-                y2: el.y2! * scaleY,
+              id,
+              x1: el.x1! * scaleX,
+              y1: el.y1! * scaleY,
+              x2: el.x2! * scaleX,
+              y2: el.y2! * scaleY,
             };
 
       dispatch(updateElement(updates));
@@ -404,27 +404,27 @@ function KonvaCanvas() {
     }
   };
 
-    const handleMouseMove = (e: { evt: MouseEvent, target: Konva.Stage }) => {
+  const handleMouseMove = (e: { evt: MouseEvent, target: Konva.Stage }) => {
 
-        const container = stageRef!.current!.container();
-        if (isShiftPressed || state.buildMode === 1) {
-            container.style.cursor = 'default';
-        } else {
-            container.style.cursor = 'grab';
-        }
+    const container = stageRef!.current!.container();
+    if (isShiftPressed || state.buildMode === 1) {
+      container.style.cursor = "default";
+    } else {
+      container.style.cursor = "grab";
+    }
 
-      if (!isSelecting.current) {
-        return;
-      }
+    if (!isSelecting.current) {
+      return;
+    }
 
-      const stage = e.target.getStage();
-      const pos = e.target.getStage().getPointerPosition()!;
-      setSelectionRectangle({
-        ...selectionRectangle,
-        x2: (pos.x - stage.x()) / scale,
-        y2: (pos.y - stage.y()) / scale,
-      });
-    };
+    const stage = e.target.getStage();
+    const pos = e.target.getStage().getPointerPosition()!;
+    setSelectionRectangle({
+      ...selectionRectangle,
+      x2: (pos.x - stage.x()) / scale,
+      y2: (pos.y - stage.y()) / scale,
+    });
+  };
 
   const handleMouseUp = () => {
     // Do nothing if we didn't start selection
@@ -456,105 +456,105 @@ function KonvaCanvas() {
     setSelectedIds(selected.map(rect => rect.id));
   };
 
-    return (
+  return (
 
-        <div className="space-y-6">
-            <div className="App overflow-hidden bg-white"
-                 style={{display: "flex", border: "1px solid #e0e0e0", flexDirection: "row"}}>
+    <div className="space-y-6">
+      <div className="App overflow-hidden bg-white"
+           style={{ display: "flex", border: "1px solid #e0e0e0", flexDirection: "row" }}>
 
-                <Toolbox dispatch={dispatch} stageRef={stageRef} state={state}/>
+        <Toolbox dispatch={dispatch} stageRef={stageRef} state={state} />
 
-                {/* main Canvas */}
-                <div ref={containerRef} style={{ flex: 1, position: 'relative' }}>
-                    <Stage
-                        scaleX={scale}
-                        scaleY={scale}
-                        onWheel={handleWheel}
-                        draggable={!isSelecting.current}
-                        ref={stageRef}
-                        width={containerSize.width}
-                        height={containerSize.height}
-                        onMouseDown={handleMouseDown}
-                        onMousemove={handleMouseMove}
-                        onMouseup={handleMouseUp}
-                    >
+        {/* main Canvas */}
+        <div ref={containerRef} style={{ flex: 1, position: "relative" }}>
+          <Stage
+            scaleX={scale}
+            scaleY={scale}
+            onWheel={handleWheel}
+            draggable={!isSelecting.current}
+            ref={stageRef}
+            width={containerSize.width}
+            height={containerSize.height}
+            onMouseDown={handleMouseDown}
+            onMousemove={handleMouseMove}
+            onMouseup={handleMouseUp}
+          >
 
-                        <Layer>
+            <Layer>
 
-                            {/* this is where we display elements */}
-                            {state.elements?.map((el) => {
-                                return (
-                                    <Group
-                                        key={el.id}
-                                        id={el.id}
-                                        x={el.x}
-                                        y={el.y}
-                                        draggable={el.draggable}
-                                        rotation={el.rotation}
-                                        onDblClick={(e) => handleDoubleClickOnElement(e, el)}
-                                        onDragMove={(e) => handleDragMove(e, el)}
-                                        onDragEnd={(e) => handleDragEnd(e, el)}
-                                        ref={node => {
-                                            if (node) {
-                                                rectRefs.current.set(el.id, node);
-                                            }
-                                        }}
-                                    >
-                                        {renderElement(el, true)}
-                                    </Group>
-                                );
-                            })}
+              {/* this is where we display elements */}
+              {state.elements?.map((el) => {
+                return (
+                  <Group
+                    key={el.id}
+                    id={el.id}
+                    x={el.x}
+                    y={el.y}
+                    draggable={el.draggable}
+                    rotation={el.rotation}
+                    onDblClick={(e) => handleDoubleClickOnElement(e, el)}
+                    onDragMove={(e) => handleDragMove(e, el)}
+                    onDragEnd={(e) => handleDragEnd(e, el)}
+                    ref={node => {
+                      if (node) {
+                        rectRefs.current.set(el.id, node);
+                      }
+                    }}
+                  >
+                    {renderElement(el, true)}
+                  </Group>
+                );
+              })}
 
-                            {/* transformer for all selected shapes. this is what we use to scale up or shrink the shapes */}
-                            <Transformer
-                                ref={transformerRef}
-                                boundBoxFunc={(_oldBox, newBox) => {
-                                    return newBox;
-                                }}
-                                onTransformEnd={handleTransformEnd}
-                            />
+              {/* transformer for all selected shapes. this is what we use to scale up or shrink the shapes */}
+              <Transformer
+                ref={transformerRef}
+                boundBoxFunc={(_oldBox, newBox) => {
+                  return newBox;
+                }}
+                onTransformEnd={handleTransformEnd}
+              />
 
-                            {/* Selection rectangle */}
-                            {selectionRectangle.visible && (
-                                <Group>
-                                    <Rect
-                                        x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                        y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                        width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                        height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                        fill="rgba(0,0,255,0.5)"
-                                    />
-                                    <Text
-                                        text={`start: ${selectionRectangle.x1.toFixed(2)}:${selectionRectangle.y1.toFixed(2)}\nend: ${selectionRectangle.x2.toFixed(2)}:${selectionRectangle.y2.toFixed(2)}`}
-                                        x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                        y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                        width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                        height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                        fill="white"
-                                        fontSize={12}
-                                        align="center"
-                                        verticalAlign="middle"
-                                    />
-                                </Group>
-                            )}
-
-                        </Layer>
-                    </Stage>
-                </div>
-
-              {/*<StagePreview state={state} mainStage={stageRef.current!}></StagePreview>*/}
-
-              {selectedIds.length === 1 && (
-                <ElementInspector
-                  dispatch={dispatch}
-                  state={state}
-                  selectedIds={selectedIds}
-                  setSelectedIds={setSelectedIds}
-                ></ElementInspector>
+              {/* Selection rectangle */}
+              {selectionRectangle.visible && (
+                <Group>
+                  <Rect
+                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                    fill="rgba(0,0,255,0.5)"
+                  />
+                  <Text
+                    text={`start: ${selectionRectangle.x1.toFixed(2)}:${selectionRectangle.y1.toFixed(2)}\nend: ${selectionRectangle.x2.toFixed(2)}:${selectionRectangle.y2.toFixed(2)}`}
+                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                    fill="white"
+                    fontSize={12}
+                    align="center"
+                    verticalAlign="middle"
+                  />
+                </Group>
               )}
-            </div>
+
+            </Layer>
+          </Stage>
         </div>
-    );
+
+        {/*<StagePreview state={state} mainStage={stageRef.current!}></StagePreview>*/}
+
+        {selectedIds.length === 1 && (
+          <ElementInspector
+            dispatch={dispatch}
+            state={state}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+          ></ElementInspector>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default KonvaCanvas;

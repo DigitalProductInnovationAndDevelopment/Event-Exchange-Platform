@@ -161,9 +161,9 @@ export const Dashboard = () => {
                           (event.capacity > 0
                             ? (event.participantCount / event.capacity) * 100
                             : 0),
-                        0
+                          0,
                       ) / (events.length || 1)
-                    ).toFixed(2)
+                    ).toFixed(2),
                   )
                 }
                 suffix="%"

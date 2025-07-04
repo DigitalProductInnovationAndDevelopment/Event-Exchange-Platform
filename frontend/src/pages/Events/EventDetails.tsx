@@ -129,7 +129,7 @@ export const EventDetails = () => {
         <div className="flex items-center space-x-4">
           <Title level={2} className="mb-0 max-w-xl">{event.name}</Title>
           <div className="px-4 py-2">
-            <EventStatusTag status={event.status} size="big"/>
+            <EventStatusTag status={event.status} size="big" />
           </div>
         </div>
         <Space>
@@ -188,7 +188,7 @@ export const EventDetails = () => {
                 </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Type" span={3}>
-                <EventTypeTag type={event.eventType}/>
+                <EventTypeTag type={event.eventType} />
               </Descriptions.Item>
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
@@ -204,20 +204,20 @@ export const EventDetails = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      background: '#f5f5f5',
+                      background: "#f5f5f5",
                       borderRadius: 4,
-                      width: '100%',
-                      height: '200px',
-                      overflow: 'hidden',
+                      width: "100%",
+                      height: "200px",
+                      overflow: "hidden",
                     }}
                   >
                     <Image
-                        src={`${BASE_URL}/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
+                      src={`${BASE_URL}/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
                       alt="Event Seat Plan Image"
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                       }}
                     />
                   </div>
@@ -225,11 +225,11 @@ export const EventDetails = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      background: '#f5f5f5',
+                      background: "#f5f5f5",
                       borderRadius: 4,
-                      width: '100%',
-                      height: '200px',
-                      color: '#8c8c8c',
+                      width: "100%",
+                      height: "200px",
+                      color: "#8c8c8c",
                     }}
                   >
                     No seat layout available
@@ -238,12 +238,13 @@ export const EventDetails = () => {
               </Col>
               <Col span={12}>
                 <Space direction="vertical" className="w-full">
-                  <Button block icon={<UserAddOutlined />} onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
+                  <Button block icon={<UserAddOutlined />}
+                          onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
                     Manage Participants
                   </Button>
                   <Button block icon={<EditOutlined />} onClick={() => {
                     if (event?.schematics) {
-                      navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`)
+                      navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`);
                     } else {
                       handleCreate();
                     }
@@ -296,26 +297,26 @@ export const EventDetails = () => {
           {imageFiles?.length > 0 && (
             <Card title="Event Images" className="mb-6">
               <Space direction="vertical" className="w-full">
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: "relative" }}>
                   <div
                     style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      background: '#f5f5f5',
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      background: "#f5f5f5",
                       borderRadius: 4,
-                      width: '100%',
-                      height: '200px',
-                      overflow: 'hidden',
+                      width: "100%",
+                      height: "200px",
+                      overflow: "hidden",
                     }}
                   >
                     <Image
-                        src={`${BASE_URL}/files/${imageFiles[currentImageIndex].fileId}`}
+                      src={`${BASE_URL}/files/${imageFiles[currentImageIndex].fileId}`}
                       alt="Event Image"
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
                       }}
                     />
                   </div>
@@ -325,24 +326,24 @@ export const EventDetails = () => {
                         type="text"
                         icon={<LeftOutlined />}
                         style={{
-                          position: 'absolute',
+                          position: "absolute",
                           left: 8,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
+                          top: "50%",
+                          transform: "translateY(-50%)",
                           zIndex: 1,
-                          color: 'white',
-                          fontSize: '18px',
-                          background: 'rgba(0, 0, 0, 0.5)',
-                          border: 'none',
-                          borderRadius: '50%',
-                          width: '32px',
-                          height: '32px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          color: "white",
+                          fontSize: "18px",
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "none",
+                          borderRadius: "50%",
+                          width: "32px",
+                          height: "32px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                         onClick={() => {
-                          console.log('Left button clicked, current index:', currentImageIndex);
+                          console.log("Left button clicked, current index:", currentImageIndex);
                           setCurrentImageIndex((currentImageIndex - 1 + imageFiles.length) % imageFiles.length);
                         }}
                       />
@@ -350,31 +351,31 @@ export const EventDetails = () => {
                         type="text"
                         icon={<RightOutlined />}
                         style={{
-                          position: 'absolute',
+                          position: "absolute",
                           right: 8,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
+                          top: "50%",
+                          transform: "translateY(-50%)",
                           zIndex: 1,
-                          color: 'white',
-                          fontSize: '18px',
-                          background: 'rgba(0, 0, 0, 0.5)',
-                          border: 'none',
-                          borderRadius: '50%',
-                          width: '32px',
-                          height: '32px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          color: "white",
+                          fontSize: "18px",
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "none",
+                          borderRadius: "50%",
+                          width: "32px",
+                          height: "32px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                         onClick={() => {
-                          console.log('Right button clicked, current index:', currentImageIndex);
+                          console.log("Right button clicked, current index:", currentImageIndex);
                           setCurrentImageIndex((currentImageIndex + 1) % imageFiles.length);
                         }}
                       />
                     </>
                   )}
                 </div>
-                </Space>
+              </Space>
             </Card>
           )}
 

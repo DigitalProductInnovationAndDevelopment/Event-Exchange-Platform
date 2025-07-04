@@ -206,14 +206,14 @@ export default function useApiService() {
     [request],
   );
 
-    const getSchematics: (id: string) => Promise<AppState> = useCallback(async (id: string) => {
-        try {
-            const response = await request<{ state: string }>(`/schematics/${id}`);
-            return JSON.parse(response.state);
-        } catch (err) {
-            toast.error('Schematics fetch failed');
-        }
-    }, [request]);
+  const getSchematics: (id: string) => Promise<AppState> = useCallback(async (id: string) => {
+    try {
+      const response = await request<{ state: string }>(`/schematics/${id}`);
+      return JSON.parse(response.state);
+    } catch (err) {
+      toast.error("Schematics fetch failed");
+    }
+  }, [request]);
 
   const initiateSchematics = useCallback(
     async (eventId: string): Promise<SchematicsEntity | null> => {
@@ -241,45 +241,45 @@ export default function useApiService() {
     [request],
   );
 
-    const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null>): Promise<SchematicsEntity | null> => {
-        try {
-            const response = await request(`/schematics/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    state: JSON.stringify(canvasState),
-                }),
-            });
-            if (stageRef && stageRef!.current) {
-                const dataUrl = await handleExport(stageRef);
-                if (dataUrl) {
-                    const arr = dataUrl!.split(',');
-                    const mime = arr[0].match(/:(.*?);/)![1];
-                    const bstr = atob(arr[1]);
-                    let n = bstr.length;
-                    const u8arr = new Uint8Array(n);
+  const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null>): Promise<SchematicsEntity | null> => {
+      try {
+        const response = await request(`/schematics/${id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            state: JSON.stringify(canvasState),
+          }),
+        });
+        if (stageRef && stageRef!.current) {
+          const dataUrl = await handleExport(stageRef);
+          if (dataUrl) {
+            const arr = dataUrl!.split(",");
+            const mime = arr[0].match(/:(.*?);/)![1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
 
-                    while (n--) {
-                        u8arr[n] = bstr.charCodeAt(n);
-                    }
-
-                    const file = new File([u8arr], id, {type: mime});
-
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('schematicsId', id);
-                    await fileUpload(formData);
-                }
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n);
             }
 
-          toast.success("Schematics saved successfully!");
-          return response;
-        } catch (err) {
-          toast.error("Schematics save failed");
-          return null;
+            const file = new File([u8arr], id, { type: mime });
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("schematicsId", id);
+            await fileUpload(formData);
+          }
         }
-      },
-      [fileUpload, request],
-    );
+
+        toast.success("Schematics saved successfully!");
+        return response;
+      } catch (err) {
+        toast.error("Schematics save failed");
+        return null;
+      }
+    },
+    [fileUpload, request],
+  );
 
   const deleteSchematics = useCallback(
     async (id: string) => {

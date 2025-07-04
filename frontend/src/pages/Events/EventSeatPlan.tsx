@@ -53,7 +53,7 @@ export const EventSeatPlan = () => {
       <Row gutter={16}>
         <Col span={24}>
           <Card className="mb-6">
-            <div style={{ height: '600px', overflow: 'hidden' }}>
+            <div style={{ height: "600px", overflow: "hidden" }}>
               <CanvasProvider initialState={initialState}>
                 <KonvaCanvas />
               </CanvasProvider>

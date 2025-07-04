@@ -102,8 +102,8 @@ const SeatAllocationContent = ({
       {/* Main content: seat map and unallocated employees list */}
       <Row gutter={16}>
         <Col span={18}>
-        <Card className="mb-6">
-            <div style={{ height: '600px', overflow: 'hidden' }}>
+          <Card className="mb-6">
+            <div style={{ height: "600px", overflow: "hidden" }}>
               <KonvaCanvas />
             </div>
           </Card>

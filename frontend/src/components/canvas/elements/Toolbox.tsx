@@ -13,43 +13,43 @@ import { addElement, changeBuildMode } from "../actions/actions.tsx";
 
 
 function makeBackgroundWhite(uri: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
 
-        img.onload = function () {
-            console.log("Image loaded", img.width, img.height);
+    img.onload = function() {
+      console.log("Image loaded", img.width, img.height);
 
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
 
-            const ctx = canvas.getContext('2d');
-            if (!ctx) {
-                return reject(new Error("Failed to get canvas context"));
-            }
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        return reject(new Error("Failed to get canvas context"));
+      }
 
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0);
 
-            try {
-                const jpegUri = canvas.toDataURL('image/jpeg', 2);
-                console.log("Generated JPEG length:", jpegUri.length);
-                resolve(jpegUri);
-            } catch (e) {
-                reject(e);
-            }
-        };
+      try {
+        const jpegUri = canvas.toDataURL("image/jpeg", 2);
+        console.log("Generated JPEG length:", jpegUri.length);
+        resolve(jpegUri);
+      } catch (e) {
+        reject(e);
+      }
+    };
 
-        img.onerror = function (err) {
-            console.error("Image failed to load", err);
-            reject(new Error("Failed to load image"));
-        };
+    img.onerror = function(err) {
+      console.error("Image failed to load", err);
+      reject(new Error("Failed to load image"));
+    };
 
-        img.src = uri;
-    });
+    img.src = uri;
+  });
 }
 
 
@@ -63,15 +63,15 @@ function downloadURI(uri: string, name: string) {
 }
 
 function sanitize(value: number, fallback = 0) {
-    if (!Number.isFinite(value)) {
-        return fallback;
-    }
-    return value;
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+  return value;
 }
 
 export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>) => {
 
-    if (!stageRef.current) return;
+  if (!stageRef.current) return;
 
   const stage = stageRef.current;
   const layers = stage.getLayers();
@@ -87,11 +87,11 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
     .map(layer => layer.getClientRect({ skipTransform: false }))
     .filter(rect => rect.width > 0 && rect.height > 0);
 
-    // Calculate bounding box
-    const minX = Math.min(...layerRects.map(rect => rect.x));
-    const minY = Math.min(...layerRects.map(rect => rect.y));
-    const maxX = Math.max(...layerRects.map(rect => rect.x + rect.width));
-    const maxY = Math.max(...layerRects.map(rect => rect.y + rect.height));
+  // Calculate bounding box
+  const minX = Math.min(...layerRects.map(rect => rect.x));
+  const minY = Math.min(...layerRects.map(rect => rect.y));
+  const maxX = Math.max(...layerRects.map(rect => rect.x + rect.width));
+  const maxY = Math.max(...layerRects.map(rect => rect.y + rect.height));
 
   const contentRect = {
     x: minX,
@@ -108,44 +108,44 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
     height: contentRect.height + padding * 2,
   };
 
-    try {
-        return await makeBackgroundWhite(stage.toDataURL({
-            x: sanitize(exportRect.x),
-            y: sanitize(exportRect.y),
-            width: sanitize(exportRect.width),
-            height: sanitize(exportRect.height),
-            pixelRatio: 2,
-        }))
-            .then((jpegUri) => {
-                console.log("Converted image URI:", jpegUri);
-                return jpegUri;
-            })
-            .catch((err) => {
-                console.error("Error processing image:", err);
-            });
+  try {
+    return await makeBackgroundWhite(stage.toDataURL({
+      x: sanitize(exportRect.x),
+      y: sanitize(exportRect.y),
+      width: sanitize(exportRect.width),
+      height: sanitize(exportRect.height),
+      pixelRatio: 2,
+    }))
+      .then((jpegUri) => {
+        console.log("Converted image URI:", jpegUri);
+        return jpegUri;
+      })
+      .catch((err) => {
+        console.error("Error processing image:", err);
+      });
 
-    } catch (error) {
-        console.error('Export failed:', error);
-    }
+  } catch (error) {
+    console.error("Export failed:", error);
+  }
 };
 
 const handleToolboxClick =
-    (type: string, dispatch: (arg0: {
-        type: string;
-        payload: number | Chair | Table | Wall | Room | null;
-    }) => void, currentBuildMode: number) => {
-        const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
-        if (!toolItem) return;
+  (type: string, dispatch: (arg0: {
+    type: string;
+    payload: number | Chair | Table | Wall | Room | null;
+  }) => void, currentBuildMode: number) => {
+    const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
+    if (!toolItem) return;
 
-        if (type === "quickWall") {
-            // Toggle quickwall mode: if already in build mode 1, switch back to 0
-            const newBuildMode = currentBuildMode === 1 ? 0 : 1;
-            dispatch(changeBuildMode(newBuildMode));
-        } else {
-            dispatch(addElement(shapeFactory(type)));
-        }
+    if (type === "quickWall") {
+      // Toggle quickwall mode: if already in build mode 1, switch back to 0
+      const newBuildMode = currentBuildMode === 1 ? 0 : 1;
+      dispatch(changeBuildMode(newBuildMode));
+    } else {
+      dispatch(addElement(shapeFactory(type)));
+    }
 
-    };
+  };
 
 function Toolbox({
                    dispatch,
@@ -184,34 +184,34 @@ function Toolbox({
             fill="black"
           />
 
-                    {TOOLBOX_ITEMS.map((item, i) => (
-                        <Group
-                            key={item.type}
-                            x={10}
-                            y={i * 60 + 40}
-                            onClick={() => handleToolboxClick(item.type, dispatch, state.buildMode)}
-                            cursor="pointer"
-                        >
-                            <Rect width={80} height={40} fill="#ddd" stroke="#999" cornerRadius={6}/>
-                            <Text text={item.label} fontSize={12} x={10} y={13} fill="black"/>
-                        </Group>
-                    ))}
+          {TOOLBOX_ITEMS.map((item, i) => (
+            <Group
+              key={item.type}
+              x={10}
+              y={i * 60 + 40}
+              onClick={() => handleToolboxClick(item.type, dispatch, state.buildMode)}
+              cursor="pointer"
+            >
+              <Rect width={80} height={40} fill="#ddd" stroke="#999" cornerRadius={6} />
+              <Text text={item.label} fontSize={12} x={10} y={13} fill="black" />
+            </Group>
+          ))}
 
-                    <Group y={400} onClick={async () => {
-                        const uri = await handleExport(stageRef);
-                        downloadURI(uri!, 'stage.jpeg');
-                    }}>
-                        <Rect
-                            width={80}
-                            height={50}
-                            fill="#f66"
-                            cornerRadius={8}
-                            x={10}
-                            stroke="#900"
-                            strokeWidth={1}
-                        />
-                        <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold"/>
-                    </Group>
+          <Group y={400} onClick={async () => {
+            const uri = await handleExport(stageRef);
+            downloadURI(uri!, "stage.jpeg");
+          }}>
+            <Rect
+              width={80}
+              height={50}
+              fill="#f66"
+              cornerRadius={8}
+              x={10}
+              stroke="#900"
+              strokeWidth={1}
+            />
+            <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
+          </Group>
 
           <Group
             y={460}

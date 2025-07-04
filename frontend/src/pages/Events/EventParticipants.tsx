@@ -54,7 +54,7 @@ export const EventParticipants = () => {
       p =>
         (p.profile.fullName.toLowerCase().includes(employeeSearch.toLowerCase()) ||
           p.profile.email.toLowerCase().includes(employeeSearch.toLowerCase())) &&
-        !participants.some(participant => participant.employeeId === p.profile.id)
+        !participants.some(participant => participant.employeeId === p.profile.id),
     )
     .sort((a, b) => a.profile.fullName.localeCompare(b.profile.fullName));
 
@@ -103,7 +103,7 @@ export const EventParticipants = () => {
   const filteredParticipants = participants.filter(
     e =>
       e.fullName.toLowerCase().includes(participantSearch.toLowerCase()) ||
-      e.email.toLowerCase().includes(participantSearch.toLowerCase())
+      e.email.toLowerCase().includes(participantSearch.toLowerCase()),
   );
 
   const columns = [
@@ -334,7 +334,7 @@ export const EventParticipants = () => {
                   onClick={() => handleAddParticipant({
                     guestCount: record.guestCount,
                     eventId: eventId!,
-                    employeeId: record.profile.id
+                    employeeId: record.profile.id,
                   })}
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
                 >
