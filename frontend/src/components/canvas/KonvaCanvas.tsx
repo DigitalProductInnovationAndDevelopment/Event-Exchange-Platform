@@ -12,17 +12,18 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import {
   addElement,
   changeBuildMode,
+  commitUndoRedoHistory,
   duplicateMultipleElements,
-  removeElement,
+  redo,
+  removeElements,
   setState,
+  undo,
   updateElement,
-  updateMultipleElements,
+  updateMultipleWithoutUndoRedo,
 } from "./actions/actions.tsx";
 import useApiService from "../../services/apiService.ts";
 import { useParams } from "react-router-dom";
-import { Typography } from "antd";
-
-const { Title } = Typography;
+import StagePreview from "../../components/canvas/elements/StagePreview.tsx";
 
 function KonvaCanvas() {
   const { state, dispatch } = useCanvas();
@@ -111,27 +112,45 @@ function KonvaCanvas() {
       const tag = (e.target as HTMLElement).tagName.toLowerCase();
       if (tag === "input" || tag === "textarea") return;
 
+      const isUndo = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && !e.shiftKey;
+      const isRedoX = (e.key === "x" || e.key === "X") && (e.ctrlKey || e.metaKey);
+      const isRedoShiftZ = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && e.shiftKey;
+
+      if (isUndo) {
+        e.preventDefault();
+        dispatch(undo());
+        return;
+      }
+
+      if (isRedoX || isRedoShiftZ) {
+        e.preventDefault();
+        dispatch(redo());
+        return;
+      }
+
       if (e.key === "Escape") {
         setSelectedIds([]);
 
         setQuickWallCoordinates({ x1: undefined, y1: undefined });
 
         dispatch(changeBuildMode(0));
+        return;
       }
 
       if (e.key === "Shift") {
         setIsShiftPressed(true);
+        return;
       }
 
       if (e.key === "Backspace" || e.key === "Delete") {
-        for (const id of selectedIds) {
-          dispatch(removeElement(id));
-        }
+        dispatch(removeElements(selectedIds));
         setSelectedIds([]);
+        return;
       }
 
       if (e.key === "D" || e.key === "d") {
         dispatch(duplicateMultipleElements(selectedIds, setSelectedIds));
+        return;
       }
     };
 
@@ -180,9 +199,13 @@ function KonvaCanvas() {
 
       // Update all chair positions
       if (updates.length > 0) {
-        dispatch(updateMultipleElements(updates));
+        dispatch(updateMultipleWithoutUndoRedo(updates));
       }
     }
+  };
+
+  const handleDragStart = () => {
+    dispatch(commitUndoRedoHistory());
   };
 
   // handle drag end for elements
@@ -266,7 +289,7 @@ function KonvaCanvas() {
 
         // Update chair with attachment info
         dispatch(
-          updateElement({
+          updateMultipleWithoutUndoRedo([{
             id: el.id,
             x: attachPosition.x,
             y: attachPosition.y,
@@ -276,16 +299,16 @@ function KonvaCanvas() {
               dy: attachPosition.y - table.y,
               angle: attachPosition.angle,
             },
-          }),
+          }]),
         );
 
         // Update table with attached chair
         if (!table.attachedChairs.includes(el.id)) {
           dispatch(
-            updateElement({
+            updateMultipleWithoutUndoRedo([{
               id: table.id,
               attachedChairs: [...table.attachedChairs, el.id],
-            }),
+            }]),
           );
         }
         return;
@@ -294,27 +317,27 @@ function KonvaCanvas() {
         const parent = state.elements.find(t => t.id === el.attachedTo) as Table;
         if (parent) {
           dispatch(
-            updateElement({
+            updateMultipleWithoutUndoRedo([{
               id: parent.id,
               attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
-            }),
+            }]),
           );
         }
         dispatch(
-          updateElement({
+          updateMultipleWithoutUndoRedo([{
             id: el.id,
             x,
             y,
             attachedTo: null,
             offset: null,
-          }),
+          }]),
         );
         return;
       }
     }
-
     // Default handling for position updates
-    dispatch(updateElement({ id, x, y }));
+    dispatch(updateMultipleWithoutUndoRedo([{ id, x, y }]));
+
   };
 
   function handleDoubleClickOnElement(_e: KonvaEventObject<MouseEvent>, el: ElementProperties) {
@@ -494,6 +517,7 @@ function KonvaCanvas() {
                     onDblClick={(e) => handleDoubleClickOnElement(e, el)}
                     onDragMove={(e) => handleDragMove(e, el)}
                     onDragEnd={(e) => handleDragEnd(e, el)}
+                    onDragStart={(e) => handleDragStart()}
                     ref={node => {
                       if (node) {
                         rectRefs.current.set(el.id, node);
@@ -542,7 +566,7 @@ function KonvaCanvas() {
           </Stage>
         </div>
 
-        {/*<StagePreview state={state} mainStage={stageRef.current!}></StagePreview>*/}
+        <StagePreview state={state} mainStage={stageRef.current!}></StagePreview>
 
         {selectedIds.length === 1 && (
           <ElementInspector

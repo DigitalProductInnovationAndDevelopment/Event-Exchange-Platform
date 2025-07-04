@@ -243,6 +243,9 @@ export default function useApiService() {
 
   const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null>): Promise<SchematicsEntity | null> => {
       try {
+
+        delete canvasState.history;
+
         const response = await request(`/schematics/${id}`, {
           method: "PUT",
           body: JSON.stringify({

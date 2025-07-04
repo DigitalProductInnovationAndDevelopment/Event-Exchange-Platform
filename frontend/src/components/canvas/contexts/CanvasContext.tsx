@@ -7,7 +7,7 @@ import { type AppState, initialState as InitialStateClass, reducer } from "../re
 const CanvasContext = createContext(null);
 export const useCanvas: () => {
   state: AppState;
-  dispatch: (action: { type: string; payload: any; setSelectedIds?: any }) => void;
+  dispatch: (action: { type: string; payload?: any; setSelectedIds?: any }) => void;
 } = () => useContext(CanvasContext);
 
 // Modified CanvasProvider to accept initialState prop and sync on change

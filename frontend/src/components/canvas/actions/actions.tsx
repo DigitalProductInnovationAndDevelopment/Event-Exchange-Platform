@@ -13,15 +13,19 @@ export interface Action {
 
 export const SET_STATE = "SET_STATE";
 export const ADD_ELEMENT = "ADD_ELEMENT";
-export const REMOVE_ELEMENT = "REMOVE_ELEMENT";
+export const REMOVE_ELEMENTS = "REMOVE_ELEMENTS";
 export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
 export const UPDATE_ELEMENT_SPECIFIC_FIELD = "UPDATE_ELEMENT_SPECIFIC_FIELD";
 export const UPDATE_MULTIPLE_ELEMENTS = "UPDATE_MULTIPLE_ELEMENTS";
+export const UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO = "UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO";
 export const DUPLICATE_MULTIPLE_ELEMENTS = "DUPLICATE_MULTIPLE_ELEMENTS";
 export const CREATE_GROUP = "CREATE_GROUP";
 export const UPDATE_GROUP = "UPDATE_GROUP";
 export const REMOVE_GROUP = "REMOVE_GROUP";
 export const CHANGE_BUILD_MODE = "CHANGE_BUILD_MODE";
+export const UNDO = "UNDO";
+export const REDO = "REDO";
+export const COMMIT_UNDO_REDO_HISTORY = "COMMIT_UNDO_REDO_HISTORY";
 
 export const setState = (payload: AppState): Action => ({
   type: SET_STATE,
@@ -33,8 +37,8 @@ export const addElement = (payload: Chair | Table | Wall | Room | null): Action 
   payload,
 });
 
-export const removeElement = (payload: string): Action => ({
-  type: REMOVE_ELEMENT,
+export const removeElements = (payload: string[]): Action => ({
+  type: REMOVE_ELEMENTS,
   payload,
 });
 
@@ -66,6 +70,25 @@ export const updateMultipleElements = (
   payload,
 });
 
+export const updateMultipleWithoutUndoRedo = (
+  payload: ({
+    id: string;
+    x?: number;
+    y?: number;
+    attachedTo?: string | null;
+    attachedChairs?: string[];
+    offset?: { dx: number, dy: number, angle: number, } | null;
+  } | null)[],
+): Action => ({
+  type: UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO,
+  payload,
+});
+
+export const commitUndoRedoHistory = (): Action => ({
+  type: COMMIT_UNDO_REDO_HISTORY,
+  payload: null,
+});
+
 export const duplicateMultipleElements = (
   payload: string[],
   setSelectedIds: Dispatch<SetStateAction<string[]>>,
@@ -93,4 +116,14 @@ export const removeGroup = (payload: never): Action => ({
 export const changeBuildMode = (payload: number): Action => ({
   type: CHANGE_BUILD_MODE,
   payload,
+});
+
+export const undo = (): Action => ({
+  type: UNDO,
+  payload: null,
+});
+
+export const redo = (): Action => ({
+  type: REDO,
+  payload: null,
 });

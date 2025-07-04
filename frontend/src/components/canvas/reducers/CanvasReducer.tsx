@@ -6,15 +6,19 @@ import {
   type Action,
   ADD_ELEMENT,
   CHANGE_BUILD_MODE,
+  COMMIT_UNDO_REDO_HISTORY,
   CREATE_GROUP,
   DUPLICATE_MULTIPLE_ELEMENTS,
-  REMOVE_ELEMENT,
+  REDO,
+  REMOVE_ELEMENTS,
   REMOVE_GROUP,
   SET_STATE,
+  UNDO,
   UPDATE_ELEMENT,
   UPDATE_ELEMENT_SPECIFIC_FIELD,
   UPDATE_GROUP,
   UPDATE_MULTIPLE_ELEMENTS,
+  UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO,
 } from "../actions/actions.tsx";
 
 export interface AppState {
@@ -23,7 +27,14 @@ export interface AppState {
   groups: { id: string }[];
   canvasPosition: { x: number; y: number };
   scale: number;
+  history?: HistoryState;
 }
+
+interface HistoryState {
+  past: AppState[];
+  future: AppState[];
+}
+
 
 export class initialState implements AppState {
   buildMode: number;
@@ -31,6 +42,7 @@ export class initialState implements AppState {
   groups: { id: string }[];
   canvasPosition: { x: number; y: number };
   scale: number;
+  history: HistoryState;
 
   constructor() {
     this.buildMode = 0;
@@ -38,6 +50,10 @@ export class initialState implements AppState {
     this.groups = [];
     this.canvasPosition = { x: 0, y: 0 };
     this.scale = 1;
+    this.history = {
+      past: [],
+      future: [],
+    };
   }
 }
 
@@ -47,17 +63,22 @@ export function reducer(state: AppState, action: Action) {
       if (action.payload) {
         // If payload is a string, parse it; if it's already an object, use it directly
         if (typeof action.payload === "string") {
-          return { ...JSON.parse(action.payload) };
+          return { ...JSON.parse(action.payload), history: { past: [], future: [] } };
         } else {
-          return { ...action.payload };
+          return { ...action.payload, history: { past: [], future: [] } };
         }
-      } else return { ...state };
+      } else return { ...state, history: { past: [], future: [] } };
     case ADD_ELEMENT:
-      return { ...state, elements: [...state.elements, action.payload] };
-    case REMOVE_ELEMENT:
       return {
         ...state,
-        elements: state.elements.filter(el => el.id !== action.payload),
+        elements: [...state.elements, action.payload],
+        history: { past: [...state.history.past, state], future: [] },
+      };
+    case REMOVE_ELEMENTS:
+      return {
+        ...state,
+        elements: state.elements.filter(el => !action.payload.includes(el.id)),
+        history: { past: [...state.history.past, state], future: [] },
       };
     case UPDATE_ELEMENT:
       return {
@@ -65,6 +86,7 @@ export function reducer(state: AppState, action: Action) {
         elements: state.elements.map(el =>
           el.id === action.payload.id ? { ...el, ...action.payload } : el,
         ),
+        history: { past: [...state.history.past, state], future: [] },
       };
     case UPDATE_ELEMENT_SPECIFIC_FIELD:
       return {
@@ -72,6 +94,7 @@ export function reducer(state: AppState, action: Action) {
         elements: state.elements.map(el =>
           el.id === action.payload.id ? { ...el, [action.payload.key]: action.payload.value } : el,
         ),
+        history: { past: [...state.history.past, state], future: [] },
       };
     case UPDATE_MULTIPLE_ELEMENTS:
       return {
@@ -80,6 +103,16 @@ export function reducer(state: AppState, action: Action) {
           const update = action.payload.find((update: { id: string }) => update.id === el.id);
           return update ? { ...el, ...update } : el;
         }),
+        history: { past: [...state.history.past, state], future: [] },
+      };
+    case UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO:
+      return {
+        ...state,
+        elements: state.elements.map(el => {
+          const update = action.payload.find((update: { id: string }) => update.id === el.id);
+          return update ? { ...el, ...update } : el;
+        }),
+        history: { ...state.history },
       };
     case DUPLICATE_MULTIPLE_ELEMENTS: {
       const idMap: { [key: string]: string } = {};
@@ -143,6 +176,7 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         elements: [...state.elements, ...updatedElements],
+        history: { past: [...state.history.past, state], future: [] },
       };
     }
     case CREATE_GROUP:
@@ -161,6 +195,47 @@ export function reducer(state: AppState, action: Action) {
       };
     case CHANGE_BUILD_MODE:
       return { ...state, buildMode: action.payload };
+    case UNDO: {
+      const { past, future } = state.history;
+      if (past.length === 0) return state;
+
+      const newPast = past.slice(0, -1);
+      const previous = past[past.length - 1];
+
+      return {
+        ...previous,
+        history: {
+          past: [...newPast],
+          future: [...future, { ...state }],
+        },
+      };
+    }
+    case REDO: {
+      const { past, future } = state.history;
+      if (future.length === 0) return state;
+
+      const next = future[future.length - 1];
+      const newFuture = future.slice(0, -1);
+
+      return {
+        ...next,
+        history: {
+          past: [...past, { ...state }],
+          future: [...newFuture],
+        },
+      };
+    }
+    case COMMIT_UNDO_REDO_HISTORY: {
+      return {
+        ...state,
+        history: {
+          past: [...state.history.past, state],
+          future: [],
+        },
+      };
+    }
+
+
     default:
       return state;
   }
