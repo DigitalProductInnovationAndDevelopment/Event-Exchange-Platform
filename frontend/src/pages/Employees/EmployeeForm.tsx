@@ -1,8 +1,8 @@
-import React from "react";
-import { Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import { DietaryPreference, EmploymentType, Role } from "../../types/employee";
 import { EmployeeTypeTag } from "../../components/EmployeeTypeTag.tsx";
 import { DietTypeTag } from "../../components/DietTypeTag.tsx";
+import moment from "moment";
 
 const { Option } = Select;
 
@@ -81,9 +81,16 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
       <Form.Item
         label="Date Joined"
         name="employmentStartDate"
-        rules={[{ required: true, message: "Please enter employment start date" }]}
-      >
-        <Input placeholder="Enter date joined" type="date" />
+        rules={[{ required: true, message: "Please enter employment start date" }]}>
+        <DatePicker
+          className="w-full"
+          placeholder="Enter date joined"
+          format="DD/MM/YYYY"
+          showTime={false}
+          disabledDate={(current) => {
+            return current && current > moment().endOf("day");
+          }}
+        />
       </Form.Item>
       <Form.Item
         label="Location"

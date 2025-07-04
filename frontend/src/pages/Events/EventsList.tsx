@@ -98,7 +98,7 @@ export const EventsList = () => {
       key: "eventType",
       width: "14%",
       render: (type: EventType) => <EventTypeTag type={type} />,
-      filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
+      filters: Object.entries(EVENT_TYPE_COLORS).map(([type]) => ({
         text: type.replace(/_/g, " "),
         value: type,
       })),
@@ -117,7 +117,7 @@ export const EventsList = () => {
       key: "status",
       width: "14%",
       render: (status: EventStatus) => <EventStatusTag status={status} />,
-      filters: Object.entries(EVENT_STATUS_COLORS).map(([status, _]) => ({
+      filters: Object.entries(EVENT_STATUS_COLORS).map(([status]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
         value: status,
       })),

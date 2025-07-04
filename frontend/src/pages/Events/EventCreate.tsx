@@ -19,6 +19,7 @@ import type { Event, EventType } from "../../types/event";
 import { EVENT_TYPE_COLORS } from "../../types/event";
 import useApiService from "../../services/apiService";
 import { EventTypeTag } from "../../components/EventTypeTag.tsx";
+import moment from "moment/moment";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -100,6 +101,9 @@ export const EventCreate = () => {
                       format="DD/MM/YYYY hh:mm A"
                       onChange={(date, dateString) => console.log(date, dateString)}
                       showTime={{ use12Hours: true }}
+                      disabledDate={(current) => {
+                        return current && current < moment().startOf("day");
+                      }}
                     />
                   </Form.Item>
                 </Descriptions.Item>
