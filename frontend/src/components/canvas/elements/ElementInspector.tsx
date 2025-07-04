@@ -5,10 +5,10 @@ import { updateElementSpecificField } from "../../../components/canvas/actions/a
 import "./ElementInspector.css";
 
 export function ElementInspector({
-  dispatch,
-  state,
-  selectedIds,
-}: {
+                                   dispatch,
+                                   state,
+                                   selectedIds,
+                                 }: {
   dispatch: (action: { type: string; payload: object }) => void;
   state: AppState;
   selectedIds: string[];
@@ -59,7 +59,7 @@ export function ElementInspector({
                                 id: selectedIds[0],
                                 key,
                                 value: e.target.value,
-                              })
+                              }),
                             )
                           }
                         >
@@ -89,7 +89,7 @@ export function ElementInspector({
                                 paramType === "number"
                                   ? parseFloat(e.target.value)
                                   : e.target.value,
-                            })
+                            }),
                           )
                         }
                       />

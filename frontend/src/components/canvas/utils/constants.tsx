@@ -54,7 +54,7 @@ export const renderElement = (el: ElementProperties, areTextsEnabled: boolean) =
 };
 
 export const getEditableParameters = (
-  el: ElementProperties
+  el: ElementProperties,
 ): { [key: string]: string | string[] } => {
   switch (el.type) {
     case "chair":
@@ -63,6 +63,8 @@ export const getEditableParameters = (
         y: "number",
         radius: "number",
         color: "string",
+        employeeId: "string",
+        employeeName: "string",
       };
     case "rectTable":
       return {

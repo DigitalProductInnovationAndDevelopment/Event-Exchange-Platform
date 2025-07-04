@@ -1,4 +1,4 @@
-import { Button, Card, Col, Divider, List, Row, Space, Statistic, Tag, Typography } from "antd";
+import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { type Event, EVENT_STATUS_COLORS, type EventStatus } from "../types/event";
+import { type Event, type EventStatus } from "../types/event";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 
@@ -161,9 +161,9 @@ export const Dashboard = () => {
                           (event.capacity > 0
                             ? (event.participantCount / event.capacity) * 100
                             : 0),
-                        0
+                          0,
                       ) / (events.length || 1)
-                    ).toFixed(2)
+                    ).toFixed(2),
                   )
                 }
                 suffix="%"

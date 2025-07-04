@@ -1,6 +1,18 @@
 version: '3'
 services:
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: itestra-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_ORIGIN=http://localhost:8000
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+
+
   postgres:
     image: postgres
     container_name: itestra-postgres

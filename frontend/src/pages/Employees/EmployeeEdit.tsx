@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
-import { Card, Button, message, Typography, Tag, Form } from "antd";
+import { Button, Card, Form, message, Typography } from "antd";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import useApiService from "../../services/apiService";
 
@@ -58,12 +58,12 @@ export const EmployeeEdit = () => {
   // Normalize gender to uppercase for initialValues
   const normalizedInitialValues = employee
     ? {
-        ...employee,
-        profile: {
-          ...employee.profile,
-          gender: employee.profile.gender?.toUpperCase() || undefined,
-        },
-      }
+      ...employee,
+      profile: {
+        ...employee.profile,
+        gender: employee.profile.gender?.toUpperCase() || undefined,
+      },
+    }
     : { profile: { gender: undefined } };
 
   return (

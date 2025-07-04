@@ -73,29 +73,38 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
   return table.type === "circleTable" ? (
     <Group>
       <Circle radius={table.radius} fill={table.color || "#8B4513"} />
-      {areTextsEnabled && (
+      {areTextsEnabled &&
         <Text
-          text={`name: ${table.name}\nr: ${table.radius?.toFixed(2)}\nChairs: ${table.attachedChairs.length}`}
+          text={`${table.name}\n${table.attachedChairs.length} chairs`}
           fill="white"
           fontSize={12}
           x={-(table.radius ?? 0) / 2}
           y={-(table.radius ?? 0) / 2}
+          width={table.radius ? table.radius * 2 : 0}
+          verticalAlign="middle"
         />
-      )}
+      }
     </Group>
+
   ) : (
     <Group>
-      <Rect width={table.width} height={table.height} fill={table.color || "#8B4513"} />
-      {areTextsEnabled && (
+      <Rect
+        width={table.width}
+        height={table.height}
+        fill={table.color || "#8B4513"}
+      />
+      {areTextsEnabled &&
         <Text
-          text={`name: ${table.name}\nw: ${table.width?.toFixed(2)}\nh: ${table.height?.toFixed(2)}\nChairs: ${table.attachedChairs.length}`}
+          text={`${table.name}\n${table.attachedChairs.length} chairs`}
           fill="white"
           fontSize={12}
           align="center"
           width={table.width}
-          padding={4}
+          verticalAlign="middle"
+          height={table.height}
         />
-      )}
+      }
     </Group>
+
   );
 }

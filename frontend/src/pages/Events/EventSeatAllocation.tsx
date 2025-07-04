@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row, Space, Typography, List, Avatar, message } from "antd";
+import { Avatar, Button, Card, Col, List, message, Row, Space, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import useApiService from "../../services/apiService";
@@ -15,11 +15,11 @@ type SchematicsType = { id: string; name: string; state: AppState } | null;
 
 // Main content component for seat allocation
 const SeatAllocationContent = ({
-  eventId,
-  eventName,
-  schematics,
-  participants,
-}: {
+                                 eventId,
+                                 eventName,
+                                 schematics,
+                                 participants,
+                               }: {
   eventId: string;
   eventName: string;
   schematics: SchematicsType;
@@ -35,9 +35,9 @@ const SeatAllocationContent = ({
   useEffect(() => {
     if (!participants || !state) return;
     const allocatedIds = new Set(
-      state.elements
-        ?.filter((e: any) => e.type === "chair" && e.employeeId)
-        .map((e: any) => e.employeeId)
+        state.elements
+            ?.filter((e: any) => e.type === "chair" && e.employeeId)
+            .map((e: any) => e.employeeId),
     );
     setUnallocated(participants.filter(p => !allocatedIds.has(p.employeeId)));
   }, [participants, state]);
@@ -50,7 +50,7 @@ const SeatAllocationContent = ({
         if (!el.employeeId) {
           const next = participants.find(p => {
             return !state.elements.some(
-              (e: any) => e.type === "chair" && e.employeeId === p.employeeId
+                (e: any) => e.type === "chair" && e.employeeId === p.employeeId,
             );
           });
           if (next) {
@@ -74,7 +74,7 @@ const SeatAllocationContent = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       {/* Breadcrumb navigation */}
       <Breadcrumb
         items={[
@@ -102,9 +102,10 @@ const SeatAllocationContent = ({
       {/* Main content: seat map and unallocated employees list */}
       <Row gutter={16}>
         <Col span={18}>
-          <Card title="Seat Map (Drag to Adjust)" className="mb-6">
-            {/* Visual seat map, supports drag and drop if implemented in KonvaCanvas */}
-            <KonvaCanvas />
+          <Card className="mb-6">
+            <div style={{ height: "600px", overflow: "hidden" }}>
+              <KonvaCanvas />
+            </div>
           </Card>
         </Col>
         <Col span={6}>

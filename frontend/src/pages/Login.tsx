@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, message } from "antd";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../assets/itestra_logo.png";
+import { BASE_URL } from "../services/apiService.ts";
+
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -27,14 +29,14 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-1/5 h-1/3 shadow-lg">
+      <Card className="w-1/5 h-2/5 shadow-lg">
         <div className="flex flex-col items-center space-y-6">
           <img src={logo} alt="Company Logo" className="w-28 h-28 object-contain" />
           <Button
             type="primary"
             className="w-48"
             onClick={() =>
-              (window.location.href = "http://localhost:8000/oauth2/authorization/gitlab")
+              (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)
             }
           >
             Employee Login

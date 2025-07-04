@@ -1,0 +1,3 @@
+map $host $vite_api_origin {
+  default "$VITE_API_ORIGIN";
+}
