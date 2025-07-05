@@ -2,9 +2,11 @@ import { DatePicker, Form, Input, Select } from "antd";
 import { DietaryPreference, EmploymentType, Role } from "../../types/employee";
 import { EmployeeTypeTag } from "../../components/EmployeeTypeTag.tsx";
 import { DietTypeTag } from "../../components/DietTypeTag.tsx";
-import moment from "moment";
+import dayjs from "dayjs";
 
 const { Option } = Select;
+
+const dateFormat = "YYYY-MM-DD";
 
 type EmployeeFormProps = {
   initialValues: any;
@@ -31,8 +33,11 @@ const ROLE_OPTIONS = Object.entries(Role).map(([key, value]) => ({
 
 const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
   const handleFinish = (values: any) => {
+    values.employmentStartDate = values.employmentStartDate.format("YYYY-MM-DD");
     onSave(values);
   };
+
+  initialValues.employmentStartDate = initialValues.employmentStartDate ? dayjs(initialValues.employmentStartDate, dateFormat) : dayjs().startOf("day");
 
   return (
     <Form form={form} layout="vertical" initialValues={initialValues} onFinish={handleFinish}>
@@ -85,10 +90,10 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
         <DatePicker
           className="w-full"
           placeholder="Enter date joined"
-          format="DD/MM/YYYY"
+          format={dateFormat}
           showTime={false}
           disabledDate={(current) => {
-            return current && current > moment().endOf("day");
+            return current && current > dayjs().endOf("day");
           }}
         />
       </Form.Item>
