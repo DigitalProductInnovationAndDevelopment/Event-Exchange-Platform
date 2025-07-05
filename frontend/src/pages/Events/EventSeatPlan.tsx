@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Space, Tooltip, Typography } from "antd";
+import { Button, Card, Col, Row, Space, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import useApiService from "../../services/apiService";
 import KonvaCanvas from "../../components/canvas/KonvaCanvas";
 import { CanvasProvider } from "../../components/canvas/contexts/CanvasContext";
 import type { AppState } from "../../components/canvas/reducers/CanvasReducer";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { CanvasTooltip } from "../../components/CanvasTooltip.tsx";
 
 const { Title } = Typography;
 
@@ -47,20 +47,7 @@ export const EventSeatPlan = () => {
       <div className="flex justify-between items-center">
         <div className="flex flex-row">
           <Title level={2}>Manage Seat Layout</Title>
-          <Tooltip
-            className="ms-3 mt-2"
-            title={
-              <div className="whitespace-pre-line">
-                1. In order to select multiple items, click on "SHIFT" and drag your mouse over the desired items.{"\n"}
-                2. In order to delete selected items press "BACKSPACE".{"\n"}
-                3. You can duplicate selected items by pressing "D".{"\n"}
-                4. You can redo and undo your actions by pressing CTRL + Z / CTRL + SHIFT + Z.
-              </div>
-            }
-            placement="rightBottom"
-          >
-            <InfoCircleOutlined style={{ fontSize: 24, cursor: "pointer", color: "#1890ff" }} />
-          </Tooltip>
+          <CanvasTooltip />
         </div>
 
         <Space>
