@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import { Circle, Text } from "react-konva";
-import type { ElementProperties } from "components/canvas/utils/constants.tsx";
+import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
 
 export class Chair implements ElementProperties {
-  id: string;
-  type: string;
+  id: UUID;
+  type: ShapeType;
   x: number;
   y: number;
   radius: number;

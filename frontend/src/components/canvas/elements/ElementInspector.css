@@ -1,7 +1,7 @@
 .panelStyle {
     position: fixed;
     bottom: 10%;
-    right: 20px;
+    left: 15%;
     width: 300px;
     height: 350px;
     overflow-y: auto;

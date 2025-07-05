@@ -14,10 +14,11 @@ function StagePreview({ state, mainStage }: { state: AppState; mainStage: Konva.
   return (
     <div
       style={{
-        position: "absolute",
-        top: "4%",
-        right: isVisible ? "25px" : "95px",
+        position: "sticky",
+        top: "0",
+        right: isVisible ? "0" : "70px",
         border: isVisible ? "1px solid grey" : "none",
+        height: (window.innerHeight / 4),
         backgroundColor: isVisible ? "lightgrey" : "transparent",
         zIndex: 999,
       }}

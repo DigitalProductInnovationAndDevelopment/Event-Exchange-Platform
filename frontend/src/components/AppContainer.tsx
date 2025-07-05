@@ -14,7 +14,7 @@ export const AppContainer = () => {
   const location = useLocation();
   const { logoutRequest } = useApiService();
   const [collapsed, setCollapsed] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode] = useState(false);
 
   const mainMenuItems = [
     {

@@ -1,16 +1,5 @@
 import { Tag } from "antd";
-
-
-export const DIET_TYPE_COLORS: Record<string, string> = {
-    VEGETARIAN: "green",
-    PESCATARIAN: "blue",
-    HALAL: "orange",
-    KOSHER: "purple",
-    VEGAN: "magenta",
-    LACTOSE_FREE: "cyan",
-    GLUTEN_FREE: "lime",
-    KETO: "gold",
-};
+import { DIET_TYPE_COLORS } from "../components/canvas/utils/constants.tsx";
 
 export const DietTypeTag = ({ type }: { type: string }) => {
     if (!type) return null;

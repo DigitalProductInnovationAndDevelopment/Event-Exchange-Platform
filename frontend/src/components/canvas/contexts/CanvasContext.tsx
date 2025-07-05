@@ -23,7 +23,6 @@ export const CanvasProvider = ({ children, initialState }) => {
     if (initialState) {
       dispatch({ type: "SET_STATE", payload: initialState });
     }
-    // eslint-disable-next-line
   }, [JSON.stringify(initialState)]);
 
   return (

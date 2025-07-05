@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
 import { Button, Card, Form, message, Typography } from "antd";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import useApiService from "../../services/apiService";
+import type { Employee } from "types/employee.ts";
 
 const { Title } = Typography;
 
@@ -11,7 +12,7 @@ export const EmployeeEdit = () => {
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const { getEmployeeById, updateEmployee } = useApiService();
-  const [employee, setEmployee] = useState<any>(null);
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
@@ -19,7 +20,7 @@ export const EmployeeEdit = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getEmployeeById(employeeId!);
+        const data = await getEmployeeById(employeeId!) ?? null;
         setEmployee(data);
       } catch (err) {
         message.error("Failed to fetch employee");
@@ -30,7 +31,7 @@ export const EmployeeEdit = () => {
     })();
   }, [employeeId, getEmployeeById]);
 
-  const handleFinish = async (values: any) => {
+  const handleFinish = async (values: Employee) => {
     setSaving(true);
     try {
       // Ensure authorities is always an array

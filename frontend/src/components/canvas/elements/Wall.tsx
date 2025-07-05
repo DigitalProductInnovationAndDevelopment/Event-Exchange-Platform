@@ -1,10 +1,10 @@
 import { Line, Rect } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
-import type { ElementProperties } from "components/canvas/utils/constants.tsx";
+import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
 
 export class Wall implements ElementProperties {
-  id: string;
-  type: string;
+  id: UUID;
+  type: ShapeType;
   x1: number;
   y1: number;
   x2: number;
@@ -27,9 +27,6 @@ export class Wall implements ElementProperties {
 export const WallRender = (wall: Wall) => {
   // Calculate the selection area around the wall
   const selectionPadding = 8; // pixels around the line for easier selection
-  const dx = wall.x2 - wall.x1;
-  const dy = wall.y2 - wall.y1;
-  const length = Math.sqrt(dx * dx + dy * dy);
 
   // Calculate the bounding box for the selection area
   const minX = Math.min(wall.x1, wall.x2) - selectionPadding;

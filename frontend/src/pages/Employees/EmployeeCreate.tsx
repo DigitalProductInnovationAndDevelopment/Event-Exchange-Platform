@@ -4,6 +4,7 @@ import { Button, Card, Form, message, Typography } from "antd";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import useApiService from "../../services/apiService";
 import { useState } from "react";
+import type { Employee } from "../../types/employee.ts";
 
 const { Title } = Typography;
 
@@ -13,7 +14,7 @@ export const EmployeeCreate = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  const handleFinish = async (values: any) => {
+  const handleFinish = async (values: Employee) => {
     setLoading(true);
     try {
       // Ensure authorities is always an array

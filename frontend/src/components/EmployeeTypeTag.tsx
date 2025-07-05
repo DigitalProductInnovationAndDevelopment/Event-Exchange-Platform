@@ -1,12 +1,5 @@
 import { Tag } from "antd";
-
-
-export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
-  FULLTIME: "green",
-  PARTTIME: "blue",
-  WORKING_STUDENT: "orange",
-  THESIS: "purple",
-};
+import { EMPLOYMENT_TYPE_COLORS } from "../components/canvas/utils/constants.tsx";
 
 export const EmployeeTypeTag = ({ type }: { type: string }) => {
   if (!type) return null;

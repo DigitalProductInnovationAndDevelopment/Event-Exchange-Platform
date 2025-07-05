@@ -1,11 +1,34 @@
-import { Table, TABLE_TYPES, TableRender } from "../elements/Table.tsx";
+import { Table, TableRender } from "../elements/Table.tsx";
 import { Room, RoomRender } from "../elements/Room.tsx";
 import { Wall, WallRender } from "../elements/Wall.tsx";
 import { Chair, ChairRender } from "../elements/Chair.tsx";
+import type { AppState } from "../../../components/canvas/reducers/CanvasReducer.tsx";
+
+export type UUID = string;
+export type ShapeType = "chair" | "room" | "rectTable" | "circleTable" | "wall" | "quickWall";
+export type SchematicsType = { id: string; name: string; state: AppState } | null;
+
+export const DIET_TYPE_COLORS: Record<string, string> = {
+  VEGETARIAN: "green",
+  PESCATARIAN: "blue",
+  HALAL: "orange",
+  KOSHER: "purple",
+  VEGAN: "magenta",
+  LACTOSE_FREE: "cyan",
+  GLUTEN_FREE: "lime",
+  KETO: "gold",
+};
+
+export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
+  FULLTIME: "green",
+  PARTTIME: "blue",
+  WORKING_STUDENT: "orange",
+  THESIS: "purple",
+};
 
 export interface ElementProperties {
-  id: string;
-  type: string;
+  id: UUID;
+  type: ShapeType;
   x?: number;
   y?: number;
   x1?: number;
@@ -18,18 +41,51 @@ export interface ElementProperties {
   width?: number;
   height?: number;
   stroke?: string;
-  attachedChairs?: string[];
-  attachedTo?: string;
+  attachedChairs?: UUID[];
+  attachedTo?: UUID;
   rotation?: number;
   draggable?: boolean;
   offset?: { dx?: number; dy?: number };
 }
 
-export const TOOLBOX_ITEMS = [
+export const TABLE_TYPES = {
+  RECT: {
+    id: "" as UUID,
+    name: "",
+    x: 0,
+    y: 0,
+    radius: undefined,
+    stroke: "",
+    attachedChairs: [],
+    rotation: 0,
+    type: "rectTable" as ShapeType,
+    label: "Rect Table",
+    color: "#8B4513",
+    width: 80,
+    height: 50,
+  },
+  CIRCLE: {
+    id: "" as UUID,
+    name: "",
+    x: 0,
+    y: 0,
+    width: undefined,
+    height: undefined,
+    stroke: "",
+    attachedChairs: [],
+    rotation: 0,
+    type: "circleTable" as ShapeType,
+    label: "Circle Table",
+    color: "#A0522D",
+    radius: 40,
+  },
+};
+
+export const TOOLBOX_ITEMS: { type: ShapeType; label: string }[] = [
   { type: "chair", label: "Chair" },
   { type: "rectTable", label: "Rect Table" },
   { type: "circleTable", label: "Circle Table" },
-  { type: "wall", label: "Wall", name: "" },
+  { type: "wall", label: "Wall" },
   { type: "quickWall", label: "Quick Wall" },
   { type: "room", label: "Room" },
 ];

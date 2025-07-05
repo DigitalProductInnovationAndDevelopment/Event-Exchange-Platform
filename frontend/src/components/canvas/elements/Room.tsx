@@ -1,11 +1,11 @@
 import { Rect } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
-import type { ElementProperties } from "components/canvas/utils/constants.tsx";
+import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
 
 export class Room implements ElementProperties {
-  id: string;
+  id: UUID;
   name: string;
-  type: string;
+  type: ShapeType;
   x: number;
   y: number;
   width: number;

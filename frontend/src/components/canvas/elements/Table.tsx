@@ -1,44 +1,11 @@
 import { Circle, Group, Rect, Text } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
-import type { ElementProperties } from "components/canvas/utils/constants.tsx";
-
-export const TABLE_TYPES = {
-  RECT: {
-    id: "",
-    name: "",
-    x: 0,
-    y: 0,
-    radius: undefined,
-    stroke: "",
-    attachedChairs: [],
-    rotation: 0,
-    type: "rectTable",
-    label: "Rect Table",
-    color: "#8B4513",
-    width: 80,
-    height: 50,
-  },
-  CIRCLE: {
-    id: "",
-    name: "",
-    x: 0,
-    y: 0,
-    width: undefined,
-    height: undefined,
-    stroke: "",
-    attachedChairs: [],
-    rotation: 0,
-    type: "circleTable",
-    label: "Circle Table",
-    color: "#A0522D",
-    radius: 40,
-  },
-};
+import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
 
 export class Table implements ElementProperties {
-  id: string;
+  id: UUID;
   name: string;
-  type: string;
+  type: ShapeType;
   x: number;
   y: number;
   radius: number | undefined;
@@ -48,7 +15,7 @@ export class Table implements ElementProperties {
   stroke: string;
   color: string;
   draggable: boolean;
-  attachedChairs: string[];
+  attachedChairs: UUID[];
 
   constructor(tableType: ElementProperties) {
     this.id = uuidv4();

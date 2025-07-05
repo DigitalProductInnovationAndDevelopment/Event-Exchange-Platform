@@ -7,16 +7,13 @@ import {
   ADD_ELEMENT,
   CHANGE_BUILD_MODE,
   COMMIT_UNDO_REDO_HISTORY,
-  CREATE_GROUP,
   DUPLICATE_MULTIPLE_ELEMENTS,
   REDO,
   REMOVE_ELEMENTS,
-  REMOVE_GROUP,
   SET_STATE,
   UNDO,
   UPDATE_ELEMENT,
   UPDATE_ELEMENT_SPECIFIC_FIELD,
-  UPDATE_GROUP,
   UPDATE_MULTIPLE_ELEMENTS,
   UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO,
 } from "../actions/actions.tsx";
@@ -72,13 +69,13 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         elements: [...state.elements, action.payload],
-        history: { past: [...state.history.past, state], future: [] },
+        history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
     case REMOVE_ELEMENTS:
       return {
         ...state,
         elements: state.elements.filter(el => !action.payload.includes(el.id)),
-        history: { past: [...state.history.past, state], future: [] },
+        history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
     case UPDATE_ELEMENT:
       return {
@@ -86,7 +83,7 @@ export function reducer(state: AppState, action: Action) {
         elements: state.elements.map(el =>
           el.id === action.payload.id ? { ...el, ...action.payload } : el,
         ),
-        history: { past: [...state.history.past, state], future: [] },
+        history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
     case UPDATE_ELEMENT_SPECIFIC_FIELD:
       return {
@@ -94,7 +91,7 @@ export function reducer(state: AppState, action: Action) {
         elements: state.elements.map(el =>
           el.id === action.payload.id ? { ...el, [action.payload.key]: action.payload.value } : el,
         ),
-        history: { past: [...state.history.past, state], future: [] },
+        history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
     case UPDATE_MULTIPLE_ELEMENTS:
       return {
@@ -103,7 +100,7 @@ export function reducer(state: AppState, action: Action) {
           const update = action.payload.find((update: { id: string }) => update.id === el.id);
           return update ? { ...el, ...update } : el;
         }),
-        history: { past: [...state.history.past, state], future: [] },
+        history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
     case UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO:
       return {
@@ -176,27 +173,13 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         elements: [...state.elements, ...updatedElements],
-        history: { past: [...state.history.past, state], future: [] },
+        history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
     }
-    case CREATE_GROUP:
-      return { ...state, groups: [...state.groups, action.payload] };
-    case UPDATE_GROUP:
-      return {
-        ...state,
-        groups: state.groups.map(group =>
-          group.id === action.payload.id ? { ...group, ...action.payload } : group,
-        ),
-      };
-    case REMOVE_GROUP:
-      return {
-        ...state,
-        groups: state.groups.filter(group => group.id !== action.payload),
-      };
     case CHANGE_BUILD_MODE:
       return { ...state, buildMode: action.payload };
     case UNDO: {
-      const { past, future } = state.history;
+      const { past, future } = state.history ?? { past: [], future: [] };
       if (past.length === 0) return state;
 
       const newPast = past.slice(0, -1);
@@ -211,7 +194,7 @@ export function reducer(state: AppState, action: Action) {
       };
     }
     case REDO: {
-      const { past, future } = state.history;
+      const { past, future } = state.history ?? { past: [], future: [] };
       if (future.length === 0) return state;
 
       const next = future[future.length - 1];
@@ -229,13 +212,11 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         history: {
-          past: [...state.history.past, state],
+          past: [...(state.history?.past ?? []), state],
           future: [],
         },
       };
     }
-
-
     default:
       return state;
   }

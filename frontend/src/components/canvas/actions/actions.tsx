@@ -19,9 +19,6 @@ export const UPDATE_ELEMENT_SPECIFIC_FIELD = "UPDATE_ELEMENT_SPECIFIC_FIELD";
 export const UPDATE_MULTIPLE_ELEMENTS = "UPDATE_MULTIPLE_ELEMENTS";
 export const UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO = "UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO";
 export const DUPLICATE_MULTIPLE_ELEMENTS = "DUPLICATE_MULTIPLE_ELEMENTS";
-export const CREATE_GROUP = "CREATE_GROUP";
-export const UPDATE_GROUP = "UPDATE_GROUP";
-export const REMOVE_GROUP = "REMOVE_GROUP";
 export const CHANGE_BUILD_MODE = "CHANGE_BUILD_MODE";
 export const UNDO = "UNDO";
 export const REDO = "REDO";
@@ -96,21 +93,6 @@ export const duplicateMultipleElements = (
   type: DUPLICATE_MULTIPLE_ELEMENTS,
   payload,
   setSelectedIds,
-});
-
-export const createGroup = (payload: never): Action => ({
-  type: CREATE_GROUP,
-  payload,
-});
-
-export const updateGroup = (payload: never): Action => ({
-  type: UPDATE_GROUP,
-  payload,
-});
-
-export const removeGroup = (payload: never): Action => ({
-  type: REMOVE_GROUP,
-  payload,
 });
 
 export const changeBuildMode = (payload: number): Action => ({

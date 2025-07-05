@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Descriptions, message, Modal, Space, Table, Typography } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { type Employee } from "../../types/employee.ts";
+import { type Employee, type ParticipationDetails } from "../../types/employee.ts";
 import useApiService from "../../services/apiService.ts";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import { DIET_TYPES } from "./EmployeeForm";
@@ -23,7 +23,7 @@ const eventColumns = [
     title: "Date",
     dataIndex: "eventDate",
     key: "eventDate",
-    render: (_: any, record: any) => {
+    render: (_: unknown, record: ParticipationDetails) => {
       return new Date(record.eventDate).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -51,7 +51,7 @@ const eventColumns = [
     title: "Status",
     dataIndex: "confirmed",
     key: "confirmed",
-    render: (_: any, record: any) => {
+    render: (_: unknown, record: ParticipationDetails) => {
       return record.confirmed ? "Confirmed" : "Not Confirmed";
     },
   },

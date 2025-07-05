@@ -13,7 +13,7 @@ const { Title } = Typography;
 
 // Define table columns with correct types
 const columns = (
-  onDelete: (key: string) => void,
+  _onDelete: (key: string) => void,
   onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
 ): ColumnsType<Employee> => [
   {
