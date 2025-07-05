@@ -73,7 +73,7 @@ const routes: RouteObject[] = [
         element: <EventSeatPlan />,
       },
       {
-        path: "events/:eventId/seat-allocation",
+        path: "events/:eventId/seat-allocation/:schematicsId",
         element: <EventSeatAllocation />,
       },
       {

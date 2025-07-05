@@ -1,6 +1,6 @@
 import { useCanvas } from "./contexts/CanvasContext.tsx";
 import { useEffect, useRef, useState } from "react";
-import { Group, Layer, Rect, Stage, Text, Transformer } from "react-konva";
+import { Group, Layer, Stage, Transformer } from "react-konva";
 import { type ElementProperties, renderElement, shapeFactory } from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
 import { ElementInspector } from "./elements/ElementInspector.tsx";
@@ -18,12 +18,14 @@ import {
   removeElements,
   setState,
   undo,
-  updateElement,
+  updateMultipleElements,
   updateMultipleWithoutUndoRedo,
 } from "./actions/actions.tsx";
 import useApiService from "../../services/apiService.ts";
 import { useParams } from "react-router-dom";
 import StagePreview from "../../components/canvas/elements/StagePreview.tsx";
+import NeighbourArrows from "../../components/canvas/elements/NeighbourArrows.tsx";
+import SelectionRectangle from "../../components/canvas/elements/SelectionRectangle.tsx";
 
 function KonvaCanvas() {
   const { state, dispatch } = useCanvas();
@@ -222,15 +224,35 @@ function KonvaCanvas() {
       );
 
       const table = tables.find(t => {
-        return (
-          (t.type === "circleTable" && Math.hypot(t.x - x, t.y - y) < t.radius! + el.radius!) ||
-          (t.type === "rectTable" &&
-            x >= t.x - el.radius! &&
-            x <= t.x + t.width! + el.radius! &&
-            y >= t.y - el.radius! &&
-            y <= t.y + t.height! + el.radius!)
-        );
+        if (t.type === "circleTable") {
+          const distance = Math.hypot(t.x - x, t.y - y);
+          // Check if chair is within attachment zone (table radius + chair radius + small buffer)
+          return distance < t.radius! + el.radius! + 20; // Added buffer for better UX
+        } else {
+          // For rectangle tables, use Konva's intersection method
+          const chairRadius = el.radius!;
+
+          // Treat circular chair as a rectangular bounding box with buffer
+          const chairBox = {
+            x: x - chairRadius,
+            y: y - chairRadius,
+            width: 2 * (chairRadius),
+            height: 2 * (chairRadius),
+          };
+
+          // Get the table's client rect (handles rotation automatically)
+          // Note: You'll need to pass rectRefs and stageRef to this function or access them from context
+          const tableRect = rectRefs.current.get(t.id)?.getClientRect({ relativeTo: stageRef.current });
+
+          if (!tableRect) return false;
+
+          return Konva.Util.haveIntersection(chairBox, tableRect);
+        }
       }) as Table;
+
+      for (let i = 0; i < tables.length; i++) {
+        tables[i].attachedChairs = tables[i].attachedChairs.filter(cid => cid !== el.id);
+      }
 
       if (table) {
         // Calculate optimal position for the chair around the table
@@ -240,51 +262,60 @@ function KonvaCanvas() {
           // Calculate angle from table center to chair
           const angle = Math.atan2(y - table.y, x - table.x);
           // Position the chair at the edge of the table
+          const distance = table.radius! + el.radius!;
           attachPosition = {
-            x: table.x + (table.radius! + el.radius!) * Math.cos(angle),
-            y: table.y + (table.radius! + el.radius!) * Math.sin(angle),
+            x: table.x + distance * Math.cos(angle),
+            y: table.y + distance * Math.sin(angle),
             angle: angle,
           };
         } else {
-          const padding = el.radius!;
-          const width = table.width!;
-          const height = table.height!;
+          if (Math.abs(table.rotation) < 0.01) {
+            const { radius: padding } = el;
+            const { width, height, x: tableX, y: tableY } = table;
 
-          const centerX = table.x + width / 2;
-          const centerY = table.y + height / 2;
+            const centerX = tableX + width! / 2;
+            const centerY = tableY + height! / 2;
 
-          const dx = x - centerX;
-          const dy = y - centerY;
+            // Coordinates relative to table center
+            const dx = x - centerX;
+            const dy = y - centerY;
 
-          let snappedX, snappedY;
+            const localX = dx;
+            const localY = dy;
 
-          if (Math.abs(dx) * height <= Math.abs(dy) * width) {
-            // Snapped to top or bottom
-            snappedX = centerX + ((height / 2) * dx) / Math.abs(dy);
-            if (dy < 0) {
-              // Top
-              snappedY = centerY - height / 2 - padding;
+            let snappedX, snappedY;
+
+            // Decide which edge to snap to
+            const ratioX = Math.abs(localX) / (width! / 2);
+            const ratioY = Math.abs(localY) / (height! / 2);
+
+            if (ratioX > ratioY) {
+              // Snap to left or right
+              snappedX = (localX < 0 ? -1 : 1) * (width! / 2 + padding!);
+              snappedY = Math.max(-height! / 2, Math.min(height! / 2, localY));
             } else {
-              // Bottom
-              snappedY = centerY + height / 2 + padding;
+              // Snap to top or bottom
+              snappedY = (localY < 0 ? -1 : 1) * (height! / 2 + padding!);
+              snappedX = Math.max(-width! / 2, Math.min(width! / 2, localX));
             }
+
+            const globalX = centerX + snappedX;
+            const globalY = centerY + snappedY;
+
+            const angleToCenter = Math.atan2(centerY - globalY, centerX - globalX);
+
+            attachPosition = {
+              x: globalX,
+              y: globalY,
+              angle: angleToCenter,
+            };
           } else {
-            // Snapped to left or right
-            if (dx < 0) {
-              // Left
-              snappedX = centerX - width / 2 - padding;
-            } else {
-              // Right
-              snappedX = centerX + width / 2 + padding;
-            }
-            snappedY = centerY + ((width / 2) * dy) / Math.abs(dx);
+            attachPosition = {
+              x: x,
+              y: y,
+              angle: 0,
+            };
           }
-
-          attachPosition = {
-            x: snappedX,
-            y: snappedY,
-            angle: 0,
-          };
         }
 
         // Update chair with attachment info
@@ -313,24 +344,23 @@ function KonvaCanvas() {
         }
         return;
       } else if (el.attachedTo) {
+        const updates = [];
+
         // Detach chair from table
-        const parent = state.elements.find(t => t.id === el.attachedTo) as Table;
-        if (parent) {
-          dispatch(
-            updateMultipleWithoutUndoRedo([{
-              id: parent.id,
-              attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
-            }]),
-          );
+        const parents = state.elements.filter(t => t.id === el.attachedTo) as Table[];
+        if (parents) {
+          parents.forEach((parent) => {
+            updates.push(
+              {
+                id: parent.id,
+                attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
+              },
+            );
+          });
         }
+        updates.push({ id: el.id, x, y, attachedTo: null, offset: null });
         dispatch(
-          updateMultipleWithoutUndoRedo([{
-            id: el.id,
-            x,
-            y,
-            attachedTo: null,
-            offset: null,
-          }]),
+          updateMultipleWithoutUndoRedo(updates),
         );
         return;
       }
@@ -341,14 +371,15 @@ function KonvaCanvas() {
   };
 
   function handleDoubleClickOnElement(_e: KonvaEventObject<MouseEvent>, el: ElementProperties) {
-    setSelectedIds([...selectedIds, el.id]);
+    // setSelectedIds([...selectedIds, el.id]);
+    setSelectedIds([el.id]);
   }
 
   const handleTransformEnd = () => {
     const nodes = transformerRef.current!.nodes();
 
     const selectedIds = [];
-
+    const updates = [];
     for (const node of nodes) {
       const id = node.attrs.id;
       selectedIds.push(id);
@@ -359,15 +390,20 @@ function KonvaCanvas() {
       node.scaleX(1);
       node.scaleY(1);
 
-      const updates =
+      const update =
         el.type === "circleTable" || el.type === "chair"
           ? {
             id,
             radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
+            rotation: node.rotation(),
+            x: el.x!,
+            y: el.y!,
           }
           : el.type !== "wall"
             ? {
               id,
+              x: node.x()! / scaleX,
+              y: node.y()! / scaleY,
               width: el.width ? Math.max(10, el.width * scaleX) : undefined,
               height: el.height ? Math.max(10, el.height * scaleY) : undefined,
               rotation: node.rotation(),
@@ -378,11 +414,12 @@ function KonvaCanvas() {
               y1: el.y1! * scaleY,
               x2: el.x2! * scaleX,
               y2: el.y2! * scaleY,
+              rotation: node.rotation(),
             };
-
-      dispatch(updateElement(updates));
+      updates.push(update);
     }
-
+    // @ts-ignore
+    dispatch(updateMultipleElements(updates));
     setSelectedIds(selectedIds);
   };
 
@@ -517,7 +554,7 @@ function KonvaCanvas() {
                     onDblClick={(e) => handleDoubleClickOnElement(e, el)}
                     onDragMove={(e) => handleDragMove(e, el)}
                     onDragEnd={(e) => handleDragEnd(e, el)}
-                    onDragStart={(e) => handleDragStart()}
+                    onDragStart={() => handleDragStart()}
                     ref={node => {
                       if (node) {
                         rectRefs.current.set(el.id, node);
@@ -539,29 +576,19 @@ function KonvaCanvas() {
               />
 
               {/* Selection rectangle */}
-              {selectionRectangle.visible && (
-                <Group>
-                  <Rect
-                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                    fill="rgba(0,0,255,0.5)"
+              {selectionRectangle.visible && <SelectionRectangle selectionRectangle={selectionRectangle} />}
+              {selectedIds.length === 1 &&
+                state.elements.find((el) => el.type === "chair") && (
+                  <NeighbourArrows
+                    state={state}
+                    table={(state.elements.find(
+                      (a) =>
+                        a.id ===
+                        state.elements.find((el) => el.id === selectedIds[0])?.attachedTo,
+                    ) as Table)}
+                    selectedChairId={selectedIds[0]}
                   />
-                  <Text
-                    text={`start: ${selectionRectangle.x1.toFixed(2)}:${selectionRectangle.y1.toFixed(2)}\nend: ${selectionRectangle.x2.toFixed(2)}:${selectionRectangle.y2.toFixed(2)}`}
-                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                    fill="white"
-                    fontSize={12}
-                    align="center"
-                    verticalAlign="middle"
-                  />
-                </Group>
-              )}
-
+                )}
             </Layer>
           </Stage>
         </div>
@@ -572,8 +599,7 @@ function KonvaCanvas() {
           <ElementInspector
             dispatch={dispatch}
             state={state}
-            selectedIds={selectedIds}
-            setSelectedIds={setSelectedIds}
+            selectedId={selectedIds[0]}
           ></ElementInspector>
         )}
       </div>

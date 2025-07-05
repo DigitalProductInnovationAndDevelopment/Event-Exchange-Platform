@@ -251,7 +251,8 @@ export const EventDetails = () => {
                   }}>
                     Manage Seat Layout
                   </Button>
-                  <Button block icon={<EditOutlined />} onClick={() => navigate(`/events/${eventId}/seat-allocation`)}>
+                  <Button block icon={<EditOutlined />}
+                          onClick={() => navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`)}>
                     Manage Seat Allocation
                   </Button>
                 </Space>
