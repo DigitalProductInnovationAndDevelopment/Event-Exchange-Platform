@@ -60,6 +60,8 @@ public class EventServiceImpl implements EventService {
         if (dto.getCapacity() != null && event.getParticipantCount(null) > dto.getCapacity()) {
             throw new EventCapacityExceededException();
         }
+        eventMapper.updateEventFromDto(dto, event);
+
         return eventRepository.save(event);
     }
 
