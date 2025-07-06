@@ -7,7 +7,8 @@ export const CanvasTooltip = () => {
       className="ms-3 mt-2"
       title={
         <div className="whitespace-pre-line">
-          1. In order to select multiple items, click on "SHIFT" and drag your mouse over the desired items.{"\n"}
+          1. In order to select multiple items, press and hold on "SHIFT" and drag your mouse over the desired
+          items.{"\n"}
           2. In order to delete selected items press "BACKSPACE".{"\n"}
           3. In order to deactivate Quick Wall feature press "ESC".{"\n"}
           4. You can duplicate selected items by pressing "D".{"\n"}

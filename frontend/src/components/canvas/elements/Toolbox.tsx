@@ -6,10 +6,11 @@ import type { Wall } from "./Wall";
 import type { AppState } from "../reducers/CanvasReducer.tsx";
 import type { Table } from "./Table.tsx";
 import Konva from "konva";
-import React from "react";
-import useApiService from "../../../services/apiService.ts";
+import React, { useRef } from "react";
+import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import { addElement, changeBuildMode } from "../actions/actions.tsx";
+import FPSText from "components/canvas/elements/FPSText.tsx";
 
 
 function makeBackgroundWhite(uri: string): Promise<string> {
@@ -158,10 +159,11 @@ function Toolbox({
 }) {
   const { updateSchematics } = useApiService();
   const { schematicsId } = useParams();
+  const toolboxLayer = useRef<Konva.Layer | null>(null);
 
   return (
     <Stage scaleX={1} scaleY={1} width={150} height={window.innerHeight}>
-      <Layer>
+      <Layer ref={toolboxLayer}>
         <Group x={TOOLBOX_X} y={TOOLBOX_Y}>
           <Rect
             width={100}

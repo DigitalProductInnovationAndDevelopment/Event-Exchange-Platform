@@ -1,6 +1,6 @@
 import type { AppState } from "../reducers/CanvasReducer.tsx";
 import { getEditableParameters } from "../utils/constants.tsx";
-import { updateElementSpecificField } from "../../../components/canvas/actions/actions.tsx";
+import { updateElementSpecificField } from "components/canvas/actions/actions.tsx";
 import "./ElementInspector.css";
 
 export function ElementInspector({

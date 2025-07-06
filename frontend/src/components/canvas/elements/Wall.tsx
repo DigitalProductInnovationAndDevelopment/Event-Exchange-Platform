@@ -1,6 +1,7 @@
-import { Line, Rect } from "react-konva";
+import { Group, Line, Rect } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
 import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
+import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functions.tsx";
 
 export class Wall implements ElementProperties {
   id: UUID;
@@ -35,7 +36,9 @@ export const WallRender = (wall: Wall) => {
   const maxY = Math.max(wall.y1, wall.y2) + selectionPadding;
 
   return (
-    <>
+    <Group
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}>
       {/* Invisible selection area */}
       <Rect
         x={minX}
@@ -45,6 +48,7 @@ export const WallRender = (wall: Wall) => {
         fill="transparent"
         stroke="transparent"
         strokeWidth={0}
+        perfectDrawEnabled={false}
       />
       {/* Visible wall line */}
       <Line
@@ -52,7 +56,8 @@ export const WallRender = (wall: Wall) => {
         stroke="green"
         strokeWidth={2}
         lineJoin="round"
+        perfectDrawEnabled={false}
       />
-    </>
+    </Group>
   );
 };

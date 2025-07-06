@@ -1,6 +1,7 @@
 import { Circle, Group, Rect, Text } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
 import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
+import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functions.tsx";
 
 export class Table implements ElementProperties {
   id: UUID;
@@ -38,7 +39,9 @@ export class Table implements ElementProperties {
 
 export function TableRender(table: Table, areTextsEnabled: boolean) {
   return table.type === "circleTable" ? (
-    <Group>
+    <Group
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}>
       <Circle radius={table.radius} fill={table.color || "#8B4513"} />
       {areTextsEnabled &&
         <Text
@@ -54,11 +57,14 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
     </Group>
 
   ) : (
-    <Group>
+    <Group
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}>
       <Rect
         width={table.width}
         height={table.height}
         fill={table.color || "#8B4513"}
+        perfectDrawEnabled={false}
       />
       {areTextsEnabled &&
         <Text
@@ -69,6 +75,7 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
           width={table.width}
           verticalAlign="middle"
           height={table.height}
+          perfectDrawEnabled={false}
         />
       }
     </Group>

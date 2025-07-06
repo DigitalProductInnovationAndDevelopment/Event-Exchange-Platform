@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { Circle, Text } from "react-konva";
+import { Circle, Group, Text } from "react-konva";
 import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
+import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functions.tsx";
 
 export class Chair implements ElementProperties {
   id: UUID;
@@ -32,10 +33,13 @@ export class Chair implements ElementProperties {
 
 export function ChairRender(chair: Chair) {
   return (
-    <>
+    <Group
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}>
       <Circle
         radius={chair.radius || 10}
         fill={chair.color || "#888"}
+        perfectDrawEnabled={false}
       />
       {chair.employeeName && (
         <Text
@@ -46,9 +50,11 @@ export function ChairRender(chair: Chair) {
           fill="black"
           align="center"
           width={chair.radius * 2 + 10}
+          globalCompositeOperation="xor"
+          perfectDrawEnabled={false}
         />
       )}
-    </>
+    </Group>
   );
 }
 

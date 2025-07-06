@@ -8,3 +8,11 @@ export function areNeighbours(sourceChair: Chair, targetChair: Chair): boolean {
   return distance <= threshold;
 }
 
+export const handleMouseOver = (e) => {
+  e.target.getStage().container().style.cursor = "default";
+};
+
+export const handleMouseOut = (e) => {
+  e.target.getStage().container().style.cursor = "grab";
+};
+

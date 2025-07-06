@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, Button, Card, Col, List, message, Row, Space, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import useApiService from "../../services/apiService";
-import { CanvasProvider, useCanvas } from "../../components/canvas/contexts/CanvasContext";
-import KonvaCanvas from "../../components/canvas/KonvaCanvas";
+import { Breadcrumb } from "components/Breadcrumb";
+import useApiService from "services/apiService";
+import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
+import KonvaCanvas from "components/canvas/KonvaCanvas";
 import type { ParticipationDetails } from "types/employee";
 import type { AppState } from "components/canvas/reducers/CanvasReducer";
 import type { ElementProperties } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { Table } from "components/canvas/elements/Table.tsx";
 
-import { CanvasTooltip } from "../../components/CanvasTooltip.tsx";
-import { areNeighbours } from "../../components/canvas/utils/functions.tsx";
+import { CanvasTooltip } from "components/CanvasTooltip.tsx";
+import { areNeighbours } from "components/canvas/utils/functions.tsx";
 
 const { Title } = Typography;
 
@@ -32,7 +32,7 @@ const SeatAllocationContent = ({
   schematicsId: string
 }) => {
   const navigate = useNavigate();
-  const { state, dispatch } = useCanvas();
+  const { state } = useCanvas();
   const [loading, setLoading] = useState(false);
   const [unallocated, setUnallocated] = useState<ParticipationDetails[]>([]);
   const { updateSchematics } = useApiService();
@@ -99,7 +99,7 @@ const SeatAllocationContent = ({
   const handleSave = async () => {
     if (!schematicsState || !state) return;
     setLoading(true);
-    await updateSchematics(schematicsId, state, null as any);
+    await updateSchematics(schematicsId, state, null);
     setLoading(false);
     message.success("Allocation saved!");
   };
@@ -173,7 +173,7 @@ export const EventSeatAllocation = () => {
   const [participants, setParticipants] = useState<ParticipationDetails[]>([]);
   const [schematics, setSchematics] = useState<AppState | null>(null);
   const [schematicsId, setSchematicsId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   // Fetch event info, participants, and seat map on mount
   useEffect(() => {
@@ -196,7 +196,7 @@ export const EventSeatAllocation = () => {
   if (!eventId || !schematics) return <div>Loading...</div>;
 
   return (
-    <CanvasProvider initialState={schematics}>
+    <CanvasProvider>
       <SeatAllocationContent
         eventId={eventId}
         eventName={eventName}

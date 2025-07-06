@@ -21,11 +21,11 @@ import {
   updateMultipleElements,
   updateMultipleWithoutUndoRedo,
 } from "./actions/actions.tsx";
-import useApiService from "../../services/apiService.ts";
+import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
-import StagePreview from "../../components/canvas/elements/StagePreview.tsx";
-import NeighbourArrows from "../../components/canvas/elements/NeighbourArrows.tsx";
-import SelectionRectangle from "../../components/canvas/elements/SelectionRectangle.tsx";
+import StagePreview from "components/canvas/elements/StagePreview.tsx";
+import NeighbourArrows from "components/canvas/elements/NeighbourArrows.tsx";
+import SelectionRectangle from "components/canvas/elements/SelectionRectangle.tsx";
 
 function KonvaCanvas() {
   const { state, dispatch } = useCanvas();
@@ -42,6 +42,8 @@ function KonvaCanvas() {
   const [initiated, setInitiated] = useState(false);
   const { schematicsId } = useParams();
   const [isShiftPressed, setIsShiftPressed] = useState(false);
+  const dragLayer = useRef<Konva.Layer | null>(null);
+  const mainLayer = useRef<Konva.Layer | null>(null);
 
   const [selectionRectangle, setSelectionRectangle] = useState({
     visible: false,
@@ -62,6 +64,9 @@ function KonvaCanvas() {
     };
     fetchData().then(() => {
       stageRef.current?.setPosition(state.canvasPosition ? state.canvasPosition : { x: 0, y: 0 });
+      const container = stageRef!.current!.container();
+      container.style.cursor = "grab";
+
       setScale(state.scale);
       setInitiated(true);
     });
@@ -106,6 +111,8 @@ function KonvaCanvas() {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "Shift") {
         setIsShiftPressed(false);
+        const container = stageRef!.current!.container();
+        container.style.cursor = "grab";
       }
     };
 
@@ -204,6 +211,7 @@ function KonvaCanvas() {
         dispatch(updateMultipleWithoutUndoRedo(updates));
       }
     }
+
   };
 
   const handleDragStart = () => {
@@ -469,8 +477,6 @@ function KonvaCanvas() {
     const container = stageRef!.current!.container();
     if (isShiftPressed || state.buildMode === 1) {
       container.style.cursor = "default";
-    } else {
-      container.style.cursor = "grab";
     }
 
     if (!isSelecting.current) {
@@ -539,8 +545,7 @@ function KonvaCanvas() {
             onMouseup={handleMouseUp}
           >
 
-            <Layer>
-
+            <Layer ref={mainLayer}>
               {/* this is where we display elements */}
               {state.elements?.map((el) => {
                 return (
@@ -590,8 +595,10 @@ function KonvaCanvas() {
                   />
                 )}
             </Layer>
+
           </Stage>
         </div>
+
 
         <StagePreview state={state} mainStage={stageRef.current!}></StagePreview>
 

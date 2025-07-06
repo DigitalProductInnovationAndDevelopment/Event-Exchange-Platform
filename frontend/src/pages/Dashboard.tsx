@@ -1,4 +1,4 @@
-import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from "antd";
+import { Button, Card, Col, Divider, List, Row, Space, Statistic, Tag, Typography } from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -40,6 +40,10 @@ export const Dashboard = () => {
 
     fetchDashboardData();
   }, [getEvents]);
+
+  const getStatusColor = (status: Event["status"]) => {
+    return status === "completed" ? "green" : status === "upcoming" ? "blue" : "orange";
+  };
 
   const getStatusIcon = (status: EventStatus) => {
     return status === "completed" ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
@@ -107,6 +111,9 @@ export const Dashboard = () => {
                     title={
                       <Space>
                         <Link to={`/events/${event.id}`}>{event.name}</Link>
+                        <Tag color={getStatusColor(event.status)} icon={getStatusIcon(event.status)}>
+                          {event.status.toUpperCase()}
+                        </Tag>
                       </Space>
                     }
                     description={

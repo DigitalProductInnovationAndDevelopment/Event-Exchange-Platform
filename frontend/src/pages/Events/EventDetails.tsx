@@ -81,9 +81,9 @@ export const EventDetails = () => {
     }
   };
 
-  const handleFileUpload = async (file: FileEntity) => {
-    event!.fileEntities.push(file);
+  const handleFileUpload = async (file: FileEntity | undefined) => {
     if (file) {
+      event!.fileEntities.push(file);
       setEvent({
         ...event!,
       });
@@ -389,7 +389,7 @@ export const EventDetails = () => {
                   onDelete={handleFileDelete}
                   onDownload={handleDownload}
                 />
-                <FileUploadButton eventId={eventId} onUpload={handleFileUpload} />
+                <FileUploadButton eventId={eventId!} onUpload={handleFileUpload} />
               </div>
             </Space>
           </Card>

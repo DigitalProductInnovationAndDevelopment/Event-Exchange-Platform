@@ -2,11 +2,9 @@ import { Table, TableRender } from "../elements/Table.tsx";
 import { Room, RoomRender } from "../elements/Room.tsx";
 import { Wall, WallRender } from "../elements/Wall.tsx";
 import { Chair, ChairRender } from "../elements/Chair.tsx";
-import type { AppState } from "../../../components/canvas/reducers/CanvasReducer.tsx";
 
 export type UUID = string;
 export type ShapeType = "chair" | "room" | "rectTable" | "circleTable" | "wall" | "quickWall";
-export type SchematicsType = { id: string; name: string; state: AppState } | null;
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGETARIAN: "green",

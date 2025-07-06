@@ -1,7 +1,7 @@
 import { DatePicker, Form, Input, Select } from "antd";
-import { DietaryPreference, EmploymentType, Role } from "../../types/employee";
-import { EmployeeTypeTag } from "../../components/EmployeeTypeTag.tsx";
-import { DietTypeTag } from "../../components/DietTypeTag.tsx";
+import { DietaryPreference, EmploymentType, Role } from "types/employee";
+import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
+import { DietTypeTag } from "components/DietTypeTag.tsx";
 import dayjs from "dayjs";
 
 const { Option } = Select;
@@ -15,18 +15,18 @@ type EmployeeFormProps = {
 };
 
 
-export const DIET_TYPES = Object.entries(DietaryPreference).map(([key, label]) => ({
+export const DIET_TYPES = Object.entries(DietaryPreference).map(([key]) => ({
   label: <DietTypeTag type={key} />,
   value: key,
 }));
 
 
-export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key, label]) => ({
+export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key]) => ({
   label: <EmployeeTypeTag type={key} />,
   value: key,
 }));
 
-const ROLE_OPTIONS = Object.entries(Role).map(([key, value]) => ({
+const ROLE_OPTIONS = Object.entries(Role).map(([, value]) => ({
   label: value.charAt(0) + value.slice(1).toLowerCase(),
   value: value,
 }));

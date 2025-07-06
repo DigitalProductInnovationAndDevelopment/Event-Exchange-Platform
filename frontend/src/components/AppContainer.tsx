@@ -202,7 +202,7 @@ export const AppContainer = () => {
               <Outlet />
             </div>
           </Content>
-          <Footer className="text-center border-t border-gray-200" style={{ background: "#e6f4ff" }}>
+          <Footer className="text-center border-t border-gray-200" style={{ background: "rgba(255,255,255,0)" }}>
             Event Exchange Platform ©{new Date().getFullYear()}
           </Footer>
         </Layout>

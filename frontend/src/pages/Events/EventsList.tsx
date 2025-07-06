@@ -16,16 +16,16 @@ import {
 import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { Breadcrumb } from "components/Breadcrumb";
 import type { ColumnsType } from "antd/es/table";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import type { Event, EventStatus, EventType, FileEntity } from "../../types/event";
-import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "../../types/event";
-import useApiService, { BASE_URL } from "../../services/apiService.ts";
+import type { Event, EventStatus, EventType, FileEntity } from "types/event";
+import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "types/event";
+import useApiService, { BASE_URL } from "services/apiService.ts";
 import "./carousel_arrows.css";
-import { EventTypeTag } from "../../components/EventTypeTag.tsx";
-import { EventStatusTag } from "../../components/EventStatusTag.tsx";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { EventStatusTag } from "components/EventStatusTag.tsx";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;

@@ -1,8 +1,8 @@
-import type { ElementProperties } from "../../../components/canvas/utils/constants.tsx";
+import type { ElementProperties } from "components/canvas/utils/constants.tsx";
 import type { Table } from "./Table.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import { Arrow, Group } from "react-konva";
-import { areNeighbours } from "../../canvas/utils/functions.tsx";
+import { areNeighbours } from "components/canvas/utils/functions.tsx";
 
 interface NeighbourArrowsProps {
   state: { elements: ElementProperties[] };

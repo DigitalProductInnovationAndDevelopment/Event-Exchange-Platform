@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import type { Employee, ParticipationDetails, Profile } from "types/employee.ts";
 import type { Event, FileEntity, SchematicsEntity } from "types/event.ts";
 import toast from "react-hot-toast";
@@ -157,7 +156,7 @@ export default function useApiService() {
   const fileUpload = useCallback(
     async (formData: FormData) => {
       try {
-        const response = await request<string>("/files/upload", {
+        const response = await request<FileEntity>("/files/upload", {
           method: "POST",
           body: formData,
         });
@@ -206,10 +205,10 @@ export default function useApiService() {
     [request],
   );
 
-  const getSchematics: (id: string) => Promise<AppState> = useCallback(async (id: string) => {
+  const getSchematics: (id: string) => Promise<AppState | undefined> = useCallback(async (id: string) => {
     try {
       const response = await request<{ state: string }>(`/schematics/${id}`);
-      return JSON.parse(response.state);
+      return JSON.parse(response.state) as AppState;
     } catch (err) {
       toast.error("Schematics fetch failed");
     }
@@ -241,7 +240,7 @@ export default function useApiService() {
     [request],
   );
 
-  const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null>): Promise<SchematicsEntity | null> => {
+  const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null> | null): Promise<SchematicsEntity | null> => {
       const historyTemp = { ...canvasState.history };
 
       try {

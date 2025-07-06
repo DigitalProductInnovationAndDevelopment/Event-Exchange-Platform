@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
 import { Button, Card, Form, message, Typography } from "antd";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import useApiService from "../../services/apiService";
+import { Breadcrumb } from "components/Breadcrumb";
+import useApiService from "services/apiService";
 import type { Employee } from "types/employee.ts";
 
 const { Title } = Typography;

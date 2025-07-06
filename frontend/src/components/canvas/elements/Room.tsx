@@ -1,6 +1,7 @@
 import { Rect } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
 import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
+import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functions.tsx";
 
 export class Room implements ElementProperties {
   id: UUID;
@@ -33,6 +34,9 @@ export class Room implements ElementProperties {
 export function RoomRender(room: Room) {
   return (
     <Rect
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      perfectDrawEnabled={false}
       width={room.width}
       height={room.height}
       fill={room.color || "#EEE"}

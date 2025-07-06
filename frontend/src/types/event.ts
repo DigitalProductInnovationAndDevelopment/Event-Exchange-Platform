@@ -1,3 +1,5 @@
+import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
+
 export type EventStatus = "upcoming" | "ongoing" | "completed";
 export type EventType = "WINTER_EVENT" | "SUMMER_EVENT" | "YEAR_END_PARTY";
 
@@ -41,3 +43,5 @@ export interface Event {
   fileEntities: FileEntity[];
   schematics: SchematicsEntity | null;
 }
+
+export type SchematicsType = { id: string; state: AppState } | null;

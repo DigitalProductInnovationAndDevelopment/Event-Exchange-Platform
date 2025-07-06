@@ -11,7 +11,7 @@ export const useCanvas: () => {
 } = () => useContext(CanvasContext);
 
 // Modified CanvasProvider to accept initialState prop and sync on change
-export const CanvasProvider = ({ children, initialState }) => {
+export const CanvasProvider = ({ children, initialState }: { children, initialState?: AppState }) => {
   // If initialState is provided, use it; otherwise use default
   const [state, dispatch] = useReducer(
     reducer,

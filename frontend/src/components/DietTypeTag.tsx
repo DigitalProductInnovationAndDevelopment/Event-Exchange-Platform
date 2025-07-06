@@ -1,5 +1,5 @@
 import { Tag } from "antd";
-import { DIET_TYPE_COLORS } from "../components/canvas/utils/constants.tsx";
+import { DIET_TYPE_COLORS } from "components/canvas/utils/constants.tsx";
 
 export const DietTypeTag = ({ type }: { type: string }) => {
     if (!type) return null;

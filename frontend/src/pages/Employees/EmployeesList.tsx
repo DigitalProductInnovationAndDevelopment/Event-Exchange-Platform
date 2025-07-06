@@ -4,10 +4,10 @@ import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from "@an
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "types/employee.ts";
-import useApiService from "../../services/apiService.ts";
+import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import { EmployeeTypeTag } from "../../components/EmployeeTypeTag.tsx";
+import { Breadcrumb } from "components/Breadcrumb";
+import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 
 const { Title } = Typography;
 

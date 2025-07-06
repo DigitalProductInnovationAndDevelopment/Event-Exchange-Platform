@@ -13,12 +13,12 @@ import {
   Typography,
 } from "antd";
 import { useNavigate } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import React, { useState } from "react";
-import type { Event, EventType } from "../../types/event";
-import { EVENT_TYPE_COLORS } from "../../types/event";
-import useApiService from "../../services/apiService";
-import { EventTypeTag } from "../../components/EventTypeTag.tsx";
+import { Breadcrumb } from "components/Breadcrumb";
+import { useState } from "react";
+import type { Event, EventType } from "types/event";
+import { EVENT_TYPE_COLORS } from "types/event";
+import useApiService from "services/apiService";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
 import moment from "moment/moment";
 
 const { Title } = Typography;
@@ -125,7 +125,7 @@ export const EventCreate = () => {
                     noStyle
                   >
                     <Select
-                      options={Object.entries(EVENT_TYPE_COLORS).map(([key, value]) => ({
+                      options={Object.entries(EVENT_TYPE_COLORS).map(([key]) => ({
                         label: <EventTypeTag type={key as EventType} />,
                         value: key,
                       }))}

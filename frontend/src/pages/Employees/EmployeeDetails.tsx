@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Button, Card, Descriptions, message, Modal, Space, Table, Typography } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { type Employee, type ParticipationDetails } from "../../types/employee.ts";
-import useApiService from "../../services/apiService.ts";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { type Employee, type ParticipationDetails } from "types/employee.ts";
+import useApiService from "services/apiService.ts";
+import { Breadcrumb } from "components/Breadcrumb";
 import { DIET_TYPES } from "./EmployeeForm";
 import type { EventType } from "types/event.ts";
-import { EventTypeTag } from "../../components/EventTypeTag.tsx";
-import { EmployeeTypeTag } from "../../components/EmployeeTypeTag.tsx";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 
 const { Title } = Typography;
 

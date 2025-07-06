@@ -1,6 +1,6 @@
 import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
 import useApiService from "../../services/apiService";
 import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
@@ -228,7 +228,7 @@ export const EventParticipants = () => {
               title: "Guests",
               dataIndex: "guestCount",
               key: "guestCount",
-              render: (guestCount: number, record: Employee) => (
+              render: (_guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
                   value={employeeGuests[record.profile.id] ?? 0}
@@ -312,7 +312,7 @@ export const EventParticipants = () => {
               title: "Guests",
               dataIndex: "guestCount",
               key: "guestCount",
-              render: (guestCount: number, record: Employee) => (
+              render: (_guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
                   value={employeeGuests[record.profile.id] ?? 0}
