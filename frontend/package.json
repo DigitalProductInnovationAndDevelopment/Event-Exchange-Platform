@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prod": "vite build",
-    "build": "tsc -b && vite build",
+    "prod": "vite build --base=/Event-Exchange-Platform/",
+    "build": "tsc -b && vite build --base=/Event-Exchange-Platform/",
     "predeploy": "npm run prod",
     "deploy": "gh-pages -d dist",
     "lint": "eslint .",

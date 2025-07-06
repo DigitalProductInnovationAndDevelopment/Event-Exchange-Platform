@@ -1,4 +1,4 @@
-import type { RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { AppContainer } from "../components/AppContainer";
@@ -101,4 +101,4 @@ const routes: RouteObject[] = [
   },
 ];
 
-export const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes, { basename: import.meta.env.BASE_URL });
