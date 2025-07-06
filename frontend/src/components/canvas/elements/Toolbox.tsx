@@ -6,10 +6,53 @@ import type { Wall } from "./Wall";
 import type { AppState } from "../reducers/CanvasReducer.tsx";
 import type { Table } from "./Table.tsx";
 import Konva from "konva";
-import React from "react";
-import useApiService from "../../../services/apiService.ts";
+import React, { useRef } from "react";
+import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import { addElement, changeBuildMode } from "../actions/actions.tsx";
+import FPSText from "components/canvas/elements/FPSText.tsx";
+
+
+function makeBackgroundWhite(uri: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = function() {
+      console.log("Image loaded", img.width, img.height);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        return reject(new Error("Failed to get canvas context"));
+      }
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.drawImage(img, 0, 0);
+
+      try {
+        const jpegUri = canvas.toDataURL("image/jpeg", 2);
+        console.log("Generated JPEG length:", jpegUri.length);
+        resolve(jpegUri);
+      } catch (e) {
+        reject(e);
+      }
+    };
+
+    img.onerror = function(err) {
+      console.error("Image failed to load", err);
+      reject(new Error("Failed to load image"));
+    };
+
+    img.src = uri;
+  });
+}
+
 
 function downloadURI(uri: string, name: string) {
   const link = document.createElement("a");
@@ -20,7 +63,15 @@ function downloadURI(uri: string, name: string) {
   document.body.removeChild(link);
 }
 
-const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
+function sanitize(value: number, fallback = 0) {
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+  return value;
+}
+
+export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>) => {
+
   if (!stageRef.current) return;
 
   const stage = stageRef.current;
@@ -36,11 +87,6 @@ const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
   const layerRects = layers
     .map(layer => layer.getClientRect({ skipTransform: false }))
     .filter(rect => rect.width > 0 && rect.height > 0);
-
-  if (layerRects.length === 0) {
-    console.warn("No visible content found");
-    return;
-  }
 
   // Calculate bounding box
   const minX = Math.min(...layerRects.map(rect => rect.x));
@@ -64,49 +110,60 @@ const handleExport = (stageRef: React.RefObject<Konva.Stage | null>) => {
   };
 
   try {
-    const uri = stage.toDataURL({
-      x: exportRect.x,
-      y: exportRect.y,
-      width: exportRect.width,
-      height: exportRect.height,
+    return await makeBackgroundWhite(stage.toDataURL({
+      x: sanitize(exportRect.x),
+      y: sanitize(exportRect.y),
+      width: sanitize(exportRect.width),
+      height: sanitize(exportRect.height),
       pixelRatio: 2,
-    });
+    }))
+      .then((jpegUri) => {
+        console.log("Converted image URI:", jpegUri);
+        return jpegUri;
+      })
+      .catch((err) => {
+        console.error("Error processing image:", err);
+      });
 
-    downloadURI(uri, "stage.png");
   } catch (error) {
     console.error("Export failed:", error);
   }
 };
 
-const handleToolboxClick = (
-  type: string,
-  dispatch: (arg0: { type: string; payload: number | Chair | Table | Wall | Room | null }) => void
-) => {
-  const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
-  if (!toolItem) return;
+const handleToolboxClick =
+  (type: string, dispatch: (arg0: {
+    type: string;
+    payload: number | Chair | Table | Wall | Room | null;
+  }) => void, currentBuildMode: number) => {
+    const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
+    if (!toolItem) return;
 
-  if (type === "quickWall") {
-    dispatch(changeBuildMode(1));
-  } else {
-    dispatch(addElement(shapeFactory(type)));
-  }
-};
+    if (type === "quickWall") {
+      // Toggle quickwall mode: if already in build mode 1, switch back to 0
+      const newBuildMode = currentBuildMode === 1 ? 0 : 1;
+      dispatch(changeBuildMode(newBuildMode));
+    } else {
+      dispatch(addElement(shapeFactory(type)));
+    }
+
+  };
 
 function Toolbox({
-  dispatch,
-  stageRef,
-  state,
-}: {
+                   dispatch,
+                   stageRef,
+                   state,
+                 }: {
   dispatch: (action: { type: string; payload: any }) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   state: AppState;
 }) {
   const { updateSchematics } = useApiService();
   const { schematicsId } = useParams();
+  const toolboxLayer = useRef<Konva.Layer | null>(null);
 
   return (
     <Stage scaleX={1} scaleY={1} width={150} height={window.innerHeight}>
-      <Layer>
+      <Layer ref={toolboxLayer}>
         <Group x={TOOLBOX_X} y={TOOLBOX_Y}>
           <Rect
             width={100}
@@ -134,7 +191,7 @@ function Toolbox({
               key={item.type}
               x={10}
               y={i * 60 + 40}
-              onClick={() => handleToolboxClick(item.type, dispatch)}
+              onClick={() => handleToolboxClick(item.type, dispatch, state.buildMode)}
               cursor="pointer"
             >
               <Rect width={80} height={40} fill="#ddd" stroke="#999" cornerRadius={6} />
@@ -142,7 +199,10 @@ function Toolbox({
             </Group>
           ))}
 
-          <Group y={400} onClick={() => handleExport(stageRef)}>
+          <Group y={400} onClick={async () => {
+            const uri = await handleExport(stageRef);
+            downloadURI(uri!, "stage.jpeg");
+          }}>
             <Rect
               width={80}
               height={50}
@@ -152,7 +212,7 @@ function Toolbox({
               stroke="#900"
               strokeWidth={1}
             />
-            <Text text="Export PDF" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
+            <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
           </Group>
 
           <Group
@@ -165,7 +225,7 @@ function Toolbox({
                   canvasPosition: stageRef!.current!.getPosition(),
                   scale: stageRef!.current!.scaleX(),
                 },
-                stageRef
+                stageRef,
               )
             }
           >
@@ -180,6 +240,16 @@ function Toolbox({
             />
             <Text text="Save" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
           </Group>
+
+          {/*<Group
+            y={510}>
+            <Text text={"#undo: " + state.history?.past?.length + "\n#redo: " + state.history?.future?.length} x={25}
+                  y={15} fill="black" fontSize={10} fontStyle="bold" />
+          </Group>
+          <Group x={15} y={560}>
+            <FPSText layer={toolboxLayer}></FPSText>
+          </Group>*/}
+
         </Group>
       </Layer>
     </Stage>

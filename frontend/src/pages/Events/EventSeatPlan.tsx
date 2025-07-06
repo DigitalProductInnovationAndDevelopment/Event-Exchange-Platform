@@ -1,42 +1,31 @@
 import { Button, Card, Col, Row, Space, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import { useEffect, useState } from "react";
-import useApiService from "../../services/apiService";
-import KonvaCanvas from "../../components/canvas/KonvaCanvas";
-import { CanvasProvider } from "../../components/canvas/contexts/CanvasContext";
+import { Breadcrumb } from "components/Breadcrumb";
+import KonvaCanvas from "components/canvas/KonvaCanvas";
+import { CanvasProvider } from "components/canvas/contexts/CanvasContext";
+import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 
 const { Title } = Typography;
 
 export const EventSeatPlan = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const [eventName, setEventName] = useState("");
-  const { getEventById } = useApiService();
-
-  useEffect(() => {
-    (async () => {
-      if (eventId) {
-        const event = await getEventById(eventId);
-        if (event) {
-          setEventName(event.name);
-        }
-      }
-    })();
-  }, [eventId, getEventById]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       <Breadcrumb
         items={[
           { path: "/events", label: "Events" },
-          { path: `/events/${eventId}`, label: eventName || "Event" },
           { path: `/events/${eventId}/seat-plan`, label: "Manage Seat Plan" },
         ]}
       />
 
       <div className="flex justify-between items-center">
-        <Title level={2}>Manage Seat Plan</Title>
+        <div className="flex flex-row">
+          <Title level={2}>Manage Seat Layout</Title>
+          <CanvasTooltip />
+        </div>
+
         <Space>
           <Button onClick={() => navigate(`/events/${eventId}`)}>Back to Event</Button>
         </Space>
@@ -45,9 +34,11 @@ export const EventSeatPlan = () => {
       <Row gutter={16}>
         <Col span={24}>
           <Card className="mb-6">
-            <CanvasProvider>
-              <KonvaCanvas />
-            </CanvasProvider>
+            <div style={{ height: "600px", overflow: "hidden" }}>
+              <CanvasProvider>
+                <KonvaCanvas />
+              </CanvasProvider>
+            </div>
           </Card>
         </Col>
       </Row>

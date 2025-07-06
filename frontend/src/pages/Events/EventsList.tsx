@@ -4,32 +4,28 @@ import {
   Carousel,
   Col,
   DatePicker,
+  Image,
   Input,
   Row,
   Select,
   Space,
   Switch,
   Table,
-  Tag,
   Typography,
 } from "antd";
-import {
-  AppstoreOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { Breadcrumb } from "components/Breadcrumb";
 import type { ColumnsType } from "antd/es/table";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import type { Event, EventStatus, EventType, FileEntity } from "../../types/event";
-import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "../../types/event";
-import useApiService from "../../services/apiService.ts";
+import type { Event, EventStatus, EventType, FileEntity } from "types/event";
+import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "types/event";
+import useApiService, { BASE_URL } from "services/apiService.ts";
 import "./carousel_arrows.css";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { EventStatusTag } from "components/EventStatusTag.tsx";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -101,16 +97,8 @@ export const EventsList = () => {
       dataIndex: "eventType",
       key: "eventType",
       width: "14%",
-      render: (type: EventType) => (
-        <Tag color={EVENT_TYPE_COLORS[type]}>
-          {type
-            .split("_")
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(" ")
-            .toUpperCase()}
-        </Tag>
-      ),
-      filters: Object.entries(EVENT_TYPE_COLORS).map(([type, _]) => ({
+      render: (type: EventType) => <EventTypeTag type={type} />,
+      filters: Object.entries(EVENT_TYPE_COLORS).map(([type]) => ({
         text: type.replace(/_/g, " "),
         value: type,
       })),
@@ -128,10 +116,8 @@ export const EventsList = () => {
       dataIndex: "status",
       key: "status",
       width: "14%",
-      render: (status: EventStatus) => (
-        <Tag color={EVENT_STATUS_COLORS[status]}>{status?.toUpperCase()}</Tag>
-      ),
-      filters: Object.entries(EVENT_STATUS_COLORS).map(([status, _]) => ({
+      render: (status: EventStatus) => <EventStatusTag status={status} />,
+      filters: Object.entries(EVENT_STATUS_COLORS).map(([status]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
         value: status,
       })),
@@ -257,25 +243,34 @@ export const EventsList = () => {
                               const filteredImages = event.fileEntities?.filter(
                                 (file: FileEntity) =>
                                   file.contentType === "image/png" ||
-                                  file.contentType === "image/jpeg"
+                                  file.contentType === "image/jpeg",
                               );
                               if (filteredImages && filteredImages.length > 0) {
                                 return (
                                   <Carousel dots={false} arrows={filteredImages.length > 1}>
                                     {filteredImages.map((file: FileEntity) => (
                                       <div key={file.fileId} className="px-8">
-                                        <Card>
-                                          <img
-                                            src={`http://localhost:8000/files/${file.fileId}`}
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            borderRadius: 4,
+                                            width: "100%",
+                                            height: "200px",
+                                            overflow: "hidden",
+                                          }}
+                                        >
+                                          <Image
+                                            src={`${BASE_URL}/files/${file.fileId}`}
                                             alt="Event Image"
                                             style={{
-                                              margin: 0,
-                                              maxWidth: 200,
-                                              maxHeight: 100,
-                                              objectFit: "cover",
+                                              width: "100%",
+                                              height: "100%",
+                                              objectFit: "contain",
                                             }}
                                           />
-                                        </Card>
+                                        </div>
                                       </div>
                                     ))}
                                   </Carousel>

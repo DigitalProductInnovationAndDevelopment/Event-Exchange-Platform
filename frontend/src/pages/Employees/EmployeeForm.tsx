@@ -1,8 +1,12 @@
-import React from "react";
-import { Form, Input, Select, Button, Space, Tag } from "antd";
-import { DietaryPreference, EmploymentType, Role } from "../../types/employee";
+import { DatePicker, Form, Input, Select } from "antd";
+import { DietaryPreference, EmploymentType, Role } from "types/employee";
+import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
+import { DietTypeTag } from "components/DietTypeTag.tsx";
+import dayjs from "dayjs";
 
 const { Option } = Select;
+
+const dateFormat = "YYYY-MM-DD";
 
 type EmployeeFormProps = {
   initialValues: any;
@@ -10,42 +14,30 @@ type EmployeeFormProps = {
   form: any;
 };
 
-export const DIET_TYPE_COLORS: Record<string, string> = {
-  VEGETARIAN: "green",
-  PESCATARIAN: "blue",
-  HALAL: "orange",
-  KOSHER: "purple",
-  VEGAN: "magenta",
-  LACTOSE_FREE: "cyan",
-  GLUTEN_FREE: "lime",
-  KETO: "gold",
-};
-export const DIET_TYPES = Object.entries(DietaryPreference).map(([key, label]) => ({
-  label: <Tag color={DIET_TYPE_COLORS[key]}>{label}</Tag>,
+
+export const DIET_TYPES = Object.entries(DietaryPreference).map(([key]) => ({
+  label: <DietTypeTag type={key} />,
   value: key,
 }));
 
-export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
-  FULLTIME: "green",
-  PARTTIME: "blue",
-  WORKING_STUDENT: "orange",
-  THESIS: "purple",
-};
 
-export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key, label]) => ({
-  label: <Tag color={EMPLOYMENT_TYPE_COLORS[key]}>{label}</Tag>,
+export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key]) => ({
+  label: <EmployeeTypeTag type={key} />,
   value: key,
 }));
 
-const ROLE_OPTIONS = Object.entries(Role).map(([key, value]) => ({
+const ROLE_OPTIONS = Object.entries(Role).map(([, value]) => ({
   label: value.charAt(0) + value.slice(1).toLowerCase(),
   value: value,
 }));
 
 const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
   const handleFinish = (values: any) => {
+    values.employmentStartDate = values.employmentStartDate.format("YYYY-MM-DD");
     onSave(values);
   };
+
+  initialValues.employmentStartDate = initialValues.employmentStartDate ? dayjs(initialValues.employmentStartDate, dateFormat) : dayjs().startOf("day");
 
   return (
     <Form form={form} layout="vertical" initialValues={initialValues} onFinish={handleFinish}>
@@ -94,9 +86,16 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
       <Form.Item
         label="Date Joined"
         name="employmentStartDate"
-        rules={[{ required: true, message: "Please enter employment start date" }]}
-      >
-        <Input placeholder="Enter date joined" type="date" />
+        rules={[{ required: true, message: "Please enter employment start date" }]}>
+        <DatePicker
+          className="w-full"
+          placeholder="Enter date joined"
+          format={dateFormat}
+          showTime={false}
+          disabledDate={(current) => {
+            return current && current > dayjs().endOf("day");
+          }}
+        />
       </Form.Item>
       <Form.Item
         label="Location"

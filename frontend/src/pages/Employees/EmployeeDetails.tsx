@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Descriptions, Space, Table, Typography, Modal, message, Tag } from "antd";
+import { Button, Card, Descriptions, message, Modal, Space, Table, Typography } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {
-  ArrowLeftOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import { type Employee } from "../../types/employee.ts";
-import useApiService from "../../services/apiService.ts";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import { DIET_TYPES, EMPLOYMENT_TYPES, EMPLOYMENT_TYPE_COLORS } from "./EmployeeForm";
+import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { type Employee, type ParticipationDetails } from "types/employee.ts";
+import useApiService from "services/apiService.ts";
+import { Breadcrumb } from "components/Breadcrumb";
+import { DIET_TYPES } from "./EmployeeForm";
+import type { EventType } from "types/event.ts";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 
 const { Title } = Typography;
 
@@ -25,7 +23,7 @@ const eventColumns = [
     title: "Date",
     dataIndex: "eventDate",
     key: "eventDate",
-    render: (_: any, record: any) => {
+    render: (_: unknown, record: ParticipationDetails) => {
       return new Date(record.eventDate).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -37,6 +35,7 @@ const eventColumns = [
     title: "Type",
     dataIndex: "eventType",
     key: "eventType",
+    render: (type: EventType) => <EventTypeTag type={type} />,
   },
   {
     title: "Address",
@@ -52,7 +51,7 @@ const eventColumns = [
     title: "Status",
     dataIndex: "confirmed",
     key: "confirmed",
-    render: (_: any, record: any) => {
+    render: (_: unknown, record: ParticipationDetails) => {
       return record.confirmed ? "Confirmed" : "Not Confirmed";
     },
   },
@@ -82,35 +81,26 @@ export const EmployeeDetails = () => {
     { label: "Gitlab Username", value: employee?.profile.gitlabUsername },
     {
       label: "Gender",
-      value: employee?.profile.gender
-        ? employee.profile.gender.charAt(0).toUpperCase() +
-          employee.profile.gender.slice(1).toLowerCase()
-        : undefined,
+      value: employee?.profile.gender ? employee.profile.gender.charAt(0).toUpperCase() + employee.profile.gender.slice(1).toLowerCase() : undefined,
     },
     {
       label: "Role",
-      value: employee?.profile.authorities?.map(
-        (role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
-      ),
+      value: employee?.profile.authorities?.map((role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()),
     },
     {
       label: "Dietary Preferences",
       value: employee?.profile.dietTypes?.length
         ? employee.profile.dietTypes.map(type => {
-            const typeObj = DIET_TYPES.find(t => t.value === type);
-            return typeObj ? typeObj.label : type;
-          })
+          const typeObj = DIET_TYPES.find(t => t.value === type);
+          return typeObj ? typeObj.label : type;
+        })
         : undefined,
     },
     { label: "Location", value: employee?.location },
     {
       label: "Employment Type",
       value: employee?.employmentType
-        ? EMPLOYMENT_TYPES.find(t => t.value === employee.employmentType)?.label || (
-            <Tag color={EMPLOYMENT_TYPE_COLORS[employee.employmentType]}>
-              {employee.employmentType}
-            </Tag>
-          )
+        ? <EmployeeTypeTag type={employee.employmentType} />
         : undefined,
     },
     { label: "Date Joined", value: employee?.employmentStartDate },
@@ -205,10 +195,10 @@ export const EmployeeDetails = () => {
             <Descriptions.Item label={field.label} key={field.label}>
               {Array.isArray(field.value)
                 ? field.value.map((v, i) => (
-                    <span key={i} style={{ marginRight: 4 }}>
+                  <span key={i} style={{ marginRight: 4 }}>
                       {v}
                     </span>
-                  ))
+                ))
                 : field.value || ""}
             </Descriptions.Item>
           ))}
@@ -224,7 +214,7 @@ export const EmployeeDetails = () => {
                 <Descriptions.Item label={field.label} key={field.label}>
                   {field.value}
                 </Descriptions.Item>
-              )
+              ),
           )}
         </Descriptions>
       </Card>

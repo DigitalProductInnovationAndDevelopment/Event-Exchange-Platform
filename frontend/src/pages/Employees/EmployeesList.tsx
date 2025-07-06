@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Input, Select, Space, Table, Typography, Card, Row, Col, Tag } from "antd";
+import { Button, Card, Col, Input, Row, Select, Space, Table, Typography } from "antd";
 import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "types/employee.ts";
-import useApiService from "../../services/apiService.ts";
+import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
-import { Breadcrumb } from "../../components/Breadcrumb";
-import { EMPLOYMENT_TYPE_COLORS, EMPLOYMENT_TYPES } from "./EmployeeForm";
+import { Breadcrumb } from "components/Breadcrumb";
+import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 
 const { Title } = Typography;
 
 // Define table columns with correct types
 const columns = (
-  onDelete: (key: string) => void,
-  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
+  _onDelete: (key: string) => void,
+  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
 ): ColumnsType<Employee> => [
   {
     title: "Full Name",
@@ -36,20 +36,7 @@ const columns = (
     title: "Employment Type",
     dataIndex: "employmentType",
     key: "employmentType",
-    render: (type: string) => {
-      if (!type) return null;
-      const typeObj = EMPLOYMENT_TYPES.find(t => t.value === type);
-      return typeObj ? (
-        typeObj.label
-      ) : (
-        <Tag color={EMPLOYMENT_TYPE_COLORS[type]}>
-          {type
-            .split("_")
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(" ")}
-        </Tag>
-      );
-    },
+    render: (type: string) => <EmployeeTypeTag type={type} />,
   },
   {
     title: "Date Joined",
@@ -146,13 +133,13 @@ export const EmployeesList = () => {
 
   const employees = useMemo(
     () => fetchedEmployees.map(e => ({ ...e, key: e.profile.id })),
-    [fetchedEmployees]
+    [fetchedEmployees],
   );
 
   // Get unique locations for filter dropdown
   const uniqueLocations = useMemo(
     () => Array.from(new Set(employees.map(emp => emp.location))).filter(Boolean),
-    [employees]
+    [employees],
   );
 
   // Filter employees by name and location

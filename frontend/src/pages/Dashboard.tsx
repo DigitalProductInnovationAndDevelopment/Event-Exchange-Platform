@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { type Event, EVENT_STATUS_COLORS, type EventStatus } from "../types/event";
+import { type Event, type EventStatus } from "../types/event";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 
@@ -40,6 +40,10 @@ export const Dashboard = () => {
 
     fetchDashboardData();
   }, [getEvents]);
+
+  const getStatusColor = (status: Event["status"]) => {
+    return status === "completed" ? "green" : status === "upcoming" ? "blue" : "orange";
+  };
 
   const getStatusIcon = (status: EventStatus) => {
     return status === "completed" ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
@@ -107,6 +111,9 @@ export const Dashboard = () => {
                     title={
                       <Space>
                         <Link to={`/events/${event.id}`}>{event.name}</Link>
+                        <Tag color={getStatusColor(event.status)} icon={getStatusIcon(event.status)}>
+                          {event.status.toUpperCase()}
+                        </Tag>
                       </Space>
                     }
                     description={
@@ -161,9 +168,9 @@ export const Dashboard = () => {
                           (event.capacity > 0
                             ? (event.participantCount / event.capacity) * 100
                             : 0),
-                        0
+                          0,
                       ) / (events.length || 1)
-                    ).toFixed(2)
+                    ).toFixed(2),
                   )
                 }
                 suffix="%"

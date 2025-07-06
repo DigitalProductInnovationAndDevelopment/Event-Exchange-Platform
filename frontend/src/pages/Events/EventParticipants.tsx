@@ -1,18 +1,6 @@
-import {
-  Button,
-  Card,
-  Col,
-  Input,
-  InputNumber,
-  Modal,
-  Popconfirm,
-  Row,
-  Space,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
 import useApiService from "../../services/apiService";
 import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
@@ -66,7 +54,7 @@ export const EventParticipants = () => {
       p =>
         (p.profile.fullName.toLowerCase().includes(employeeSearch.toLowerCase()) ||
           p.profile.email.toLowerCase().includes(employeeSearch.toLowerCase())) &&
-        !participants.some(participant => participant.employeeId === p.profile.id)
+        !participants.some(participant => participant.employeeId === p.profile.id),
     )
     .sort((a, b) => a.profile.fullName.localeCompare(b.profile.fullName));
 
@@ -83,7 +71,7 @@ export const EventParticipants = () => {
       guestCount: number;
       eventId: string;
       employeeId: string;
-    }
+    },
   ) => {
     const participant = await updateParticipant(values);
     if (participant) {
@@ -91,11 +79,11 @@ export const EventParticipants = () => {
         prev.map(p =>
           p.id === participationId
             ? {
-                ...p,
-                guestCount: values.guestCount ?? 0,
-              }
-            : p
-        )
+              ...p,
+              guestCount: values.guestCount ?? 0,
+            }
+            : p,
+        ),
       );
     }
   };
@@ -115,7 +103,7 @@ export const EventParticipants = () => {
   const filteredParticipants = participants.filter(
     e =>
       e.fullName.toLowerCase().includes(participantSearch.toLowerCase()) ||
-      e.email.toLowerCase().includes(participantSearch.toLowerCase())
+      e.email.toLowerCase().includes(participantSearch.toLowerCase()),
   );
 
   const columns = [
@@ -240,7 +228,7 @@ export const EventParticipants = () => {
               title: "Guests",
               dataIndex: "guestCount",
               key: "guestCount",
-              render: (guestCount: number, record: Employee) => (
+              render: (_guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
                   value={employeeGuests[record.profile.id] ?? 0}
@@ -324,7 +312,7 @@ export const EventParticipants = () => {
               title: "Guests",
               dataIndex: "guestCount",
               key: "guestCount",
-              render: (guestCount: number, record: Employee) => (
+              render: (_guestCount: number, record: Employee) => (
                 <InputNumber
                   min={0}
                   value={employeeGuests[record.profile.id] ?? 0}
@@ -343,13 +331,11 @@ export const EventParticipants = () => {
                 <Button
                   type="primary"
                   icon={<UserAddOutlined />}
-                  onClick={() =>
-                    handleAddParticipant({
-                      guestCount: record.guestCount,
-                      eventId: eventId,
-                      employeeId: record.profile.id,
-                    })
-                  }
+                  onClick={() => handleAddParticipant({
+                    guestCount: record.guestCount,
+                    eventId: eventId!,
+                    employeeId: record.profile.id,
+                  })}
                   disabled={participants.some(p => p.employeeId === record.profile.id)}
                 >
                   Add

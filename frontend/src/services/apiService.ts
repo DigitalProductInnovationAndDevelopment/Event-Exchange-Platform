@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import type { Employee, ParticipationDetails, Profile } from "types/employee.ts";
 import type { Event, FileEntity, SchematicsEntity } from "types/event.ts";
 import toast from "react-hot-toast";
@@ -7,8 +6,9 @@ import React, { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
+import { handleExport } from "../components/canvas/elements/Toolbox.tsx";
 
-const BASE_URL = "http://localhost:8000";
+export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
 export default function useApiService() {
   const { logout } = useAuth();
@@ -70,7 +70,7 @@ export default function useApiService() {
 
       return (await response.text()) as unknown as T;
     },
-    [logout]
+    [logout],
   );
 
   const logoutRequest = useCallback(async () => {
@@ -92,7 +92,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const getEvents = useCallback(async (): Promise<Event[] | null> => {
@@ -118,7 +118,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const updateEvent = useCallback(
@@ -135,7 +135,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const deleteEvent = useCallback(
@@ -150,13 +150,13 @@ export default function useApiService() {
         toast.error("Event deletion failed");
       }
     },
-    [request]
+    [request],
   );
 
   const fileUpload = useCallback(
     async (formData: FormData) => {
       try {
-        const response = await request<string>("/files/upload", {
+        const response = await request<FileEntity>("/files/upload", {
           method: "POST",
           body: formData,
         });
@@ -166,7 +166,7 @@ export default function useApiService() {
         toast.error("File upload failed");
       }
     },
-    [request]
+    [request],
   );
 
   const fileDownload = useCallback(
@@ -187,7 +187,7 @@ export default function useApiService() {
         toast.error("Failed to download file");
       }
     },
-    [request]
+    [request],
   );
 
   const deleteFile = useCallback(
@@ -202,19 +202,17 @@ export default function useApiService() {
         toast.error("File deletion failed");
       }
     },
-    [request]
+    [request],
   );
 
-  const getSchematics = useCallback(
-    async (id: string) => {
-      try {
-        return await request<{ id: string; name: string; state: AppState }>(`/schematics/${id}`);
-      } catch (err) {
-        toast.error("Schematics fetch failed");
-      }
-    },
-    [request]
-  );
+  const getSchematics: (id: string) => Promise<AppState | undefined> = useCallback(async (id: string) => {
+    try {
+      const response = await request<{ state: string }>(`/schematics/${id}`);
+      return JSON.parse(response.state) as AppState;
+    } catch (err) {
+      toast.error("Schematics fetch failed");
+    }
+  }, [request]);
 
   const initiateSchematics = useCallback(
     async (eventId: string): Promise<SchematicsEntity | null> => {
@@ -239,16 +237,15 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
-  const updateSchematics = useCallback(
-    async (
-      id: string,
-      canvasState: AppState,
-      stageRef: React.RefObject<Konva.Stage | null>
-    ): Promise<SchematicsEntity | null> => {
+  const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null> | null): Promise<SchematicsEntity | null> => {
+      const historyTemp = { ...canvasState.history };
+
       try {
+        delete canvasState.history;
+
         const response = await request(`/schematics/${id}`, {
           method: "PUT",
           body: JSON.stringify({
@@ -256,33 +253,39 @@ export default function useApiService() {
           }),
         });
         if (stageRef && stageRef!.current) {
-          const dataUrl = stageRef!.current!.toDataURL({ pixelRatio: 2 });
-          const arr = dataUrl.split(",");
-          const mime = arr[0].match(/:(.*?);/)![1];
-          const bstr = atob(arr[1]);
-          let n = bstr.length;
-          const u8arr = new Uint8Array(n);
+          const dataUrl = await handleExport(stageRef);
+          if (dataUrl) {
+            const arr = dataUrl!.split(",");
+            const mime = arr[0].match(/:(.*?);/)![1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
 
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n);
+            }
+
+            const file = new File([u8arr], id, { type: mime });
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("schematicsId", id);
+            await fileUpload(formData);
           }
-
-          const file = new File([u8arr], id, { type: mime });
-
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("schematicsId", id);
-          await fileUpload(formData);
         }
 
         toast.success("Schematics saved successfully!");
+        // @ts-ignore
+        canvasState.history = historyTemp;
         return response;
       } catch (err) {
         toast.error("Schematics save failed");
+        // @ts-ignore
+        canvasState.history = historyTemp;
         return null;
       }
     },
-    [fileUpload, request]
+    [fileUpload, request],
   );
 
   const deleteSchematics = useCallback(
@@ -297,7 +300,7 @@ export default function useApiService() {
         toast.error("Schematics deletion failed");
       }
     },
-    [request]
+    [request],
   );
 
   const getEmployeeById = useCallback(
@@ -308,7 +311,7 @@ export default function useApiService() {
         toast.error("Employee fetch failed");
       }
     },
-    [request]
+    [request],
   );
 
   const getEmployees = useCallback(async () => {
@@ -333,7 +336,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const updateEmployee = useCallback(
@@ -350,7 +353,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const deleteEmployee = useCallback(
@@ -365,7 +368,7 @@ export default function useApiService() {
         toast.error("Employee deletion failed");
       }
     },
-    [request]
+    [request],
   );
 
   const getEventParticipants = useCallback(
@@ -376,7 +379,7 @@ export default function useApiService() {
         toast.error("Fetch operation for the participants of the event failed");
       }
     },
-    [request]
+    [request],
   );
 
   const addParticipant = useCallback(
@@ -391,7 +394,7 @@ export default function useApiService() {
           {
             method: "POST",
             body: JSON.stringify(participation),
-          }
+          },
         );
         toast.success("Participant added successfully!");
         return response;
@@ -400,7 +403,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const updateParticipant = useCallback(
@@ -415,7 +418,7 @@ export default function useApiService() {
           {
             method: "PUT",
             body: JSON.stringify(participation),
-          }
+          },
         );
         toast.success("Participant updated successfully!");
         return response;
@@ -424,7 +427,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request]
+    [request],
   );
 
   const deleteParticipation = useCallback(
@@ -439,7 +442,7 @@ export default function useApiService() {
         toast.error("Event participant deletion failed");
       }
     },
-    [request]
+    [request],
   );
 
   return {

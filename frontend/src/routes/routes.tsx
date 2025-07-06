@@ -1,4 +1,4 @@
-import type { RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { AppContainer } from "../components/AppContainer";
@@ -12,8 +12,6 @@ import { EmployeesList } from "../pages/Employees/EmployeesList";
 import { LoginSuccess } from "../pages/LoginSuccess.tsx";
 import { EmployeeDetails } from "../pages/Employees/EmployeeDetails";
 import { NotFound } from "../pages/NotFound";
-import { CanvasProvider } from "../components/canvas/contexts/CanvasContext.tsx";
-import KonvaCanvas from "../components/canvas/KonvaCanvas.tsx";
 import { EventParticipants } from "../pages/Events/EventParticipants.tsx";
 import { EventSeatPlan } from "../pages/Events/EventSeatPlan.tsx";
 import { EventSeatAllocation } from "../pages/Events/EventSeatAllocation.tsx";
@@ -73,7 +71,7 @@ const routes: RouteObject[] = [
         element: <EventSeatPlan />,
       },
       {
-        path: "events/:eventId/seat-allocation",
+        path: "events/:eventId/seat-allocation/:schematicsId",
         element: <EventSeatAllocation />,
       },
       {
@@ -92,15 +90,7 @@ const routes: RouteObject[] = [
       {
         path: "employees/:employeeId/edit",
         element: <EmployeeEdit />,
-      },
-      {
-        path: "canvas/:schematicsId",
-        element: (
-          <CanvasProvider>
-            <KonvaCanvas />
-          </CanvasProvider>
-        ),
-      },
+      }
     ],
   },
 
@@ -111,4 +101,4 @@ const routes: RouteObject[] = [
   },
 ];
 
-export const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes, { basename: import.meta.env.BASE_URL });

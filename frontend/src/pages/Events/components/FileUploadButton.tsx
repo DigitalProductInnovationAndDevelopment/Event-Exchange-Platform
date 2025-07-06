@@ -3,13 +3,19 @@ import { Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import useApiService from "../../../services/apiService.ts";
 import toast from "react-hot-toast";
+import type { RcFile } from "antd/es/upload/interface";
+import type { UUID } from "components/canvas/utils/constants.tsx";
+import type { FileEntity } from "types/event.ts";
 
-const FileUploadButton = ({ eventId, onUpload }) => {
+const FileUploadButton = ({ eventId, onUpload }: {
+  eventId: UUID,
+  onUpload: (file: FileEntity | undefined) => Promise<void>
+}) => {
   const [uploading, setUploading] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<RcFile | null>(null);
   const { fileUpload } = useApiService();
 
-  const handleBeforeUpload = file => {
+  const handleBeforeUpload = (file: RcFile) => {
     if (file.size > 10 * 1024 * 1024) {
       toast.error("File size exceeds 10 MB");
       return false;
@@ -30,7 +36,7 @@ const FileUploadButton = ({ eventId, onUpload }) => {
 
     try {
       setUploading(true);
-      const uploadedFile = await fileUpload(formData);
+      const uploadedFile: FileEntity | undefined = await fileUpload(formData);
       onUpload(uploadedFile);
     } catch (error) {
       message.error("Upload failed");

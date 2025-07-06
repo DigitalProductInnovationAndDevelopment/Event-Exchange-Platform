@@ -13,11 +13,13 @@ import {
   Typography,
 } from "antd";
 import { useNavigate } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { Breadcrumb } from "components/Breadcrumb";
 import { useState } from "react";
-import type { Event, EventType } from "../../types/event";
-import { EVENT_TYPE_COLORS } from "../../types/event";
-import useApiService from "../../services/apiService";
+import type { Event, EventType } from "types/event";
+import { EVENT_TYPE_COLORS } from "types/event";
+import useApiService from "services/apiService";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
+import moment from "moment/moment";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -99,6 +101,9 @@ export const EventCreate = () => {
                       format="DD/MM/YYYY hh:mm A"
                       onChange={(date, dateString) => console.log(date, dateString)}
                       showTime={{ use12Hours: true }}
+                      disabledDate={(current) => {
+                        return current && current < moment().startOf("day");
+                      }}
                     />
                   </Form.Item>
                 </Descriptions.Item>
@@ -120,12 +125,9 @@ export const EventCreate = () => {
                     noStyle
                   >
                     <Select
-                      options={Object.entries(EVENT_TYPE_COLORS).map(([value]) => ({
-                        value,
-                        label: value
-                          .split("_")
-                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                          .join(" "),
+                      options={Object.entries(EVENT_TYPE_COLORS).map(([key]) => ({
+                        label: <EventTypeTag type={key as EventType} />,
+                        value: key,
                       }))}
                     />
                   </Form.Item>
