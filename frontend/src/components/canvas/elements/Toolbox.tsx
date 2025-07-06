@@ -240,6 +240,16 @@ function Toolbox({
             />
             <Text text="Save" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
           </Group>
+
+          {/*<Group
+            y={510}>
+            <Text text={"#undo: " + state.history?.past?.length + "\n#redo: " + state.history?.future?.length} x={25}
+                  y={15} fill="black" fontSize={10} fontStyle="bold" />
+          </Group>
+          <Group x={15} y={560}>
+            <FPSText layer={toolboxLayer}></FPSText>
+          </Group>*/}
+
         </Group>
       </Layer>
     </Stage>

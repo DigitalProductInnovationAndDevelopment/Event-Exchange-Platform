@@ -50,7 +50,7 @@ export function ChairRender(chair: Chair) {
           fill="black"
           align="center"
           width={chair.radius * 2 + 10}
-          globalCompositeOperation="xor"
+          // globalCompositeOperation="xor"
           perfectDrawEnabled={false}
         />
       )}
