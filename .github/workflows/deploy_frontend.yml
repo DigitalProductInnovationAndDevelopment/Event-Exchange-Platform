@@ -44,7 +44,7 @@ jobs:
         working-directory: ./frontend
 
       - name: Build
-        run: npm run build
+        run: npm run prod
         working-directory: ./frontend
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
