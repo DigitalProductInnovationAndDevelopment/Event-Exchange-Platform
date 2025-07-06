@@ -47,7 +47,7 @@ jobs:
         run: npm run prod
         working-directory: ./frontend
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_API_ORIGIN: ${{ secrets.VITE_API_ORIGIN }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
