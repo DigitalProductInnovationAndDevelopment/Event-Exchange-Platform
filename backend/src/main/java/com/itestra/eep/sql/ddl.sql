@@ -89,7 +89,8 @@ CREATE TABLE organization.event
     address VARCHAR(1000) NOT NULL
 );
 
-CREATE TABLE organization.tables
+
+CREATE TABLE organization.chair
 (
     id       UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.event (id)
@@ -102,15 +103,22 @@ CREATE TABLE organization.participation
     confirmed   BOOLEAN,
     employee_id UUID REFERENCES organization.employee (profile_id) NOT NULL,
     event_id    UUID REFERENCES organization.Event (id),
-    table_id UUID REFERENCES organization.tables (id) NULL,
+    chair_id UUID REFERENCES organization.chair (id) NULL,
     CONSTRAINT unique_person_event UNIQUE (employee_id, event_id)
 );
 
-CREATE TABLE organization.chair
+CREATE TABLE organization.visitor
 (
-    id       UUID PRIMARY KEY,
-    table_id UUID REFERENCES organization.tables (id)
+    profile_id  UUID PRIMARY KEY REFERENCES organization.profile (id),
+    confirmed   BOOLEAN,
+    invitee_id  UUID REFERENCES organization.employee (profile_id) NULL,
+    event_id    UUID REFERENCES organization.event (id),
+    access_link VARCHAR(255)                                       NOT NULL,
+    chair_id    UUID REFERENCES organization.chair (id)            NULL,
+    CONSTRAINT unique_visitor_event UNIQUE (profile_id, invitee_id, event_id)
 );
+
+
 
 CREATE TABLE organization.files
 (

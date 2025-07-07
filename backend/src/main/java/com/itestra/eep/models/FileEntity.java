@@ -1,7 +1,6 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
@@ -24,8 +23,8 @@ public class FileEntity {
     @Column(name = "file_id", nullable = false)
     private UUID fileId;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "event_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "event_id")
     private Event event;
 
     @Column(name = "name", nullable = false)

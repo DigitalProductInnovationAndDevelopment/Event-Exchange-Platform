@@ -47,6 +47,9 @@ public class Event {
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Participation> participations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Visitor> visitors = new ArrayList<>();
+
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
 

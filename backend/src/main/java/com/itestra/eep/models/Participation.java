@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import java.util.UUID;
 
@@ -32,9 +31,9 @@ public class Participation {
     @ManyToOne
     private Event event;
 
-    @Nullable
-    @OneToOne
-    private TableEntity table;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chair_id")
+    private Chair chair;
 
 }
 

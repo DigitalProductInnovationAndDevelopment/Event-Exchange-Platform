@@ -1,7 +1,6 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,11 +17,26 @@ public class Visitor {
     private UUID id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
-    @ManyToOne
-    private Employee invitor;
-}
+    @Column(name = "confirmed")
+    private Boolean confirmed;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invitee_id")
+    private Employee invitee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chair_id")
+    private Chair chair;
+
+    @Column(name = "access_link", nullable = false)
+    private String accessLink;
+
+}
