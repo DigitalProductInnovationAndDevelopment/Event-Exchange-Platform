@@ -29,6 +29,48 @@ jobs:
         working-directory: ./backend
         run: |
           echo "${{ secrets.SSL_KEYSTORE_BASE64 }}" | base64 --decode > src/main/resources/keystore.p12
+          
+      - name: Create app.yaml for App Engine
+        working-directory: ./backend/src/main/resources
+        env:
+          SSL_KEYSTORE_PASSWORD: ${{ secrets.SSL_KEYSTORE_PASSWORD }}
+          SSL_KEYSTORE_TYPE: ${{ secrets.SSL_KEYSTORE_TYPE }}
+          SSL_KEY_ALIAS: ${{ secrets.SSL_KEY_ALIAS }}
+          DATABASE_ADDRESS: ${{ secrets.DATABASE_ADDRESS }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          JWT_SERVER_KEY: ${{ secrets.JWT_SERVER_KEY }}
+          GITLAB_INSTANCE_ADDRESS: ${{ secrets.GITLAB_INSTANCE_ADDRESS }}
+          GITLAB_INSTANCE_CLIENT_ID: ${{ secrets.GITLAB_INSTANCE_CLIENT_ID }}
+          GITLAB_INSTANCE_CLIENT_SECRET: ${{ secrets.GITLAB_INSTANCE_CLIENT_SECRET }}
+          SERVER_ADDRESS: ${{ secrets.SERVER_ADDRESS }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+        run: |
+          cat > app.yaml <<EOF
+          runtime: java17
+          automatic_scaling:
+            min_instances: 1
+            max_instances: 1
+            max_pending_latency: automatic
+            max_concurrent_requests: 50
+          env_variables:
+            SPRING_PROFILES_ACTIVE: prod
+            SERVER_SSL_KEY_STORE: classpath:keystore.p12
+            SSL_KEYSTORE_PASSWORD: "$SSL_KEYSTORE_PASSWORD"
+            SSL_KEYSTORE_TYPE: "$SSL_KEYSTORE_TYPE"
+            SSL_KEY_ALIAS: "$SSL_KEY_ALIAS"
+            DATABASE_ADDRESS: "$DATABASE_ADDRESS"
+            DATABASE_NAME: "$DATABASE_NAME"
+            DATABASE_USERNAME: "$DATABASE_USERNAME"
+            DATABASE_PASSWORD: "$DATABASE_PASSWORD"
+            JWT_SERVER_KEY: "$JWT_SERVER_KEY"
+            GITLAB_INSTANCE_ADDRESS: "$GITLAB_INSTANCE_ADDRESS"
+            GITLAB_INSTANCE_CLIENT_ID: "$GITLAB_INSTANCE_CLIENT_ID"
+            GITLAB_INSTANCE_CLIENT_SECRET: "$GITLAB_INSTANCE_CLIENT_SECRET"
+            SERVER_ADDRESS: "$SERVER_ADDRESS"
+            SERVER_PORT: "$SERVER_PORT"
+          EOF
 
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
