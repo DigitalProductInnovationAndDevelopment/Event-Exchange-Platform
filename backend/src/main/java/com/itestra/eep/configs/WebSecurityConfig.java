@@ -1,6 +1,7 @@
 package com.itestra.eep.configs;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -28,6 +29,9 @@ public class WebSecurityConfig {
     private final AuthenticationSuccessHandler gitlabOAuth2SuccessHandler;
     private final OncePerRequestFilter securityContextInterceptor;
 
+    @Value("${client.instance.address}")
+    private String clientAddress;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -54,15 +58,13 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    private static Customizer<CorsConfigurer<HttpSecurity>> getCorsConfigurerCustomizer() {
+    private Customizer<CorsConfigurer<HttpSecurity>> getCorsConfigurerCustomizer() {
         return cors -> cors.configurationSource(request -> {
             CorsConfiguration configuration = new CorsConfiguration();
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
             configuration.setAllowCredentials(true);
-            // TODO fix for production
-
-            configuration.addAllowedOrigin("http://localhost:3000");
-            configuration.addAllowedOrigin("http://localhost:5173");
+            // TODO check for production
+            configuration.addAllowedOrigin(clientAddress);
 
             configuration.addAllowedHeader("Content-Type");
             configuration.addAllowedHeader("Authorization");
