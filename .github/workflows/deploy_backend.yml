@@ -33,6 +33,7 @@ jobs:
       - name: Create app.yaml for App Engine
         working-directory: ./backend
         env:
+          CLIENT_INSTANCE_ADDRESS: ${{ secrets.CLIENT_INSTANCE_ADDRESS }}
           DATABASE_ADDRESS: ${{ secrets.DATABASE_ADDRESS }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
@@ -53,6 +54,7 @@ jobs:
             max_concurrent_requests: 50
           env_variables:
             SPRING_PROFILES_ACTIVE: prod
+            CLIENT_INSTANCE_ADDRESS: "CLIENT_INSTANCE_ADDRESS"
             DATABASE_ADDRESS: "$DATABASE_ADDRESS"
             DATABASE_NAME: "$DATABASE_NAME"
             DATABASE_USERNAME: "$DATABASE_USERNAME"
