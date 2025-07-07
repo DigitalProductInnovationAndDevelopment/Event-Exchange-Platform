@@ -1,0 +1,49 @@
+name: Build, Package and Deploy Spring Boot App with HTTPS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        working-directory: ./backend
+        run: mvn clean package -DskipTests
+
+      - name: Create SSL keystore file for deployment
+        working-directory: ./backend
+        run: |
+          echo "${{ secrets.SSL_KEYSTORE_BASE64 }}" | base64 --decode > src/main/resources/keystore.p12
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Deploy to App Engine
+        uses: google-github-actions/deploy-appengine@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          working_directory: ./backend
+        env:
+          SPRING_PROFILES_ACTIVE: prod
+          SERVER_SSL_KEY_STORE: ${{ secrets.SSL_KEYSTORE_PATH}}
+          SSL_KEYSTORE_PASSWORD: ${{ secrets.SSL_KEYSTORE_PASSWORD }}
+          SSL_KEYSTORE_TYPE: ${{ secrets.SSL_KEYSTORE_TYPE }}
+          SSL_KEY_ALIAS: ${{ secrets.SSL_KEY_ALIAS }}
+
+      - name: Clean up keystore file
+        if: always()
+        run: rm -f ./backend/src/main/resources/keystore.p12
