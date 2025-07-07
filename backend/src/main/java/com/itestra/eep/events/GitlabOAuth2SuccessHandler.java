@@ -8,12 +8,12 @@ import com.itestra.eep.models.Profile;
 import com.itestra.eep.models.UserRole;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.services.ProfileService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -81,13 +81,15 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String jwt = jwtService.generateToken(userProfile);
         String springProfiles = System.getProperty("spring.profiles.active");
 
-        Cookie cookie = new Cookie("Authorization", jwt);
-        cookie.setHttpOnly(true);
-        //TODO check true for production and https
-        cookie.setSecure(isSSLEnabled || (springProfiles != null && Arrays.asList(springProfiles.split(",")).contains("prod")));
-        cookie.setPath("/");
-        cookie.setMaxAge((int) expiration);
-        response.addCookie(cookie);
+        ResponseCookie responseCookie = ResponseCookie.from("Authorization", jwt)
+                .httpOnly(true)
+                .secure(isSSLEnabled || (springProfiles != null && Arrays.asList(springProfiles.split(",")).contains("prod")))
+                .path("/")
+                .maxAge(expiration)
+                .sameSite("None")
+                .build();
+
+        response.setHeader("Set-Cookie", responseCookie.toString());
 
         response.sendRedirect("%s/Event-Exchange-Platform/login_success".formatted(clientAddress));
         eventPublisher.publishEvent(new UserLoginSuccessEvent(this, userProfile, request.getRemoteAddr()));
