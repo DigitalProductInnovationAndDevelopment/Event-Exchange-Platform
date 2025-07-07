@@ -33,9 +33,6 @@ jobs:
       - name: Create app.yaml for App Engine
         working-directory: ./backend
         env:
-          SSL_KEYSTORE_PASSWORD: ${{ secrets.SSL_KEYSTORE_PASSWORD }}
-          SSL_KEYSTORE_TYPE: ${{ secrets.SSL_KEYSTORE_TYPE }}
-          SSL_KEY_ALIAS: ${{ secrets.SSL_KEY_ALIAS }}
           DATABASE_ADDRESS: ${{ secrets.DATABASE_ADDRESS }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
@@ -56,10 +53,6 @@ jobs:
             max_concurrent_requests: 50
           env_variables:
             SPRING_PROFILES_ACTIVE: prod
-            SERVER_SSL_KEY_STORE: classpath:keystore.p12
-            SSL_KEYSTORE_PASSWORD: "$SSL_KEYSTORE_PASSWORD"
-            SSL_KEYSTORE_TYPE: "$SSL_KEYSTORE_TYPE"
-            SSL_KEY_ALIAS: "$SSL_KEY_ALIAS"
             DATABASE_ADDRESS: "$DATABASE_ADDRESS"
             DATABASE_NAME: "$DATABASE_NAME"
             DATABASE_USERNAME: "$DATABASE_USERNAME"

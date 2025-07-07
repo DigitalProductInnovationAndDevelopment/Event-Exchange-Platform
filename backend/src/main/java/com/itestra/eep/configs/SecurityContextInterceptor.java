@@ -40,6 +40,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private static final String[] WHITELIST = {
+            "/actuator/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
             "/swagger-ui/**"
