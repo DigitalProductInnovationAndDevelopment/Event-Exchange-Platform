@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,13 +39,7 @@ jobs:
         uses: google-github-actions/deploy-appengine@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          working_directory: ./backend
-        env:
-          SPRING_PROFILES_ACTIVE: prod
-          SERVER_SSL_KEY_STORE: ${{ secrets.SSL_KEYSTORE_PATH}}
-          SSL_KEYSTORE_PASSWORD: ${{ secrets.SSL_KEYSTORE_PASSWORD }}
-          SSL_KEYSTORE_TYPE: ${{ secrets.SSL_KEYSTORE_TYPE }}
-          SSL_KEY_ALIAS: ${{ secrets.SSL_KEY_ALIAS }}
+          deliverables: ./backend/src/main/resources/app.yaml
 
       - name: Clean up keystore file
         if: always()
