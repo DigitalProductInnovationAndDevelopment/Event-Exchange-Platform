@@ -31,7 +31,7 @@ jobs:
           echo "${{ secrets.SSL_KEYSTORE_BASE64 }}" | base64 --decode > src/main/resources/keystore.p12
           
       - name: Create app.yaml for App Engine
-        working-directory: ./backend/src/main/resources
+        working-directory: ./backend
         env:
           SSL_KEYSTORE_PASSWORD: ${{ secrets.SSL_KEYSTORE_PASSWORD }}
           SSL_KEYSTORE_TYPE: ${{ secrets.SSL_KEYSTORE_TYPE }}
@@ -81,7 +81,9 @@ jobs:
         uses: google-github-actions/deploy-appengine@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          deliverables: ./backend/src/main/resources/app.yaml
+          deliverables: ./backend/app.yaml
+          promote: true
+          flags: --verbosity debug
 
       - name: Clean up keystore file
         if: always()
