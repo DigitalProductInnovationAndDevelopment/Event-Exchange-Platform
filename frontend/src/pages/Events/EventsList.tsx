@@ -37,15 +37,19 @@ export const EventsList = () => {
   const [selectedType, setSelectedType] = useState<EventType | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
   const [fetchedEvents, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const { getEvents } = useApiService();
 
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const data = await getEvents();
         setEvents(data ?? []);
       } catch (err) {
         console.error("Failed to fetch events:", err);
+      } finally {
+        setLoading(false);
       }
     })();
   }, [getEvents]);
@@ -213,7 +217,7 @@ export const EventsList = () => {
           Upcoming Events
         </Title>
         {isTableView ? (
-          <Table rowKey="id" columns={columns} dataSource={upcomingEvents} pagination={false} />
+          <Table rowKey="id" columns={columns} dataSource={upcomingEvents} pagination={false} loading={loading} />
         ) : (
           <Row gutter={[16, 16]}>
             {upcomingEvents.map(event => (
@@ -301,6 +305,7 @@ export const EventsList = () => {
             columns={columns}
             dataSource={pastEvents}
             pagination={{ pageSize: 15 }}
+            loading={loading}
           />
         ) : (
           <Row gutter={[16, 16]}>

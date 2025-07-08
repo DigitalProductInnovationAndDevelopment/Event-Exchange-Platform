@@ -1,6 +1,6 @@
-import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Statistic, Typography } from "antd";
+import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb } from "../../components/Breadcrumb";
+import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
   BarChartOutlined,
   DeleteOutlined,
@@ -14,13 +14,13 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import type { Event, FileEntity } from "../../types/event";
+import type { Event, FileEntity } from "types/event.ts";
 import useApiService, { BASE_URL } from "../../services/apiService.ts";
 import FileUploadButton from "./components/FileUploadButton.tsx";
 import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
-import { EventStatusTag } from "../../components/EventStatusTag.tsx";
-import { EventTypeTag } from "../../components/EventTypeTag.tsx";
+import { EventStatusTag } from "components/EventStatusTag.tsx";
+import { EventTypeTag } from "components/EventTypeTag.tsx";
 
 const { Title } = Typography;
 
@@ -28,6 +28,7 @@ export const EventDetails = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -35,10 +36,13 @@ export const EventDetails = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const data = await getEventById(eventId!);
         setEvent(data);
+        setLoading(false);
       } catch (err) {
         console.error("Failed to fetch events:", err);
+        setLoading(false);
       }
     })();
   }, [eventId, getEventById]);
@@ -108,8 +112,14 @@ export const EventDetails = () => {
     await fileDownload(file);
   };
 
-  if (!event) {
-    return <div>Event not found</div>;
+  if (loading) {
+    return (<div className="flex justify-center items-center h-screen">
+      <Spin size="large" tip="Loading event..." />
+    </div>);
+  } else if (!event) {
+    return <div className="flex justify-center items-center h-screen">
+      <div>Event not found.</div>
+    </div>;
   }
 
   const imageFiles = event.fileEntities?.filter(

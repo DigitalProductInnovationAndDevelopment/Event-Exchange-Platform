@@ -6,7 +6,7 @@ import React, { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
-import { handleExport } from "../components/canvas/elements/Toolbox.tsx";
+import { handleExport } from "components/canvas/utils/functions.tsx";
 
 export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
@@ -46,6 +46,7 @@ export default function useApiService() {
         throw new Error("Access denied. You are logged out.");
       } else if (response.status === 403) {
         toast.error("Access denied. You don't have permission for this action.");
+        //logout();
         throw new Error("Access denied. You don't have permission for this action.");
       } else if (response.status >= 500 || response.status === 409) {
         const errorMessage = await response.text();

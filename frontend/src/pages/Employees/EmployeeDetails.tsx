@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Descriptions, message, Modal, Space, Table, Typography } from "antd";
+import { Button, Card, Descriptions, message, Modal, Space, Spin, Table, Typography } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { type Employee, type ParticipationDetails } from "types/employee.ts";
@@ -64,14 +64,18 @@ export const EmployeeDetails = () => {
   const [employee, setEmployee] = useState<Employee | null>(null);
   const { getEmployeeById, deleteEmployee } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const data = await getEmployeeById(employeeId!);
         setEmployee(data!);
       } catch (err) {
         console.error("Failed to fetch employee:", err);
+      } finally {
+        setLoading(false);
       }
     })();
   }, [employeeId, getEmployeeById]);
@@ -138,6 +142,13 @@ export const EmployeeDetails = () => {
   const handleDeleteCancel = () => {
     setDeleteModalOpen(false);
   };
+
+
+  if (loading) {
+    return (<div className="flex justify-center items-center h-screen">
+      <Spin size="large" tip="Loading employee details..." />
+    </div>);
+  }
 
   return (
     <div>

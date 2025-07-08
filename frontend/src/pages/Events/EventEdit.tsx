@@ -10,6 +10,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Typography,
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
@@ -34,6 +35,7 @@ export const EventEdit = () => {
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const event = await getEventById(eventId!);
       if (event) {
         setEventName(event.name);
@@ -42,14 +44,13 @@ export const EventEdit = () => {
           date: dayjs(event.date),
         });
       }
+      setLoading(false);
     })();
   }, [eventId, form, getEventById]);
 
   const onFinish = async (values: Event) => {
     setLoading(true);
     try {
-      // @ts-ignore
-      console.log("Form values:", { ...values, date: values.date.toISOString() });
       const result = await updateEvent(eventId!, values);
       if (result) {
         navigate(`/events/${eventId}`, { replace: true });
@@ -60,6 +61,12 @@ export const EventEdit = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (<div className="flex justify-center items-center h-screen">
+      <Spin size="large" tip="Loading event details..." />
+    </div>);
+  }
 
   return (
     <div className="space-y-6">

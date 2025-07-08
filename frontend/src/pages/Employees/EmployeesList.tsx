@@ -13,7 +13,6 @@ const { Title } = Typography;
 
 // Define table columns with correct types
 const columns = (
-  _onDelete: (key: string) => void,
   onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
 ): ColumnsType<Employee> => [
   {
@@ -75,6 +74,104 @@ const columns = (
   },
 ];
 
+
+function downloadCSV(): void {
+  const employees: Employee[] = [
+    {
+      profile: {
+        fullName: "Alice Smith",
+        gender: "Female",
+        gitlabUsername: "asmith",
+        email: "alice.smith@example.com",
+        dietTypes: [],
+        id: "",
+      },
+      location: "Munich",
+      employmentStartDate: "2023-01-15",
+      employmentType: "FULLTIME",
+      projects: [],
+    },
+    {
+      profile: {
+        fullName: "Bob Johnson",
+        gender: "Male",
+        gitlabUsername: "bjohnson",
+        email: "bob.johnson@example.com",
+        dietTypes: [],
+        id: "",
+      },
+      location: "Berlin",
+      employmentStartDate: "2022-09-01",
+      employmentType: "PARTTIME",
+      projects: [],
+    },
+    {
+      profile: {
+        fullName: "Clara Lee",
+        gender: "Female",
+        gitlabUsername: "clee",
+        email: "clara.lee@example.com",
+        dietTypes: [],
+        id: "",
+      },
+      location: "Munich",
+      employmentStartDate: "2024-03-10",
+      employmentType: "WORKING_STUDENT",
+      projects: [],
+    },
+    {
+      profile: {
+        fullName: "David Brown",
+        gender: "Female",
+        gitlabUsername: "dbrown",
+        email: "david.brown@example.com",
+        dietTypes: [],
+        id: "",
+      },
+      location: "Frankfurt",
+      employmentStartDate: "2023-11-20",
+      employmentType: "THESIS",
+      projects: [],
+    },
+  ];
+  const headers = [
+    "Name",
+    "Last Name",
+    "Location",
+    "Employment Start Date",
+    "Employment Type",
+    "Email",
+    "Gender",
+    "Gitlab Username",
+  ];
+
+  const rows = employees.map(emp => [
+    emp.profile.fullName.split(" ")[0],
+    emp.profile.fullName.split(" ")[1],
+    emp.location,
+    emp.employmentStartDate,
+    emp.employmentType,
+    emp.profile.email,
+    emp.profile.gender,
+    emp.profile.gitlabUsername,
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map(e => e.map(val => `${val}`).join(";"))
+    .join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "import_employees_example.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
+
 // Utility function to export employee data as CSV
 const exportToCSV = (data: Employee[]) => {
   // Define CSV headers
@@ -117,16 +214,20 @@ export const EmployeesList = () => {
   const [searchText, setSearchText] = useState("");
   const [locationFilter, setLocationFilter] = useState<string | undefined>(undefined);
   const [fetchedEmployees, setEmployees] = useState<Employee[]>([]);
-  const { getEmployees, deleteEmployee } = useApiService();
+  const { getEmployees } = useApiService();
   const [pageSize, setPageSize] = useState<number>(10);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const data = await getEmployees();
         setEmployees(data ?? []);
       } catch (err) {
         console.error("Failed to fetch employees:", err);
+      } finally {
+        setLoading(false);
       }
     })();
   }, [getEmployees]);
@@ -153,14 +254,10 @@ export const EmployeesList = () => {
     });
   }, [employees, searchText, locationFilter]);
 
-  // Handle delete action
-  const handleDelete = async (profileId: string) => {
-    try {
-      await deleteEmployee(profileId);
-      setEmployees(prev => prev.filter(item => item.profile.id !== profileId));
-    } catch (err) {
-      console.error("Failed to delete employee:", err);
-    }
+  // Handle export action
+  const handleImportEmployeeTemplate = () => {
+    downloadCSV();
+    toast.success("Downloaded employee import template .csv");
   };
 
   // Handle export action
@@ -214,7 +311,12 @@ export const EmployeesList = () => {
               options={uniqueLocations.map(location => ({ value: location, label: location }))}
             />
           </Col>
-          <Col span={8}>
+          <Col span={4}>
+            <Button icon={<DownloadOutlined />} onClick={handleImportEmployeeTemplate} style={{ width: "100%" }}>
+              Download Import Template
+            </Button>
+          </Col>
+          <Col span={4}>
             <Button icon={<DownloadOutlined />} onClick={handleExport} style={{ width: "100%" }}>
               Export
             </Button>
@@ -222,10 +324,11 @@ export const EmployeesList = () => {
         </Row>
       </Card>
       <Table
-        columns={columns(handleDelete, handleNavigate)}
+        columns={columns(handleNavigate)}
         dataSource={filteredData}
         bordered={false}
         rowKey={record => record.profile.id}
+        loading={loading}
         pagination={{
           pageSize: pageSize,
           showSizeChanger: true,

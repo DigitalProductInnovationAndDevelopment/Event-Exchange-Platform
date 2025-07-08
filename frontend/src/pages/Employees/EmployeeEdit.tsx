@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
-import { Button, Card, Form, message, Typography } from "antd";
+import { Button, Card, Form, message, Spin, Typography } from "antd";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
 import type { Employee } from "types/employee.ts";
@@ -20,6 +20,7 @@ export const EmployeeEdit = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const data = await getEmployeeById(employeeId!) ?? null;
         setEmployee(data);
       } catch (err) {
@@ -54,7 +55,11 @@ export const EmployeeEdit = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (<div className="flex justify-center items-center h-screen">
+      <Spin size="large" tip="Loading employee details..." />
+    </div>);
+  }
 
   // Normalize gender to uppercase for initialValues
   const normalizedInitialValues = employee

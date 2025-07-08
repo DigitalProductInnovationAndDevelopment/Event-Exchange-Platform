@@ -20,26 +20,28 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const { getEvents } = useApiService();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Replace with actual API calls
-    const fetchDashboardData = async () => {
+    (async () => {
       try {
         // Mock API calls - replace with actual API endpoints
         // const eventsResponse = await fetch('/api/events');
         // const statsResponse = await fetch('/api/dashboard/stats');
         // const eventsData = await eventsResponse.json();
         // const statsData = await statsResponse.json();
+        setLoading(true);
         const data = await getEvents();
         setEvents(data ?? []);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         // TODO: Handle error appropriately
+      } finally {
+        setLoading(false);
       }
-    };
-
-    fetchDashboardData();
+    })();
   }, [getEvents]);
+
 
   const getStatusColor = (status: Event["status"]) => {
     return status === "completed" ? "green" : status === "upcoming" ? "blue" : "orange";
@@ -96,6 +98,7 @@ export const Dashboard = () => {
 
           <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: "12px" }}>
             <List
+              loading={loading}
               dataSource={events
                 .filter(event => new Date(event.date).getTime() > new Date().getTime())
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
@@ -146,10 +149,11 @@ export const Dashboard = () => {
             }
           >
             <div className="space-y-2">
-              <Statistic title="Total Events" value={events.length} prefix={<CalendarOutlined />} />
+              <Statistic loading={loading} title="Total Events" value={events.length} prefix={<CalendarOutlined />} />
               <Divider className="my-4" />
 
               <Statistic
+                loading={loading}
                 title="Total Participants"
                 value={events.reduce((sum, event) => sum + event.participantCount, 0)}
                 prefix={<TeamOutlined />}
@@ -157,6 +161,7 @@ export const Dashboard = () => {
               <Divider className="my-4" />
 
               <Statistic
+                loading={loading}
                 title="Average Engagement"
                 value={
                   // TODO: Fix this calculation

@@ -33,9 +33,6 @@ export const EventCreate = () => {
   const onFinish = async (values: Event) => {
     setLoading(true);
     try {
-      // @ts-ignore
-      console.log("Form values:", { ...values, date: values.date.toISOString() });
-
       const result = await createEvent(values);
       if (result) {
         navigate(`/events`, { replace: true });
