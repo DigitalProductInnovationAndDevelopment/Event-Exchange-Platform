@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Set;
 
 @Component
@@ -34,9 +33,6 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     @Value("${client.instance.address}")
     private String clientAddress;
-
-    @Value("${server.ssl.enabled}")
-    private boolean isSSLEnabled;
 
     @Value("${application.security.jwt.expiration}")
     private long expiration;
@@ -79,11 +75,10 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
 
         String jwt = jwtService.generateToken(userProfile);
-        String springProfiles = System.getProperty("spring.profiles.active");
 
         ResponseCookie responseCookie = ResponseCookie.from("Authorization", jwt)
                 .httpOnly(true)
-                .secure(isSSLEnabled || (springProfiles != null && Arrays.asList(springProfiles.split(",")).contains("prod")))
+                .secure(true)
                 .path("/")
                 .maxAge(expiration)
                 .sameSite("None")
