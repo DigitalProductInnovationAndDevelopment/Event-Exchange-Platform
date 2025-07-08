@@ -62,7 +62,7 @@ export const AppContainer = () => {
     return `/${segments[1]}`;
   };
 
-  const primaryColor = "#36C5F0";
+  const primaryColor = "#00aeff";
   const bgLight = "#F8F9FA";
   const bgDark = "#1f1f1f";
 
@@ -90,23 +90,22 @@ export const AppContainer = () => {
             bodyBg: darkMode ? "#0a0a0a" : bgLight,
           },
 
-          Menu: {
-            itemBg: "transparent",
-            itemColor: darkMode ? "#e0e0e0" : "#2d2d2d",
-            itemHoverColor: "#36C5F0",
-            itemSelectedColor: "#ffffff",
-            itemSelectedBg: "#36C5F0",
-            itemActiveBg: "#36C5F0",
-            popupBg: darkMode ? "#0e1a26" : "#ffffff",
-            horizontalItemHoverColor: "#36C5F0",
-            itemMarginInline: 16,
-            itemBorderRadius: 16,
-            activeBarBorderWidth: 0,
-          },
-          Button: {
-            colorPrimary: primaryColor,
-            colorText: darkMode ? "#fff" : "#000",
-          },
+            Menu: {
+              itemBg: "transparent",
+              itemColor: darkMode ? "#e0e0e0" : "#2d2d2d",
+              itemHoverColor: "#00aeff",
+              itemSelectedColor: "#ffffff",
+              itemSelectedBg: "#00aeff",
+              itemActiveBg: "#00aeff",
+              popupBg: darkMode ? "#0e1a26" : "#ffffff",
+              horizontalItemHoverColor: "#00aeff",
+              itemMarginInline: 16,
+              itemBorderRadius: 16
+            },
+            Button: {
+              colorPrimary: primaryColor,
+              colorText: darkMode ? "#fff" : "#000",
+            },
 
           Input: {
             colorBgContainer: darkMode ? "#333" : "#fff",
@@ -180,16 +179,15 @@ export const AppContainer = () => {
                   onClick: ({ key }) => handleMenuClick(key),
                 }}
                 placement="topLeft"
-              >
-                <div style={{ backgroundColor: "#36C5F0" }}
-                     className="w-36 h-36 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
-                  <Avatar icon={<UserOutlined />} className="bg-blue-200" size={48} />
-                  <span
-                    className="mt-3 text-gray-800 text-sm font-medium text-center"> {user?.name || user?.email || "User"} </span>
-                </div>
-              </Dropdown>
+            >
+              <div style={{backgroundColor: "#00aeff", borderRadius: "50%"}}
+                   className="w-36 h-36 shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
+                <Avatar icon={<UserOutlined/>} className="bg-blue-200" size={48}/>
+                <span
+                    className="mt-3 text-white text-sm font-medium text-center"> {user?.name || user?.email || "User"} </span>
+              </div>
+            </Dropdown>
             </div>
-
           </div>
         </Sider>
 
@@ -202,7 +200,7 @@ export const AppContainer = () => {
               <Outlet />
             </div>
           </Content>
-          <Footer className="text-center border-t border-gray-200" style={{ background: "rgba(255,255,255,0)" }}>
+          <Footer className="text-center border-t border-white-200" style={{background: "transparent"}}>
             Event Exchange Platform ©{new Date().getFullYear()}
           </Footer>
         </Layout>
