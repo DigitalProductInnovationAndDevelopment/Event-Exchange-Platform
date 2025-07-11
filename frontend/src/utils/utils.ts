@@ -1,28 +1,18 @@
-import type { Employee } from "types/employee";
+import type { ParticipationDetails } from "types/employee";
 
 // Utility function to export employee data as CSV
-export const exportToCSV = (data: Employee[]) => {
+export const exportToCSV = (data: ParticipationDetails[]) => {
   // Define CSV headers
   const headers = [
     "Gitlab ID",
     "Full Name",
-    "Gender",
-    "Projects",
-    "Location",
     "Email",
-    "Roles",
-    "Date Joined",
   ];
   // Map data to CSV rows
   const rows = data.map(emp => [
-    emp.profile.gitlabUsername,
-    emp.profile.fullName,
-    emp.profile.gender,
-    emp.projects,
-    emp.location,
-    emp.profile.email,
-    emp.profile.authorities,
-    emp.employmentStartDate,
+    emp.gitlabUsername,
+    emp.fullName,
+    emp.email,
   ]);
   // Combine headers and rows
   const csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");

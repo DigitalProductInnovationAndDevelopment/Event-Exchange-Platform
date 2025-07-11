@@ -35,6 +35,7 @@ export interface ParticipationDetails {
   fullName: string;
   gitlabUsername: string;
   email: string;
+  dietTypes: (keyof typeof DietaryPreference)[];
 }
 
 export enum DietaryPreference {

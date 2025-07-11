@@ -1,24 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
-import {
-  DownloadOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "types/employee.ts";
+import { Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
 import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 import { exportToCSV } from "../../utils/utils";
 import { parse } from "papaparse";
-import { Role } from "../../types/employee";
+import moment from "moment/moment";
 
 const { Title } = Typography;
+
+function parseDate(dateStr: string) {
+  return moment(dateStr, ["DD.MM.YYYY", "YYYY-MM-DD"]).toDate();
+}
 
 // Define table columns with correct types
 const columns = (
@@ -299,7 +298,7 @@ export const EmployeesList = () => {
         dietTypes: [], // Could be extended to parse from CSV
         authorities: [Role.EMPLOYEE],
       },
-      employmentStartDate: row.startDate, // Should be ISO string or yyyy-mm-dd
+      employmentStartDate: parseDate(row.startDate),
       employmentType: row.employmentType,
       location: row.location,
       projects: [],

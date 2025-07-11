@@ -1,24 +1,12 @@
-import {
-  Button,
-  Card,
-  Col,
-  Input,
-  InputNumber,
-  Modal,
-  Popconfirm,
-  Row,
-  Space,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
 import useApiService from "../../services/apiService";
 import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
 import type { Employee, ParticipationDetails } from "types/employee.ts";
-import { parse } from "papaparse";
-import Papa from "papaparse";
+import Papa, { parse } from "papaparse";
+import type { UUID } from "components/canvas/utils/constants.tsx";
 
 const { Title } = Typography;
 
@@ -82,14 +70,14 @@ export const EventParticipants = () => {
   };
 
   const handleGuestsChange = async (
-    participationId: string,
+    participationId: UUID,
+    eventId: UUID,
     values: {
       guestCount: number;
-      eventId: string;
       employeeId: string;
     }
   ) => {
-    const participant = await updateParticipant(values);
+    const participant = await updateParticipant(eventId, values);
     if (participant) {
       setParticipants(prev =>
         prev.map(p =>
@@ -104,12 +92,11 @@ export const EventParticipants = () => {
     }
   };
 
-  const handleAddParticipant = async (values: {
+  const handleAddParticipant = async (eventId: UUID, values: {
     guestCount: number;
-    eventId: string;
-    employeeId: string;
+    employeeId: UUID;
   }) => {
-    const participant = await addParticipant(values);
+    const participant = await addParticipant(eventId, values);
     if (participant) {
       participants.push(participant);
       setParticipants([...participants]);
@@ -117,7 +104,7 @@ export const EventParticipants = () => {
   };
 
   const handleAddParticipantBatch = async (
-    rows: { guestCount: number; email: string; eventId: string }[]
+    eventId: UUID, rows: { guestCount: number; email: string; }[],
   ) => {
     console.log(rows);
     if (!rows.length) return;
@@ -127,18 +114,16 @@ export const EventParticipants = () => {
     const batch = rows
       .map(row => ({
         guestCount: row.guestCount,
-        eventId: row.eventId,
         employeeId: emailToEmployee[row.email],
       }))
       .filter(p => p.employeeId);
     if (batch.length) {
-      const newParticipants = await addParticipantsBatch(batch);
+      const newParticipants = await addParticipantsBatch(eventId, batch);
       setImportModalOpen(false);
       setImportFile(null);
       setImportedRows([]);
       if (newParticipants) {
-        participants.push(...newParticipants);
-        setParticipants([...participants]);
+        setParticipants([...participants, ...newParticipants]);
       }
     }
   };
@@ -167,9 +152,8 @@ export const EventParticipants = () => {
           min={0}
           value={guestCount}
           onChange={value =>
-            handleGuestsChange(participant.id, {
+            handleGuestsChange(participant.id, eventId!, {
               guestCount: value!,
-              eventId: eventId!,
               employeeId: participant.employeeId,
             })
           }
@@ -319,9 +303,8 @@ export const EventParticipants = () => {
                   type="primary"
                   icon={<UserAddOutlined />}
                   onClick={() =>
-                    handleAddParticipant({
+                    handleAddParticipant(eventId!, {
                       guestCount: employeeGuests[record.profile.id],
-                      eventId: eventId!,
                       employeeId: record.profile.id,
                     })
                   }
@@ -365,7 +348,8 @@ export const EventParticipants = () => {
             disabled={importedRows.length === 0}
             onClick={() =>
               handleAddParticipantBatch(
-                importedRows.map(row => ({ ...row, eventId: String(eventId) }))
+                eventId!,
+                importedRows.map(row => ({ ...row })),
               )
             }
           >

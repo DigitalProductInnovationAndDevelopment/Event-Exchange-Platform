@@ -7,6 +7,7 @@ import { useAuth } from "../contexts/AuthContext.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
 import { handleExport } from "components/canvas/utils/functions.tsx";
+import type { UUID } from "components/canvas/utils/constants.tsx";
 
 export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
@@ -409,14 +410,14 @@ export default function useApiService() {
   );
 
   const addParticipant = useCallback(
-    async (participation: {
+    async (
+      eventId: string, participation: {
       guestCount: number;
-      eventId: string;
       employeeId: string;
     }): Promise<ParticipationDetails | null> => {
       try {
         const response = await request<ParticipationDetails>(
-          `/events/${participation.eventId}/participants`,
+          `/events/${eventId}/participants`,
           {
             method: "POST",
             body: JSON.stringify(participation),
@@ -434,16 +435,13 @@ export default function useApiService() {
 
   const addParticipantsBatch = useCallback(
     async (
-      participations: {
+      eventId: string, participations: {
         guestCount: number;
-        eventId: string;
         employeeId: string;
       }[]
     ): Promise<ParticipationDetails[] | null> => {
       try {
         if (participations.length === 0) return [];
-        // Assume all participations are for the same event
-        const eventId = participations[0].eventId;
         const response = await request<ParticipationDetails[]>(
           `/events/${eventId}/participants/batch`,
           {
@@ -462,14 +460,13 @@ export default function useApiService() {
   );
 
   const updateParticipant = useCallback(
-    async (participation: {
+    async (eventId: UUID, participation: {
       guestCount: number;
-      eventId: string;
-      employeeId: string;
+      employeeId: UUID;
     }): Promise<ParticipationDetails | null> => {
       try {
         const response = await request<ParticipationDetails>(
-          `/events/${participation.eventId}/participants`,
+          `/events/${eventId}/participants`,
           {
             method: "PUT",
             body: JSON.stringify(participation),
@@ -500,23 +497,6 @@ export default function useApiService() {
     [request]
   );
 
-  // Returns a list of Employee objects who are participants of a given event
-  const getEmployeesByEventId = useCallback(
-    async (eventId: string): Promise<Employee[]> => {
-      try {
-        const participants = await getEventParticipants(eventId);
-        const employees = await getEmployees();
-        if (!participants || !employees) return [];
-        const participantIds = new Set(participants.map(p => p.employeeId));
-        return employees.filter(e => participantIds.has(e.profile.id));
-      } catch (err) {
-        toast.error("Failed to fetch employees for event");
-        return [];
-      }
-    },
-    [getEventParticipants, getEmployees]
-  );
-
   return {
     request,
     logoutRequest,
@@ -544,6 +524,5 @@ export default function useApiService() {
     addParticipantsBatch,
     updateParticipant,
     deleteParticipation,
-    getEmployeesByEventId,
   };
 }

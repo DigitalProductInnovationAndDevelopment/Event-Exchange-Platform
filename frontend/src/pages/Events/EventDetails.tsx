@@ -1,16 +1,4 @@
-import {
-  Button,
-  Card,
-  Col,
-  Descriptions,
-  Image,
-  Modal,
-  Row,
-  Space,
-  Spin,
-  Statistic,
-  Typography,
-} from "antd";
+import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
@@ -33,7 +21,7 @@ import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
-import { DietaryPreference, type Employee } from "types/employee.ts";
+import { DietaryPreference, type ParticipationDetails } from "types/employee.ts";
 import { exportToCSV } from "../../utils/utils";
 
 const { Title } = Typography;
@@ -50,11 +38,11 @@ export const EventDetails = () => {
     deleteFile,
     fileDownload,
     initiateSchematics,
-    getEmployeesByEventId,
+    getEventParticipants,
   } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
-  const [eventEmployees, setEventEmployees] = useState<Employee[]>([]);
+  const [eventParticipants, setEventParticipants] = useState<ParticipationDetails[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -62,18 +50,16 @@ export const EventDetails = () => {
         setLoading(true);
         const data = await getEventById(eventId!);
         setEvent(data);
-        // Fetch only participating employees for dietary stats
-        const employees = await getEmployeesByEventId(eventId!);
-        setEventEmployees(employees || []);
-        // Calculate dietary stats
-        if (employees) {
+        const participants = await getEventParticipants(eventId!);
+        setEventParticipants(participants || []);
+        if (eventParticipants) {
           const dietCount: Record<string, number> = {};
           Object.values(DietaryPreference).forEach(pref => {
             dietCount[pref] = 0;
           });
-          employees.forEach(emp => {
-            if (emp.profile.dietTypes) {
-              emp.profile.dietTypes.forEach(diet => {
+          eventParticipants.forEach(emp => {
+            if (emp.dietTypes) {
+              emp.dietTypes.forEach(diet => {
                 const dietValue = DietaryPreference[diet];
                 if (dietValue in dietCount) dietCount[dietValue] += 1;
               });
@@ -87,7 +73,7 @@ export const EventDetails = () => {
         setLoading(false);
       }
     })();
-  }, [eventId, getEventById, getEmployeesByEventId]);
+  }, [eventId, eventParticipants, getEventById, getEventParticipants]);
 
   async function onDelete() {
     try {
@@ -156,7 +142,7 @@ export const EventDetails = () => {
 
   // Handle export action
   const handleExport = () => {
-    exportToCSV(eventEmployees);
+    exportToCSV(eventParticipants);
     toast.success("Exported employee data as CSV");
   };
 
