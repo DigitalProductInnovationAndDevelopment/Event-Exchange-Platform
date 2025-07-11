@@ -52,12 +52,12 @@ export const EventDetails = () => {
         setEvent(data);
         const participants = await getEventParticipants(eventId!);
         setEventParticipants(participants || []);
-        if (eventParticipants) {
+        if (participants) {
           const dietCount: Record<string, number> = {};
           Object.values(DietaryPreference).forEach(pref => {
             dietCount[pref] = 0;
           });
-          eventParticipants.forEach(emp => {
+          participants.forEach(emp => {
             if (emp.dietTypes) {
               emp.dietTypes.forEach(diet => {
                 const dietValue = DietaryPreference[diet];
@@ -73,7 +73,7 @@ export const EventDetails = () => {
         setLoading(false);
       }
     })();
-  }, [eventId, eventParticipants, getEventById, getEventParticipants]);
+  }, [eventId, getEventById, getEventParticipants]);
 
   async function onDelete() {
     try {
