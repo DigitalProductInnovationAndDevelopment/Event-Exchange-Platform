@@ -21,11 +21,11 @@ public interface EventService {
 
     void delete(UUID id);
 
-    Participation addParticipant(ParticipationUpsertDTO dto);
+    Participation addParticipant(UUID eventId, ParticipationUpsertDTO dto);
 
-    Participation updateParticipant(ParticipationUpsertDTO dto);
+    Participation updateParticipant(UUID eventId, ParticipationUpsertDTO dto);
 
     void deleteParticipant(UUID participationId);
 
-    List<Participation> addParticipantsBatch(List<ParticipationUpsertDTO> dtos);
+    List<Participation> addParticipantsBatch(UUID eventId, List<ParticipationUpsertDTO> dtos);
 }

@@ -62,23 +62,23 @@ public class EventController {
 
     @PostMapping("/{eventId}/participants")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ParticipationDetailsDTO> addEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {
-        Participation participation = eventService.addParticipant(dto);
-        return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
+    public ResponseEntity<ParticipationDetailsDTO> addEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid ParticipationUpsertDTO dto) {
+        Participation participation = eventService.addParticipant(eventId, dto);
+        return new ResponseEntity<>(participationMapper.map(participation), HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}/participants/batch")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<List<ParticipationDetailsDTO>> addEventParticipantsBatch(@RequestBody @Valid List<ParticipationUpsertDTO> dtos) {
-        List<Participation> participations = eventService.addParticipantsBatch(dtos);
+    public ResponseEntity<List<ParticipationDetailsDTO>> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<ParticipationUpsertDTO> dtos) {
+        List<Participation> participations = eventService.addParticipantsBatch(eventId, dtos);
         return new ResponseEntity<>(participationMapper.map(participations), HttpStatus.OK);
     }
 
     @PutMapping("/{eventId}/participants")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {
-        Participation participation = eventService.updateParticipant(dto);
-        return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
+    public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid ParticipationUpsertDTO dto) {
+        Participation participation = eventService.updateParticipant(eventId, dto);
+        return new ResponseEntity<>(participationMapper.map(participation), HttpStatus.OK);
     }
 
     @DeleteMapping("/participants/{participationId}")

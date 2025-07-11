@@ -8,7 +8,6 @@ import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.services.EmployeeService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -51,19 +50,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void importEmployeesFromCSV(List<@Valid EmployeeCreateDTO> employees) {
-        // TODO: in case we want to parse csv in the backend
-    }
-
-    @Override
-    public List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> employees) {
-        List<Employee> created = new java.util.ArrayList<>();
-        for (EmployeeCreateDTO dto : employees) {
-            created.add(create(dto));
+    public List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> dtos) {
+        List<Employee> employeesToCreate = new java.util.ArrayList<>();
+        for (EmployeeCreateDTO dto : dtos) {
+            Employee employee = new Employee();
+            employeeMapper.createEmployeeFromDto(dto, employee);
+            employeesToCreate.add(employee);
         }
-        return created;
+        return employeeRepository.saveAll(employeesToCreate);
     }
-
 
     @Override
     public Employee create(EmployeeCreateDTO dto) {

@@ -4,7 +4,6 @@ import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +21,6 @@ public interface EmployeeService {
     List<Employee> findAll();
 
     void delete(UUID id);
-
-    void importEmployeesFromCSV(List<@Valid EmployeeCreateDTO> employees);
 
     List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> employees);
 }

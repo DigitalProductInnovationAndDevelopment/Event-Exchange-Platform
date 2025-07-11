@@ -71,11 +71,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Participation addParticipant(ParticipationUpsertDTO dto) {
+    public Participation addParticipant(UUID eventId, ParticipationUpsertDTO dto) {
 
         Employee employee = employeeRepository.findById(dto.getEmployeeId())
                 .orElseThrow(EmployeeNotFoundException::new);
-        Event event = eventRepository.findById(dto.getEventId())
+        Event event = eventRepository.findById(eventId)
                 .orElseThrow(EventNotFoundException::new);
 
         validateCapacity(event, dto.getGuestCount(), null);
@@ -86,10 +86,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Participation updateParticipant(ParticipationUpsertDTO dto) {
+    public Participation updateParticipant(UUID eventId, ParticipationUpsertDTO dto) {
 
         Participation participation = participationRepository
-                .findByEmployee_IdAndEvent_Id(dto.getEmployeeId(), dto.getEventId())
+                .findByEmployee_IdAndEvent_Id(dto.getEmployeeId(), eventId)
                 .orElseThrow(ParticipationNotFoundException::new);
 
         validateCapacity(participation.getEvent(), dto.getGuestCount(), participation);
@@ -105,12 +105,27 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Participation> addParticipantsBatch(List<ParticipationUpsertDTO> dtos) {
-        List<Participation> participations = new java.util.ArrayList<>();
+    public List<Participation> addParticipantsBatch(UUID eventId, List<ParticipationUpsertDTO> dtos) {
+        List<Participation> participationsToCreate = new java.util.ArrayList<>();
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(EventNotFoundException::new);
+
+        int initialParticipantCount = event.getParticipantCount(null);
+        int finalParticipantCount = initialParticipantCount;
+
         for (ParticipationUpsertDTO dto : dtos) {
-            participations.add(addParticipant(dto));
+            Employee employee = employeeRepository.findById(dto.getEmployeeId())
+                    .orElseThrow(EmployeeNotFoundException::new);
+            Participation participation = new Participation(null, dto.getGuestCount(), true, employee, event, null);
+            participationsToCreate.add(participation);
+            finalParticipantCount += dto.getGuestCount() + 1;
         }
-        return participations;
+
+        if (event.getCapacity() < finalParticipantCount) {
+            throw new EventCapacityExceededException(event.getCapacity() - initialParticipantCount);
+        }
+
+        return participationRepository.saveAll(participationsToCreate);
     }
 
     private void validateCapacity(Event event, int guestCount, Participation excludeParticipation) {

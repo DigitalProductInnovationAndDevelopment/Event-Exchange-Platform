@@ -14,6 +14,4 @@ public class ParticipationUpsertDTO implements Serializable {
     @NotNull(message = "Participation must be performed by an Employee.")
     UUID employeeId;
 
-    @NotNull(message = "Participation must be connected to an Event.")
-    UUID eventId;
 }
