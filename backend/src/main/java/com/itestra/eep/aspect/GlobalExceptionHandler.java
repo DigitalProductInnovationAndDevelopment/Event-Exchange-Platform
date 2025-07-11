@@ -1,6 +1,7 @@
 package com.itestra.eep.aspect;
 
 import com.itestra.eep.exceptions.*;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,9 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private static final Map<String, String> CONSTRAINT_TO_MESSAGE = Map.of(
-            "profile_gitlab_username_key", "There is a user with the given GitLab username"
+            "profile_gitlab_username_key", "There is a user with the given GitLab username",
+            "profile_email_key", "There is a user with the given email.",
+            "unique_person_event", "Some participants are already a part of the event."
     );
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -32,6 +35,17 @@ public class GlobalExceptionHandler {
         List<String> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String errorMessage = error.getDefaultMessage();
+            errors.add(errorMessage);
+        });
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public ResponseEntity<List<String>> handleConstraintValidationExceptions(final ConstraintViolationException ex) {
+        List<String> errors = new ArrayList<>();
+        ex.getConstraintViolations().forEach((error) -> {
+            String errorMessage = error.getMessage();
             errors.add(errorMessage);
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);

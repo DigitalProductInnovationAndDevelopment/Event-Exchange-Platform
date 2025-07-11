@@ -2,10 +2,11 @@ package com.itestra.eep.dtos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.itestra.eep.enums.DietaryPreference;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.serializers.LocalDateTimeDeserializer;
 import com.itestra.eep.serializers.LocalDateTimeSerializer;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Value;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Value
-@AllArgsConstructor
+@Builder
 public class ParticipationDetailsDTO implements Serializable {
 
     UUID id;
@@ -41,4 +42,6 @@ public class ParticipationDetailsDTO implements Serializable {
     String gitlabUsername;
 
     String email;
+
+    DietaryPreference[] dietTypes;
 }

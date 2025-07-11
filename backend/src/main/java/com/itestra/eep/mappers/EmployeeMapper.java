@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = ParticipationMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = ParticipationMapper.class)
 public interface EmployeeMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
