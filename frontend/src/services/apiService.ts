@@ -71,7 +71,7 @@ export default function useApiService() {
 
       return (await response.text()) as unknown as T;
     },
-    [logout],
+    [logout]
   );
 
   const logoutRequest = useCallback(async () => {
@@ -93,7 +93,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const getEvents = useCallback(async (): Promise<Event[] | null> => {
@@ -119,7 +119,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const updateEvent = useCallback(
@@ -136,7 +136,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteEvent = useCallback(
@@ -151,7 +151,7 @@ export default function useApiService() {
         toast.error("Event deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
   const fileUpload = useCallback(
@@ -167,7 +167,7 @@ export default function useApiService() {
         toast.error("File upload failed");
       }
     },
-    [request],
+    [request]
   );
 
   const fileDownload = useCallback(
@@ -188,7 +188,7 @@ export default function useApiService() {
         toast.error("Failed to download file");
       }
     },
-    [request],
+    [request]
   );
 
   const deleteFile = useCallback(
@@ -203,17 +203,20 @@ export default function useApiService() {
         toast.error("File deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
-  const getSchematics: (id: string) => Promise<AppState | undefined> = useCallback(async (id: string) => {
-    try {
-      const response = await request<{ state: string }>(`/schematics/${id}`);
-      return JSON.parse(response.state) as AppState;
-    } catch (err) {
-      toast.error("Schematics fetch failed");
-    }
-  }, [request]);
+  const getSchematics: (id: string) => Promise<AppState | undefined> = useCallback(
+    async (id: string) => {
+      try {
+        const response = await request<{ state: string }>(`/schematics/${id}`);
+        return JSON.parse(response.state) as AppState;
+      } catch (err) {
+        toast.error("Schematics fetch failed");
+      }
+    },
+    [request]
+  );
 
   const initiateSchematics = useCallback(
     async (eventId: string): Promise<SchematicsEntity | null> => {
@@ -238,10 +241,15 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
-  const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null> | null): Promise<SchematicsEntity | null> => {
+  const updateSchematics = useCallback(
+    async (
+      id: string,
+      canvasState: AppState,
+      stageRef: React.RefObject<Konva.Stage | null> | null
+    ): Promise<SchematicsEntity | null> => {
       const historyTemp = { ...canvasState.history };
 
       try {
@@ -286,7 +294,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [fileUpload, request],
+    [fileUpload, request]
   );
 
   const deleteSchematics = useCallback(
@@ -301,7 +309,7 @@ export default function useApiService() {
         toast.error("Schematics deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
   const getEmployeeById = useCallback(
@@ -312,7 +320,7 @@ export default function useApiService() {
         toast.error("Employee fetch failed");
       }
     },
-    [request],
+    [request]
   );
 
   const getEmployees = useCallback(async () => {
@@ -337,7 +345,24 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
+  );
+
+  const createEmployeeBatch = useCallback(
+    async (employeeDataList: Employee[]): Promise<Employee[] | null> => {
+      try {
+        const response = await request<Employee[]>("/profile/employees/batch", {
+          method: "POST",
+          body: JSON.stringify(employeeDataList),
+        });
+        toast.success("Employees created successfully!");
+        return response;
+      } catch (error) {
+        console.error("Failed to create employees batch", error);
+        return null;
+      }
+    },
+    [request]
   );
 
   const updateEmployee = useCallback(
@@ -354,7 +379,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteEmployee = useCallback(
@@ -369,7 +394,7 @@ export default function useApiService() {
         toast.error("Employee deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
   const getEventParticipants = useCallback(
@@ -380,7 +405,7 @@ export default function useApiService() {
         toast.error("Fetch operation for the participants of the event failed");
       }
     },
-    [request],
+    [request]
   );
 
   const addParticipant = useCallback(
@@ -395,7 +420,7 @@ export default function useApiService() {
           {
             method: "POST",
             body: JSON.stringify(participation),
-          },
+          }
         );
         toast.success("Participant added successfully!");
         return response;
@@ -404,7 +429,36 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
+  );
+
+  const addParticipantsBatch = useCallback(
+    async (
+      participations: {
+        guestCount: number;
+        eventId: string;
+        employeeId: string;
+      }[]
+    ): Promise<ParticipationDetails[] | null> => {
+      try {
+        if (participations.length === 0) return [];
+        // Assume all participations are for the same event
+        const eventId = participations[0].eventId;
+        const response = await request<ParticipationDetails[]>(
+          `/events/${eventId}/participants/batch`,
+          {
+            method: "POST",
+            body: JSON.stringify(participations),
+          }
+        );
+        toast.success("Participants added successfully!");
+        return response;
+      } catch (error) {
+        console.error("Batch add participants failed", error);
+        return null;
+      }
+    },
+    [request]
   );
 
   const updateParticipant = useCallback(
@@ -419,7 +473,7 @@ export default function useApiService() {
           {
             method: "PUT",
             body: JSON.stringify(participation),
-          },
+          }
         );
         toast.success("Participant updated successfully!");
         return response;
@@ -428,7 +482,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteParticipation = useCallback(
@@ -443,7 +497,24 @@ export default function useApiService() {
         toast.error("Event participant deletion failed");
       }
     },
-    [request],
+    [request]
+  );
+
+  // Returns a list of Employee objects who are participants of a given event
+  const getEmployeesByEventId = useCallback(
+    async (eventId: string): Promise<Employee[]> => {
+      try {
+        const participants = await getEventParticipants(eventId);
+        const employees = await getEmployees();
+        if (!participants || !employees) return [];
+        const participantIds = new Set(participants.map(p => p.employeeId));
+        return employees.filter(e => participantIds.has(e.profile.id));
+      } catch (err) {
+        toast.error("Failed to fetch employees for event");
+        return [];
+      }
+    },
+    [getEventParticipants, getEmployees]
   );
 
   return {
@@ -465,11 +536,14 @@ export default function useApiService() {
     getEmployeeById,
     getEmployees,
     createEmployee,
+    createEmployeeBatch,
     updateEmployee,
     deleteEmployee,
     getEventParticipants,
     addParticipant,
+    addParticipantsBatch,
     updateParticipant,
     deleteParticipation,
+    getEmployeesByEventId,
   };
 }

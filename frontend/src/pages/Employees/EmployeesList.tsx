@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Card, Col, Input, Row, Select, Space, Table, Typography } from "antd";
-import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
+import {
+  DownloadOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "types/employee.ts";
@@ -8,12 +14,15 @@ import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
 import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
+import { exportToCSV } from "../../utils/utils";
+import { parse } from "papaparse";
+import { Role } from "../../types/employee";
 
 const { Title } = Typography;
 
 // Define table columns with correct types
 const columns = (
-  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
+  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
 ): ColumnsType<Employee> => [
   {
     title: "Full Name",
@@ -73,7 +82,6 @@ const columns = (
     ),
   },
 ];
-
 
 function downloadCSV(): void {
   const employees: Employee[] = [
@@ -156,9 +164,7 @@ function downloadCSV(): void {
     emp.profile.gitlabUsername,
   ]);
 
-  const csvContent = [headers, ...rows]
-    .map(e => e.map(val => `${val}`).join(";"))
-    .join("\n");
+  const csvContent = [headers, ...rows].map(e => e.map(val => `${val}`).join(";")).join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -170,53 +176,17 @@ function downloadCSV(): void {
   document.body.removeChild(link);
 }
 
-
-
-// Utility function to export employee data as CSV
-const exportToCSV = (data: Employee[]) => {
-  // Define CSV headers
-  const headers = [
-    "Gitlab ID",
-    "Full Name",
-    "Gender",
-    "Projects",
-    "Location",
-    "Email",
-    "Roles",
-    "Date Joined",
-  ];
-  // Map data to CSV rows
-  const rows = data.map(emp => [
-    emp.profile.gitlabUsername,
-    emp.profile.fullName,
-    emp.profile.gender,
-    emp.projects,
-    emp.location,
-    emp.profile.email,
-    emp.profile.authorities,
-    emp.employmentStartDate,
-  ]);
-  // Combine headers and rows
-  const csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");
-  // Create a blob and trigger download
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", "employees.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
 export const EmployeesList = () => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [locationFilter, setLocationFilter] = useState<string | undefined>(undefined);
   const [fetchedEmployees, setEmployees] = useState<Employee[]>([]);
-  const { getEmployees } = useApiService();
+  const { getEmployees, createEmployeeBatch } = useApiService();
   const [pageSize, setPageSize] = useState<number>(10);
   const [loading, setLoading] = useState<boolean>(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importedRows, setImportedRows] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -234,13 +204,13 @@ export const EmployeesList = () => {
 
   const employees = useMemo(
     () => fetchedEmployees.map(e => ({ ...e, key: e.profile.id })),
-    [fetchedEmployees],
+    [fetchedEmployees]
   );
 
   // Get unique locations for filter dropdown
   const uniqueLocations = useMemo(
     () => Array.from(new Set(employees.map(emp => emp.location))).filter(Boolean),
-    [employees],
+    [employees]
   );
 
   // Filter employees by name and location
@@ -279,16 +249,89 @@ export const EmployeesList = () => {
     }
   };
 
+  // CSV file parsing handler for employee import
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setImportFile(file || null);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = event => {
+        const csv = event.target?.result as string;
+        parse(csv, {
+          header: true,
+          skipEmptyLines: true,
+          complete: results => {
+            // Expecting columns: name, last name, location, employment start date, employment type, email, gender, gitlab username
+            const rows = (results.data as any[])
+              .map(row => ({
+                name: row["Name"]?.trim() || "",
+                lastName: row["Last Name"]?.trim() || "",
+                location: row["Location"]?.trim() || "",
+                startDate: row["Employment Start Date"]?.trim() || "",
+                employmentType: row["Employment Type"]?.trim() || "",
+                email: row["Email"]?.trim() || "",
+                gender: row["Gender"]?.trim() || "",
+                gitlabUsername: row["Gitlab Username"]?.trim() || "",
+              }))
+              .filter(row => row.email);
+            setImportedRows(rows);
+            console.log(importedRows);
+          },
+        });
+      };
+      reader.readAsText(file);
+    } else {
+      setImportedRows([]);
+    }
+  };
+
+  // Add All Employees handler for import modal
+  const handleAddAllEmployees = async () => {
+    if (!importedRows.length) return;
+    // Map importedRows to EmployeeCreateDTO-like objects
+    const payload = importedRows.map(row => ({
+      profile: {
+        id: "", // Required by Employee/Profile type, will be ignored by backend
+        fullName: `${row.name} ${row.lastName}`.trim(),
+        gender: row.gender,
+        gitlabUsername: row.gitlabUsername,
+        email: row.email,
+        dietTypes: [], // Could be extended to parse from CSV
+        authorities: [Role.EMPLOYEE],
+      },
+      employmentStartDate: row.startDate, // Should be ISO string or yyyy-mm-dd
+      employmentType: row.employmentType,
+      location: row.location,
+      projects: [],
+    }));
+    try {
+      const result = await createEmployeeBatch(payload);
+      if (result) {
+        toast.success("Employees imported successfully!");
+        setImportModalOpen(false);
+        setImportFile(null);
+        setImportedRows([]);
+        employees.push(...result.map(e => ({ ...e, key: e.profile.id })));
+        setEmployees([...employees]);
+      }
+    } catch (err) {
+      toast.error("Failed to import employees");
+    }
+  };
+
   return (
     <div style={{ padding: 0 }}>
       <Breadcrumb items={[{ path: "/employees", label: "Employees" }]} />
       <div className="flex justify-between items-center mb-6">
-        <Title level={2} className="m-0">
-          Employees
-        </Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
-          Add Employee
-        </Button>
+        <Title level={2}>Employees</Title>
+        <Space>
+          <Button type="primary" icon={<UploadOutlined />} onClick={() => setImportModalOpen(true)}>
+            Import Employees
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
+            Add Employee
+          </Button>
+        </Space>
       </div>
       <Card className="mb-6">
         <Row gutter={16}>
@@ -299,9 +342,10 @@ export const EmployeesList = () => {
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
               allowClear
+              style={{ width: "100%" }}
             />
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Select
               allowClear
               placeholder="Location"
@@ -311,8 +355,12 @@ export const EmployeesList = () => {
               options={uniqueLocations.map(location => ({ value: location, label: location }))}
             />
           </Col>
-          <Col span={4}>
-            <Button icon={<DownloadOutlined />} onClick={handleImportEmployeeTemplate} style={{ width: "100%" }}>
+          <Col span={6}>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={handleImportEmployeeTemplate}
+              style={{ width: "100%" }}
+            >
               Download Import Template
             </Button>
           </Col>
@@ -344,6 +392,55 @@ export const EmployeesList = () => {
         }}
         scroll={{ x: "max-content" }}
       />
+
+      <Modal
+        width={{
+          xs: "90%",
+          sm: "80%",
+          md: "70%",
+          lg: "60%",
+          xl: "50%",
+          xxl: "40%",
+        }}
+        style={{
+          maxHeight: "70vh",
+          overflow: "auto",
+        }}
+        centered
+        title="Import Employees"
+        open={importModalOpen}
+        onCancel={() => {
+          setImportModalOpen(false);
+          setImportFile(null);
+          setImportedRows([]);
+        }}
+        footer={[
+          <Button
+            key="addall"
+            type="primary"
+            disabled={importedRows.length === 0}
+            onClick={handleAddAllEmployees}
+          >
+            Add All
+          </Button>,
+        ]}
+      >
+        <Input type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
+        {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
+        {importedRows.length > 0 && (
+          <Table
+            columns={[
+              { title: "Name", dataIndex: "name", key: "name" },
+              { title: "Last Name", dataIndex: "lastName", key: "lastName" },
+              { title: "Location", dataIndex: "location", key: "location" },
+              { title: "Email", dataIndex: "email", key: "email" },
+            ]}
+            dataSource={importedRows.map((row, idx) => ({ ...row, key: idx }))}
+            pagination={false}
+            className="mt-4"
+          />
+        )}
+      </Modal>
     </div>
   );
 };

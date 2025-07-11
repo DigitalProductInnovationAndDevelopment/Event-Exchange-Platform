@@ -1,8 +1,6 @@
-import { Button, Card, Col, Divider, List, Row, Space, Statistic, Tag, Typography } from "antd";
+import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from "antd";
 import {
   CalendarOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
   EyeOutlined,
   FireOutlined,
   PlusOutlined,
@@ -10,9 +8,10 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { type Event, type EventStatus } from "../types/event";
+import { type Event } from "../types/event";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
+import { EventStatusTag } from "components/EventStatusTag.tsx";
 
 const { Title, Text } = Typography;
 
@@ -41,15 +40,6 @@ export const Dashboard = () => {
       }
     })();
   }, [getEvents]);
-
-
-  const getStatusColor = (status: Event["status"]) => {
-    return status === "completed" ? "green" : status === "upcoming" ? "blue" : "orange";
-  };
-
-  const getStatusIcon = (status: EventStatus) => {
-    return status === "completed" ? <CheckCircleOutlined /> : <ClockCircleOutlined />;
-  };
 
   return (
     <div className="space-y-4">
@@ -113,10 +103,10 @@ export const Dashboard = () => {
                   <List.Item.Meta
                     title={
                       <Space>
-                        <Link to={`/events/${event.id}`}>{event.name}</Link>
-                        <Tag color={getStatusColor(event.status)} icon={getStatusIcon(event.status)}>
-                          {event.status.toUpperCase()}
-                        </Tag>
+                        <Link className="text-xl" to={`/events/${event.id}`}>
+                          {event.name}
+                        </Link>
+                        <EventStatusTag status={event.status} />
                       </Space>
                     }
                     description={
@@ -149,7 +139,12 @@ export const Dashboard = () => {
             }
           >
             <div className="space-y-2">
-              <Statistic loading={loading} title="Total Events" value={events.length} prefix={<CalendarOutlined />} />
+              <Statistic
+                loading={loading}
+                title="Total Events"
+                value={events.length}
+                prefix={<CalendarOutlined />}
+              />
               <Divider className="my-4" />
 
               <Statistic
@@ -173,9 +168,9 @@ export const Dashboard = () => {
                           (event.capacity > 0
                             ? (event.participantCount / event.capacity) * 100
                             : 0),
-                          0,
+                        0
                       ) / (events.length || 1)
-                    ).toFixed(2),
+                    ).toFixed(2)
                   )
                 }
                 suffix="%"

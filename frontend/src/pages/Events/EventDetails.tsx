@@ -1,4 +1,16 @@
-import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Image,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Statistic,
+  Typography,
+} from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
@@ -21,6 +33,8 @@ import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { DietaryPreference, type Employee } from "types/employee.ts";
+import { exportToCSV } from "../../utils/utils";
 
 const { Title } = Typography;
 
@@ -30,8 +44,17 @@ export const EventDetails = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics } = useApiService();
+  const {
+    getEventById,
+    deleteEvent,
+    deleteFile,
+    fileDownload,
+    initiateSchematics,
+    getEmployeesByEventId,
+  } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
+  const [eventEmployees, setEventEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -39,13 +62,32 @@ export const EventDetails = () => {
         setLoading(true);
         const data = await getEventById(eventId!);
         setEvent(data);
+        // Fetch only participating employees for dietary stats
+        const employees = await getEmployeesByEventId(eventId!);
+        setEventEmployees(employees || []);
+        // Calculate dietary stats
+        if (employees) {
+          const dietCount: Record<string, number> = {};
+          Object.values(DietaryPreference).forEach(pref => {
+            dietCount[pref] = 0;
+          });
+          employees.forEach(emp => {
+            if (emp.profile.dietTypes) {
+              emp.profile.dietTypes.forEach(diet => {
+                const dietValue = DietaryPreference[diet];
+                if (dietValue in dietCount) dietCount[dietValue] += 1;
+              });
+            }
+          });
+          setDietaryStats(dietCount);
+        }
         setLoading(false);
       } catch (err) {
         console.error("Failed to fetch events:", err);
         setLoading(false);
       }
     })();
-  }, [eventId, getEventById]);
+  }, [eventId, getEventById, getEmployeesByEventId]);
 
   async function onDelete() {
     try {
@@ -112,18 +154,28 @@ export const EventDetails = () => {
     await fileDownload(file);
   };
 
+  // Handle export action
+  const handleExport = () => {
+    exportToCSV(eventEmployees);
+    toast.success("Exported employee data as CSV");
+  };
+
   if (loading) {
-    return (<div className="flex justify-center items-center h-screen">
-      <Spin size="large" tip="Loading event..." />
-    </div>);
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading event..." />
+      </div>
+    );
   } else if (!event) {
-    return <div className="flex justify-center items-center h-screen">
-      <div>Event not found.</div>
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div>Event not found.</div>
+      </div>
+    );
   }
 
   const imageFiles = event.fileEntities?.filter(
-    file => file.contentType === "image/png" || file.contentType === "image/jpeg",
+    file => file.contentType === "image/png" || file.contentType === "image/jpeg"
   );
 
   return (
@@ -137,10 +189,10 @@ export const EventDetails = () => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <Title level={2} className="mb-0 max-w-xl">{event.name}</Title>
-          <div className="px-4 py-2">
-            <EventStatusTag status={event.status} size="big" />
-          </div>
+          <Title level={2} className="max-w-xl !my-3">
+            {event.name}
+          </Title>
+          <EventStatusTag status={event.status} size="big" />
         </div>
         <Space>
           <Button
@@ -248,21 +300,33 @@ export const EventDetails = () => {
               </Col>
               <Col span={12}>
                 <Space direction="vertical" className="w-full">
-                  <Button block icon={<UserAddOutlined />}
-                          onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
+                  <Button
+                    block
+                    icon={<UserAddOutlined />}
+                    onClick={() => navigate(`/events/${eventId}/manage-participants`)}
+                  >
                     Manage Participants
                   </Button>
-                  <Button block icon={<EditOutlined />} onClick={() => {
-                    if (event?.schematics) {
-                      navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`);
-                    } else {
-                      handleCreate();
-                    }
-                  }}>
+                  <Button
+                    block
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                      if (event?.schematics) {
+                        navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`);
+                      } else {
+                        handleCreate();
+                      }
+                    }}
+                  >
                     Manage Seat Layout
                   </Button>
-                  <Button block icon={<EditOutlined />}
-                          onClick={() => navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`)}>
+                  <Button
+                    block
+                    icon={<EditOutlined />}
+                    onClick={() =>
+                      navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`)
+                    }
+                  >
                     Manage Seat Allocation
                   </Button>
                 </Space>
@@ -271,27 +335,33 @@ export const EventDetails = () => {
           </Card>
 
           <Card title="Event Statistics" className="mb-6">
-            <Row gutter={16} justify="center">
-              <Col span={6}>
+            <div className="flex flex-col">
+              <div className="flex md:flex-row justify-around items-stretch gap-4 w-full">
                 <Statistic
                   title="Participants"
                   value={event.participantCount}
                   prefix={<TeamOutlined />}
                 />
-              </Col>
-              <Col span={6}>
                 <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
-              </Col>
-
-              <Col span={8}>
                 <Statistic
                   title="Engagement"
                   value={((event.participantCount / event.capacity) * 100).toFixed(2)}
                   prefix={<BarChartOutlined />}
                   suffix="%"
                 />
-              </Col>
-            </Row>
+              </div>
+              <div className="border-t border-gray-200" />
+              <Title level={5} className="mb-2 text-center">
+                Dietary Preferences
+              </Title>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {Object.entries(dietaryStats).map(([diet, count]) => (
+                  <div key={diet} className="text-center font-medium">
+                    <span>{diet}:</span> {count}
+                  </div>
+                ))}
+              </div>
+            </div>
           </Card>
         </Col>
 
@@ -299,9 +369,15 @@ export const EventDetails = () => {
           {/* Participants Tile */}
           <Card title="Export Information" className="mb-6">
             <Space direction="vertical" className="w-full">
-              <Button block icon={<FileTextOutlined />}>Export Event Data</Button>
-              <Button block icon={<FileTextOutlined />}>Export Participants List</Button>
-              <Button block icon={<FileTextOutlined />}>Export Seat Allocation</Button>
+              <Button block icon={<FileTextOutlined />}>
+                Export Event Data
+              </Button>
+              <Button block icon={<FileTextOutlined />} onClick={handleExport}>
+                Export Participants List
+              </Button>
+              <Button block icon={<FileTextOutlined />}>
+                Export Seat Allocation
+              </Button>
             </Space>
           </Card>
 
@@ -355,7 +431,9 @@ export const EventDetails = () => {
                         }}
                         onClick={() => {
                           console.log("Left button clicked, current index:", currentImageIndex);
-                          setCurrentImageIndex((currentImageIndex - 1 + imageFiles.length) % imageFiles.length);
+                          setCurrentImageIndex(
+                            (currentImageIndex - 1 + imageFiles.length) % imageFiles.length
+                          );
                         }}
                       />
                       <Button
@@ -403,7 +481,6 @@ export const EventDetails = () => {
               </div>
             </Space>
           </Card>
-
         </Col>
       </Row>
     </div>
