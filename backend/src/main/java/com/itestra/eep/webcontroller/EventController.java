@@ -67,6 +67,13 @@ public class EventController {
         return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
     }
 
+    @PostMapping("/{eventId}/participants/batch")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<List<ParticipationDetailsDTO>> addEventParticipantsBatch(@RequestBody @Valid List<ParticipationUpsertDTO> dtos) {
+        List<Participation> participations = eventService.addParticipantsBatch(dtos);
+        return new ResponseEntity<>(participationMapper.map(participations), HttpStatus.OK);
+    }
+
     @PutMapping("/{eventId}/participants")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {

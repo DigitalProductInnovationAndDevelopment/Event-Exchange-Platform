@@ -104,6 +104,15 @@ public class EventServiceImpl implements EventService {
         participationRepository.deleteById(participationId);
     }
 
+    @Override
+    public List<Participation> addParticipantsBatch(List<ParticipationUpsertDTO> dtos) {
+        List<Participation> participations = new java.util.ArrayList<>();
+        for (ParticipationUpsertDTO dto : dtos) {
+            participations.add(addParticipant(dto));
+        }
+        return participations;
+    }
+
     private void validateCapacity(Event event, int guestCount, Participation excludeParticipation) {
 
         int currentTotal = event.getParticipantCount(excludeParticipation);

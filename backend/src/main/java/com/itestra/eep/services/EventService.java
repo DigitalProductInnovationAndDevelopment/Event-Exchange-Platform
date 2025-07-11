@@ -26,4 +26,6 @@ public interface EventService {
     Participation updateParticipant(ParticipationUpsertDTO dto);
 
     void deleteParticipant(UUID participationId);
+
+    List<Participation> addParticipantsBatch(List<ParticipationUpsertDTO> dtos);
 }

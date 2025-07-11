@@ -52,7 +52,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void importEmployeesFromCSV(List<@Valid EmployeeCreateDTO> employees) {
-        // TODO
+        // TODO: in case we want to parse csv in the backend
+    }
+
+    @Override
+    public List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> employees) {
+        List<Employee> created = new java.util.ArrayList<>();
+        for (EmployeeCreateDTO dto : employees) {
+            created.add(create(dto));
+        }
+        return created;
     }
 
 

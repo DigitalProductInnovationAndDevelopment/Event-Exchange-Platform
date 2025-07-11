@@ -62,6 +62,13 @@ public class ProfileController {
         return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
+    @PostMapping("/employees/batch")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<EmployeeDetailsDTO>> createEmployeesBatch(@RequestBody List<@Valid EmployeeCreateDTO> dtos) {
+        List<Employee> employees = employeeService.createEmployeesBatch(dtos);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
+    }
+
     @PutMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto) {
