@@ -33,14 +33,8 @@ export class Chair implements ElementProperties {
 
 export function ChairRender(chair: Chair) {
   return (
-    <Group
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}>
-      <Circle
-        radius={chair.radius || 10}
-        fill={chair.color || "#888"}
-        perfectDrawEnabled={false}
-      />
+    <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+      <Circle radius={chair.radius || 10} fill={chair.color || "#888"} perfectDrawEnabled={false} />
       {chair.employeeName && (
         <Text
           text={chair.employeeName}
@@ -57,4 +51,3 @@ export function ChairRender(chair: Chair) {
     </Group>
   );
 }
-

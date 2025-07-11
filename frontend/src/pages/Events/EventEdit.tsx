@@ -63,9 +63,11 @@ export const EventEdit = () => {
   };
 
   if (loading) {
-    return (<div className="flex justify-center items-center h-screen">
-      <Spin size="large" tip="Loading event details..." />
-    </div>);
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading event details..." />
+      </div>
+    );
   }
 
   return (

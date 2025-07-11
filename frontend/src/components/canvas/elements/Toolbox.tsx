@@ -12,30 +12,28 @@ import { useParams } from "react-router-dom";
 import { addElement, changeBuildMode } from "../actions/actions.tsx";
 import { downloadURI, handleExport } from "components/canvas/utils/functions.tsx";
 
+const handleToolboxClick = (
+  type: string,
+  dispatch: (arg0: { type: string; payload: number | Chair | Table | Wall | Room | null }) => void,
+  currentBuildMode: number
+) => {
+  const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
+  if (!toolItem) return;
 
-const handleToolboxClick =
-  (type: string, dispatch: (arg0: {
-    type: string;
-    payload: number | Chair | Table | Wall | Room | null;
-  }) => void, currentBuildMode: number) => {
-    const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
-    if (!toolItem) return;
-
-    if (type === "quickWall") {
-      // Toggle quickwall mode: if already in build mode 1, switch back to 0
-      const newBuildMode = currentBuildMode === 1 ? 0 : 1;
-      dispatch(changeBuildMode(newBuildMode));
-    } else {
-      dispatch(addElement(shapeFactory(type)));
-    }
-
-  };
+  if (type === "quickWall") {
+    // Toggle quickwall mode: if already in build mode 1, switch back to 0
+    const newBuildMode = currentBuildMode === 1 ? 0 : 1;
+    dispatch(changeBuildMode(newBuildMode));
+  } else {
+    dispatch(addElement(shapeFactory(type)));
+  }
+};
 
 function Toolbox({
-                   dispatch,
-                   stageRef,
-                   state,
-                 }: {
+  dispatch,
+  stageRef,
+  state,
+}: {
   dispatch: (action: { type: string; payload: any }) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   state: AppState;
@@ -82,10 +80,13 @@ function Toolbox({
             </Group>
           ))}
 
-          <Group y={400} onClick={async () => {
-            const uri = await handleExport(stageRef);
-            downloadURI(uri!, "stage.jpeg");
-          }}>
+          <Group
+            y={400}
+            onClick={async () => {
+              const uri = await handleExport(stageRef);
+              downloadURI(uri!, "stage.jpeg");
+            }}
+          >
             <Rect
               width={80}
               height={50}
@@ -108,7 +109,7 @@ function Toolbox({
                   canvasPosition: stageRef!.current!.getPosition(),
                   scale: stageRef!.current!.scaleX(),
                 },
-                stageRef,
+                stageRef
               )
             }
           >
@@ -132,7 +133,6 @@ function Toolbox({
           <Group x={15} y={560}>
             <FPSText layer={toolboxLayer}></FPSText>
           </Group>*/}
-
         </Group>
       </Layer>
     </Stage>

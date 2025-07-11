@@ -21,7 +21,7 @@ export const EmployeeEdit = () => {
     (async () => {
       try {
         setLoading(true);
-        const data = await getEmployeeById(employeeId!) ?? null;
+        const data = (await getEmployeeById(employeeId!)) ?? null;
         setEmployee(data);
       } catch (err) {
         message.error("Failed to fetch employee");
@@ -56,20 +56,22 @@ export const EmployeeEdit = () => {
   };
 
   if (loading) {
-    return (<div className="flex justify-center items-center h-screen">
-      <Spin size="large" tip="Loading employee details..." />
-    </div>);
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading employee details..." />
+      </div>
+    );
   }
 
   // Normalize gender to uppercase for initialValues
   const normalizedInitialValues = employee
     ? {
-      ...employee,
-      profile: {
-        ...employee.profile,
-        gender: employee.profile.gender?.toUpperCase() || undefined,
-      },
-    }
+        ...employee,
+        profile: {
+          ...employee.profile,
+          gender: employee.profile.gender?.toUpperCase() || undefined,
+        },
+      }
     : { profile: { gender: undefined } };
 
   return (

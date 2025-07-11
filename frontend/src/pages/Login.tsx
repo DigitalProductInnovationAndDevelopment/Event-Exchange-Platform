@@ -5,7 +5,6 @@ import { useAuth } from "../contexts/AuthContext";
 import logo from "../assets/itestra_logo.png";
 import { BASE_URL } from "../services/apiService.ts";
 
-
 export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -35,9 +34,7 @@ export const Login = () => {
           <Button
             type="primary"
             className="w-48"
-            onClick={() =>
-              (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)
-            }
+            onClick={() => (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)}
           >
             Employee Login
           </Button>

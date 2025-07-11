@@ -13,7 +13,7 @@ export interface Profile {
   gender: string;
   gitlabUsername: string;
   email: string;
-  dietTypes: DietaryPreference[];
+  dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];
 }
 

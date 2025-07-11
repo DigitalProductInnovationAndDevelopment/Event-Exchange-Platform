@@ -10,29 +10,25 @@ interface NeighbourArrowsProps {
   selectedChairId: string;
 }
 
-function NeighbourArrows({
-                           state,
-                           table,
-                           selectedChairId,
-                         }: NeighbourArrowsProps) {
+function NeighbourArrows({ state, table, selectedChairId }: NeighbourArrowsProps) {
   if (!table || !selectedChairId) return null;
 
   const chairs = state.elements.filter(
-    (el) => el.type === "chair" && table.attachedChairs.includes(el.id),
+    el => el.type === "chair" && table.attachedChairs.includes(el.id)
   ) as Chair[];
 
-  const selectedChair = chairs.find((chair) => chair.id === selectedChairId);
+  const selectedChair = chairs.find(chair => chair.id === selectedChairId);
   if (!selectedChair) return null;
 
   const arrows = chairs
-    .filter((chair) => chair.id !== selectedChair.id)
-    .filter((chair) => {
+    .filter(chair => chair.id !== selectedChair.id)
+    .filter(chair => {
       return areNeighbours(selectedChair, chair);
     });
 
   return (
     <Group>
-      {arrows.map((neighbor) => (
+      {arrows.map(neighbor => (
         <Arrow
           key={neighbor.id}
           points={[selectedChair.x, selectedChair.y, neighbor.x, neighbor.y]}

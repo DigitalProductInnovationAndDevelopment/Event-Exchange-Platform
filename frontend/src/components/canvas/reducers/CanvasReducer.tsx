@@ -32,7 +32,6 @@ interface HistoryState {
   future: AppState[];
 }
 
-
 export class initialState implements AppState {
   buildMode: number;
   elements: ElementProperties[];
@@ -81,7 +80,7 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         elements: state.elements.map(el =>
-          el.id === action.payload.id ? { ...el, ...action.payload } : el,
+          el.id === action.payload.id ? { ...el, ...action.payload } : el
         ),
         history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
@@ -89,7 +88,7 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         elements: state.elements.map(el =>
-          el.id === action.payload.id ? { ...el, [action.payload.key]: action.payload.value } : el,
+          el.id === action.payload.id ? { ...el, [action.payload.key]: action.payload.value } : el
         ),
         history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
