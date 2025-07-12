@@ -1,5 +1,6 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -19,8 +20,16 @@ import java.util.UUID;
 @Setter
 public class ConstraintSolverDTO implements Serializable {
 
-    @JsonProperty("Anzahl")
+    @JsonIgnore
     int guestCount;
+
+    @JsonProperty("ProfileId")
+    String profileId;
+
+    @JsonProperty("Anzahl")
+    public int getGuestCount() {
+        return guestCount + 1;
+    }
 
     @JsonProperty("Vorname")
     String employeeProfileFullName;

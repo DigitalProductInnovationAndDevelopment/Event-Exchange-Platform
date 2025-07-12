@@ -17,6 +17,7 @@ import java.util.List;
 public interface ParticipationMapper {
 
     @Mappings({
+            @Mapping(source = "employee.id", target = "profileId"),
             @Mapping(source = "employee.profile.fullName", target = "employeeProfileFullName"),
             @Mapping(source = "employee.profile.gender", target = "employeeProfileGender"),
             @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes"),
