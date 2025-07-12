@@ -3,7 +3,6 @@ package com.itestra.eep.configs;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.exceptions.UnauthorizedException;
 import com.itestra.eep.models.Profile;
-import com.itestra.eep.models.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SecurityException;
@@ -114,7 +113,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
     }
 
     private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
-        Set<UserRole> roles = Set.of(new UserRole(null, null, Role.VISITOR));
+        Set<Role> roles = Set.of(Role.VISITOR);
         Profile profile = Profile.builder().fullName("Visitor").authorities(roles).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
         authentication.setAuthenticated(false);
@@ -129,8 +128,8 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
         @SuppressWarnings("unchecked")
         List<String> userRoles = (List<String>) claims.getOrDefault("roles", Collections.emptyList());
 
-        Set<UserRole> roles = userRoles.stream()
-                .map(role -> new UserRole(null, null, Role.valueOf(role)))
+        Set<Role> roles = userRoles.stream()
+                .map(Role::valueOf)
                 .collect(Collectors.toSet());
 
         Profile profile = Profile.builder()

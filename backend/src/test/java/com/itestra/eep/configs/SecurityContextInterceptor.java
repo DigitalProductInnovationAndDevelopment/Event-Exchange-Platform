@@ -1,7 +1,6 @@
 package com.itestra.eep.configs;
 
 import com.itestra.eep.enums.Role;
-import com.itestra.eep.models.UserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +28,8 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
-        Set<UserRole> roles = authentication.getAuthorities().stream()
-                .map(role -> new UserRole(null, null, Role.valueOf(role.toString())))
+        Set<Role> roles = authentication.getAuthorities().stream()
+                .map(role -> Role.valueOf(role.getAuthority()))
                 .collect(Collectors.toSet());
 
         com.itestra.eep.models.Profile authenticatedTestUserProfile = com.itestra.eep.models.Profile.builder()

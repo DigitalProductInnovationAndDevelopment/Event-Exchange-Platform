@@ -7,7 +7,6 @@ import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
-import com.itestra.eep.models.UserRole;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.utils.RandomEntityGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +60,7 @@ public class ProfileControllerIntegrationTest {
                 .gitlabUsername("johndoe")
                 .email("john.doe@example.com")
                 .dietTypes(new DietaryPreference[]{DietaryPreference.VEGETARIAN})
-                .authorities(Set.of(new UserRole(1L, null, Role.ADMIN)))
+                .authorities(Set.of(Role.ADMIN))
                 .build();
 
         employeeCreateDTO = new EmployeeCreateDTO(

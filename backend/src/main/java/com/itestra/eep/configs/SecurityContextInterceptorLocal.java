@@ -2,7 +2,6 @@ package com.itestra.eep.configs;
 
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.models.Profile;
-import com.itestra.eep.models.UserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ public class SecurityContextInterceptorLocal extends OncePerRequestFilter {
         String userName = "testuser";
         UUID userId = UUID.fromString("12345678-1234-1234-1234-123456789012");
 
-        Set<UserRole> roles = Set.of(new UserRole(null, null, Role.ADMIN));
+        Set<Role> roles = Set.of(Role.ADMIN);
 
         Profile profile = Profile.builder()
                 .id(userId)

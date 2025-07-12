@@ -44,10 +44,10 @@ CREATE TABLE organization.profile
 
 CREATE TABLE organization.user_roles
 (
-    id         BIGSERIAL PRIMARY KEY,
     profile_id UUID        NOT NULL,
     role       VARCHAR(50) NOT NULL,
-    FOREIGN KEY (profile_id) REFERENCES organization.profile (id) ON DELETE CASCADE
+    FOREIGN KEY (profile_id) REFERENCES organization.profile (id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_role UNIQUE (profile_id, role)
 );
 
 CREATE TABLE organization.employee
