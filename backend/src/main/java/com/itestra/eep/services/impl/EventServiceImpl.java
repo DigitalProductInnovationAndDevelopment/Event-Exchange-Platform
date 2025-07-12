@@ -11,19 +11,25 @@ import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Event;
 import com.itestra.eep.models.Participation;
+import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.repositories.ParticipationRepository;
 import com.itestra.eep.services.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+
+import static com.itestra.eep.enums.Role.VISITOR;
 
 
 @Slf4j
@@ -43,8 +49,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> findAll() {
-        return eventRepository.findAll();
+    public List<Event> findAll(Authentication authentication) {
+        if (Objects.isNull(authentication)) {
+            return new ArrayList<>();
+        } else if (authentication.getAuthorities().contains(VISITOR)) {
+            return eventRepository.findByParticipations_Employee_Id(((Profile) authentication.getPrincipal()).getId());
+        } else {
+            return eventRepository.findAll();
+        }
     }
 
     @Override
@@ -139,5 +151,10 @@ public class EventServiceImpl implements EventService {
             int excludedCount = excludeParticipation != null ? excludeParticipation.getGuestCount() + 1 : 0;
             throw new EventCapacityExceededException(available - excludedCount);
         }
+    }
+
+    @Override
+    public boolean isParticipant(UUID eventId, UUID userId) {
+        return eventRepository.existsByIdAndParticipations_Employee_Id(eventId, userId);
     }
 }

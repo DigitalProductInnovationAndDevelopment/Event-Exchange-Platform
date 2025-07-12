@@ -1,11 +1,9 @@
 package com.itestra.eep.events;
 
 import com.itestra.eep.configs.JwtUtil;
-import com.itestra.eep.enums.Role;
 import com.itestra.eep.exceptions.UserProfileNotFoundException;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
-import com.itestra.eep.models.UserRole;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.services.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,14 +11,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static com.itestra.eep.enums.Role.EMPLOYEE;
 
 @Component
 @RequiredArgsConstructor
@@ -33,6 +33,9 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     @Value("${client.instance.address}")
     private String clientAddress;
+
+    @Value("${server.ssl.enabled}")
+    private boolean isSSLEnabled;
 
     @Value("${application.security.jwt.expiration}")
     private long expiration;
@@ -55,9 +58,6 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         } catch (UserProfileNotFoundException e) {
 
             Employee newEmployeeRecord = new Employee();
-            UserRole userRole = new UserRole();
-            // since we handle GitLab authentication here, we assume that the new profile belongs to an employee.
-            userRole.setRole(Role.EMPLOYEE);
 
             userProfile = Profile.builder()
                     .gitlabUsername(gitlabUsername)
@@ -65,9 +65,7 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                     .fullName(name)
                     .build();
 
-            userRole.setProfile(userProfile);
-
-            userProfile.setAuthorities(Set.of(userRole));
+            userProfile.setAuthorities(Collections.singleton(EMPLOYEE));
             newEmployeeRecord.setProfile(userProfile);
             newEmployeeRecord.setLocation(location);
             employeeRepository.saveAndFlush(newEmployeeRecord);
@@ -76,15 +74,19 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         String jwt = jwtService.generateToken(userProfile);
 
-        ResponseCookie responseCookie = ResponseCookie.from("Authorization", jwt)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(expiration)
-                .sameSite("None")
-                .build();
+        // we had to manually set it up like this because otherwise Safari and Firefox were not recognizing the cookie.
+        String cookieValue = "Authorization=" + jwt +
+                "; Path=/; Max-Age=" + expiration;
 
-        response.setHeader("Set-Cookie", responseCookie.toString());
+        String springProfiles = System.getProperty("spring.profiles.active");
+
+        if (isSSLEnabled || (springProfiles != null && Arrays.asList(springProfiles.split(",")).contains("prod"))) {
+            cookieValue += "; HttpOnly; Secure; SameSite=None";
+        } else {
+            cookieValue += "; SameSite=Lax";
+        }
+
+        response.setHeader("Set-Cookie", cookieValue);
 
         response.sendRedirect("%s/Event-Exchange-Platform/login_success".formatted(clientAddress));
         eventPublisher.publishEvent(new UserLoginSuccessEvent(this, userProfile, request.getRemoteAddr()));

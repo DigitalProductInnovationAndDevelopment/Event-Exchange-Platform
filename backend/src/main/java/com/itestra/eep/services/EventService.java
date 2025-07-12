@@ -5,6 +5,7 @@ import com.itestra.eep.dtos.EventUpdateDTO;
 import com.itestra.eep.dtos.ParticipationUpsertDTO;
 import com.itestra.eep.models.Event;
 import com.itestra.eep.models.Participation;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public interface EventService {
 
     Event findById(UUID id);
 
-    List<Event> findAll();
+    List<Event> findAll(Authentication authentication);
 
     Event create(EventCreateDTO dto);
 
@@ -28,4 +29,7 @@ public interface EventService {
     void deleteParticipant(UUID participationId);
 
     List<Participation> addParticipantsBatch(UUID eventId, List<ParticipationUpsertDTO> dtos);
+
+    boolean isParticipant(UUID eventId, UUID userId);
+
 }
