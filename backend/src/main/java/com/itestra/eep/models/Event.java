@@ -45,6 +45,7 @@ public class Event {
     private List<FileEntity> fileEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id ASC")
     private List<Participation> participations = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -59,9 +60,9 @@ public class Event {
     }
 
     @Transient
-    public int getParticipantCount(Participation excludeParticipation) {
+    public int getParticipantCount(Participation excludeCertainParticipation) {
         return participations.stream()
-                .filter(p -> excludeParticipation == null || !p.getId().equals(excludeParticipation.getId()))
+                .filter(p -> excludeCertainParticipation == null || !p.getId().equals(excludeCertainParticipation.getId()))
                 .mapToInt(p -> p.getGuestCount() + 1)
                 .sum();
     }

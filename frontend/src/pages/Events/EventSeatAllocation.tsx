@@ -16,20 +16,19 @@ import { areNeighbours } from "components/canvas/utils/functions.tsx";
 
 const { Title } = Typography;
 
-
 // Main content component for seat allocation
 const SeatAllocationContent = ({
-                                 eventId,
-                                 eventName,
-                                 schematicsState,
-                                 participants,
-                                 schematicsId,
-                               }: {
-  eventId: string,
-  eventName: string,
-  schematicsState: AppState,
-  participants: ParticipationDetails[],
-  schematicsId: string
+  eventId,
+  eventName,
+  schematicsState,
+  participants,
+  schematicsId,
+}: {
+  eventId: string;
+  eventName: string;
+  schematicsState: AppState;
+  participants: ParticipationDetails[];
+  schematicsId: string;
 }) => {
   const navigate = useNavigate();
   const { state } = useCanvas();
@@ -41,16 +40,20 @@ const SeatAllocationContent = ({
   useEffect(() => {
     if (!participants || !state) return;
     const allocatedIds = new Set(
-        state.elements
-            ?.filter((e: any) => e.type === "chair" && e.employeeId)
-            .map((e: any) => e.employeeId),
+      state.elements
+        ?.filter((e: any) => e.type === "chair" && e.employeeId)
+        .map((e: any) => e.employeeId)
     );
     setUnallocated(participants.filter(p => !allocatedIds.has(p.employeeId)));
   }, [participants, state]);
 
   const generateChairNeighborMap = () => {
-    const tables: Table[] = (state.elements.filter((el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable") as Table[]);
-    const chairs: Chair[] = (state.elements.filter((el: ElementProperties) => el.type === "chair") as Chair[]);
+    const tables: Table[] = state.elements.filter(
+      (el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable"
+    ) as Table[];
+    const chairs: Chair[] = state.elements.filter(
+      (el: ElementProperties) => el.type === "chair"
+    ) as Chair[];
 
     const chairMap = new Map<string, Chair>();
     chairs.forEach((chair: Chair) => {
@@ -87,7 +90,6 @@ const SeatAllocationContent = ({
     console.log("Chair Neighbors:", neighborMap);
     return neighborMap;
   };
-
 
   // Generate initial seat allocation: assign unallocated employees to empty chairs
   const handleGenerate = () => {

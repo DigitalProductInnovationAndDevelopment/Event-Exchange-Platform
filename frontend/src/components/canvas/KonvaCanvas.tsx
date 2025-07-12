@@ -123,7 +123,8 @@ function KonvaCanvas() {
 
       const isUndo = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && !e.shiftKey;
       const isRedoX = (e.key === "x" || e.key === "X") && (e.ctrlKey || e.metaKey);
-      const isRedoShiftZ = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && e.shiftKey;
+      const isRedoShiftZ =
+        (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && e.shiftKey;
 
       if (isUndo) {
         e.preventDefault();
@@ -194,16 +195,16 @@ function KonvaCanvas() {
       // Get all attached chairs and their offsets
       const updates = el
         .attachedChairs!.map((chairId: string) => {
-        const chair = state.elements.find(e => e.id === chairId) as Chair;
-        if (chair && chair.offset) {
-          return {
-            id: chairId,
-            x: newX + chair.offset.dx,
-            y: newY + chair.offset.dy,
-          };
-        }
-        return null;
-      })
+          const chair = state.elements.find(e => e.id === chairId) as Chair;
+          if (chair && chair.offset) {
+            return {
+              id: chairId,
+              x: newX + chair.offset.dx,
+              y: newY + chair.offset.dy,
+            };
+          }
+          return null;
+        })
         .filter(Boolean);
 
       // Update all chair positions
@@ -211,7 +212,6 @@ function KonvaCanvas() {
         dispatch(updateMultipleWithoutUndoRedo(updates));
       }
     }
-
   };
 
   const handleDragStart = () => {
@@ -228,7 +228,7 @@ function KonvaCanvas() {
     if (el.type === "chair") {
       // Find the closest table
       const tables = state.elements.filter(
-        (t): t is Table => t.type === "circleTable" || t.type === "rectTable",
+        (t): t is Table => t.type === "circleTable" || t.type === "rectTable"
       );
 
       const table = tables.find(t => {
@@ -244,13 +244,15 @@ function KonvaCanvas() {
           const chairBox = {
             x: x - chairRadius,
             y: y - chairRadius,
-            width: 2 * (chairRadius),
-            height: 2 * (chairRadius),
+            width: 2 * chairRadius,
+            height: 2 * chairRadius,
           };
 
           // Get the table's client rect (handles rotation automatically)
           // Note: You'll need to pass rectRefs and stageRef to this function or access them from context
-          const tableRect = rectRefs.current.get(t.id)?.getClientRect({ relativeTo: stageRef.current });
+          const tableRect = rectRefs.current
+            .get(t.id)
+            ?.getClientRect({ relativeTo: stageRef.current });
 
           if (!tableRect) return false;
 
@@ -328,26 +330,30 @@ function KonvaCanvas() {
 
         // Update chair with attachment info
         dispatch(
-          updateMultipleWithoutUndoRedo([{
-            id: el.id,
-            x: attachPosition.x,
-            y: attachPosition.y,
-            attachedTo: table.id,
-            offset: {
-              dx: attachPosition.x - table.x,
-              dy: attachPosition.y - table.y,
-              angle: attachPosition.angle,
+          updateMultipleWithoutUndoRedo([
+            {
+              id: el.id,
+              x: attachPosition.x,
+              y: attachPosition.y,
+              attachedTo: table.id,
+              offset: {
+                dx: attachPosition.x - table.x,
+                dy: attachPosition.y - table.y,
+                angle: attachPosition.angle,
+              },
             },
-          }]),
+          ])
         );
 
         // Update table with attached chair
         if (!table.attachedChairs.includes(el.id)) {
           dispatch(
-            updateMultipleWithoutUndoRedo([{
-              id: table.id,
-              attachedChairs: [...table.attachedChairs, el.id],
-            }]),
+            updateMultipleWithoutUndoRedo([
+              {
+                id: table.id,
+                attachedChairs: [...table.attachedChairs, el.id],
+              },
+            ])
           );
         }
         return;
@@ -357,25 +363,20 @@ function KonvaCanvas() {
         // Detach chair from table
         const parents = state.elements.filter(t => t.id === el.attachedTo) as Table[];
         if (parents) {
-          parents.forEach((parent) => {
-            updates.push(
-              {
-                id: parent.id,
-                attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
-              },
-            );
+          parents.forEach(parent => {
+            updates.push({
+              id: parent.id,
+              attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
+            });
           });
         }
         updates.push({ id: el.id, x, y, attachedTo: null, offset: null });
-        dispatch(
-          updateMultipleWithoutUndoRedo(updates),
-        );
+        dispatch(updateMultipleWithoutUndoRedo(updates));
         return;
       }
     }
     // Default handling for position updates
     dispatch(updateMultipleWithoutUndoRedo([{ id, x, y }]));
-
   };
 
   function handleDoubleClickOnElement(_e: KonvaEventObject<MouseEvent>, el: ElementProperties) {
@@ -401,29 +402,29 @@ function KonvaCanvas() {
       const update =
         el.type === "circleTable" || el.type === "chair"
           ? {
-            id,
-            radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
-            rotation: node.rotation(),
-            x: el.x!,
-            y: el.y!,
-          }
+              id,
+              radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
+              rotation: node.rotation(),
+              x: el.x!,
+              y: el.y!,
+            }
           : el.type !== "wall"
             ? {
-              id,
-              x: node.x()! / scaleX,
-              y: node.y()! / scaleY,
-              width: el.width ? Math.max(10, el.width * scaleX) : undefined,
-              height: el.height ? Math.max(10, el.height * scaleY) : undefined,
-              rotation: node.rotation(),
-            }
+                id,
+                x: node.x()! / scaleX,
+                y: node.y()! / scaleY,
+                width: el.width ? Math.max(10, el.width * scaleX) : undefined,
+                height: el.height ? Math.max(10, el.height * scaleY) : undefined,
+                rotation: node.rotation(),
+              }
             : {
-              id,
-              x1: el.x1! * scaleX,
-              y1: el.y1! * scaleY,
-              x2: el.x2! * scaleX,
-              y2: el.y2! * scaleY,
-              rotation: node.rotation(),
-            };
+                id,
+                x1: el.x1! * scaleX,
+                y1: el.y1! * scaleY,
+                x2: el.x2! * scaleX,
+                y2: el.y2! * scaleY,
+                rotation: node.rotation(),
+              };
       updates.push(update);
     }
     // @ts-ignore
@@ -472,8 +473,7 @@ function KonvaCanvas() {
     }
   };
 
-  const handleMouseMove = (e: { evt: MouseEvent, target: Konva.Stage }) => {
-
+  const handleMouseMove = (e: { evt: MouseEvent; target: Konva.Stage }) => {
     const container = stageRef!.current!.container();
     if (isShiftPressed || state.buildMode === 1) {
       container.style.cursor = "default";
@@ -515,7 +515,7 @@ function KonvaCanvas() {
       // we are checking if rectangle intersects with selection box
       return Konva.Util.haveIntersection(
         selBox,
-        rectRefs.current.get(rect.id).getClientRect({ relativeTo: stageRef.current }),
+        rectRefs.current.get(rect.id).getClientRect({ relativeTo: stageRef.current })
       );
     });
 
@@ -523,11 +523,11 @@ function KonvaCanvas() {
   };
 
   return (
-
     <div className="space-y-6">
-      <div className="App overflow-hidden bg-white"
-           style={{ display: "flex", border: "1px solid #e0e0e0", flexDirection: "row" }}>
-
+      <div
+        className="App overflow-hidden bg-white"
+        style={{ display: "flex", border: "1px solid #e0e0e0", flexDirection: "row" }}
+      >
         <Toolbox dispatch={dispatch} stageRef={stageRef} state={state} />
 
         {/* main Canvas */}
@@ -544,10 +544,9 @@ function KonvaCanvas() {
             onMousemove={handleMouseMove}
             onMouseup={handleMouseUp}
           >
-
             <Layer ref={mainLayer}>
               {/* this is where we display elements */}
-              {state.elements?.map((el) => {
+              {state.elements?.map(el => {
                 return (
                   <Group
                     key={el.id}
@@ -556,9 +555,9 @@ function KonvaCanvas() {
                     y={el.y}
                     draggable={el.draggable}
                     rotation={el.rotation}
-                    onDblClick={(e) => handleDoubleClickOnElement(e, el)}
-                    onDragMove={(e) => handleDragMove(e, el)}
-                    onDragEnd={(e) => handleDragEnd(e, el)}
+                    onDblClick={e => handleDoubleClickOnElement(e, el)}
+                    onDragMove={e => handleDragMove(e, el)}
+                    onDragEnd={e => handleDragEnd(e, el)}
                     onDragStart={() => handleDragStart()}
                     ref={node => {
                       if (node) {
@@ -581,24 +580,23 @@ function KonvaCanvas() {
               />
 
               {/* Selection rectangle */}
-              {selectionRectangle.visible && <SelectionRectangle selectionRectangle={selectionRectangle} />}
-              {selectedIds.length === 1 &&
-                state.elements.find((el) => el.type === "chair") && (
-                  <NeighbourArrows
-                    state={state}
-                    table={(state.elements.find(
-                      (a) =>
-                        a.id ===
-                        state.elements.find((el) => el.id === selectedIds[0])?.attachedTo,
-                    ) as Table)}
-                    selectedChairId={selectedIds[0]}
-                  />
-                )}
+              {selectionRectangle.visible && (
+                <SelectionRectangle selectionRectangle={selectionRectangle} />
+              )}
+              {selectedIds.length === 1 && state.elements.find(el => el.type === "chair") && (
+                <NeighbourArrows
+                  state={state}
+                  table={
+                    state.elements.find(
+                      a => a.id === state.elements.find(el => el.id === selectedIds[0])?.attachedTo
+                    ) as Table
+                  }
+                  selectedChairId={selectedIds[0]}
+                />
+              )}
             </Layer>
-
           </Stage>
         </div>
-
 
         <StagePreview state={state} mainStage={stageRef.current!}></StagePreview>
 

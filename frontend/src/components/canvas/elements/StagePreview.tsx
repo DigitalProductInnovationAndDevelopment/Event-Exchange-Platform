@@ -18,7 +18,7 @@ function StagePreview({ state, mainStage }: { state: AppState; mainStage: Konva.
         top: "0",
         right: isVisible ? "0" : "70px",
         border: isVisible ? "1px solid grey" : "none",
-        height: (window.innerHeight / 4),
+        height: window.innerHeight / 4,
         backgroundColor: isVisible ? "lightgrey" : "transparent",
         zIndex: 999,
       }}
@@ -52,8 +52,8 @@ function StagePreview({ state, mainStage }: { state: AppState; mainStage: Konva.
           height={window.innerHeight / 4}
           scaleX={mainStage === null ? 0.25 : mainStage.scaleX() * 0.0625}
           scaleY={mainStage === null ? 0.25 : mainStage.scaleY() * 0.0625}
-          x={mainStage === null ? 0 : ((window.innerWidth - 250) / 8) + mainStage.x() * 0.0625}
-          y={mainStage === null ? 0 : (window.innerHeight / 8) + mainStage.y() * 0.0625}
+          x={mainStage === null ? 0 : (window.innerWidth - 250) / 8 + mainStage.x() * 0.0625}
+          y={mainStage === null ? 0 : window.innerHeight / 8 + mainStage.y() * 0.0625}
         >
           <Layer>
             {state.elements.map(el => (

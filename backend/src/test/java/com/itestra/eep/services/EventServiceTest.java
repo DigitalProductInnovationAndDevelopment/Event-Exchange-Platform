@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -71,8 +73,8 @@ class EventServiceTest {
         event = eventRepository.save(event);
         int guestCount = 1;
 
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId(), event.getId());
-        Participation participation = eventService.addParticipant(dto);
+        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId());
+        Participation participation = eventService.addParticipant(event.getId(), dto);
 
         assertNotNull(participation);
         assertEquals(employee.getId(), participation.getEmployee().getId());
@@ -90,9 +92,9 @@ class EventServiceTest {
         event.setCapacity(10);
         event = eventRepository.save(event);
         int guestCount = 10;
-
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId(), event.getId());
-        assertThrows(com.itestra.eep.exceptions.EventCapacityExceededException.class, () -> eventService.addParticipant(dto));
+        final UUID eventId = event.getId();
+        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId());
+        assertThrows(com.itestra.eep.exceptions.EventCapacityExceededException.class, () -> eventService.addParticipant(eventId, dto));
     }
 
 } 

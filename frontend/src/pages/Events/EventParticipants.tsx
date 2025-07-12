@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import useApiService from "../../services/apiService";
 import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
 import type { Employee, ParticipationDetails } from "types/employee.ts";
+import Papa, { parse } from "papaparse";
+import type { UUID } from "components/canvas/utils/constants.tsx";
 
 const { Title } = Typography;
 
@@ -15,6 +17,7 @@ export const EventParticipants = () => {
     getEventParticipants,
     getEmployees,
     addParticipant,
+    addParticipantsBatch,
     updateParticipant,
     deleteParticipation,
   } = useApiService();
@@ -26,6 +29,7 @@ export const EventParticipants = () => {
   const [employeeGuests, setEmployeeGuests] = useState<{ [id: string]: number }>({});
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
+  const [importedRows, setImportedRows] = useState<{ email: string; guestCount: number }[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -54,7 +58,7 @@ export const EventParticipants = () => {
       p =>
         (p.profile.fullName.toLowerCase().includes(employeeSearch.toLowerCase()) ||
           p.profile.email.toLowerCase().includes(employeeSearch.toLowerCase())) &&
-        !participants.some(participant => participant.employeeId === p.profile.id),
+        !participants.some(participant => participant.employeeId === p.profile.id)
     )
     .sort((a, b) => a.profile.fullName.localeCompare(b.profile.fullName));
 
@@ -66,44 +70,68 @@ export const EventParticipants = () => {
   };
 
   const handleGuestsChange = async (
-    participationId: string,
+    participationId: UUID,
+    eventId: UUID,
     values: {
       guestCount: number;
-      eventId: string;
       employeeId: string;
-    },
+    }
   ) => {
-    const participant = await updateParticipant(values);
+    const participant = await updateParticipant(eventId, values);
     if (participant) {
       setParticipants(prev =>
         prev.map(p =>
           p.id === participationId
             ? {
-              ...p,
-              guestCount: values.guestCount ?? 0,
-            }
-            : p,
-        ),
+                ...p,
+                guestCount: values.guestCount ?? 0,
+              }
+            : p
+        )
       );
     }
   };
 
-  const handleAddParticipant = async (values: {
+  const handleAddParticipant = async (eventId: UUID, values: {
     guestCount: number;
-    eventId: string;
-    employeeId: string;
+    employeeId: UUID;
   }) => {
-    const participant = await addParticipant(values);
+    const participant = await addParticipant(eventId, values);
     if (participant) {
       participants.push(participant);
       setParticipants([...participants]);
     }
   };
 
+  const handleAddParticipantBatch = async (
+    eventId: UUID, rows: { guestCount: number; email: string; }[],
+  ) => {
+    console.log(rows);
+    if (!rows.length) return;
+    const emailToEmployee = Object.fromEntries(
+      allEmployees.map(e => [e.profile.email, e.profile.id])
+    );
+    const batch = rows
+      .map(row => ({
+        guestCount: row.guestCount,
+        employeeId: emailToEmployee[row.email],
+      }))
+      .filter(p => p.employeeId);
+    if (batch.length) {
+      const newParticipants = await addParticipantsBatch(eventId, batch);
+      setImportModalOpen(false);
+      setImportFile(null);
+      setImportedRows([]);
+      if (newParticipants) {
+        setParticipants([...participants, ...newParticipants]);
+      }
+    }
+  };
+
   const filteredParticipants = participants.filter(
     e =>
       e.fullName.toLowerCase().includes(participantSearch.toLowerCase()) ||
-      e.email.toLowerCase().includes(participantSearch.toLowerCase()),
+      e.email.toLowerCase().includes(participantSearch.toLowerCase())
   );
 
   const columns = [
@@ -111,8 +139,8 @@ export const EventParticipants = () => {
       title: "Name",
       dataIndex: "fullName",
       key: "fullName",
-      sorter: (a: Employee, b: Employee) =>
-        (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
+      sorter: (a: ParticipationDetails, b: ParticipationDetails) =>
+        (a.fullName ?? "").localeCompare(b.fullName ?? ""),
     },
     { title: "Email", dataIndex: "email", key: "email" },
     {
@@ -124,9 +152,8 @@ export const EventParticipants = () => {
           min={0}
           value={guestCount}
           onChange={value =>
-            handleGuestsChange(participant.id, {
+            handleGuestsChange(participant.id, eventId!, {
               guestCount: value!,
-              eventId: eventId!,
               employeeId: participant.employeeId,
             })
           }
@@ -136,7 +163,7 @@ export const EventParticipants = () => {
     {
       title: "",
       key: "actions",
-      render: (_: never, record: ParticipationDetails) => (
+      render: (record: ParticipationDetails) => (
         <Popconfirm
           placement="right"
           title="Are you sure you want to delete this participant?"
@@ -151,6 +178,34 @@ export const EventParticipants = () => {
       ),
     },
   ];
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setImportFile(file || null);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = event => {
+        const csv = event.target?.result as string;
+        parse(csv, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results: Papa.ParseResult<any>) => {
+            // Expecting columns: email, guestCount
+            const rows = (results.data as any[])
+              .map(row => ({
+                email: row.email?.trim() || "",
+                guestCount: Number(row.guestCount) || 0,
+              }))
+              .filter(row => row.email);
+            setImportedRows(rows);
+          },
+        });
+      };
+      reader.readAsText(file);
+    } else {
+      setImportedRows([]);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -243,14 +298,13 @@ export const EventParticipants = () => {
             {
               title: "",
               key: "actions",
-              render: (_: any, record: Employee & { id: string }) => (
+              render: (_: any, record: Employee) => (
                 <Button
                   type="primary"
                   icon={<UserAddOutlined />}
                   onClick={() =>
-                    handleAddParticipant({
+                    handleAddParticipant(eventId!, {
                       guestCount: employeeGuests[record.profile.id],
-                      eventId: eventId!,
                       employeeId: record.profile.id,
                     })
                   }
@@ -282,70 +336,40 @@ export const EventParticipants = () => {
         centered
         title="Import Participants"
         open={importModalOpen}
-        onCancel={() => setImportModalOpen(false)}
+        onCancel={() => {
+          setImportModalOpen(false);
+          setImportFile(null);
+          setImportedRows([]);
+        }}
         footer={[
-          <Button key="addall" type="primary" onClick={() => setImportModalOpen(false)}>
+          <Button
+            key="addall"
+            type="primary"
+            disabled={importedRows.length === 0}
+            onClick={() =>
+              handleAddParticipantBatch(
+                eventId!,
+                importedRows.map(row => ({ ...row })),
+              )
+            }
+          >
             Add All
           </Button>,
         ]}
       >
-        <Input
-          type="file"
-          accept=".csv,.xlsx,.xls,.txt"
-          onChange={e => setImportFile(e.target.files?.[0] || null)}
-          className="mb-4"
-        />
+        <Input type="file" accept=".csv" onChange={handleImportFile} className="mb-4" />
         {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
-
-        <Input.Search
-          placeholder="Search employees..."
-          value={employeeSearch}
-          onChange={e => setEmployeeSearch(e.target.value)}
-          className="mb-4"
-        />
-        <Table
-          rowKey={r => r.profile.id}
-          columns={[
-            { title: "Name", dataIndex: ["profile", "fullName"], key: "fullName" },
-            { title: "Email", dataIndex: ["profile", "email"], key: "email" },
-            {
-              title: "Guests",
-              dataIndex: "guestCount",
-              key: "guestCount",
-              render: (_guestCount: number, record: Employee) => (
-                <InputNumber
-                  min={0}
-                  value={employeeGuests[record.profile.id] ?? 0}
-                  onChange={value =>
-                    setEmployeeGuests(prev => ({ ...prev, [record.profile.id]: value ?? 0 }))
-                  }
-                  style={{ width: 80 }}
-                  disabled={participants.some(p => p.employeeId === record.profile.id)}
-                />
-              ),
-            },
-            {
-              title: "",
-              key: "actions",
-              render: (_: any, record: any) => (
-                <Button
-                  type="primary"
-                  icon={<UserAddOutlined />}
-                  onClick={() => handleAddParticipant({
-                    guestCount: record.guestCount,
-                    eventId: eventId!,
-                    employeeId: record.profile.id,
-                  })}
-                  disabled={participants.some(p => p.employeeId === record.profile.id)}
-                >
-                  Add
-                </Button>
-              ),
-            },
-          ]}
-          dataSource={allEmployeesFiltered}
-          pagination={false}
-        />
+        {importedRows.length > 0 && (
+          <Table
+            columns={[
+              { title: "Email", dataIndex: "email", key: "email" },
+              { title: "Guest Count", dataIndex: "guestCount", key: "guestCount" },
+            ]}
+            dataSource={importedRows.map((row, idx) => ({ ...row, key: idx }))}
+            pagination={false}
+            className="mt-4"
+          />
+        )}
       </Modal>
     </div>
   );

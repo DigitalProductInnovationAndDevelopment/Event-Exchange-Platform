@@ -14,12 +14,10 @@ type EmployeeFormProps = {
   form: any;
 };
 
-
 export const DIET_TYPES = Object.entries(DietaryPreference).map(([key]) => ({
   label: <DietTypeTag type={key} />,
   value: key,
 }));
-
 
 export const EMPLOYMENT_TYPES = Object.entries(EmploymentType).map(([key]) => ({
   label: <EmployeeTypeTag type={key} />,
@@ -37,7 +35,9 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
     onSave(values);
   };
 
-  initialValues.employmentStartDate = initialValues.employmentStartDate ? dayjs(initialValues.employmentStartDate, dateFormat) : dayjs().startOf("day");
+  initialValues.employmentStartDate = initialValues.employmentStartDate
+    ? dayjs(initialValues.employmentStartDate, dateFormat)
+    : dayjs().startOf("day");
 
   return (
     <Form form={form} layout="vertical" initialValues={initialValues} onFinish={handleFinish}>
@@ -86,13 +86,14 @@ const EmployeeForm = ({ initialValues, onSave, form }: EmployeeFormProps) => {
       <Form.Item
         label="Date Joined"
         name="employmentStartDate"
-        rules={[{ required: true, message: "Please enter employment start date" }]}>
+        rules={[{ required: true, message: "Please enter employment start date" }]}
+      >
         <DatePicker
           className="w-full"
           placeholder="Enter date joined"
           format={dateFormat}
           showTime={false}
-          disabledDate={(current) => {
+          disabledDate={current => {
             return current && current > dayjs().endOf("day");
           }}
         />

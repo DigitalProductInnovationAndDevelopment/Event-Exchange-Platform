@@ -17,7 +17,8 @@ export const REMOVE_ELEMENTS = "REMOVE_ELEMENTS";
 export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
 export const UPDATE_ELEMENT_SPECIFIC_FIELD = "UPDATE_ELEMENT_SPECIFIC_FIELD";
 export const UPDATE_MULTIPLE_ELEMENTS = "UPDATE_MULTIPLE_ELEMENTS";
-export const UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO = "UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO";
+export const UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO =
+  "UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO";
 export const DUPLICATE_MULTIPLE_ELEMENTS = "DUPLICATE_MULTIPLE_ELEMENTS";
 export const CHANGE_BUILD_MODE = "CHANGE_BUILD_MODE";
 export const UNDO = "UNDO";
@@ -61,7 +62,7 @@ export const updateElementSpecificField = (payload: {
 });
 
 export const updateMultipleElements = (
-  payload: ({ id: string; x: number; y: number } | null)[],
+  payload: ({ id: string; x: number; y: number } | null)[]
 ): Action => ({
   type: UPDATE_MULTIPLE_ELEMENTS,
   payload,
@@ -74,8 +75,8 @@ export const updateMultipleWithoutUndoRedo = (
     y?: number;
     attachedTo?: string | null;
     attachedChairs?: string[];
-    offset?: { dx: number, dy: number, angle: number, } | null;
-  } | null)[],
+    offset?: { dx: number; dy: number; angle: number } | null;
+  } | null)[]
 ): Action => ({
   type: UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO,
   payload,
@@ -88,7 +89,7 @@ export const commitUndoRedoHistory = (): Action => ({
 
 export const duplicateMultipleElements = (
   payload: string[],
-  setSelectedIds: Dispatch<SetStateAction<string[]>>,
+  setSelectedIds: Dispatch<SetStateAction<string[]>>
 ): Action => ({
   type: DUPLICATE_MULTIPLE_ELEMENTS,
   payload,

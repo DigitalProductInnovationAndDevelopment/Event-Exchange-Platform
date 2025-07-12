@@ -3,13 +3,10 @@ package com.itestra.eep.mappers;
 import com.itestra.eep.dtos.ProjectCreateDTO;
 import com.itestra.eep.dtos.ProjectUpdateDTO;
 import com.itestra.eep.models.Project;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProjectMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

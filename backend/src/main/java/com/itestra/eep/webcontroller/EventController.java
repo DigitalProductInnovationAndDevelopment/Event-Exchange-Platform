@@ -13,13 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,17 +40,18 @@ public class EventController {
     private final EventMapper eventMapper;
     private final ParticipationMapper participationMapper;
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
-    public ResponseEntity<EventDetailsDTO> getEvent(@PathVariable UUID id) {
-        Event event = eventService.findById(id);
+    @GetMapping("/{eventId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE') or " +
+            "(hasAuthority('VISITOR') and @eventServiceImpl.isParticipant(#eventId, authentication.principal.getId()))")
+    public ResponseEntity<EventDetailsDTO> getEvent(@PathVariable UUID eventId) {
+        Event event = eventService.findById(eventId);
         return new ResponseEntity<>(eventMapper.toDetailsDto(event), HttpStatus.OK);
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
-    public ResponseEntity<List<EventDetailsDTO>> getAllEvents() {
-        List<Event> events = eventService.findAll();
+    public ResponseEntity<List<EventDetailsDTO>> getAllEvents(Authentication authentication) {
+        List<Event> events = eventService.findAll(authentication);
         return new ResponseEntity<>(eventMapper.toDetailsDto(events), HttpStatus.OK);
     }
 
@@ -62,16 +64,23 @@ public class EventController {
 
     @PostMapping("/{eventId}/participants")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ParticipationDetailsDTO> addEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {
-        Participation participation = eventService.addParticipant(dto);
-        return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
+    public ResponseEntity<ParticipationDetailsDTO> addEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid ParticipationUpsertDTO dto) {
+        Participation participation = eventService.addParticipant(eventId, dto);
+        return new ResponseEntity<>(participationMapper.map(participation), HttpStatus.OK);
+    }
+
+    @PostMapping("/{eventId}/participants/batch")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<List<ParticipationDetailsDTO>> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<ParticipationUpsertDTO> dtos) {
+        List<Participation> participations = eventService.addParticipantsBatch(eventId, dtos);
+        return new ResponseEntity<>(participationMapper.map(participations), HttpStatus.OK);
     }
 
     @PutMapping("/{eventId}/participants")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@RequestBody @Valid ParticipationUpsertDTO dto) {
-        Participation participation = eventService.updateParticipant(dto);
-        return new ResponseEntity<>(participationMapper.map(List.of(participation)).get(0), HttpStatus.OK);
+    public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid ParticipationUpsertDTO dto) {
+        Participation participation = eventService.updateParticipant(eventId, dto);
+        return new ResponseEntity<>(participationMapper.map(participation), HttpStatus.OK);
     }
 
     @DeleteMapping("/participants/{participationId}")
@@ -89,24 +98,28 @@ public class EventController {
     }
 
     @GetMapping("/assign/{eventId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Boolean> assignTables(@PathVariable UUID eventId) throws IOException, InterruptedException {
+    //@PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Boolean> assignTables(@PathVariable UUID eventId, OutputStream outputStream) throws IOException, InterruptedException {
         Event event = eventService.findById(eventId);
         List<Participation> participations = event.getParticipations();
         List<ConstraintSolverDTO> formattedData = participationMapper.toConstraintSolverDTO(participations);
 
         // we create input and output temp files
         Path tempInputFile = Files.createTempFile("input", ".json");
+        Path tempTableFile = Files.createTempFile("table", ".json");
+        Path tempConstraintsFile = Files.createTempFile("constraints", ".json");
         Path tempOutputFile = Files.createTempFile("output", ".json");
 
         // we serialize Java objects to JSON and write to input file so that our python script can read them.
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(formattedData);
         Files.write(tempInputFile, jsonString.getBytes(StandardCharsets.UTF_8));
+        Files.write(tempTableFile, "[{\"table_id\": 1,\"Anzahl\": 6},{\"table_id\": 2,\"Anzahl\": 6},{\"table_id\": 3,\"Anzahl\": 6}]".getBytes(StandardCharsets.UTF_8));
+        Files.write(tempConstraintsFile, "{\"Standort\": 1, \"Projekt\": 1, \"Anstellung\": 1, \"Geschlecht\": 0, \"last neighborhood\": 3}".getBytes(StandardCharsets.UTF_8));
 
         ProcessBuilder pb = new ProcessBuilder(
                 "../venv/bin/python",
-                "algo.py", tempInputFile.toString(), tempOutputFile.toString()
+                "algo(table).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
         );
 
         // we set the working directory to where algo.py is located
@@ -116,17 +129,26 @@ public class EventController {
         Process process = pb.start();
 
         // Read script output
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        /*BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
             log.info(line);
-        }
+        }*/
 
         int exitCode = process.waitFor();
         log.info("Exited with code: {}", exitCode);
 
+        BufferedReader fileReader = Files.newBufferedReader(tempOutputFile);
+        String line;
+        while ((line = fileReader.readLine()) != null) {
+            log.info(line);
+        }
+
+
         // delete temp files
         Files.deleteIfExists(tempInputFile);
+        Files.deleteIfExists(tempTableFile);
+        Files.deleteIfExists(tempConstraintsFile);
         Files.deleteIfExists(tempOutputFile);
 
         return ResponseEntity.ok(true);

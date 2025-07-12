@@ -3,30 +3,22 @@ package com.itestra.eep.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.itestra.eep.enums.Role;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.UUID;
+
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(schema = "organization", name = "user_roles")
 public class UserRole implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "profile_id")
+    @Column(name = "profile_id", nullable = false)
     @JsonIgnore
-    private Profile profile;
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

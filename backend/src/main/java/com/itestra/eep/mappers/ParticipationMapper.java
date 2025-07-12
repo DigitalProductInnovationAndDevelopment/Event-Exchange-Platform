@@ -6,16 +6,18 @@ import com.itestra.eep.models.Event;
 import com.itestra.eep.models.Participation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.Mappings;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ParticipationMapper {
 
     @Mappings({
+            @Mapping(source = "employee.id", target = "profileId"),
             @Mapping(source = "employee.profile.fullName", target = "employeeProfileFullName"),
             @Mapping(source = "employee.profile.gender", target = "employeeProfileGender"),
             @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes"),
@@ -26,6 +28,11 @@ public interface ParticipationMapper {
     ConstraintSolverDTO toConstraintSolverDTO(Participation participation);
 
     List<ConstraintSolverDTO> toConstraintSolverDTO(List<Participation> participations);
+
+
+    default ParticipationDetailsDTO map(Participation participation) {
+        return this.map(List.of(participation)).get(0);
+    }
 
     default List<ParticipationDetailsDTO> map(List<Participation> participations) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -39,20 +46,21 @@ public interface ParticipationMapper {
         return participations.stream()
                 .map(p -> {
                     Event e = p.getEvent();
-                    return new ParticipationDetailsDTO(
-                            p.getId(),
-                            p.getEmployee().getId(),
-                            e.getId(),
-                            p.getGuestCount(),
-                            p.isConfirmed(),
-                            e.getName(),
-                            e.getEventType(),
-                            e.getDate(),
-                            e.getAddress(),
-                            p.getEmployee().getProfile().getFullName(),
-                            p.getEmployee().getProfile().getGitlabUsername(),
-                            p.getEmployee().getProfile().getEmail()
-                    );
+                    return ParticipationDetailsDTO.builder()
+                            .id(p.getId())
+                            .employeeId(p.getEmployee().getId())
+                            .eventId(e.getId())
+                            .guestCount(p.getGuestCount())
+                            .confirmed(p.isConfirmed())
+                            .eventName(e.getName())
+                            .eventType(e.getEventType())
+                            .eventDate(e.getDate())
+                            .eventAddress(e.getAddress())
+                            .fullName(p.getEmployee().getProfile().getFullName())
+                            .gitlabUsername(p.getEmployee().getProfile().getGitlabUsername())
+                            .email(p.getEmployee().getProfile().getEmail())
+                            .dietTypes(p.getEmployee().getProfile().getDietTypes())
+                            .build();
                 })
                 .toList();
     }

@@ -90,7 +90,7 @@ const routes: RouteObject[] = [
       {
         path: "employees/:employeeId/edit",
         element: <EmployeeEdit />,
-      }
+      },
     ],
   },
 

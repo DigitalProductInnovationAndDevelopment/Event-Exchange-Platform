@@ -36,9 +36,7 @@ export const WallRender = (wall: Wall) => {
   const maxY = Math.max(wall.y1, wall.y2) + selectionPadding;
 
   return (
-    <Group
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}>
+    <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
       {/* Invisible selection area */}
       <Rect
         x={minX}
