@@ -35,8 +35,8 @@ public class Employee {
     @Column(name = "employment_type")
     private EmploymentType employmentType;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true)
-    private List<Participation> participations = new LinkedList<>();
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<EmployeeParticipation> participations = new LinkedList<>();
 
     @ManyToMany
     @JoinTable(

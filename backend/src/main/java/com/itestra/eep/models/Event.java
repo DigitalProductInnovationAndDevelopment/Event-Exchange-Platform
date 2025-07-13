@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -46,10 +44,14 @@ public class Event {
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id ASC")
-    private List<Participation> participations = new ArrayList<>();
+    private List<EmployeeParticipation> employeeParticipations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Visitor> visitors = new ArrayList<>();
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id ASC")
+    private List<VisitorParticipation> visitorParticipations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Chair> chairs = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
@@ -60,12 +62,11 @@ public class Event {
     }
 
     @Transient
-    public int getParticipantCount(Participation excludeCertainParticipation) {
-        return participations.stream()
-                .filter(p -> excludeCertainParticipation == null || !p.getId().equals(excludeCertainParticipation.getId()))
+    public int getParticipantCount(EmployeeParticipation excludeCertainEmployeeParticipation) {
+        return employeeParticipations.stream()
+                .filter(p -> excludeCertainEmployeeParticipation == null || !p.getId().equals(excludeCertainEmployeeParticipation.getId()))
                 .mapToInt(p -> p.getGuestCount() + 1)
                 .sum();
     }
 
 }
-

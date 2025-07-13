@@ -1,9 +1,9 @@
 package com.itestra.eep.mappers;
 
 import com.itestra.eep.dtos.ConstraintSolverDTO;
-import com.itestra.eep.dtos.ParticipationDetailsDTO;
+import com.itestra.eep.dtos.EmployeeParticipationDetailsDTO;
+import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
-import com.itestra.eep.models.Participation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -12,9 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
+import static com.itestra.eep.enums.Role.ADMIN;
+
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface ParticipationMapper {
+public interface EmployeeParticipationMapper {
 
     @Mappings({
             @Mapping(source = "employee.id", target = "profileId"),
@@ -25,33 +27,34 @@ public interface ParticipationMapper {
             @Mapping(source = "employee.location", target = "employeeLocation"),
             @Mapping(source = "employee.employmentType", target = "employeeEmploymentType"),
     })
-    ConstraintSolverDTO toConstraintSolverDTO(Participation participation);
+    ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipation employeeParticipation);
 
-    List<ConstraintSolverDTO> toConstraintSolverDTO(List<Participation> participations);
+    List<ConstraintSolverDTO> toConstraintSolverDTO(List<EmployeeParticipation> employeeParticipations);
 
 
-    default ParticipationDetailsDTO map(Participation participation) {
-        return this.map(List.of(participation)).get(0);
+    default EmployeeParticipationDetailsDTO map(EmployeeParticipation employeeParticipation) {
+        return this.map(List.of(employeeParticipation)).get(0);
     }
 
-    default List<ParticipationDetailsDTO> map(List<Participation> participations) {
+    default List<EmployeeParticipationDetailsDTO> map(List<EmployeeParticipation> employeeParticipations) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> "ADMIN".equals(a.getAuthority()));
 
-        if (!isAdmin || participations == null || participations.isEmpty()) {
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> ADMIN.name().equals(a.getAuthority()));
+
+        if (!isAdmin || employeeParticipations == null || employeeParticipations.isEmpty()) {
             return List.of();
         }
 
-        return participations.stream()
+        return employeeParticipations.stream()
                 .map(p -> {
                     Event e = p.getEvent();
-                    return ParticipationDetailsDTO.builder()
+                    return EmployeeParticipationDetailsDTO.builder()
                             .id(p.getId())
                             .employeeId(p.getEmployee().getId())
                             .eventId(e.getId())
                             .guestCount(p.getGuestCount())
-                            .confirmed(p.isConfirmed())
+                            .confirmed(p.getConfirmed())
                             .eventName(e.getName())
                             .eventType(e.getEventType())
                             .eventDate(e.getDate())

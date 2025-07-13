@@ -8,7 +8,7 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = ParticipationMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = EmployeeParticipationMapper.class)
 public interface EmployeeMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

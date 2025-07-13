@@ -6,6 +6,7 @@ import com.itestra.eep.enums.DietaryPreference;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.serializers.LocalDateTimeDeserializer;
 import com.itestra.eep.serializers.LocalDateTimeSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
@@ -15,7 +16,8 @@ import java.util.UUID;
 
 @Value
 @Builder
-public class ParticipationDetailsDTO implements Serializable {
+@AllArgsConstructor
+public class EmployeeParticipationDetailsDTO implements Serializable {
 
     UUID id;
 

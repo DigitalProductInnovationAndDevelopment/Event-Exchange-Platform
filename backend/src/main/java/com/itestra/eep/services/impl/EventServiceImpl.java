@@ -1,21 +1,20 @@
 package com.itestra.eep.services.impl;
 
+import com.itestra.eep.dtos.EmployeeParticipationUpsertDTO;
 import com.itestra.eep.dtos.EventCreateDTO;
 import com.itestra.eep.dtos.EventUpdateDTO;
-import com.itestra.eep.dtos.ParticipationUpsertDTO;
 import com.itestra.eep.exceptions.EmployeeNotFoundException;
 import com.itestra.eep.exceptions.EventCapacityExceededException;
 import com.itestra.eep.exceptions.EventNotFoundException;
 import com.itestra.eep.exceptions.ParticipationNotFoundException;
+import com.itestra.eep.factories.VisitorParticipationFactory;
 import com.itestra.eep.mappers.EventMapper;
-import com.itestra.eep.models.Employee;
-import com.itestra.eep.models.Event;
-import com.itestra.eep.models.Participation;
-import com.itestra.eep.models.Profile;
+import com.itestra.eep.models.*;
+import com.itestra.eep.repositories.EmployeeParticipationRepository;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
-import com.itestra.eep.repositories.ParticipationRepository;
 import com.itestra.eep.services.EventService;
+import com.itestra.eep.validators.EventCapacityValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -24,10 +23,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static com.itestra.eep.enums.Role.VISITOR;
 
@@ -40,8 +36,10 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final EmployeeRepository employeeRepository;
-    private final ParticipationRepository participationRepository;
+    private final EmployeeParticipationRepository employeeParticipationRepository;
     private final EventMapper eventMapper;
+    private final EventCapacityValidator eventCapacityValidator;
+    private final VisitorParticipationFactory visitorParticipationFactory;
 
     @Override
     public Event findById(UUID id) {
@@ -53,7 +51,7 @@ public class EventServiceImpl implements EventService {
         if (Objects.isNull(authentication)) {
             return new ArrayList<>();
         } else if (authentication.getAuthorities().contains(VISITOR)) {
-            return eventRepository.findByParticipations_Employee_Id(((Profile) authentication.getPrincipal()).getId());
+            return eventRepository.findByVisitorParticipations_Profile_Id(((Profile) authentication.getPrincipal()).getId());
         } else {
             return eventRepository.findAll();
         }
@@ -83,78 +81,84 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Participation addParticipant(UUID eventId, ParticipationUpsertDTO dto) {
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public EmployeeParticipation addParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 
         Employee employee = employeeRepository.findById(dto.getEmployeeId())
                 .orElseThrow(EmployeeNotFoundException::new);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(EventNotFoundException::new);
 
-        validateCapacity(event, dto.getGuestCount(), null);
+        eventCapacityValidator.validateCapacity(event, dto.getGuestCount(), null);
 
-        Participation participation = new Participation(null, dto.getGuestCount(), true, employee, event, null);
+        EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
 
-        return participationRepository.save(participation);
+        handleVisitorProfilesForGuests(employeeParticipation, dto.getGuestCount());
+
+        return employeeParticipationRepository.save(employeeParticipation);
+
     }
 
     @Override
-    public Participation updateParticipant(UUID eventId, ParticipationUpsertDTO dto) {
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public EmployeeParticipation updateParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 
-        Participation participation = participationRepository
+        EmployeeParticipation employeeParticipation = employeeParticipationRepository
                 .findByEmployee_IdAndEvent_Id(dto.getEmployeeId(), eventId)
                 .orElseThrow(ParticipationNotFoundException::new);
 
-        validateCapacity(participation.getEvent(), dto.getGuestCount(), participation);
+        eventCapacityValidator.validateCapacity(employeeParticipation.getEvent(), dto.getGuestCount(), employeeParticipation);
 
-        participation.setGuestCount(dto.getGuestCount());
+        handleVisitorProfilesForGuests(employeeParticipation, dto.getGuestCount());
 
-        return participationRepository.save(participation);
+        return employeeParticipationRepository.save(employeeParticipation);
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public List<EmployeeParticipation> addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos) {
+        List<EmployeeParticipation> participationsToCreate = new java.util.ArrayList<>();
+
+        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+
+        for (EmployeeParticipationUpsertDTO dto : dtos) {
+            Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElseThrow(EmployeeNotFoundException::new);
+
+            EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
+
+            handleVisitorProfilesForGuests(employeeParticipation, dto.getGuestCount());
+
+            participationsToCreate.add(employeeParticipation);
+
+        }
+
+        eventCapacityValidator.validateBatchCapacity(event, participationsToCreate);
+
+        return employeeParticipationRepository.saveAll(participationsToCreate);
     }
 
     @Override
     public void deleteParticipant(UUID participationId) {
-        participationRepository.deleteById(participationId);
-    }
-
-    @Override
-    public List<Participation> addParticipantsBatch(UUID eventId, List<ParticipationUpsertDTO> dtos) {
-        List<Participation> participationsToCreate = new java.util.ArrayList<>();
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(EventNotFoundException::new);
-
-        int initialParticipantCount = event.getParticipantCount(null);
-        int finalParticipantCount = initialParticipantCount;
-
-        for (ParticipationUpsertDTO dto : dtos) {
-            Employee employee = employeeRepository.findById(dto.getEmployeeId())
-                    .orElseThrow(EmployeeNotFoundException::new);
-            Participation participation = new Participation(null, dto.getGuestCount(), true, employee, event, null);
-            participationsToCreate.add(participation);
-            finalParticipantCount += dto.getGuestCount() + 1;
-        }
-
-        if (event.getCapacity() < finalParticipantCount) {
-            throw new EventCapacityExceededException(event.getCapacity() - initialParticipantCount);
-        }
-
-        return participationRepository.saveAll(participationsToCreate);
-    }
-
-    private void validateCapacity(Event event, int guestCount, Participation excludeParticipation) {
-
-        int currentTotal = event.getParticipantCount(excludeParticipation);
-
-        int newTotal = currentTotal + guestCount + 1;
-
-        if (newTotal > event.getCapacity()) {
-            int available = event.getCapacity() - currentTotal;
-            int excludedCount = excludeParticipation != null ? excludeParticipation.getGuestCount() + 1 : 0;
-            throw new EventCapacityExceededException(available - excludedCount);
-        }
+        employeeParticipationRepository.deleteById(participationId);
     }
 
     @Override
     public boolean isParticipant(UUID eventId, UUID userId) {
-        return eventRepository.existsByIdAndParticipations_Employee_Id(eventId, userId);
+        return eventRepository.existsByIdAndEmployeeParticipations_Employee_Id(eventId, userId);
     }
+
+    private void handleVisitorProfilesForGuests(EmployeeParticipation participation, int newGuestCount) {
+        int currentGuestCount = participation.getGuestCount();
+        participation.setGuestCount(newGuestCount);
+
+        Set<VisitorParticipation> visitors = participation.getVisitorParticipations();
+
+        if (newGuestCount > currentGuestCount) {
+            visitorParticipationFactory.addVisitorParticipations(participation, visitors, currentGuestCount, newGuestCount);
+        } else if (newGuestCount < currentGuestCount) {
+            visitorParticipationFactory.removeVisitorParticipations(visitors, currentGuestCount - newGuestCount);
+        }
+    }
+
+
 }

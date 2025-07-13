@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Value
-public class ParticipationUpsertDTO implements Serializable {
+public class EmployeeParticipationUpsertDTO implements Serializable {
 
     int guestCount;
 

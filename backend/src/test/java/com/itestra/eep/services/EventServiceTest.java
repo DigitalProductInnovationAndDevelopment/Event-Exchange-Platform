@@ -1,10 +1,10 @@
 package com.itestra.eep.services;
 
-import com.itestra.eep.dtos.ParticipationUpsertDTO;
+import com.itestra.eep.dtos.EmployeeParticipationUpsertDTO;
 import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.Employee;
+import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
-import com.itestra.eep.models.Participation;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.utils.RandomEntityGenerator;
@@ -73,13 +73,13 @@ class EventServiceTest {
         event = eventRepository.save(event);
         int guestCount = 1;
 
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId());
-        Participation participation = eventService.addParticipant(event.getId(), dto);
+        EmployeeParticipationUpsertDTO dto = new EmployeeParticipationUpsertDTO(guestCount, employee.getId());
+        EmployeeParticipation employeeParticipation = eventService.addParticipant(event.getId(), dto);
 
-        assertNotNull(participation);
-        assertEquals(employee.getId(), participation.getEmployee().getId());
-        assertEquals(event.getId(), participation.getEvent().getId());
-        assertEquals(guestCount, participation.getGuestCount());
+        assertNotNull(employeeParticipation);
+        assertEquals(employee.getId(), employeeParticipation.getEmployee().getId());
+        assertEquals(event.getId(), employeeParticipation.getEvent().getId());
+        assertEquals(guestCount, employeeParticipation.getGuestCount());
     }
 
     @Test
@@ -93,7 +93,7 @@ class EventServiceTest {
         event = eventRepository.save(event);
         int guestCount = 10;
         final UUID eventId = event.getId();
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId());
+        EmployeeParticipationUpsertDTO dto = new EmployeeParticipationUpsertDTO(guestCount, employee.getId());
         assertThrows(com.itestra.eep.exceptions.EventCapacityExceededException.class, () -> eventService.addParticipant(eventId, dto));
     }
 

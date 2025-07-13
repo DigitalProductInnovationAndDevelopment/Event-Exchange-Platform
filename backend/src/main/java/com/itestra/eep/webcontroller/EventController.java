@@ -1,11 +1,10 @@
 package com.itestra.eep.webcontroller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itestra.eep.dtos.*;
+import com.itestra.eep.mappers.EmployeeParticipationMapper;
 import com.itestra.eep.mappers.EventMapper;
-import com.itestra.eep.mappers.ParticipationMapper;
+import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
-import com.itestra.eep.models.Participation;
 import com.itestra.eep.services.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +30,7 @@ public class EventController {
 
     private final EventService eventService;
     private final EventMapper eventMapper;
-    private final ParticipationMapper participationMapper;
+    private final EmployeeParticipationMapper employeeParticipationMapper;
 
     @GetMapping("/{eventId}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE') or " +
@@ -55,103 +47,11 @@ public class EventController {
         return new ResponseEntity<>(eventMapper.toDetailsDto(events), HttpStatus.OK);
     }
 
-    @GetMapping("/{eventId}/participants")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<List<ParticipationDetailsDTO>> getEventParticipants(@PathVariable UUID eventId) {
-        Event event = eventService.findById(eventId);
-        return new ResponseEntity<>(participationMapper.map(event.getParticipations()), HttpStatus.OK);
-    }
-
-    @PostMapping("/{eventId}/participants")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ParticipationDetailsDTO> addEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid ParticipationUpsertDTO dto) {
-        Participation participation = eventService.addParticipant(eventId, dto);
-        return new ResponseEntity<>(participationMapper.map(participation), HttpStatus.OK);
-    }
-
-    @PostMapping("/{eventId}/participants/batch")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<List<ParticipationDetailsDTO>> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<ParticipationUpsertDTO> dtos) {
-        List<Participation> participations = eventService.addParticipantsBatch(eventId, dtos);
-        return new ResponseEntity<>(participationMapper.map(participations), HttpStatus.OK);
-    }
-
-    @PutMapping("/{eventId}/participants")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ParticipationDetailsDTO> updateEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid ParticipationUpsertDTO dto) {
-        Participation participation = eventService.updateParticipant(eventId, dto);
-        return new ResponseEntity<>(participationMapper.map(participation), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/participants/{participationId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<Boolean> deleteEventParticipant(@PathVariable UUID participationId) {
-        eventService.deleteParticipant(participationId);
-        return ResponseEntity.ok(true);
-    }
-
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EventCreateDTO> createEvent(@RequestBody @Valid EventCreateDTO eventCreateDTO) {
         Event event = eventService.create(eventCreateDTO);
         return new ResponseEntity<>(eventMapper.toCreateDto(event), HttpStatus.OK);
-    }
-
-    @GetMapping("/assign/{eventId}")
-    //@PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Boolean> assignTables(@PathVariable UUID eventId, OutputStream outputStream) throws IOException, InterruptedException {
-        Event event = eventService.findById(eventId);
-        List<Participation> participations = event.getParticipations();
-        List<ConstraintSolverDTO> formattedData = participationMapper.toConstraintSolverDTO(participations);
-
-        // we create input and output temp files
-        Path tempInputFile = Files.createTempFile("input", ".json");
-        Path tempTableFile = Files.createTempFile("table", ".json");
-        Path tempConstraintsFile = Files.createTempFile("constraints", ".json");
-        Path tempOutputFile = Files.createTempFile("output", ".json");
-
-        // we serialize Java objects to JSON and write to input file so that our python script can read them.
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writeValueAsString(formattedData);
-        Files.write(tempInputFile, jsonString.getBytes(StandardCharsets.UTF_8));
-        Files.write(tempTableFile, "[{\"table_id\": 1,\"Anzahl\": 6},{\"table_id\": 2,\"Anzahl\": 6},{\"table_id\": 3,\"Anzahl\": 6}]".getBytes(StandardCharsets.UTF_8));
-        Files.write(tempConstraintsFile, "{\"Standort\": 1, \"Projekt\": 1, \"Anstellung\": 1, \"Geschlecht\": 0, \"last neighborhood\": 3}".getBytes(StandardCharsets.UTF_8));
-
-        ProcessBuilder pb = new ProcessBuilder(
-                "../venv/bin/python",
-                "algo(table).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
-        );
-
-        // we set the working directory to where algo.py is located
-        pb.directory(new File("."));
-        pb.redirectErrorStream(true);
-
-        Process process = pb.start();
-
-        // Read script output
-        /*BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            log.info(line);
-        }*/
-
-        int exitCode = process.waitFor();
-        log.info("Exited with code: {}", exitCode);
-
-        BufferedReader fileReader = Files.newBufferedReader(tempOutputFile);
-        String line;
-        while ((line = fileReader.readLine()) != null) {
-            log.info(line);
-        }
-
-
-        // delete temp files
-        Files.deleteIfExists(tempInputFile);
-        Files.deleteIfExists(tempTableFile);
-        Files.deleteIfExists(tempConstraintsFile);
-        Files.deleteIfExists(tempOutputFile);
-
-        return ResponseEntity.ok(true);
     }
 
     @PutMapping("/{id}")
@@ -168,5 +68,39 @@ public class EventController {
         return ResponseEntity.ok(true);
     }
 
+    @GetMapping("/{eventId}/participants")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<List<EmployeeParticipationDetailsDTO>> getEventParticipants(@PathVariable UUID eventId) {
+        Event event = eventService.findById(eventId);
+        return new ResponseEntity<>(employeeParticipationMapper.map(event.getEmployeeParticipations()), HttpStatus.OK);
+    }
+
+    @PostMapping("/{eventId}/participants")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<EmployeeParticipationDetailsDTO> addEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid EmployeeParticipationUpsertDTO dto) {
+        EmployeeParticipation employeeParticipation = eventService.addParticipant(eventId, dto);
+        return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipation), HttpStatus.OK);
+    }
+
+    @PostMapping("/{eventId}/participants/batch")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<List<EmployeeParticipationDetailsDTO>> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<EmployeeParticipationUpsertDTO> dtos) {
+        List<EmployeeParticipation> employeeParticipations = eventService.addParticipantsBatch(eventId, dtos);
+        return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipations), HttpStatus.OK);
+    }
+
+    @PutMapping("/{eventId}/participants")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<EmployeeParticipationDetailsDTO> updateEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid EmployeeParticipationUpsertDTO dto) {
+        EmployeeParticipation employeeParticipation = eventService.updateParticipant(eventId, dto);
+        return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipation), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/participants/{participationId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<Boolean> deleteEventParticipant(@PathVariable UUID participationId) {
+        eventService.deleteParticipant(participationId);
+        return ResponseEntity.ok(true);
+    }
 
 }

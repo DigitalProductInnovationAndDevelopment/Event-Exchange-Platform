@@ -1,10 +1,10 @@
 package com.itestra.eep.services;
 
+import com.itestra.eep.dtos.EmployeeParticipationUpsertDTO;
 import com.itestra.eep.dtos.EventCreateDTO;
 import com.itestra.eep.dtos.EventUpdateDTO;
-import com.itestra.eep.dtos.ParticipationUpsertDTO;
+import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
-import com.itestra.eep.models.Participation;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -22,13 +22,13 @@ public interface EventService {
 
     void delete(UUID id);
 
-    Participation addParticipant(UUID eventId, ParticipationUpsertDTO dto);
+    EmployeeParticipation addParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto);
 
-    Participation updateParticipant(UUID eventId, ParticipationUpsertDTO dto);
+    EmployeeParticipation updateParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto);
 
     void deleteParticipant(UUID participationId);
 
-    List<Participation> addParticipantsBatch(UUID eventId, List<ParticipationUpsertDTO> dtos);
+    List<EmployeeParticipation> addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos);
 
     boolean isParticipant(UUID eventId, UUID userId);
 
