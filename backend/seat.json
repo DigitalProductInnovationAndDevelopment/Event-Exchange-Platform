@@ -1,0 +1,1515 @@
+[
+  {
+    "chair_id": 1,
+    "neighbor_list": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "chair_id": 2,
+    "neighbor_list": [
+      1,
+      3,
+      4,
+      6
+    ]
+  },
+  {
+    "chair_id": 3,
+    "neighbor_list": [
+      1,
+      2,
+      5,
+      6
+    ]
+  },
+  {
+    "chair_id": 4,
+    "neighbor_list": [
+      1,
+      2,
+      5,
+      6
+    ]
+  },
+  {
+    "chair_id": 5,
+    "neighbor_list": [
+      1,
+      3,
+      4,
+      6
+    ]
+  },
+  {
+    "chair_id": 6,
+    "neighbor_list": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "chair_id": 7,
+    "neighbor_list": [
+      8,
+      11,
+      15,
+      16
+    ]
+  },
+  {
+    "chair_id": 8,
+    "neighbor_list": [
+      7,
+      9,
+      10,
+      12
+    ]
+  },
+  {
+    "chair_id": 9,
+    "neighbor_list": [
+      8,
+      10,
+      13,
+      14
+    ]
+  },
+  {
+    "chair_id": 10,
+    "neighbor_list": [
+      8,
+      9,
+      15,
+      16
+    ]
+  },
+  {
+    "chair_id": 11,
+    "neighbor_list": [
+      7,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "chair_id": 12,
+    "neighbor_list": [
+      8,
+      11,
+      13,
+      15
+    ]
+  },
+  {
+    "chair_id": 13,
+    "neighbor_list": [
+      9,
+      11,
+      12,
+      16
+    ]
+  },
+  {
+    "chair_id": 14,
+    "neighbor_list": [
+      9,
+      11,
+      15,
+      16
+    ]
+  },
+  {
+    "chair_id": 15,
+    "neighbor_list": [
+      7,
+      10,
+      12,
+      14
+    ]
+  },
+  {
+    "chair_id": 16,
+    "neighbor_list": [
+      7,
+      10,
+      13,
+      14
+    ]
+  },
+  {
+    "chair_id": 17,
+    "neighbor_list": [
+      18,
+      21,
+      23,
+      26
+    ]
+  },
+  {
+    "chair_id": 18,
+    "neighbor_list": [
+      17,
+      19,
+      20,
+      24
+    ]
+  },
+  {
+    "chair_id": 19,
+    "neighbor_list": [
+      18,
+      20,
+      22,
+      25
+    ]
+  },
+  {
+    "chair_id": 20,
+    "neighbor_list": [
+      18,
+      19,
+      23,
+      26
+    ]
+  },
+  {
+    "chair_id": 21,
+    "neighbor_list": [
+      17,
+      22,
+      24,
+      25
+    ]
+  },
+  {
+    "chair_id": 22,
+    "neighbor_list": [
+      19,
+      21,
+      23,
+      24
+    ]
+  },
+  {
+    "chair_id": 23,
+    "neighbor_list": [
+      17,
+      20,
+      22,
+      25
+    ]
+  },
+  {
+    "chair_id": 24,
+    "neighbor_list": [
+      18,
+      21,
+      22,
+      26
+    ]
+  },
+  {
+    "chair_id": 25,
+    "neighbor_list": [
+      19,
+      21,
+      23,
+      26
+    ]
+  },
+  {
+    "chair_id": 26,
+    "neighbor_list": [
+      17,
+      20,
+      24,
+      25
+    ]
+  },
+  {
+    "chair_id": 27,
+    "neighbor_list": [
+      28,
+      31,
+      32,
+      33
+    ]
+  },
+  {
+    "chair_id": 28,
+    "neighbor_list": [
+      27,
+      29,
+      30,
+      32
+    ]
+  },
+  {
+    "chair_id": 29,
+    "neighbor_list": [
+      28,
+      30,
+      31,
+      33
+    ]
+  },
+  {
+    "chair_id": 30,
+    "neighbor_list": [
+      28,
+      29,
+      31,
+      32
+    ]
+  },
+  {
+    "chair_id": 31,
+    "neighbor_list": [
+      27,
+      29,
+      30,
+      33
+    ]
+  },
+  {
+    "chair_id": 32,
+    "neighbor_list": [
+      27,
+      28,
+      30,
+      33
+    ]
+  },
+  {
+    "chair_id": 33,
+    "neighbor_list": [
+      27,
+      29,
+      31,
+      32
+    ]
+  },
+  {
+    "chair_id": 34,
+    "neighbor_list": [
+      35,
+      36,
+      37,
+      38
+    ]
+  },
+  {
+    "chair_id": 35,
+    "neighbor_list": [
+      34,
+      36,
+      37,
+      39
+    ]
+  },
+  {
+    "chair_id": 36,
+    "neighbor_list": [
+      34,
+      35,
+      38,
+      39
+    ]
+  },
+  {
+    "chair_id": 37,
+    "neighbor_list": [
+      34,
+      35,
+      38,
+      39
+    ]
+  },
+  {
+    "chair_id": 38,
+    "neighbor_list": [
+      34,
+      36,
+      37,
+      39
+    ]
+  },
+  {
+    "chair_id": 39,
+    "neighbor_list": [
+      35,
+      36,
+      37,
+      38
+    ]
+  },
+  {
+    "chair_id": 40,
+    "neighbor_list": [
+      41,
+      42,
+      43,
+      44
+    ]
+  },
+  {
+    "chair_id": 41,
+    "neighbor_list": [
+      40,
+      42,
+      43,
+      45
+    ]
+  },
+  {
+    "chair_id": 42,
+    "neighbor_list": [
+      40,
+      41,
+      44,
+      45
+    ]
+  },
+  {
+    "chair_id": 43,
+    "neighbor_list": [
+      40,
+      41,
+      44,
+      45
+    ]
+  },
+  {
+    "chair_id": 44,
+    "neighbor_list": [
+      40,
+      42,
+      43,
+      45
+    ]
+  },
+  {
+    "chair_id": 45,
+    "neighbor_list": [
+      41,
+      42,
+      43,
+      44
+    ]
+  },
+  {
+    "chair_id": 46,
+    "neighbor_list": [
+      47,
+      48,
+      49,
+      51
+    ]
+  },
+  {
+    "chair_id": 47,
+    "neighbor_list": [
+      46,
+      48,
+      50,
+      51
+    ]
+  },
+  {
+    "chair_id": 48,
+    "neighbor_list": [
+      46,
+      47,
+      49,
+      50
+    ]
+  },
+  {
+    "chair_id": 49,
+    "neighbor_list": [
+      46,
+      48,
+      50,
+      51
+    ]
+  },
+  {
+    "chair_id": 50,
+    "neighbor_list": [
+      47,
+      48,
+      49,
+      51
+    ]
+  },
+  {
+    "chair_id": 51,
+    "neighbor_list": [
+      46,
+      47,
+      49,
+      50
+    ]
+  },
+  {
+    "chair_id": 52,
+    "neighbor_list": [
+      53,
+      54,
+      56,
+      57
+    ]
+  },
+  {
+    "chair_id": 53,
+    "neighbor_list": [
+      52,
+      54,
+      55,
+      56
+    ]
+  },
+  {
+    "chair_id": 54,
+    "neighbor_list": [
+      52,
+      53,
+      55,
+      57
+    ]
+  },
+  {
+    "chair_id": 55,
+    "neighbor_list": [
+      53,
+      54,
+      56,
+      57
+    ]
+  },
+  {
+    "chair_id": 56,
+    "neighbor_list": [
+      52,
+      53,
+      55,
+      57
+    ]
+  },
+  {
+    "chair_id": 57,
+    "neighbor_list": [
+      52,
+      54,
+      55,
+      56
+    ]
+  },
+  {
+    "chair_id": 58,
+    "neighbor_list": [
+      59,
+      60,
+      61,
+      62
+    ]
+  },
+  {
+    "chair_id": 59,
+    "neighbor_list": [
+      58,
+      60,
+      61,
+      63
+    ]
+  },
+  {
+    "chair_id": 60,
+    "neighbor_list": [
+      58,
+      59,
+      62,
+      63
+    ]
+  },
+  {
+    "chair_id": 61,
+    "neighbor_list": [
+      58,
+      59,
+      62,
+      63
+    ]
+  },
+  {
+    "chair_id": 62,
+    "neighbor_list": [
+      58,
+      60,
+      61,
+      63
+    ]
+  },
+  {
+    "chair_id": 63,
+    "neighbor_list": [
+      59,
+      60,
+      61,
+      62
+    ]
+  },
+  {
+    "chair_id": 64,
+    "neighbor_list": [
+      65,
+      66,
+      67,
+      68
+    ]
+  },
+  {
+    "chair_id": 65,
+    "neighbor_list": [
+      64,
+      66,
+      67,
+      69
+    ]
+  },
+  {
+    "chair_id": 66,
+    "neighbor_list": [
+      64,
+      65,
+      68,
+      69
+    ]
+  },
+  {
+    "chair_id": 67,
+    "neighbor_list": [
+      64,
+      65,
+      68,
+      69
+    ]
+  },
+  {
+    "chair_id": 68,
+    "neighbor_list": [
+      64,
+      66,
+      67,
+      69
+    ]
+  },
+  {
+    "chair_id": 69,
+    "neighbor_list": [
+      65,
+      66,
+      67,
+      68
+    ]
+  },
+  {
+    "chair_id": 70,
+    "neighbor_list": [
+      71,
+      72,
+      73,
+      74
+    ]
+  },
+  {
+    "chair_id": 71,
+    "neighbor_list": [
+      70,
+      72,
+      73,
+      75
+    ]
+  },
+  {
+    "chair_id": 72,
+    "neighbor_list": [
+      70,
+      71,
+      74,
+      75
+    ]
+  },
+  {
+    "chair_id": 73,
+    "neighbor_list": [
+      70,
+      71,
+      74,
+      75
+    ]
+  },
+  {
+    "chair_id": 74,
+    "neighbor_list": [
+      70,
+      72,
+      73,
+      75
+    ]
+  },
+  {
+    "chair_id": 75,
+    "neighbor_list": [
+      71,
+      72,
+      73,
+      74
+    ]
+  },
+  {
+    "chair_id": 76,
+    "neighbor_list": [
+      77,
+      78,
+      79,
+      80
+    ]
+  },
+  {
+    "chair_id": 77,
+    "neighbor_list": [
+      76,
+      78,
+      79,
+      81
+    ]
+  },
+  {
+    "chair_id": 78,
+    "neighbor_list": [
+      76,
+      77,
+      80,
+      81
+    ]
+  },
+  {
+    "chair_id": 79,
+    "neighbor_list": [
+      76,
+      77,
+      80,
+      81
+    ]
+  },
+  {
+    "chair_id": 80,
+    "neighbor_list": [
+      76,
+      78,
+      79,
+      81
+    ]
+  },
+  {
+    "chair_id": 81,
+    "neighbor_list": [
+      77,
+      78,
+      79,
+      80
+    ]
+  },
+  {
+    "chair_id": 82,
+    "neighbor_list": [
+      83,
+      84,
+      85,
+      86
+    ]
+  },
+  {
+    "chair_id": 83,
+    "neighbor_list": [
+      82,
+      84,
+      85,
+      87
+    ]
+  },
+  {
+    "chair_id": 84,
+    "neighbor_list": [
+      82,
+      83,
+      86,
+      87
+    ]
+  },
+  {
+    "chair_id": 85,
+    "neighbor_list": [
+      82,
+      83,
+      86,
+      87
+    ]
+  },
+  {
+    "chair_id": 86,
+    "neighbor_list": [
+      82,
+      84,
+      85,
+      87
+    ]
+  },
+  {
+    "chair_id": 87,
+    "neighbor_list": [
+      83,
+      84,
+      85,
+      86
+    ]
+  },
+  {
+    "chair_id": 88,
+    "neighbor_list": [
+      89,
+      90,
+      91,
+      92
+    ]
+  },
+  {
+    "chair_id": 89,
+    "neighbor_list": [
+      88,
+      90,
+      91,
+      93
+    ]
+  },
+  {
+    "chair_id": 90,
+    "neighbor_list": [
+      88,
+      89,
+      92,
+      93
+    ]
+  },
+  {
+    "chair_id": 91,
+    "neighbor_list": [
+      88,
+      89,
+      92,
+      93
+    ]
+  },
+  {
+    "chair_id": 92,
+    "neighbor_list": [
+      88,
+      90,
+      91,
+      93
+    ]
+  },
+  {
+    "chair_id": 93,
+    "neighbor_list": [
+      89,
+      90,
+      91,
+      92
+    ]
+  },
+  {
+    "chair_id": 94,
+    "neighbor_list": [
+      95,
+      96,
+      97,
+      98
+    ]
+  },
+  {
+    "chair_id": 95,
+    "neighbor_list": [
+      94,
+      96,
+      97,
+      99
+    ]
+  },
+  {
+    "chair_id": 96,
+    "neighbor_list": [
+      94,
+      95,
+      98,
+      99
+    ]
+  },
+  {
+    "chair_id": 97,
+    "neighbor_list": [
+      94,
+      95,
+      98,
+      99
+    ]
+  },
+  {
+    "chair_id": 98,
+    "neighbor_list": [
+      94,
+      96,
+      97,
+      99
+    ]
+  },
+  {
+    "chair_id": 99,
+    "neighbor_list": [
+      95,
+      96,
+      97,
+      98
+    ]
+  },
+  {
+    "chair_id": 100,
+    "neighbor_list": [
+      101,
+      103,
+      104,
+      111
+    ]
+  },
+  {
+    "chair_id": 101,
+    "neighbor_list": [
+      100,
+      102,
+      105,
+      106
+    ]
+  },
+  {
+    "chair_id": 102,
+    "neighbor_list": [
+      101,
+      103,
+      107,
+      108
+    ]
+  },
+  {
+    "chair_id": 103,
+    "neighbor_list": [
+      100,
+      102,
+      109,
+      110
+    ]
+  },
+  {
+    "chair_id": 104,
+    "neighbor_list": [
+      100,
+      105,
+      107,
+      111
+    ]
+  },
+  {
+    "chair_id": 105,
+    "neighbor_list": [
+      101,
+      104,
+      106,
+      108
+    ]
+  },
+  {
+    "chair_id": 106,
+    "neighbor_list": [
+      101,
+      105,
+      109,
+      110
+    ]
+  },
+  {
+    "chair_id": 107,
+    "neighbor_list": [
+      102,
+      104,
+      108,
+      111
+    ]
+  },
+  {
+    "chair_id": 108,
+    "neighbor_list": [
+      102,
+      105,
+      107,
+      109
+    ]
+  },
+  {
+    "chair_id": 109,
+    "neighbor_list": [
+      103,
+      106,
+      108,
+      110
+    ]
+  },
+  {
+    "chair_id": 110,
+    "neighbor_list": [
+      103,
+      106,
+      109,
+      111
+    ]
+  },
+  {
+    "chair_id": 111,
+    "neighbor_list": [
+      100,
+      104,
+      107,
+      110
+    ]
+  },
+  {
+    "chair_id": 112,
+    "neighbor_list": [
+      113,
+      114,
+      115
+    ]
+  },
+  {
+    "chair_id": 113,
+    "neighbor_list": [
+      112,
+      114,
+      115
+    ]
+  },
+  {
+    "chair_id": 114,
+    "neighbor_list": [
+      112,
+      113,
+      115
+    ]
+  },
+  {
+    "chair_id": 115,
+    "neighbor_list": [
+      112,
+      113,
+      114
+    ]
+  },
+  {
+    "chair_id": 116,
+    "neighbor_list": [
+      117,
+      118,
+      119
+    ]
+  },
+  {
+    "chair_id": 117,
+    "neighbor_list": [
+      116,
+      118,
+      119
+    ]
+  },
+  {
+    "chair_id": 118,
+    "neighbor_list": [
+      116,
+      117,
+      119
+    ]
+  },
+  {
+    "chair_id": 119,
+    "neighbor_list": [
+      116,
+      117,
+      118
+    ]
+  },
+  {
+    "chair_id": 120,
+    "neighbor_list": [
+      121,
+      122,
+      123
+    ]
+  },
+  {
+    "chair_id": 121,
+    "neighbor_list": [
+      120,
+      122,
+      123
+    ]
+  },
+  {
+    "chair_id": 122,
+    "neighbor_list": [
+      120,
+      121,
+      123
+    ]
+  },
+  {
+    "chair_id": 123,
+    "neighbor_list": [
+      120,
+      121,
+      122
+    ]
+  },
+  {
+    "chair_id": 124,
+    "neighbor_list": [
+      125,
+      126,
+      127
+    ]
+  },
+  {
+    "chair_id": 125,
+    "neighbor_list": [
+      124,
+      126,
+      127
+    ]
+  },
+  {
+    "chair_id": 126,
+    "neighbor_list": [
+      124,
+      125,
+      127
+    ]
+  },
+  {
+    "chair_id": 127,
+    "neighbor_list": [
+      124,
+      125,
+      126
+    ]
+  },
+  {
+    "chair_id": 128,
+    "neighbor_list": [
+      129,
+      130,
+      131
+    ]
+  },
+  {
+    "chair_id": 129,
+    "neighbor_list": [
+      128,
+      130,
+      131
+    ]
+  },
+  {
+    "chair_id": 130,
+    "neighbor_list": [
+      128,
+      129,
+      131
+    ]
+  },
+  {
+    "chair_id": 131,
+    "neighbor_list": [
+      128,
+      129,
+      130
+    ]
+  },
+  {
+    "chair_id": 132,
+    "neighbor_list": [
+      133,
+      134,
+      135
+    ]
+  },
+  {
+    "chair_id": 133,
+    "neighbor_list": [
+      132,
+      134,
+      135
+    ]
+  },
+  {
+    "chair_id": 134,
+    "neighbor_list": [
+      132,
+      133,
+      135
+    ]
+  },
+  {
+    "chair_id": 135,
+    "neighbor_list": [
+      132,
+      133,
+      134
+    ]
+  },
+  {
+    "chair_id": 136,
+    "neighbor_list": [
+      137,
+      138,
+      139
+    ]
+  },
+  {
+    "chair_id": 137,
+    "neighbor_list": [
+      136,
+      138,
+      139
+    ]
+  },
+  {
+    "chair_id": 138,
+    "neighbor_list": [
+      136,
+      137,
+      139
+    ]
+  },
+  {
+    "chair_id": 139,
+    "neighbor_list": [
+      136,
+      137,
+      138
+    ]
+  },
+  {
+    "chair_id": 140,
+    "neighbor_list": [
+      141,
+      142,
+      143
+    ]
+  },
+  {
+    "chair_id": 141,
+    "neighbor_list": [
+      140,
+      142,
+      143
+    ]
+  },
+  {
+    "chair_id": 142,
+    "neighbor_list": [
+      140,
+      141,
+      143
+    ]
+  },
+  {
+    "chair_id": 143,
+    "neighbor_list": [
+      140,
+      141,
+      142
+    ]
+  },
+  {
+    "chair_id": 144,
+    "neighbor_list": [
+      145,
+      146,
+      147
+    ]
+  },
+  {
+    "chair_id": 145,
+    "neighbor_list": [
+      144,
+      146,
+      147
+    ]
+  },
+  {
+    "chair_id": 146,
+    "neighbor_list": [
+      144,
+      145,
+      147
+    ]
+  },
+  {
+    "chair_id": 147,
+    "neighbor_list": [
+      144,
+      145,
+      146
+    ]
+  },
+  {
+    "chair_id": 148,
+    "neighbor_list": [
+      149,
+      150,
+      151
+    ]
+  },
+  {
+    "chair_id": 149,
+    "neighbor_list": [
+      148,
+      150,
+      151
+    ]
+  },
+  {
+    "chair_id": 150,
+    "neighbor_list": [
+      148,
+      149,
+      151
+    ]
+  },
+  {
+    "chair_id": 151,
+    "neighbor_list": [
+      148,
+      149,
+      150
+    ]
+  },
+  {
+    "chair_id": 152,
+    "neighbor_list": [
+      153,
+      154,
+      155
+    ]
+  },
+  {
+    "chair_id": 153,
+    "neighbor_list": [
+      152,
+      154,
+      155
+    ]
+  },
+  {
+    "chair_id": 154,
+    "neighbor_list": [
+      152,
+      153,
+      155
+    ]
+  },
+  {
+    "chair_id": 155,
+    "neighbor_list": [
+      152,
+      153,
+      154
+    ]
+  },
+  {
+    "chair_id": 156,
+    "neighbor_list": [
+      157,
+      159,
+      161,
+      163
+    ]
+  },
+  {
+    "chair_id": 157,
+    "neighbor_list": [
+      156,
+      158,
+      159,
+      160
+    ]
+  },
+  {
+    "chair_id": 158,
+    "neighbor_list": [
+      157,
+      160,
+      161,
+      162
+    ]
+  },
+  {
+    "chair_id": 159,
+    "neighbor_list": [
+      156,
+      157,
+      162,
+      163
+    ]
+  },
+  {
+    "chair_id": 160,
+    "neighbor_list": [
+      157,
+      158,
+      161,
+      163
+    ]
+  },
+  {
+    "chair_id": 161,
+    "neighbor_list": [
+      156,
+      158,
+      160,
+      162
+    ]
+  },
+  {
+    "chair_id": 162,
+    "neighbor_list": [
+      158,
+      159,
+      161,
+      163
+    ]
+  },
+  {
+    "chair_id": 163,
+    "neighbor_list": [
+      156,
+      159,
+      160,
+      162
+    ]
+  },
+  {
+    "chair_id": 164,
+    "neighbor_list": [
+      165,
+      168,
+      172,
+      173
+    ]
+  },
+  {
+    "chair_id": 165,
+    "neighbor_list": [
+      164,
+      166,
+      167,
+      169
+    ]
+  },
+  {
+    "chair_id": 166,
+    "neighbor_list": [
+      165,
+      167,
+      170,
+      171
+    ]
+  },
+  {
+    "chair_id": 167,
+    "neighbor_list": [
+      165,
+      166,
+      168,
+      172
+    ]
+  },
+  {
+    "chair_id": 168,
+    "neighbor_list": [
+      164,
+      167,
+      169,
+      170
+    ]
+  },
+  {
+    "chair_id": 169,
+    "neighbor_list": [
+      165,
+      168,
+      171,
+      173
+    ]
+  },
+  {
+    "chair_id": 170,
+    "neighbor_list": [
+      166,
+      168,
+      171,
+      172
+    ]
+  },
+  {
+    "chair_id": 171,
+    "neighbor_list": [
+      166,
+      169,
+      170,
+      173
+    ]
+  },
+  {
+    "chair_id": 172,
+    "neighbor_list": [
+      164,
+      167,
+      170,
+      173
+    ]
+  },
+  {
+    "chair_id": 173,
+    "neighbor_list": [
+      164,
+      169,
+      171,
+      172
+    ]
+  }
+]
