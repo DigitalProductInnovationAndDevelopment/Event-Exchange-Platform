@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import type { Chair } from "../elements/Chair.tsx";
 import type { Wall } from "../elements/Wall.tsx";
-import type { ElementProperties } from "components/canvas/utils/constants.tsx";
+import type { ElementProperties, UUID } from "components/canvas/utils/constants.tsx";
 import {
   type Action,
   ADD_ELEMENT,
@@ -10,6 +10,7 @@ import {
   DUPLICATE_MULTIPLE_ELEMENTS,
   REDO,
   REMOVE_ELEMENTS,
+  SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT,
   SET_STATE,
   UNDO,
   UPDATE_ELEMENT,
@@ -20,6 +21,7 @@ import {
 
 export interface AppState {
   buildMode: number;
+  chairIdForManualAssignment: UUID | null;
   elements: ElementProperties[];
   groups: { id: string }[];
   canvasPosition: { x: number; y: number };
@@ -34,6 +36,7 @@ interface HistoryState {
 
 export class initialState implements AppState {
   buildMode: number;
+  chairIdForManualAssignment: UUID | null;
   elements: ElementProperties[];
   groups: { id: string }[];
   canvasPosition: { x: number; y: number };
@@ -46,6 +49,7 @@ export class initialState implements AppState {
     this.groups = [];
     this.canvasPosition = { x: 0, y: 0 };
     this.scale = 1;
+    this.chairIdForManualAssignment = null;
     this.history = {
       past: [],
       future: [],
@@ -110,6 +114,11 @@ export function reducer(state: AppState, action: Action) {
         }),
         history: { ...state.history },
       };
+    case SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT:
+      return {
+        ...state,
+        chairIdForManualAssignment: action.payload,
+      };
     case DUPLICATE_MULTIPLE_ELEMENTS: {
       const idMap: { [key: string]: string } = {};
       const newElements = [];
@@ -120,7 +129,18 @@ export function reducer(state: AppState, action: Action) {
           const newId = uuidv4();
           idMap[original.id] = newId;
           if (
-            original.type === "chair" ||
+            original.type === "chair"
+          ) {
+            const newChair = {
+              ...original,
+              id: newId,
+              x: (original as Chair).x + 50,
+              y: (original as Chair).y + 50,
+            };
+            delete (newChair as Chair).assigneeName;
+            delete (newChair as Chair).assigneeProfileId;
+            newElements.push(newChair);
+          } else if (
             original.type === "room" ||
             original.type === "rectTable" ||
             original.type === "circleTable"

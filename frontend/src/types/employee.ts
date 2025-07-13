@@ -1,3 +1,5 @@
+import type { UUID } from "components/canvas/utils/constants.tsx";
+
 export interface Employee {
   profile: Profile;
   employmentStartDate: string;
@@ -8,7 +10,7 @@ export interface Employee {
 }
 
 export interface Profile {
-  id: string;
+  id: UUID;
   fullName: string;
   gender: string;
   gitlabUsername: string;
