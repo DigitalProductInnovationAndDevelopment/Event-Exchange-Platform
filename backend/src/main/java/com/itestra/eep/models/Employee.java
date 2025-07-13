@@ -41,7 +41,15 @@ public class Employee {
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<EmployeeParticipation> participations = new LinkedList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "previous_matches",
+            schema = "organization",
+            joinColumns = @JoinColumn(name = "first_employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "second_employee_id"))
+    private Set<Employee> employees = new LinkedHashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "employee_project",
             schema = "organization",
