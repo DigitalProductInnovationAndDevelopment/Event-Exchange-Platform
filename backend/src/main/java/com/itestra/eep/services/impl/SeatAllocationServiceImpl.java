@@ -110,15 +110,16 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         Files.writeString(tempConstraintsFile, "{\"Standort\": 1, \"Projekt\": 1, \"Anstellung\": 1, \"Geschlecht\": 0, \"last neighborhood\": 3}");
 
 
-        /*TODO
         ProcessBuilder pb = new ProcessBuilder(
                 "python3",
                 "/algo(table).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
-        );*/
-        ProcessBuilder pb = new ProcessBuilder(
+        );
+
+       /* TODO for local dev
+       ProcessBuilder pb = new ProcessBuilder(
                 "../venv/bin/python",
                 "algo(table).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
-        );
+        );*/
 
         // we set the working directory to where algo.py is located
         //TODO pb.directory(new File("/"));
