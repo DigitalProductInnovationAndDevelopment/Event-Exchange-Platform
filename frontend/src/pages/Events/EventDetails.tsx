@@ -94,14 +94,14 @@ export const EventDetails = () => {
     }
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (basePath: string) => {
     try {
       event!.schematics = await initiateSchematics(eventId!);
       if (event!.schematics) {
         setEvent({
           ...event!,
         });
-        navigate(`/canvas/${event!.schematics.id}`);
+        navigate(`${basePath}/${event!.schematics.id}`);
       }
     } catch (error) {
       toast.error("Failed to create schematics.");
@@ -256,13 +256,19 @@ export const EventDetails = () => {
                     if (event?.schematics) {
                       navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`);
                     } else {
-                      handleCreate();
+                      handleCreate(`/events/${eventId}/seat-plan`);
                     }
                   }}>
                     Manage Seat Layout
                   </Button>
                   <Button block icon={<EditOutlined />}
-                          onClick={() => navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`)}>
+                          onClick={() => {
+                            if (event?.schematics) {
+                              navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`);
+                            } else {
+                              handleCreate(`/events/${eventId}/seat-allocation`);
+                            }
+                          }}>
                     Manage Seat Allocation
                   </Button>
                 </Space>
