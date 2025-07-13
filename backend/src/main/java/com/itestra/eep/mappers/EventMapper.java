@@ -11,7 +11,7 @@ import org.mapstruct.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = SchematicsMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = SchematicsMapper.class)
 public interface EventMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

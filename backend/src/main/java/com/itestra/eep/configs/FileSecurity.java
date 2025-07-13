@@ -3,6 +3,7 @@ package com.itestra.eep.configs;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.models.Profile;
+import com.itestra.eep.services.EventService;
 import com.itestra.eep.services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class FileSecurity {
 
     private final FileService fileService;
+    private final EventService eventService;
 
     public boolean canDownloadFile(UUID fileId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -34,20 +36,9 @@ public class FileSecurity {
         }
 
         // allow visitors or employees to download if they are participants of the event
-        boolean isVisitor = authentication.getAuthorities().stream()
-                .anyMatch(auth -> {
-                    String authority = auth.getAuthority();
-                    return Role.VISITOR.name().equals(authority) ||
-                            Role.EMPLOYEE.name().equals(authority);
-                });
-
-        if (!isVisitor) {
-            return false;
-        }
-
         Optional<FileEntity> fileOpt = fileService.getFile(fileId);
-        return fileOpt.isPresent() && fileOpt.get().getEvent().getParticipations().stream()
-                .anyMatch(participant -> participant.getId().equals(user.getId()));
+        return fileOpt.isPresent() &&
+                eventService.isParticipant(fileOpt.get().getEvent().getId(), ((Profile) authentication.getPrincipal()).getId());
     }
 }
 

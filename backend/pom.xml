@@ -116,10 +116,11 @@
             <version>2.7.0</version>
         </dependency>
         <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.11.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
         </dependency>
+
         <!-- JUnit Jupiter API and Engine for unit testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

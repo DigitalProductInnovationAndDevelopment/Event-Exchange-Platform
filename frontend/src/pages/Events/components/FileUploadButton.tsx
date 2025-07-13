@@ -7,9 +7,12 @@ import type { RcFile } from "antd/es/upload/interface";
 import type { UUID } from "components/canvas/utils/constants.tsx";
 import type { FileEntity } from "types/event.ts";
 
-const FileUploadButton = ({ eventId, onUpload }: {
-  eventId: UUID,
-  onUpload: (file: FileEntity | undefined) => Promise<void>
+const FileUploadButton = ({
+  eventId,
+  onUpload,
+}: {
+  eventId: UUID;
+  onUpload: (file: FileEntity | undefined) => Promise<void>;
 }) => {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<RcFile | null>(null);

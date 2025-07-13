@@ -98,7 +98,7 @@ export const EventCreate = () => {
                       format="DD/MM/YYYY hh:mm A"
                       onChange={(date, dateString) => console.log(date, dateString)}
                       showTime={{ use12Hours: true }}
-                      disabledDate={(current) => {
+                      disabledDate={current => {
                         return current && current < moment().startOf("day");
                       }}
                     />

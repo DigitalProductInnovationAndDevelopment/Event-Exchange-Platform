@@ -1,7 +1,9 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -10,10 +12,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(schema = "organization", name = "chair")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Chair {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)

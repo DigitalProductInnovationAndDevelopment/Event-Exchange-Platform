@@ -7,18 +7,13 @@ import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.services.EmployeeService;
-import com.itestra.eep.utils.CSVUtils;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +36,7 @@ public class ProfileController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
+    // TODO Authorization fix
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
     public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
@@ -62,6 +58,13 @@ public class ProfileController {
         return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
+    @PostMapping("/employees/batch")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<EmployeeDetailsDTO>> createEmployeesBatch(@RequestBody List<@Valid EmployeeCreateDTO> dtos) {
+        List<Employee> employees = employeeService.createEmployeesBatch(dtos);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
+    }
+
     @PutMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto) {
@@ -73,36 +76,6 @@ public class ProfileController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable UUID id) {
         employeeService.delete(id);
-        return ResponseEntity.ok(true);
-    }
-
-    @PostMapping("/import")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> importEmployees(@RequestParam("file") MultipartFile file) throws Exception {
-
-        if (file.isEmpty()) {
-            return new ResponseEntity<>("Please upload a non-empty file", HttpStatus.BAD_REQUEST);
-        }
-
-        List<EmployeeCreateDTO> employees = CSVUtils.getEmployeesFromCSV(file);
-        employeeService.importEmployeesFromCSV(employees);
-        return new ResponseEntity<>("Employees imported successfully", HttpStatus.OK);
-
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout(HttpServletResponse response) {
-
-        ResponseCookie deleteCookie = ResponseCookie.from("Authorization", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .sameSite("Strict")
-                .maxAge(0)
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
-
         return ResponseEntity.ok(true);
     }
 

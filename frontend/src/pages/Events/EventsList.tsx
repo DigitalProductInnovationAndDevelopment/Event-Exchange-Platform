@@ -13,7 +13,13 @@ import {
   Table,
   Typography,
 } from "antd";
-import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Breadcrumb } from "components/Breadcrumb";
@@ -85,16 +91,16 @@ export const EventsList = () => {
       title: "Event Name",
       dataIndex: "name",
       key: "name",
-      width: "30%",
+      width: "34%",
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
-      width: "14%",
+      width: "20%",
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-      render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm"),
+      render: (date: string) => dayjs(date).format("MMMM D, YYYY, HH:mm"),
     },
     {
       title: "Type",
@@ -112,14 +118,14 @@ export const EventsList = () => {
       title: "Participants",
       dataIndex: "participantCount",
       key: "participantCount",
-      width: "14%",
+      width: "8%",
       sorter: (a, b) => a.participantCount - b.participantCount,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: "14%",
+      width: "10%",
       render: (status: EventStatus) => <EventStatusTag status={status} />,
       filters: Object.entries(EVENT_STATUS_COLORS).map(([status]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
@@ -217,7 +223,13 @@ export const EventsList = () => {
           Upcoming Events
         </Title>
         {isTableView ? (
-          <Table rowKey="id" columns={columns} dataSource={upcomingEvents} pagination={false} loading={loading} />
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={upcomingEvents}
+            pagination={false}
+            loading={loading}
+          />
         ) : (
           <Row gutter={[16, 16]}>
             {upcomingEvents.map(event => (
@@ -247,7 +259,7 @@ export const EventsList = () => {
                               const filteredImages = event.fileEntities?.filter(
                                 (file: FileEntity) =>
                                   file.contentType === "image/png" ||
-                                  file.contentType === "image/jpeg",
+                                  file.contentType === "image/jpeg"
                               );
                               if (filteredImages && filteredImages.length > 0) {
                                 return (

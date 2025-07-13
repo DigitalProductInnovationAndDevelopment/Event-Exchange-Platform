@@ -1,6 +1,7 @@
 package com.itestra.eep.repositories;
 
 import com.itestra.eep.models.Employee;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +13,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
     List<Employee> findByIdIn(List<UUID> ids);
 
+    @EntityGraph("Employee.profile_participations")
     List<Employee> findAllByOrderByProfileFullNameAsc();
 }

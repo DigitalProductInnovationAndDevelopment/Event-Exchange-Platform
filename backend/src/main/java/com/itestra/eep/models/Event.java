@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -16,6 +14,10 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraph(name = "Event.participations_files",
+        attributeNodes = {@NamedAttributeNode("employeeParticipations"),
+                @NamedAttributeNode("schematics")}
+)
 public class Event {
 
     @Id
@@ -45,10 +47,15 @@ public class Event {
     private List<FileEntity> fileEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Participation> participations = new ArrayList<>();
+    @OrderBy("id ASC")
+    private List<EmployeeParticipation> employeeParticipations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Visitor> visitors = new ArrayList<>();
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id ASC")
+    private List<VisitorParticipation> visitorParticipations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Chair> chairs = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
@@ -59,12 +66,11 @@ public class Event {
     }
 
     @Transient
-    public int getParticipantCount(Participation excludeParticipation) {
-        return participations.stream()
-                .filter(p -> excludeParticipation == null || !p.getId().equals(excludeParticipation.getId()))
+    public int getParticipantCount(EmployeeParticipation excludeCertainEmployeeParticipation) {
+        return employeeParticipations.stream()
+                .filter(p -> excludeCertainEmployeeParticipation == null || !p.getId().equals(excludeCertainEmployeeParticipation.getId()))
                 .mapToInt(p -> p.getGuestCount() + 1)
                 .sum();
     }
 
 }
-

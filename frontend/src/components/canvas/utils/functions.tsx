@@ -15,7 +15,7 @@ export function makeBackgroundWhite(uri: string): Promise<string> {
     const img = new Image();
     img.crossOrigin = "anonymous";
 
-    img.onload = function() {
+    img.onload = function () {
       console.log("Image loaded", img.width, img.height);
 
       const canvas = document.createElement("canvas");
@@ -41,7 +41,7 @@ export function makeBackgroundWhite(uri: string): Promise<string> {
       }
     };
 
-    img.onerror = function(err) {
+    img.onerror = function (err) {
       console.error("Image failed to load", err);
       reject(new Error("Failed to load image"));
     };
@@ -67,7 +67,6 @@ export function sanitizeDimensions(value: number, fallback = 0) {
 }
 
 export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>) => {
-
   if (!stageRef.current) return;
 
   const stage = stageRef.current;
@@ -106,21 +105,22 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
   };
 
   try {
-    return await makeBackgroundWhite(stage.toDataURL({
-      x: sanitizeDimensions(exportRect.x),
-      y: sanitizeDimensions(exportRect.y),
-      width: sanitizeDimensions(exportRect.width),
-      height: sanitizeDimensions(exportRect.height),
-      pixelRatio: 2,
-    }))
-      .then((jpegUri) => {
+    return await makeBackgroundWhite(
+      stage.toDataURL({
+        x: sanitizeDimensions(exportRect.x),
+        y: sanitizeDimensions(exportRect.y),
+        width: sanitizeDimensions(exportRect.width),
+        height: sanitizeDimensions(exportRect.height),
+        pixelRatio: 2,
+      })
+    )
+      .then(jpegUri => {
         console.log("Converted image URI:", jpegUri);
         return jpegUri;
       })
-      .catch((err) => {
+      .catch(err => {
         console.error("Error processing image:", err);
       });
-
   } catch (error) {
     console.error("Export failed:", error);
   }
@@ -133,4 +133,3 @@ export const handleMouseOver = (e: Konva.KonvaEventObject<PointerEvent>) => {
 export const handleMouseOut = (e: Konva.KonvaEventObject<PointerEvent>) => {
   e.target.getStage()!.container().style.cursor = "grab";
 };
-

@@ -7,14 +7,13 @@ type FPSTextProps = {
 };
 
 function FPSText({ layer }: FPSTextProps) {
-
   const animRef = useRef<Konva.Animation | null>(null);
   const [text, setText] = useState("");
 
   useEffect(() => {
     if (!layer.current) return;
 
-    animRef.current = new Konva.Animation((frame) => {
+    animRef.current = new Konva.Animation(frame => {
       setText("FPS: " + frame?.frameRate.toFixed(1));
     }, layer.current);
 
@@ -25,13 +24,7 @@ function FPSText({ layer }: FPSTextProps) {
     };
   }, [layer]);
 
-  return (
-    <Text
-      text={text}
-      fontSize={16}
-      fill="black"
-    />
-  );
+  return <Text text={text} fontSize={16} fill="black" />;
 }
 
 export default FPSText;

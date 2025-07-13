@@ -39,11 +39,9 @@ export class Table implements ElementProperties {
 
 export function TableRender(table: Table, areTextsEnabled: boolean) {
   return table.type === "circleTable" ? (
-    <Group
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}>
+    <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
       <Circle radius={table.radius} fill={table.color || "#8B4513"} />
-      {areTextsEnabled &&
+      {areTextsEnabled && (
         <Text
           text={`${table.name}\n${table.attachedChairs.length} chairs`}
           fill="white"
@@ -53,20 +51,17 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
           width={table.radius ? table.radius * 2 : 0}
           verticalAlign="middle"
         />
-      }
+      )}
     </Group>
-
   ) : (
-    <Group
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}>
+    <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
       <Rect
         width={table.width}
         height={table.height}
         fill={table.color || "#8B4513"}
         perfectDrawEnabled={false}
       />
-      {areTextsEnabled &&
+      {areTextsEnabled && (
         <Text
           text={`${table.name}\n${table.attachedChairs.length} chairs`}
           fill="white"
@@ -77,8 +72,7 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
           height={table.height}
           perfectDrawEnabled={false}
         />
-      }
+      )}
     </Group>
-
   );
 }

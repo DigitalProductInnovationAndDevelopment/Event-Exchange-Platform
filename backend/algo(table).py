@@ -2,7 +2,7 @@ import json
 import pandas as pd
 from ortools.sat.python import cp_model
 import math
-
+import sys
 
 def assign_tables(employees_data, tables_data, constraints_config, time_limit_sec=30.0):
     """
@@ -171,11 +171,16 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
+
+    if len(sys.argv) != 5:
+        print("Usage: python algo.py <input_json_path> <table_json_path> <config_json_path> <output_json_path>")
+        sys.exit(1)
+
     # --- Configuration ---
-    EMPLOYEES_JSON_PATH = 'input.json'
-    TABLES_JSON_PATH = 'table.json'
-    CONSTRAINTS_JSON_PATH = 'constraints.json'
-    OUTPUT_JSON_PATH = 'output.json'
+    EMPLOYEES_JSON_PATH = sys.argv[1]
+    TABLES_JSON_PATH = sys.argv[2]
+    CONSTRAINTS_JSON_PATH = sys.argv[3]
+    OUTPUT_JSON_PATH = sys.argv[4]
 
     # Set a time limit for the solver
     SOLVER_TIME_LIMIT = 60.0

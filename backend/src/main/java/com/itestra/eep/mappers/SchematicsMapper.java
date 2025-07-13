@@ -6,7 +6,7 @@ import com.itestra.eep.dtos.SchematicsUpdateDTO;
 import com.itestra.eep.models.Schematics;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SchematicsMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

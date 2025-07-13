@@ -85,27 +85,32 @@ export const EmployeeDetails = () => {
     { label: "Gitlab Username", value: employee?.profile.gitlabUsername },
     {
       label: "Gender",
-      value: employee?.profile.gender ? employee.profile.gender.charAt(0).toUpperCase() + employee.profile.gender.slice(1).toLowerCase() : undefined,
+      value: employee?.profile.gender
+        ? employee.profile.gender.charAt(0).toUpperCase() +
+          employee.profile.gender.slice(1).toLowerCase()
+        : undefined,
     },
     {
       label: "Role",
-      value: employee?.profile.authorities?.map((role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()),
+      value: employee?.profile.authorities?.map(
+        (role: string) => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
+      ),
     },
     {
       label: "Dietary Preferences",
       value: employee?.profile.dietTypes?.length
         ? employee.profile.dietTypes.map(type => {
-          const typeObj = DIET_TYPES.find(t => t.value === type);
-          return typeObj ? typeObj.label : type;
-        })
+            const typeObj = DIET_TYPES.find(t => t.value === type);
+            return typeObj ? typeObj.label : type;
+          })
         : undefined,
     },
     { label: "Location", value: employee?.location },
     {
       label: "Employment Type",
-      value: employee?.employmentType
-        ? <EmployeeTypeTag type={employee.employmentType} />
-        : undefined,
+      value: employee?.employmentType ? (
+        <EmployeeTypeTag type={employee.employmentType} />
+      ) : undefined,
     },
     { label: "Date Joined", value: employee?.employmentStartDate },
   ];
@@ -143,11 +148,12 @@ export const EmployeeDetails = () => {
     setDeleteModalOpen(false);
   };
 
-
   if (loading) {
-    return (<div className="flex justify-center items-center h-screen">
-      <Spin size="large" tip="Loading employee details..." />
-    </div>);
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading employee details..." />
+      </div>
+    );
   }
 
   return (
@@ -206,10 +212,10 @@ export const EmployeeDetails = () => {
             <Descriptions.Item label={field.label} key={field.label}>
               {Array.isArray(field.value)
                 ? field.value.map((v, i) => (
-                  <span key={i} style={{ marginRight: 4 }}>
+                    <span key={i} style={{ marginRight: 4 }}>
                       {v}
                     </span>
-                ))
+                  ))
                 : field.value || ""}
             </Descriptions.Item>
           ))}
@@ -225,7 +231,7 @@ export const EmployeeDetails = () => {
                 <Descriptions.Item label={field.label} key={field.label}>
                   {field.value}
                 </Descriptions.Item>
-              ),
+              )
           )}
         </Descriptions>
       </Card>

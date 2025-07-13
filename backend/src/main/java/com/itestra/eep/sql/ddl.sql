@@ -33,28 +33,28 @@ CREATE TABLE organization.address
 CREATE TABLE organization.profile
 (
     id              UUID PRIMARY KEY,
-    gitlab_username VARCHAR(255)  NULL UNIQUE,
-    email           VARCHAR(255)  NULL UNIQUE,
-    full_name       VARCHAR(500)  NOT NULL,
-    gender          VARCHAR(255)  NULL,
-    diet_types VARCHAR NULL,
+    gitlab_username VARCHAR(255) NULL UNIQUE,
+    email           VARCHAR(255) NULL UNIQUE,
+    full_name       VARCHAR(500) NOT NULL,
+    gender          VARCHAR(255) NULL,
+    diet_types      VARCHAR      NULL,
     created_at      TIMESTAMP,
     updated_at      TIMESTAMP
 );
 
 CREATE TABLE organization.user_roles
 (
-    id         BIGSERIAL PRIMARY KEY,
     profile_id UUID        NOT NULL,
     role       VARCHAR(50) NOT NULL,
-    FOREIGN KEY (profile_id) REFERENCES organization.profile (id) ON DELETE CASCADE
+    FOREIGN KEY (profile_id) REFERENCES organization.profile (id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_role UNIQUE (profile_id, role)
 );
 
 CREATE TABLE organization.employee
 (
-    profile_id      UUID PRIMARY KEY REFERENCES organization.profile (id),
+    profile_id      UUID PRIMARY KEY REFERENCES organization.profile (id) ON DELETE CASCADE,
     employment_type varchar,
-    location VARCHAR(255) NOT NULL,
+    location        VARCHAR(255) NOT NULL,
     employment_start_date DATE
 );
 
@@ -74,8 +74,9 @@ CREATE TABLE organization.employee_project
 
 CREATE TABLE organization.previous_matches
 (
-    id        UUID PRIMARY KEY,
-    person_id UUID REFERENCES organization.profile (id)
+    first_employee_id  UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
+    second_employee_id UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
+    PRIMARY KEY (first_employee_id, second_employee_id)
 );
 
 CREATE TABLE organization.event
@@ -83,10 +84,10 @@ CREATE TABLE organization.event
     id          UUID PRIMARY KEY,
     name        VARCHAR(255)   NOT NULL,
     description VARCHAR(10000) NOT NULL,
-    date    TIMESTAMP     NULL,
+    date       TIMESTAMP     NULL,
     capacity    INT            NOT NULL,
     event_type VARCHAR,
-    address VARCHAR(1000) NOT NULL
+    address    VARCHAR(1000) NOT NULL
 );
 
 
@@ -96,34 +97,38 @@ CREATE TABLE organization.chair
     event_id UUID REFERENCES organization.event (id)
 );
 
-CREATE TABLE organization.participation
+CREATE TABLE organization.employee_participation
 (
     id          UUID PRIMARY KEY,
     guest_count INTEGER,
     confirmed   BOOLEAN,
-    employee_id UUID REFERENCES organization.employee (profile_id) NOT NULL,
-    event_id    UUID REFERENCES organization.Event (id),
-    chair_id UUID REFERENCES organization.chair (id) NULL,
-    CONSTRAINT unique_person_event UNIQUE (employee_id, event_id)
+    profile_id UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE NOT NULL,
+    event_id   UUID REFERENCES organization.Event (id) ON DELETE CASCADE,
+    chair_id   UUID REFERENCES organization.chair (id)                              NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    CONSTRAINT unique_event_participation_for_employee UNIQUE (profile_id, event_id)
 );
 
-CREATE TABLE organization.visitor
+CREATE TABLE organization.visitor_participation
 (
-    profile_id  UUID PRIMARY KEY REFERENCES organization.profile (id),
-    confirmed   BOOLEAN,
-    invitee_id  UUID REFERENCES organization.employee (profile_id) NULL,
-    event_id    UUID REFERENCES organization.event (id),
-    access_link VARCHAR(255)                                       NOT NULL,
-    chair_id    UUID REFERENCES organization.chair (id)            NULL,
-    CONSTRAINT unique_visitor_event UNIQUE (profile_id, invitee_id, event_id)
+    id                       UUID PRIMARY KEY,
+    profile_id               UUID REFERENCES organization.profile (id) ON DELETE CASCADE                NOT NULL,
+    confirmed                BOOLEAN,
+    invitor_participation_id UUID REFERENCES organization.employee_participation (id) ON DELETE CASCADE NULL,
+    event_id                 UUID REFERENCES organization.event (id) ON DELETE CASCADE                  NOT NULL,
+    access_link              VARCHAR(255)                                                               NOT NULL,
+    chair_id                 UUID REFERENCES organization.chair (id)                                    NULL,
+    created_at               TIMESTAMP,
+    updated_at               TIMESTAMP,
+    CONSTRAINT unique_event_participation_for_visitor UNIQUE (profile_id, event_id)
 );
-
 
 
 CREATE TABLE organization.files
 (
     file_id      UUID PRIMARY KEY,
-    event_id     UUID references organization.event (id),
+    event_id UUID references organization.event (id) ON DELETE CASCADE,
     name         VARCHAR(255) NOT NULL,
     content_type VARCHAR(255) NULL,
     content      BYTEA        NOT NULL,
@@ -134,7 +139,7 @@ CREATE TABLE organization.files
 CREATE TABLE organization.schematics
 (
     id         UUID PRIMARY KEY,
-    event_id   UUID REFERENCES organization.event (id),
+    event_id UUID REFERENCES organization.event (id) ON DELETE CASCADE,
     file_id    UUID REFERENCES organization.files (file_id),
     state      TEXT NOT NULL,
     created_at TIMESTAMP,
@@ -142,7 +147,6 @@ CREATE TABLE organization.schematics
     CONSTRAINT unique_schematic_per_event UNIQUE (event_id)
 );
 
-GRANT USAGE, SELECT ON SEQUENCE organization.user_roles_id_seq TO organization_user;
 GRANT USAGE, SELECT ON SEQUENCE organization.audit_log_id_seq TO organization_user;
 
 

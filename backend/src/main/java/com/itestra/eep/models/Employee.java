@@ -14,6 +14,9 @@ import java.util.*;
 @NoArgsConstructor
 @Table(name = "employee", schema = "organization")
 @AllArgsConstructor
+@NamedEntityGraph(name = "Employee.profile_participations",
+        attributeNodes = {@NamedAttributeNode("profile"), @NamedAttributeNode("participations")}
+)
 public class Employee {
 
     @Id
@@ -35,10 +38,18 @@ public class Employee {
     @Column(name = "employment_type")
     private EmploymentType employmentType;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true)
-    private List<Participation> participations = new LinkedList<>();
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<EmployeeParticipation> participations = new LinkedList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "previous_matches",
+            schema = "organization",
+            joinColumns = @JoinColumn(name = "first_employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "second_employee_id"))
+    private Set<Employee> employees = new LinkedHashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "employee_project",
             schema = "organization",

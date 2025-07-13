@@ -15,7 +15,7 @@ export interface Profile {
   gender: string;
   gitlabUsername: string;
   email: string;
-  dietTypes: DietaryPreference[];
+  dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];
 }
 
@@ -37,6 +37,7 @@ export interface ParticipationDetails {
   fullName: string;
   gitlabUsername: string;
   email: string;
+  dietTypes: (keyof typeof DietaryPreference)[];
 }
 
 export enum DietaryPreference {

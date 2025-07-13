@@ -1,6 +1,12 @@
 import { Avatar, ConfigProvider, Dropdown, Layout, Menu, theme as antdTheme } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
 import useApiService from "../services/apiService.ts";
 import { useState } from "react";
@@ -69,9 +75,7 @@ export const AppContainer = () => {
   return (
     <ConfigProvider
       theme={{
-        algorithm: darkMode
-          ? antdTheme.darkAlgorithm
-          : antdTheme.defaultAlgorithm,
+        algorithm: darkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
 
         token: {
           colorPrimary: primaryColor,
@@ -141,23 +145,27 @@ export const AppContainer = () => {
           className="fixed top-1/2 -translate-y-1/2 h-[95%] z-10 rounded-2xl ml-4 shadow-lg "
           breakpoint="lg"
           collapsedWidth="0"
-          onCollapse={(value) => setCollapsed(value)} onBreakpoint={(broken) => setCollapsed(broken)}>
-
+          onCollapse={value => setCollapsed(value)}
+          onBreakpoint={broken => setCollapsed(broken)}
+        >
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               height: "100%",
               padding: "16px 0",
-            }}>
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: 100,
-              marginTop: 16,
-              marginBottom: 4,
-            }}>
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: 100,
+                marginTop: 16,
+                marginBottom: 4,
+              }}
+            >
               <img
                 src={itestraEventLogo}
                 alt="itestra event planning logo"
@@ -173,7 +181,10 @@ export const AppContainer = () => {
             />
 
             <div style={{ flexGrow: 1 }} />
-            <div style={{ bottom: 0, width: "100%", padding: "24px 0" }} className="flex flex-col items-center">
+            <div
+              style={{ bottom: 0, width: "100%", padding: "24px 0" }}
+              className="flex flex-col items-center"
+            >
               <Dropdown
                 menu={{
                   items: userMenuItems,
@@ -181,33 +192,40 @@ export const AppContainer = () => {
                 }}
                 placement="topLeft"
               >
-                <div style={{ backgroundColor: "#36C5F0" }}
-                     className="w-36 h-36 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
+                <div
+                  style={{ backgroundColor: "#36C5F0" }}
+                  className="w-36 h-36 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all"
+                >
                   <Avatar icon={<UserOutlined />} className="bg-blue-200" size={48} />
-                  <span
-                    className="mt-3 text-gray-800 text-sm font-medium text-center"> {user?.name || user?.email || "User"} </span>
+                  <span className="mt-3 text-gray-800 text-sm font-medium text-center">
+                    {" "}
+                    {user?.name || user?.email || "User"}{" "}
+                  </span>
                 </div>
               </Dropdown>
             </div>
-
           </div>
         </Sider>
 
-        <Layout className="flex flex-col min-h-screen pl-5"
-                style={{
-                  marginLeft: collapsed ? 0 : 200,
-                }}>
+        <Layout
+          className="flex flex-col min-h-screen pl-5"
+          style={{
+            marginLeft: collapsed ? 0 : 200,
+          }}
+        >
           <Content className="bg-gray-50 flex-1 overflow-auto">
             <div className="p-6">
               <Outlet />
             </div>
           </Content>
-          <Footer className="text-center border-t border-gray-200" style={{ background: "rgba(255,255,255,0)" }}>
+          <Footer
+            className="text-center border-t border-gray-200"
+            style={{ background: "rgba(255,255,255,0)" }}
+          >
             Event Exchange Platform ©{new Date().getFullYear()}
           </Footer>
         </Layout>
       </Layout>
     </ConfigProvider>
-
   );
 };

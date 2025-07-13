@@ -1,6 +1,7 @@
 package com.itestra.eep.models;
 
 import com.itestra.eep.enums.DietaryPreference;
+import com.itestra.eep.enums.Role;
 import com.itestra.eep.serializers.DietaryPreferenceArrayConverter;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,8 +37,15 @@ public class Profile {
     @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<UserRole> authorities = new HashSet<>();
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(
+            schema = "organization",
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "profile_id")
+    )
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Set<Role> authorities = new HashSet<>();
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

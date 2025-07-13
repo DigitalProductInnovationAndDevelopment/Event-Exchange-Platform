@@ -1,10 +1,10 @@
 package com.itestra.eep.services;
 
-import com.itestra.eep.dtos.ParticipationUpsertDTO;
+import com.itestra.eep.dtos.EmployeeParticipationUpsertDTO;
 import com.itestra.eep.mappers.EventMapper;
 import com.itestra.eep.models.Employee;
+import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
-import com.itestra.eep.models.Participation;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.utils.RandomEntityGenerator;
@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,13 +73,13 @@ class EventServiceTest {
         event = eventRepository.save(event);
         int guestCount = 1;
 
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId(), event.getId());
-        Participation participation = eventService.addParticipant(dto);
+        EmployeeParticipationUpsertDTO dto = new EmployeeParticipationUpsertDTO(guestCount, employee.getId());
+        EmployeeParticipation employeeParticipation = eventService.addParticipant(event.getId(), dto);
 
-        assertNotNull(participation);
-        assertEquals(employee.getId(), participation.getEmployee().getId());
-        assertEquals(event.getId(), participation.getEvent().getId());
-        assertEquals(guestCount, participation.getGuestCount());
+        assertNotNull(employeeParticipation);
+        assertEquals(employee.getId(), employeeParticipation.getEmployee().getId());
+        assertEquals(event.getId(), employeeParticipation.getEvent().getId());
+        assertEquals(guestCount, employeeParticipation.getGuestCount());
     }
 
     @Test
@@ -90,9 +92,9 @@ class EventServiceTest {
         event.setCapacity(10);
         event = eventRepository.save(event);
         int guestCount = 10;
-
-        ParticipationUpsertDTO dto = new ParticipationUpsertDTO(guestCount, employee.getId(), event.getId());
-        assertThrows(com.itestra.eep.exceptions.EventCapacityExceededException.class, () -> eventService.addParticipant(dto));
+        final UUID eventId = event.getId();
+        EmployeeParticipationUpsertDTO dto = new EmployeeParticipationUpsertDTO(guestCount, employee.getId());
+        assertThrows(com.itestra.eep.exceptions.EventCapacityExceededException.class, () -> eventService.addParticipant(eventId, dto));
     }
 
 } 
