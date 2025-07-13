@@ -1,9 +1,9 @@
 .panelStyle {
-    position: fixed;
-    bottom: 10%;
-    left: 15%;
+    position: absolute;
+    top: 55%;
+    left: 0;
     width: 300px;
-    height: 350px;
+    height: 300px;
     overflow-y: auto;
     background-color: white;
     border: 1px solid #ccc;

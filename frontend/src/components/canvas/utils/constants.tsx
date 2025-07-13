@@ -164,7 +164,7 @@ export const getEditableParameters = (
   }
 };
 
-export const shapeFactory = (type: string) => {
+export const shapeFactory = (type: ShapeType) => {
   switch (type) {
     case "chair":
       return new Chair();

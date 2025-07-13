@@ -13,8 +13,8 @@ export class Chair implements ElementProperties {
   attachedTo: string | undefined;
   draggable: boolean;
   offset: { dx: number; dy: number };
-  employeeId?: string;
-  employeeName?: string;
+  assigneeProfileId?: string;
+  assigneeName?: string;
 
   constructor() {
     this.id = uuidv4();
@@ -26,8 +26,8 @@ export class Chair implements ElementProperties {
     this.attachedTo = undefined;
     this.draggable = true;
     this.offset = { dx: 0, dy: 0 };
-    this.employeeId = undefined;
-    this.employeeName = undefined;
+    this.assigneeProfileId = undefined;
+    this.assigneeName = undefined;
   }
 }
 
@@ -41,13 +41,13 @@ export function ChairRender(chair: Chair) {
         fill={chair.color || "#888"}
         perfectDrawEnabled={false}
       />
-      {chair.employeeName && (
+      {chair.assigneeName && (
         <Text
-          text={chair.employeeName}
+          text={chair.assigneeName}
           x={-chair.radius - 5}
           y={-chair.radius - 15}
           fontSize={10}
-          fill="black"
+          fill="darkblue"
           align="center"
           width={chair.radius * 2 + 10}
           // globalCompositeOperation="xor"
