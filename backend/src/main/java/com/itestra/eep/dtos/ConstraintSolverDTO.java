@@ -24,7 +24,7 @@ public class ConstraintSolverDTO implements Serializable {
     int guestCount;
 
     @JsonProperty("ProfileId")
-    String profileId;
+    UUID profileId;
 
     @JsonProperty("Anzahl")
     public int getGuestCount() {
@@ -57,5 +57,5 @@ public class ConstraintSolverDTO implements Serializable {
     EmploymentType employeeEmploymentType;
 
     @JsonProperty("TableNr")
-    UUID tableId;
+    Object[] tableIds;
 }
