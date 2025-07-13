@@ -3,16 +3,17 @@ package com.itestra.eep.dtos;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.EventType;
-import com.itestra.eep.models.Address;
 import com.itestra.eep.models.Event;
 import com.itestra.eep.serializers.LocalDateTimeDeserializer;
 import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -48,33 +49,4 @@ public class EventCreateDTO implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
 
-    /**
-     * DTO for {@link Address}
-     */
-    @Getter
-    @Setter
-    public static class AddressCreateDTO implements Serializable {
-        @PositiveOrZero
-        int postalCode;
-
-        @NotBlank
-        String country;
-
-        @NotBlank
-        String city;
-
-        @Nullable
-        Double latitude;
-
-        @Nullable
-        Double longitude;
-
-        @Nullable
-        @Size(message = "Address Line 1 should be shorter than 255 characters", max = 255)
-        String addressLine1;
-
-        @Nullable
-        @Size(message = "Address Line 2 should be shorter than 255 characters", max = 255)
-        String addressLine2;
-    }
 }

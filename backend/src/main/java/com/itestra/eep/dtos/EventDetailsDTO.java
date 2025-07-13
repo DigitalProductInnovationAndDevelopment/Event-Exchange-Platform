@@ -46,22 +46,4 @@ public class EventDetailsDTO implements Serializable {
 
     SchematicsDetailsDTO schematics;
 
-    @Getter
-    @Setter
-    public static class AddressDetailsDTO implements Serializable {
-
-        int postalCode;
-
-        String country;
-
-        String city;
-
-        Double latitude;
-
-        Double longitude;
-
-        String addressLine1;
-
-        String addressLine2;
-    }
 }

@@ -3,12 +3,10 @@ package com.itestra.eep.dtos;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.EventType;
-import com.itestra.eep.models.Address;
 import com.itestra.eep.models.Event;
 import com.itestra.eep.serializers.LocalDateTimeDeserializer;
 import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,31 +45,4 @@ public class EventUpdateDTO implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
 
-    /**
-     * DTO for {@link Address}
-     */
-    @Getter
-    @Setter
-    public static class AddressCreateDTO implements Serializable {
-        @PositiveOrZero
-        int postalCode;
-
-        @Nullable
-        @Size(message = "Country field should be shorter than 255 characters", max = 255)
-        String country;
-
-        @Nullable
-        @Size(message = "City field should be shorter than 255 characters", max = 255)
-        String city;
-
-        double latitude;
-
-        double longitude;
-
-        @Nullable
-        String addressLine1;
-
-        @Nullable
-        String addressLine2;
-    }
 }
