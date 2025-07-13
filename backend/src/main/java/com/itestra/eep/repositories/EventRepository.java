@@ -2,6 +2,7 @@ package com.itestra.eep.repositories;
 
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.models.Event;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,15 @@ import java.util.UUID;
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
-    boolean existsByIdAndParticipations_Employee_Id(UUID eventId, UUID participantId);
+    boolean existsByIdAndEmployeeParticipations_Employee_Id(UUID eventId, UUID participantId);
+
+    @Override
+    @EntityGraph("Event.participations_files")
+    List<Event> findAll();
+
+    @EntityGraph("Event.participations_files")
+    List<Event> findByVisitorParticipations_Profile_Id(UUID participantId);
+
 
     @Query("""
             SELECT new com.itestra.eep.dtos.SeatAllocationDetailsDTO(

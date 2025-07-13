@@ -14,6 +14,10 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraph(name = "Event.participations_files",
+        attributeNodes = {@NamedAttributeNode("employeeParticipations"),
+                @NamedAttributeNode("schematics")}
+)
 public class Event {
 
     @Id
