@@ -7,12 +7,9 @@ import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.services.EmployeeService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -39,6 +36,7 @@ public class ProfileController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
+    // TODO Authorization fix
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
     public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
@@ -78,22 +76,6 @@ public class ProfileController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable UUID id) {
         employeeService.delete(id);
-        return ResponseEntity.ok(true);
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout(HttpServletResponse response) {
-
-        ResponseCookie deleteCookie = ResponseCookie.from("Authorization", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .sameSite("Strict")
-                .maxAge(0)
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
-
         return ResponseEntity.ok(true);
     }
 

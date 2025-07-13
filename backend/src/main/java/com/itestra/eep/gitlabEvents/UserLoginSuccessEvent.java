@@ -1,4 +1,4 @@
-package com.itestra.eep.events;
+package com.itestra.eep.gitlabEvents;
 
 import com.itestra.eep.models.Profile;
 import lombok.Getter;

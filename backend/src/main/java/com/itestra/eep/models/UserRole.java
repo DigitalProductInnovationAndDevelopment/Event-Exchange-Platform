@@ -3,14 +3,11 @@ package com.itestra.eep.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.itestra.eep.enums.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+
 @Entity
 @Table(schema = "organization", name = "user_roles")
 public class UserRole implements GrantedAuthority {

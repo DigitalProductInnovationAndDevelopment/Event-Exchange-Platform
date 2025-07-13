@@ -1,4 +1,4 @@
-package com.itestra.eep.events;
+package com.itestra.eep.gitlabEvents;
 
 import com.itestra.eep.configs.JwtUtil;
 import com.itestra.eep.exceptions.UserProfileNotFoundException;

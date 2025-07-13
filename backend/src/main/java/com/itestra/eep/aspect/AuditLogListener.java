@@ -1,7 +1,7 @@
 package com.itestra.eep.aspect;
 
 import com.itestra.eep.enums.OperationType;
-import com.itestra.eep.events.UserLoginSuccessEvent;
+import com.itestra.eep.gitlabEvents.UserLoginSuccessEvent;
 import com.itestra.eep.models.AuditLog;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.AuditLogRepository;
