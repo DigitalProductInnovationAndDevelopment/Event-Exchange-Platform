@@ -26,28 +26,30 @@ export const EventParticipants = () => {
   const [employeeGuests, setEmployeeGuests] = useState<{ [id: string]: number }>({});
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
+    const fetchParticipationData = async () => {
       try {
-        const data = await getEventParticipants(eventId!);
-        setParticipants(data ?? []);
+        setLoading(true);
+        const [participantsData, employeesData] = await Promise.all([
+          getEventParticipants(eventId!),
+          getEmployees(),
+        ]);
+        setParticipants(participantsData ?? []);
+        setAllEmployees(employeesData ?? []);
       } catch (err) {
-        console.error("Failed to fetch participants of the event:", err);
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setLoading(false);
       }
-    })();
-  }, [eventId, getEventParticipants]);
+    };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await getEmployees();
-        setAllEmployees(data ?? []);
-      } catch (err) {
-        console.error("Failed to fetch all employees in the system:", err);
-      }
-    })();
-  }, [getEmployees]);
+    if (eventId) {
+      fetchParticipationData();
+    }
+
+  }, [eventId, getEmployees, getEventParticipants]);
 
   const allEmployeesFiltered = allEmployees
     .filter(
@@ -185,6 +187,7 @@ export const EventParticipants = () => {
               className="mb-4"
             />
             <Table
+              loading={loading}
               rowKey={r => r.employeeId}
               columns={columns}
               dataSource={filteredParticipants}
@@ -221,6 +224,7 @@ export const EventParticipants = () => {
         />
         <Table
           rowKey={r => r.profile.id}
+          loading={loading}
           columns={[
             { title: "Name", dataIndex: ["profile", "fullName"], key: "fullName" },
             { title: "Email", dataIndex: ["profile", "email"], key: "email" },
@@ -305,6 +309,7 @@ export const EventParticipants = () => {
         />
         <Table
           rowKey={r => r.profile.id}
+          loading={loading}
           columns={[
             { title: "Name", dataIndex: ["profile", "fullName"], key: "fullName" },
             { title: "Email", dataIndex: ["profile", "email"], key: "email" },

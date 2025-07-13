@@ -4,6 +4,7 @@ import { Chair } from "../elements/Chair.tsx";
 import { Wall } from "../elements/Wall.tsx";
 import { Room } from "../elements/Room.tsx";
 import type { Table } from "../elements/Table.tsx";
+import type { UUID } from "components/canvas/utils/constants.tsx";
 
 export interface Action {
   type: string;
@@ -17,6 +18,7 @@ export const REMOVE_ELEMENTS = "REMOVE_ELEMENTS";
 export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
 export const UPDATE_ELEMENT_SPECIFIC_FIELD = "UPDATE_ELEMENT_SPECIFIC_FIELD";
 export const UPDATE_MULTIPLE_ELEMENTS = "UPDATE_MULTIPLE_ELEMENTS";
+export const SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT = "SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT";
 export const UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO = "UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO";
 export const DUPLICATE_MULTIPLE_ELEMENTS = "DUPLICATE_MULTIPLE_ELEMENTS";
 export const CHANGE_BUILD_MODE = "CHANGE_BUILD_MODE";
@@ -78,6 +80,11 @@ export const updateMultipleWithoutUndoRedo = (
   } | null)[],
 ): Action => ({
   type: UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO,
+  payload,
+});
+
+export const setChairIdForManualAssignment = (payload: UUID | null): Action => ({
+  type: SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT,
   payload,
 });
 

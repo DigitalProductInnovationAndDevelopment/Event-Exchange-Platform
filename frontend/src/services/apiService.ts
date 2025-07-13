@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Employee, ParticipationDetails, Profile } from "types/employee.ts";
-import type { Event, FileEntity, SchematicsEntity } from "types/event.ts";
+import type { Event, FileEntity, SchematicsEntity, SeatAllocationResult, SeatAllocationUpsert } from "types/event.ts";
 import toast from "react-hot-toast";
 import React, { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import Konva from "konva";
 import { handleExport } from "components/canvas/utils/functions.tsx";
+import { Chair } from "components/canvas/elements/Chair.tsx";
 
 export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
@@ -48,6 +49,9 @@ export default function useApiService() {
         toast.error("Access denied. You don't have permission for this action.");
         //logout();
         throw new Error("Access denied. You don't have permission for this action.");
+      } else if (response.status === 404) {
+        toast.error("This operation is not found.");
+        throw new Error("This operation is not found.");
       } else if (response.status >= 500 || response.status === 409) {
         const errorMessage = await response.text();
         toast.error(errorMessage);
@@ -224,6 +228,7 @@ export default function useApiService() {
             eventId: eventId,
             state: JSON.stringify({
               buildMode: 0,
+              chairIdForManualAssignment: null,
               elements: [],
               groups: [],
               canvasPosition: { x: 0, y: 0 },
@@ -246,6 +251,14 @@ export default function useApiService() {
 
       try {
         delete canvasState.history;
+
+        // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/Visitor participation Tables
+        canvasState.elements.forEach((el) => {
+          if (el.type === "chair") {
+            delete (el as Chair).assigneeProfileId;
+            delete (el as Chair).assigneeName;
+          }
+        });
 
         const response = await request(`/schematics/${id}`, {
           method: "PUT",
@@ -446,6 +459,47 @@ export default function useApiService() {
     [request],
   );
 
+  const generateSeatAllocations = useCallback(async (eventId: string, seatMap: any) => {
+    try {
+      return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/assign`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            seatMap: seatMap,
+          }),
+        },
+      );
+    } catch (err) {
+      toast.error("Seat allocation failed!");
+      return [];
+    }
+  }, [request]);
+
+  const getSeatAllocations = useCallback(async (eventId: string) => {
+    try {
+      return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/allocations`);
+    } catch (err) {
+      toast.error("Fetching seat allocations operation failed");
+    }
+  }, [request]);
+
+  const updateSeatAllocations = useCallback(async (eventId: string, newSeatAllocation: SeatAllocationUpsert) => {
+    try {
+      const response = await request<boolean>(
+        `/seat-allocation/${eventId}/allocations`,
+        {
+          method: "PUT",
+          body: JSON.stringify(newSeatAllocation),
+        },
+      );
+      toast.success("Seat assignment is set successfully!");
+      return response;
+    } catch (err) {
+      toast.error("Fetching seat allocations operation failed");
+      return null;
+    }
+  }, [request]);
+
   return {
     request,
     logoutRequest,
@@ -471,5 +525,8 @@ export default function useApiService() {
     addParticipant,
     updateParticipant,
     deleteParticipation,
+    generateSeatAllocations,
+    getSeatAllocations,
+    updateSeatAllocations,
   };
 }
