@@ -79,7 +79,7 @@ export default function useApiService() {
   );
 
   const logoutRequest = useCallback(async () => {
-    return await request(`/profile/logout`, {
+    return await request(`/logout`, {
       method: "POST",
     });
   }, [request]);

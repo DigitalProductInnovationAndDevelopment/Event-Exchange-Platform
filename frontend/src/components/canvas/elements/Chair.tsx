@@ -47,7 +47,7 @@ export function ChairRender(chair: Chair) {
           x={-chair.radius - 5}
           y={-chair.radius - 15}
           fontSize={10}
-          fill="darkblue"
+          fill="red"
           align="center"
           width={chair.radius * 2 + 10}
           // globalCompositeOperation="xor"
