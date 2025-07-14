@@ -34,7 +34,7 @@ public class Profile {
     @Column(name = "gitlab_username")
     private String gitlabUsername;
 
-    @Column(name = "email", nullable = false, unique = true, length = 255)
+    @Column(name = "email", unique = true, length = 255)
     private String email;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

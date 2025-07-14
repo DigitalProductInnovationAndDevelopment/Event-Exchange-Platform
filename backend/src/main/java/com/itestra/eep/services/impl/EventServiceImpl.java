@@ -94,6 +94,7 @@ public class EventServiceImpl implements EventService {
         eventCapacityValidator.validateCapacity(event, dto.getGuestCount(), null);
 
         EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
+        employeeParticipationRepository.saveAndFlush(employeeParticipation);
 
         handleVisitorProfilesForGuests(employeeParticipation, 0, dto.getGuestCount());
 
@@ -130,18 +131,18 @@ public class EventServiceImpl implements EventService {
 
         for (EmployeeParticipationUpsertDTO dto : dtos) {
             Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElseThrow(EmployeeNotFoundException::new);
-
             EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
-
-            handleVisitorProfilesForGuests(employeeParticipation, 0, dto.getGuestCount());
-
             participationsToCreate.add(employeeParticipation);
-
         }
 
         eventCapacityValidator.validateBatchCapacity(event, participationsToCreate);
+        List<EmployeeParticipation> employeeParticipations = employeeParticipationRepository.saveAllAndFlush(participationsToCreate);
 
-        return employeeParticipationRepository.saveAll(participationsToCreate);
+        for (EmployeeParticipation employeeParticipation : employeeParticipations) {
+            handleVisitorProfilesForGuests(employeeParticipation, 0, employeeParticipation.getGuestCount());
+        }
+
+        return employeeParticipations;
     }
 
     @Override
