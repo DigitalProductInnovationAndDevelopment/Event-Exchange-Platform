@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface EmployeeParticipationRepository extends JpaRepository<EmployeeParticipation, UUID> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<EmployeeParticipation> findByEmployee_IdAndEvent_Id(UUID employeeId, UUID eventId);
 
 

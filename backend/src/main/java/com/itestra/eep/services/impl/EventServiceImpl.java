@@ -104,7 +104,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public EmployeeParticipation updateParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 
         EmployeeParticipation employeeParticipation = employeeParticipationRepository
