@@ -15,8 +15,11 @@ import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.services.EventService;
 import com.itestra.eep.validators.EventCapacityValidator;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -81,7 +84,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public EmployeeParticipation addParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 
         Employee employee = employeeRepository.findById(dto.getEmployeeId())
@@ -100,7 +102,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000))
     public EmployeeParticipation updateParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 
         EmployeeParticipation employeeParticipation = employeeParticipationRepository
@@ -115,7 +117,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public List<EmployeeParticipation> addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos) {
         List<EmployeeParticipation> participationsToCreate = new java.util.ArrayList<>();
 

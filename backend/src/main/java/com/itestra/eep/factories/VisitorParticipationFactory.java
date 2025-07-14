@@ -17,7 +17,7 @@ import java.util.Set;
 import static com.itestra.eep.enums.Role.VISITOR;
 
 @Service
-@Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+@Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 // TODO not well optimized. Batch insertions are not supported this way.
 public class VisitorParticipationFactory {
 
