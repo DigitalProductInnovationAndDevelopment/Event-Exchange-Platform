@@ -95,7 +95,7 @@ public class EventServiceImpl implements EventService {
 
         EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
 
-        handleVisitorProfilesForGuests(employeeParticipation, dto.getGuestCount());
+        handleVisitorProfilesForGuests(employeeParticipation, 0, dto.getGuestCount());
 
         return employeeParticipationRepository.save(employeeParticipation);
 
@@ -103,6 +103,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public EmployeeParticipation updateParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 
         EmployeeParticipation employeeParticipation = employeeParticipationRepository
@@ -111,7 +112,12 @@ public class EventServiceImpl implements EventService {
 
         eventCapacityValidator.validateCapacity(employeeParticipation.getEvent(), dto.getGuestCount(), employeeParticipation);
 
-        handleVisitorProfilesForGuests(employeeParticipation, dto.getGuestCount());
+        int oldGuestCount = employeeParticipation.getGuestCount();
+        employeeParticipation.setGuestCount(dto.getGuestCount());
+        // important to set before another transaction tries to read the guest count.
+        employeeParticipationRepository.saveAndFlush(employeeParticipation);
+
+        handleVisitorProfilesForGuests(employeeParticipation, oldGuestCount, dto.getGuestCount());
 
         return employeeParticipationRepository.save(employeeParticipation);
     }
@@ -127,7 +133,7 @@ public class EventServiceImpl implements EventService {
 
             EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
 
-            handleVisitorProfilesForGuests(employeeParticipation, dto.getGuestCount());
+            handleVisitorProfilesForGuests(employeeParticipation, 0, dto.getGuestCount());
 
             participationsToCreate.add(employeeParticipation);
 
@@ -148,16 +154,14 @@ public class EventServiceImpl implements EventService {
         return eventRepository.existsByIdAndEmployeeParticipations_Employee_Id(eventId, userId);
     }
 
-    private void handleVisitorProfilesForGuests(EmployeeParticipation participation, int newGuestCount) {
-        int currentGuestCount = participation.getGuestCount();
-        participation.setGuestCount(newGuestCount);
+    private void handleVisitorProfilesForGuests(EmployeeParticipation participation, int oldGuestCount, int newGuestCount) {
 
         Set<VisitorParticipation> visitors = participation.getVisitorParticipations();
 
-        if (newGuestCount > currentGuestCount) {
-            visitorParticipationFactory.insertVisitorParticipations(participation, currentGuestCount, newGuestCount);
-        } else if (newGuestCount < currentGuestCount) {
-            visitorParticipationFactory.deleteVisitorParticipations(visitors, currentGuestCount - newGuestCount);
+        if (newGuestCount > oldGuestCount) {
+            visitorParticipationFactory.insertVisitorParticipations(participation, oldGuestCount, newGuestCount);
+        } else if (newGuestCount < oldGuestCount) {
+            visitorParticipationFactory.deleteVisitorParticipations(visitors, oldGuestCount - newGuestCount);
         }
     }
 
