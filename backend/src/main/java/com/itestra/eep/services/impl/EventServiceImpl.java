@@ -15,9 +15,9 @@ import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.services.EventService;
 import com.itestra.eep.validators.EventCapacityValidator;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.core.Authentication;
@@ -103,7 +103,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000))
+    @Retryable(retryFor = {CannotAcquireLockException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public EmployeeParticipation updateParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto) {
 

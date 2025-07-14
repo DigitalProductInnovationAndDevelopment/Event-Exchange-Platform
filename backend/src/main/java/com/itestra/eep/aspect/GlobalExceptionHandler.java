@@ -3,6 +3,7 @@ package com.itestra.eep.aspect;
 import com.itestra.eep.exceptions.*;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +84,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Internal Server Error");
+    }
+
+    @ExceptionHandler({CannotAcquireLockException.class})
+    public ResponseEntity<Object> handleDBLockException(CannotAcquireLockException exception) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("You sent too many requests. Please try again.");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
