@@ -21,6 +21,7 @@ import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { DietaryPreference, type ParticipationDetails } from "types/employee.ts";
 
 const { Title } = Typography;
 
@@ -30,22 +31,47 @@ export const EventDetails = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { getEventById, deleteEvent, deleteFile, fileDownload, initiateSchematics } = useApiService();
+  const {
+    getEventById,
+    deleteEvent,
+    deleteFile,
+    fileDownload,
+    initiateSchematics,
+    getEventParticipants,
+  } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
+  const [_, setEventParticipants] = useState<ParticipationDetails[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const data = await getEventById(eventId!);
-        setEvent(data);
+        const [eventDetailsData, participants] = await Promise.all([getEventById(eventId!), getEventParticipants(eventId!)]);
+        setEvent(eventDetailsData);
+        setEventParticipants(participants || []);
+        if (participants) {
+          const dietCount: Record<string, number> = {};
+          Object.values(DietaryPreference).forEach(pref => {
+            dietCount[pref] = 0;
+          });
+          participants.forEach(emp => {
+            if (emp.dietTypes) {
+              emp.dietTypes.forEach(diet => {
+                const dietValue = DietaryPreference[diet];
+                if (dietValue in dietCount) dietCount[dietValue] += 1;
+              });
+            }
+          });
+          setDietaryStats(dietCount);
+        }
         setLoading(false);
       } catch (err) {
         console.error("Failed to fetch events:", err);
         setLoading(false);
       }
     })();
-  }, [eventId, getEventById]);
+  }, [eventId, getEventById, getEventParticipants]);
 
   async function onDelete() {
     try {
@@ -277,27 +303,33 @@ export const EventDetails = () => {
           </Card>
 
           <Card title="Event Statistics" className="mb-6">
-            <Row gutter={16} justify="center">
-              <Col span={6}>
+            <div className="flex flex-col">
+              <div className="flex md:flex-row justify-around items-stretch gap-4 w-full">
                 <Statistic
                   title="Participants"
                   value={event.participantCount}
                   prefix={<TeamOutlined />}
                 />
-              </Col>
-              <Col span={6}>
                 <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
-              </Col>
-
-              <Col span={8}>
                 <Statistic
                   title="Engagement"
                   value={((event.participantCount / event.capacity) * 100).toFixed(2)}
                   prefix={<BarChartOutlined />}
                   suffix="%"
                 />
-              </Col>
-            </Row>
+              </div>
+              <div className="border-t border-gray-200" />
+              <Title level={5} className="mb-2 text-center">
+                Dietary Preferences
+              </Title>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {Object.entries(dietaryStats).map(([diet, count]) => (
+                  <div key={diet} className="text-center font-medium">
+                    <span>{diet}:</span> {count}
+                  </div>
+                ))}
+              </div>
+            </div>
           </Card>
         </Col>
 
