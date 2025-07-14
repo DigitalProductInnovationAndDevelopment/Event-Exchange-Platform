@@ -155,9 +155,9 @@ public class EventServiceImpl implements EventService {
         Set<VisitorParticipation> visitors = participation.getVisitorParticipations();
 
         if (newGuestCount > currentGuestCount) {
-            visitorParticipationFactory.addVisitorParticipations(participation, visitors, currentGuestCount, newGuestCount);
+            visitorParticipationFactory.insertVisitorParticipations(participation, currentGuestCount, newGuestCount);
         } else if (newGuestCount < currentGuestCount) {
-            visitorParticipationFactory.removeVisitorParticipations(visitors, currentGuestCount - newGuestCount);
+            visitorParticipationFactory.deleteVisitorParticipations(visitors, currentGuestCount - newGuestCount);
         }
     }
 

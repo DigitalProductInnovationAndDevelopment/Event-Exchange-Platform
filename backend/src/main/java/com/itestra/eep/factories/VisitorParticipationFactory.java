@@ -1,76 +1,84 @@
 package com.itestra.eep.factories;
 
-import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.models.VisitorParticipation;
+import com.itestra.eep.repositories.ProfileRepository;
+import com.itestra.eep.repositories.VisitorParticipationRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.itestra.eep.enums.Role.VISITOR;
 
+
+@RequiredArgsConstructor
 @Service
 @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-// TODO not well optimized. Batch insertions are not supported this way.
+// TODO not well optimized. Batch guest insertions are not optimized.
 public class VisitorParticipationFactory {
 
     private static final String GUEST_NAME_TEMPLATE = "%s Guest: %d";
     private static final String ACCESS_LINK_TEMPLATE = "accesslink%d";
 
-    private Profile createVisitorProfile(String parentEmployeeName, int guestIndexNumber) {
-        return Profile.builder()
-                .authorities(Set.of(VISITOR))
-                .fullName(String.format(GUEST_NAME_TEMPLATE, parentEmployeeName, guestIndexNumber))
-                .build();
-    }
+    private final ProfileRepository profileRepository;
+    private final VisitorParticipationRepository visitorParticipationRepository;
 
-    public Set<VisitorParticipation> createVisitorParticipations(Employee employee,
-                                                                 EmployeeParticipation participation,
+
+    public List<VisitorParticipation> createVisitorParticipations(EmployeeParticipation participation,
                                                                  int guestCount,
                                                                  int startIndex) {
-        Set<VisitorParticipation> newVisitors = new HashSet<>();
-        String employeeName = employee.getProfile().getFullName();
+        List<VisitorParticipation> newVisitors = new ArrayList<>();
 
         for (int i = 0; i < guestCount; i++) {
-            int guestNumber = startIndex + i + 1;
-            Profile visitorProfile = createVisitorProfile(employeeName, guestNumber);
-            VisitorParticipation visitor = createVisitorParticipation(
-                    visitorProfile, participation, startIndex + i);
+            int guestIndex = startIndex + i + 1;
+            VisitorParticipation visitor = generateVisitorParticipation(guestIndex, participation, startIndex + i);
             newVisitors.add(visitor);
         }
 
         return newVisitors;
     }
 
-    public void addVisitorParticipations(EmployeeParticipation participation, Set<VisitorParticipation> visitors,
-                                         int currentCount, int newCount) {
+    public void insertVisitorParticipations(EmployeeParticipation participation, int currentCount, int newCount) {
         int guestsToAdd = newCount - currentCount;
-        Set<VisitorParticipation> newVisitors = createVisitorParticipations(
-                participation.getEmployee(), participation, guestsToAdd, currentCount);
-        visitors.addAll(newVisitors);
+        List<VisitorParticipation> newVisitors = createVisitorParticipations(participation, guestsToAdd, currentCount);
+        visitorParticipationRepository.saveAll(newVisitors);
     }
 
-    public void removeVisitorParticipations(Set<VisitorParticipation> visitors, int guestsToRemove) {
+    public void deleteVisitorParticipations(Set<VisitorParticipation> visitors, int guestsToRemove) {
         List<VisitorParticipation> visitorList = new ArrayList<>(visitors);
+        List<UUID> obsoleteProfileIds = new ArrayList<>();
         for (int i = 0; i < guestsToRemove && i < visitorList.size(); i++) {
-            visitors.remove(visitorList.get(visitorList.size() - 1 - i));
+            obsoleteProfileIds.add(visitorList.get(visitorList.size() - 1 - i).getProfile().getId());
         }
+        // deleting visitor profile will cascade delete the respective visitor_participations
+        profileRepository.deleteAllByIdInBatch(obsoleteProfileIds);
     }
 
-    private VisitorParticipation createVisitorParticipation(Profile profile,
-                                                            EmployeeParticipation parentParticipation,
-                                                            int index) {
-        VisitorParticipation visitor = new VisitorParticipation(profile,
+
+    private VisitorParticipation generateVisitorParticipation(int guestIndexNumber,
+                                                              EmployeeParticipation parentParticipation,
+                                                              int index) {
+
+        String parentEmployeeName = parentParticipation.getEmployee().getProfile().getFullName();
+
+        Profile visitorProfile = Profile.builder()
+                .authorities(Set.of(VISITOR))
+                .fullName(String.format(GUEST_NAME_TEMPLATE, parentEmployeeName, guestIndexNumber))
+                .build();
+
+        VisitorParticipation visitor = new VisitorParticipation(
+                visitorProfile,
                 parentParticipation,
-                String.format(ACCESS_LINK_TEMPLATE,
-                        index));
+                String.format(ACCESS_LINK_TEMPLATE, index));
+
         visitor.setEvent(parentParticipation.getEvent());
         visitor.setConfirmed(true);
         return visitor;

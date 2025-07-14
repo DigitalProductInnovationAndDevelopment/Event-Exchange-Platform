@@ -3,8 +3,10 @@ package com.itestra.eep.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.itestra.eep.enums.Role;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 
@@ -12,24 +14,31 @@ import java.util.UUID;
 @Table(schema = "organization", name = "user_roles")
 public class UserRole implements GrantedAuthority {
 
-    @Id
-    @Column(name = "profile_id", nullable = false)
-    @JsonIgnore
-    private UUID id;
+    @EmbeddedId
+    private UserRoleKey key;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Embeddable
+    @EqualsAndHashCode
+    public static class UserRoleKey implements Serializable {
+
+        @Column(name = "profile_id", nullable = false)
+        @JsonIgnore
+        private UUID id;
+
+        @Enumerated(EnumType.STRING)
+        @Column(nullable = false)
+        private Role role;
+    }
 
     @Override
     public String getAuthority() {
-        return role.getAuthority();
+        return key.role.getAuthority();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj.getClass().isAssignableFrom(Role.class)) {
-            return this.role.equals(obj);
+            return this.key.role.equals(obj);
         }
         return super.equals(obj);
     }

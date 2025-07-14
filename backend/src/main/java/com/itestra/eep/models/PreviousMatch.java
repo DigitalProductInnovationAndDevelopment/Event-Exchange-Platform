@@ -1,6 +1,7 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ public class PreviousMatch {
     @Getter
     @Setter
     @Embeddable
+    @EqualsAndHashCode
     public static class PreviousMatchId implements Serializable {
 
         @Column(name = "first_employee_id", nullable = false)
