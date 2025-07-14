@@ -353,6 +353,23 @@ export default function useApiService() {
     [request],
   );
 
+  const createEmployeeBatch = useCallback(
+    async (employeeDataList: Employee[]): Promise<Employee[] | null> => {
+      try {
+        const response = await request<Employee[]>("/profile/employees/batch", {
+          method: "POST",
+          body: JSON.stringify(employeeDataList),
+        });
+        toast.success("Employees created successfully!");
+        return response;
+      } catch (error) {
+        console.error("Failed to create employees batch", error);
+        return null;
+      }
+    },
+    [request],
+  );
+
   const updateEmployee = useCallback(
     async (id: string, employeeData: Employee): Promise<Employee | null> => {
       try {
@@ -414,6 +431,32 @@ export default function useApiService() {
         return response;
       } catch (error) {
         console.error("Failed to add participant to the event", error);
+        return null;
+      }
+    },
+    [request],
+  );
+
+  const addParticipantsBatch = useCallback(
+    async (
+      eventId: string, participations: {
+        guestCount: number;
+        employeeId: string;
+      }[],
+    ): Promise<ParticipationDetails[] | null> => {
+      try {
+        if (participations.length === 0) return [];
+        const response = await request<ParticipationDetails[]>(
+          `/events/${eventId}/participants/batch`,
+          {
+            method: "POST",
+            body: JSON.stringify(participations),
+          },
+        );
+        toast.success("Participants added successfully!");
+        return response;
+      } catch (error) {
+        console.error("Batch add participants failed", error);
         return null;
       }
     },
@@ -519,10 +562,12 @@ export default function useApiService() {
     getEmployeeById,
     getEmployees,
     createEmployee,
+    createEmployeeBatch,
     updateEmployee,
     deleteEmployee,
     getEventParticipants,
     addParticipant,
+    addParticipantsBatch,
     updateParticipant,
     deleteParticipation,
     generateSeatAllocations,
