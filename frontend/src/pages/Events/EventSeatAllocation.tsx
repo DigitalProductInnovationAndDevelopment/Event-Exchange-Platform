@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Avatar, Button, Card, Col, List, message, Row, Space, Typography } from "antd";
+import { Avatar, Button, Card, Col, List, message, Row, Space, Spin, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
@@ -162,7 +162,7 @@ const SeatAllocationContent = ({
         items={[
           { path: "/events", label: "Events" },
           { path: `/events/${eventId}`, label: eventName || "Event" },
-          { path: `/events/${eventId}/seat-allocation`, label: "Manage Seat Allocation" },
+          { path: `/events/${eventId}/seat-allocation/${schematicsId}`, label: "Manage Seat Allocation" },
         ]}
       />
       {/* Page title and action buttons */}
@@ -284,27 +284,36 @@ export const EventSeatAllocation = () => {
   const [participants, setParticipants] = useState<ParticipationDetails[]>([]);
   const [schematics, setSchematics] = useState<AppState | null>(null);
   const [schematicsId, setSchematicsId] = useState<string | null>(null);
-  const [, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Fetch event info, participants, and seat map on mount
   useEffect(() => {
     (async () => {
       if (!eventId) return;
       setLoading(true);
-      const event = await getEventById(eventId);
-      if (event) setEventName(event.name);
-      const parts = await getEventParticipants(eventId);
-      setParticipants(parts || []);
-      if (event?.schematics?.id) {
-        const sch = await getSchematics(event.schematics.id);
-        setSchematics(sch || null);
-        setSchematicsId(event.schematics.id || null);
+      try {
+        const event = await getEventById(eventId);
+        if (event) setEventName(event.name);
+        const parts = await getEventParticipants(eventId);
+        setParticipants(parts || []);
+        if (event?.schematics?.id) {
+          const sch = await getSchematics(event.schematics.id);
+          setSchematics(sch || null);
+          setSchematicsId(event.schematics.id || null);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, [eventId, getEventById, getEventParticipants, getSchematics]);
 
-  if (!eventId || !schematics) return <div>Loading...</div>;
+  if (loading || !eventId || !schematics) {
+    return (<div className="flex justify-center items-center h-screen">
+      <Spin size="large" tip="Loading event details..." />
+    </div>);
+  }
 
   return (
     <CanvasProvider>
