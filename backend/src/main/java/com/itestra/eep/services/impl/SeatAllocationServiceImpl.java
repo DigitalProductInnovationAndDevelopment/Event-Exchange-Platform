@@ -112,11 +112,11 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
         ProcessBuilder pb = new ProcessBuilder(
                 "python3",
-                "/algo(table).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
+                "/algo(seat).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
         );
 
-       /* TODO for local dev
-       ProcessBuilder pb = new ProcessBuilder(
+        /* TODO for local dev
+        ProcessBuilder pb = new ProcessBuilder(
                 "../venv/bin/python",
                 "algo(table).py", tempInputFile.toString(), tempTableFile.toString(), tempConstraintsFile.toString(), tempOutputFile.toString()
         );*/

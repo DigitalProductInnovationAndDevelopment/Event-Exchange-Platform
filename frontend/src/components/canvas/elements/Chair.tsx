@@ -21,7 +21,7 @@ export class Chair implements ElementProperties {
     this.type = "chair";
     this.x = 200;
     this.y = 100;
-    this.color = "#888";
+    this.color = "#aaa";
     this.radius = 10;
     this.attachedTo = undefined;
     this.draggable = true;
@@ -38,7 +38,7 @@ export function ChairRender(chair: Chair) {
       onMouseOut={handleMouseOut}>
       <Circle
         radius={chair.radius || 10}
-        fill={chair.color || "#888"}
+        fill={chair.color || "#aaa"}
         perfectDrawEnabled={false}
       />
       {chair.assigneeName && (
@@ -47,7 +47,7 @@ export function ChairRender(chair: Chair) {
           x={-chair.radius - 5}
           y={-chair.radius - 15}
           fontSize={10}
-          fill="red"
+          fill="black"
           align="center"
           width={chair.radius * 2 + 10}
           // globalCompositeOperation="xor"

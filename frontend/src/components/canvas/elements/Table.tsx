@@ -29,7 +29,7 @@ export class Table implements ElementProperties {
     this.height = tableType.height || undefined;
     this.radius = tableType.radius || undefined;
 
-    this.color = tableType.color || "#a57272";
+    this.color = tableType.color || "#294d69";
     this.stroke = "#333";
     this.draggable = true;
     this.attachedChairs = [];
@@ -40,14 +40,15 @@ export class Table implements ElementProperties {
 export function TableRender(table: Table, areTextsEnabled: boolean) {
   return table.type === "circleTable" ? (
     <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-      <Circle radius={table.radius} fill={table.color || "#8B4513"} />
+      <Circle radius={table.radius} fill={table.color || "#294d69"} />
       {areTextsEnabled && (
         <Text
           text={`${table.name}\n${table.attachedChairs.length} chairs`}
           fill="white"
           fontSize={12}
-          x={-(table.radius ?? 0) / 2}
-          y={-(table.radius ?? 0) / 2}
+          align="center"
+          x={-(table.radius ?? 0) + 1}
+          y={-(table.radius ?? 0) / 4}
           width={table.radius ? table.radius * 2 : 0}
           verticalAlign="middle"
         />
@@ -58,7 +59,7 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
       <Rect
         width={table.width}
         height={table.height}
-        fill={table.color || "#8B4513"}
+        fill={table.color || "#294d69"}
         perfectDrawEnabled={false}
       />
       {areTextsEnabled && (
