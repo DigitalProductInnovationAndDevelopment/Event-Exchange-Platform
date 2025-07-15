@@ -51,8 +51,8 @@ export const WallRender = (wall: Wall) => {
       {/* Visible wall line */}
       <Line
         points={[wall.x1, wall.y1, wall.x2, wall.y2]}
-        stroke="green"
-        strokeWidth={2}
+        stroke="black"
+        strokeWidth={3}
         lineJoin="round"
         perfectDrawEnabled={false}
       />
