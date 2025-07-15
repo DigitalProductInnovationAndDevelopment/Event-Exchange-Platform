@@ -87,6 +87,14 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         String jwt = jwtService.generateToken(userProfile);
 
+        handleAuthorizationCookie(response, jwt, expiration);
+
+        response.sendRedirect("%s/Event-Exchange-Platform/login_success".formatted(clientAddress));
+        eventPublisher.publishEvent(new UserLoginSuccessEvent(this, userProfile, request.getRemoteAddr()));
+
+    }
+
+    public void handleAuthorizationCookie(HttpServletResponse response, String jwt, long expiration) {
         // we had to manually set it up like this because otherwise Safari and Firefox were not recognizing the cookie.
         String cookieValue = "Authorization=" + jwt +
                 "; Path=/; Max-Age=" + expiration;
@@ -98,9 +106,5 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
 
         response.setHeader("Set-Cookie", cookieValue);
-
-        response.sendRedirect("%s/Event-Exchange-Platform/login_success".formatted(clientAddress));
-        eventPublisher.publishEvent(new UserLoginSuccessEvent(this, userProfile, request.getRemoteAddr()));
-
     }
 }

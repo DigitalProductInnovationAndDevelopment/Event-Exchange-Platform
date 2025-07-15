@@ -1,9 +1,8 @@
 package com.itestra.eep.webcontroller;
 
+import com.itestra.eep.gitlabEvents.GitlabOAuth2SuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping
 public class LoginController {
 
+    private final GitlabOAuth2SuccessHandler authenticationSuccessHandler;
+
     @GetMapping("/login/oauth2/code/gitlab")
     public ResponseEntity<Object> loginRequest() {
         return ResponseEntity.ok().build();
@@ -23,17 +24,7 @@ public class LoginController {
 
     @PostMapping("/auth/logout")
     public ResponseEntity<Boolean> logout(HttpServletResponse response) {
-
-        ResponseCookie deleteCookie = ResponseCookie.from("Authorization", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .sameSite("Strict")
-                .maxAge(0)
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
-
+        authenticationSuccessHandler.handleAuthorizationCookie(response, "", 0);
         return ResponseEntity.ok(true);
     }
 }
