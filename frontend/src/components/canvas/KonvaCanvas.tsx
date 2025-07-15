@@ -1,7 +1,7 @@
 import { useCanvas } from "./contexts/CanvasContext.tsx";
 import { useEffect, useRef, useState } from "react";
 import { Group, Layer, Stage, Transformer } from "react-konva";
-import { renderElement } from "./utils/constants";
+import { type ElementProperties, renderElement, type UUID } from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
 import Konva from "konva";
 import type { Table } from "./elements/Table.tsx";
@@ -127,6 +127,18 @@ function KonvaCanvas() {
     };
   }, [dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, stageRef]);
 
+  function getTableConnectedChairIds(tableId: UUID): UUID[] {
+    const table: ElementProperties | undefined = state.elements?.find(el => (el.type === "rectTable" || el.type === "circleTable") && el.id === tableId);
+    if (table) {
+      const chairIds: UUID[] = (table as unknown as Table).attachedChairs ?? [];
+      return [...chairIds];
+    } else {
+      return [];
+    }
+  }
+
+  const selectedIdsProxy = [...selectedIds, ...(selectedIds.length === 1 ? getTableConnectedChairIds(selectedIds[0]) : [])];
+
   return (
     <div className="space-y-6">
       <div className="App overflow-hidden bg-white"
@@ -154,7 +166,7 @@ function KonvaCanvas() {
 
             <Layer ref={mainLayer}>
               {/* this is where we display elements */}
-              {state.elements?.filter(el => !selectedIds.includes(el.id)).map((el) => {
+              {state.elements?.filter(el => !selectedIdsProxy.includes(el.id)).map((el) => {
                 return (
                   <Group
                     key={el.id}
@@ -177,42 +189,6 @@ function KonvaCanvas() {
                   </Group>
                 );
               })}
-
-              {selectedIds.length > 0 && (
-                <Group
-                  draggable={true}
-                  onDragEnd={(e) => {
-                    // Handle group drag end
-                    const deltaX = e.target.x();
-                    const deltaY = e.target.y();
-                    handleGroupDragEnd(deltaX, deltaY, dispatch, state, selectedIds);
-                    // Reset group position to remove glitch
-                    e.target.position({ x: 0, y: 0 });
-                  }}
-                  onDragStart={() => handleGroupDragStart(dispatch)}
-                >
-                  {state.elements?.filter(el => selectedIds.includes(el.id)).map((el) => {
-                    return (
-                      <Group
-                        key={el.id}
-                        id={el.id}
-                        x={el.x}
-                        y={el.y}
-                        draggable={false} // we disable individual dragging since parent handles it
-                        rotation={el.rotation}
-                        onDblClick={(e) => handleDoubleClickOnElement(e, el, setSelectedIds)}
-                        ref={node => {
-                          if (node) {
-                            rectRefs.current.set(el.id, node);
-                          }
-                        }}
-                      >
-                        {renderElement(el, true)}
-                      </Group>
-                    );
-                  })}
-                </Group>)
-              }
 
               {/* transformer for all selected shapes. this is what we use to scale up or shrink the shapes */}
               <Transformer
@@ -239,6 +215,43 @@ function KonvaCanvas() {
                     selectedChairId={selectedIds[0]}
                   />
                 )}
+            </Layer>
+
+            <Layer ref={dragLayer}>
+              {selectedIds.length > 0 && (
+                <Group
+                  draggable={true}
+                  onDragEnd={(e) => {
+                    // Handle group drag end
+                    const deltaX = e.target.x();
+                    const deltaY = e.target.y();
+                    handleGroupDragEnd(deltaX, deltaY, dispatch, state, selectedIdsProxy);
+                    // Reset group position to remove glitch
+                    e.target.position({ x: 0, y: 0 });
+                  }}
+                  onDragStart={() => handleGroupDragStart(dispatch)}
+                >
+                  {state.elements?.filter(el => selectedIdsProxy.includes(el.id)).map((el) => {
+                    return (
+                      <Group
+                        key={el.id}
+                        id={el.id}
+                        x={el.x}
+                        y={el.y}
+                        draggable={false} // we disable individual dragging since parent handles it
+                        rotation={el.rotation}
+                        ref={node => {
+                          if (node) {
+                            rectRefs.current.set(el.id, node);
+                          }
+                        }}
+                      >
+                        {renderElement(el, true)}
+                      </Group>
+                    );
+                  })}
+                </Group>)
+              }
             </Layer>
 
           </Stage>
