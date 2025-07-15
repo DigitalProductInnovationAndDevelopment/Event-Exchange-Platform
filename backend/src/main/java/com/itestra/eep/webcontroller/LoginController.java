@@ -21,7 +21,7 @@ public class LoginController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     public ResponseEntity<Boolean> logout(HttpServletResponse response) {
 
         ResponseCookie deleteCookie = ResponseCookie.from("Authorization", "")

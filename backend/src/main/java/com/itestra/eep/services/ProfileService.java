@@ -6,6 +6,8 @@ public interface ProfileService {
 
     Profile findByGitlabUsername(String gitlabUsername);
 
+    Profile findByEmail(String email);
+
     Profile initiateUserProfile(Profile user);
 
 }

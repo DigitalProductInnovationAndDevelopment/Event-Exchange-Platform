@@ -26,6 +26,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Profile findByEmail(String email) {
+        return profileRepository.findUserProfileByEmail(email).orElseThrow(UserProfileNotFoundException::new);
+    }
+
+    @Override
     public Profile initiateUserProfile(Profile profile) {
         return profileRepository.save(profile);
     }

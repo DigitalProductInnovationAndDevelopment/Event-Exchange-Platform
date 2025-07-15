@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +30,7 @@ public class WebSecurityConfig {
 
     private final AuthenticationSuccessHandler gitlabOAuth2SuccessHandler;
     private final OncePerRequestFilter securityContextInterceptor;
+    private final Environment environment;
 
     @Value("${client.instance.address}")
     private String clientAddress;
@@ -35,9 +38,7 @@ public class WebSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        String profiles = System.getProperty("spring.profiles.active");
-
-        if (profiles != null && Arrays.asList(profiles.split(",")).contains("local")) {
+        if (environment.acceptsProfiles(Profiles.of("local"))) {
             //  we disable auth
             http
                     .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())

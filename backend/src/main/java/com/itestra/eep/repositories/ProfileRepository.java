@@ -12,6 +12,6 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
     Optional<Profile> findByGitlabUsername(String gitlabUsername);
 
-    Profile findUserProfileByEmail(String email);
+    Optional<Profile> findUserProfileByEmail(String email);
 
 }

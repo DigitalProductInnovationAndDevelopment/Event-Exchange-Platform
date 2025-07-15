@@ -11,18 +11,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static com.itestra.eep.enums.Role.EMPLOYEE;
 
-@Component
+@Service
+@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 @RequiredArgsConstructor
 public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
@@ -30,6 +35,7 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final ProfileService profileService;
     private final EmployeeRepository employeeRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final Environment environment;
 
     @Value("${client.instance.address}")
     private String clientAddress;
@@ -56,19 +62,26 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         try {
             userProfile = profileService.findByGitlabUsername(gitlabUsername);
         } catch (UserProfileNotFoundException e) {
+            try {
 
-            Employee newEmployeeRecord = new Employee();
+                userProfile = profileService.findByEmail(gitlabUsername);
+                userProfile.setGitlabUsername(gitlabUsername);
 
-            userProfile = Profile.builder()
-                    .gitlabUsername(gitlabUsername)
-                    .email(email)
-                    .fullName(name)
-                    .build();
+            } catch (UserProfileNotFoundException ex) {
+                Employee newEmployeeRecord = new Employee();
 
-            userProfile.setAuthorities(Collections.singleton(EMPLOYEE));
-            newEmployeeRecord.setProfile(userProfile);
-            newEmployeeRecord.setLocation(location);
-            employeeRepository.saveAndFlush(newEmployeeRecord);
+                userProfile = Profile.builder()
+                        .gitlabUsername(gitlabUsername)
+                        .email(email)
+                        .fullName(name)
+                        .build();
+
+                userProfile.setAuthorities(Collections.singleton(EMPLOYEE));
+                newEmployeeRecord.setProfile(userProfile);
+                newEmployeeRecord.setLocation(location);
+                employeeRepository.saveAndFlush(newEmployeeRecord);
+
+            }
 
         }
 
@@ -78,9 +91,7 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String cookieValue = "Authorization=" + jwt +
                 "; Path=/; Max-Age=" + expiration;
 
-        String springProfiles = System.getProperty("spring.profiles.active");
-
-        if (isSSLEnabled || (springProfiles != null && Arrays.asList(springProfiles.split(",")).contains("prod"))) {
+        if (isSSLEnabled || environment.acceptsProfiles(Profiles.of("prod"))) {
             cookieValue += "; HttpOnly; Secure; SameSite=None";
         } else {
             cookieValue += "; SameSite=Lax";
