@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
 import { DietaryPreference, type ParticipationDetails } from "types/employee.ts";
+import { exportParticipationToCSV } from "../../utils/utils";
 
 const { Title } = Typography;
 
@@ -172,7 +173,7 @@ export const EventDetails = () => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <Title level={2} className="mb-0 max-w-xl">{event.name}</Title>
+          <Title level={2} className="!my-2 max-w-xl">{event.name}</Title>
           <div className="px-4 py-2">
             <EventStatusTag status={event.status} size="big" />
           </div>
@@ -349,7 +350,16 @@ export const EventDetails = () => {
           <Card title="Export Information" className="mb-6">
             <Space direction="vertical" className="w-full">
               <Button block icon={<FileTextOutlined />}>Export Event Data</Button>
-              <Button block icon={<FileTextOutlined />}>Export Participants List</Button>
+              <Button
+                block
+                icon={<FileTextOutlined />}
+                onClick={async () => {
+                  const participants = await getEventParticipants(eventId!);
+                  if (participants) exportParticipationToCSV(participants);
+                }}
+              >
+                Export Participants List
+              </Button>
               <Button block icon={<FileTextOutlined />}>Export Seat Allocation</Button>
             </Space>
           </Card>

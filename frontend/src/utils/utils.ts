@@ -1,7 +1,8 @@
 import type { ParticipationDetails } from "types/employee";
+import type { Employee } from "types/employee";
 
-// Utility function to export employee data as CSV
-export const exportToCSV = (data: ParticipationDetails[]) => {
+// Utility function to export participation data as CSV
+export const exportParticipationToCSV = (data: ParticipationDetails[]) => {
   // Define CSV headers
   const headers = [
     "Gitlab ID",
@@ -21,7 +22,36 @@ export const exportToCSV = (data: ParticipationDetails[]) => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.setAttribute("download", "employees.csv");
+  link.setAttribute("download", "Event_Participations.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Utility function to export a list of Employee objects as CSV
+export const exportEmployeesToCSV = (employees: Employee[]) => {
+  const headers = [
+    "Full Name",
+    "Email",
+    "Location",
+    "Date Joined",
+    "Gender",
+    "Gitlab Username"
+  ];
+  const rows = employees.map(emp => [
+    emp.profile.fullName,
+    emp.profile.email,
+    emp.location,
+    emp.employmentStartDate,
+    emp.profile.gender,
+    emp.profile.gitlabUsername
+  ]);
+  const csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "Full_Employee_List.csv");
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

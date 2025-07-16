@@ -8,79 +8,72 @@ import { Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
-import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
-import { exportToCSV } from "../../utils/utils";
+import { exportEmployeesToCSV } from "../../utils/utils";
 import { parse } from "papaparse";
-import moment from "moment/moment";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
-function parseDate(dateStr: string) {
-  return moment(dateStr, ["DD.MM.YYYY", "YYYY-MM-DD"]).toDate();
-}
-
 // Define table columns with correct types
 const columns = (
-  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
+  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
+  onDeleteClick: (employeeId: string, employeeName: string) => void
 ): ColumnsType<Employee> => [
-  {
-    title: "Full Name",
-    dataIndex: ["profile", "fullName"],
-    key: "profile.fullName",
-    sorter: (a, b) => (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
-  },
-  {
-    title: "Email",
-    dataIndex: ["profile", "email"],
-    key: "profile.email",
-  },
-  {
-    title: "Location",
-    dataIndex: "location",
-    key: "location",
-  },
-  {
-    title: "Employment Type",
-    dataIndex: "employmentType",
-    key: "employmentType",
-    render: (type: string) => <EmployeeTypeTag type={type} />,
-  },
-  {
-    title: "Date Joined",
-    dataIndex: "employmentStartDate",
-    key: "employmentStartDate",
-  },
-  {
-    title: "Events",
-    dataIndex: "attendedEventsCount",
-    key: "attendedEventsCount",
-    render: (_count: number, record: Employee) => (
-      <Button
-        type="link"
-        style={{ color: "black" }}
-        onClick={() => onNavigate(record.profile.id, "events")}
-      >
-        {record.participations?.length || 0}
-      </Button>
-    ),
-  },
-  {
-    title: "Actions",
-    key: "actions",
-    render: (_, record: Employee) => (
-      <Space size="small" align="end">
+    {
+      title: "Full Name",
+      dataIndex: ["profile", "fullName"],
+      key: "profile.fullName",
+      sorter: (a, b) => (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
+    },
+    {
+      title: "Email",
+      dataIndex: ["profile", "email"],
+      key: "profile.email",
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+    },
+    {
+      title: "Date Joined",
+      dataIndex: "employmentStartDate",
+      key: "employmentStartDate",
+    },
+    {
+      title: "Events",
+      dataIndex: "attendedEventsCount",
+      key: "attendedEventsCount",
+      render: (_count: number, record: Employee) => (
         <Button
-          type="default"
-          icon={<EyeOutlined />}
-          onClick={() => onNavigate(record.profile.id)}
-          style={{ background: "#fff", border: "1px solid #d9d9d9" }}
+          type="link"
+          style={{ color: "black" }}
+          onClick={() => onNavigate(record.profile.id, "events")}
         >
-          View
+          {record.participations?.length || 0}
         </Button>
-      </Space>
-    ),
-  },
-];
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_: any, record: Employee) => (
+        <Space size="small" align="end">
+          <Button
+            type="default"
+            icon={<EyeOutlined />}
+            onClick={() => onNavigate(record.profile.id)}
+            style={{ background: "#fff", border: "1px solid #d9d9d9" }}
+          >
+            View
+          </Button>
+          <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, record.profile.fullName)}>
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
 function downloadCSV(): void {
   const employees: Employee[] = [
@@ -146,7 +139,6 @@ function downloadCSV(): void {
     "Last Name",
     "Location",
     "Employment Start Date",
-    "Employment Type",
     "Email",
     "Gender",
     "Gitlab Username",
@@ -181,6 +173,25 @@ export const EmployeesList = () => {
   const [locationFilter, setLocationFilter] = useState<string | undefined>(undefined);
   const [fetchedEmployees, setEmployees] = useState<Employee[]>([]);
   const { getEmployees, createEmployeeBatch } = useApiService();
+  const { deleteEmployee } = useApiService();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState<{ id: string; name: string } | null>(null);
+
+  const handleDeleteEmployee = async () => {
+    if (!employeeToDelete) return;
+    const res = await deleteEmployee(employeeToDelete.id);
+    if (res !== undefined) {
+      setEmployees(prev => prev.filter(e => e.profile.id !== employeeToDelete.id));
+    }
+    setDeleteModalOpen(false);
+    setEmployeeToDelete(null);
+  };
+
+  const handleDeleteClick = (employeeId: string, employeeName: string) => {
+    setEmployeeToDelete({ id: employeeId, name: employeeName });
+    setDeleteModalOpen(true);
+  };
+
   const [pageSize, setPageSize] = useState<number>(10);
   const [loading, setLoading] = useState<boolean>(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
@@ -231,7 +242,7 @@ export const EmployeesList = () => {
 
   // Handle export action
   const handleExport = () => {
-    exportToCSV(filteredData);
+    exportEmployeesToCSV(filteredData);
     toast.success("Exported employee data as CSV");
   };
 
@@ -260,14 +271,13 @@ export const EmployeesList = () => {
           header: true,
           skipEmptyLines: true,
           complete: results => {
-            // Expecting columns: name, last name, location, employment start date, employment type, email, gender, gitlab username
+            // Expecting columns: name, last name, location, employment start date, email, gender, gitlab username
             const rows = (results.data as any[])
               .map(row => ({
                 name: row["Name"]?.trim() || "",
                 lastName: row["Last Name"]?.trim() || "",
                 location: row["Location"]?.trim() || "",
                 startDate: row["Employment Start Date"]?.trim() || "",
-                employmentType: row["Employment Type"]?.trim() || "",
                 email: row["Email"]?.trim() || "",
                 gender: row["Gender"]?.trim() || "",
                 gitlabUsername: row["Gitlab Username"]?.trim() || "",
@@ -298,7 +308,7 @@ export const EmployeesList = () => {
         dietTypes: [], // Could be extended to parse from CSV
         authorities: [Role.EMPLOYEE],
       },
-      employmentStartDate: parseDate(row.startDate),
+      employmentStartDate: row.startDate,
       employmentType: row.employmentType,
       location: row.location,
       projects: [],
@@ -325,7 +335,7 @@ export const EmployeesList = () => {
         <Title level={2}>Employees</Title>
         <Space>
           <Button type="primary" icon={<UploadOutlined />} onClick={() => setImportModalOpen(true)}>
-            Import Employees
+            Import / Update Employees
           </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
             Add Employee
@@ -371,7 +381,7 @@ export const EmployeesList = () => {
         </Row>
       </Card>
       <Table
-        columns={columns(handleNavigate)}
+        columns={columns(handleNavigate, handleDeleteClick)}
         dataSource={filteredData}
         bordered={false}
         rowKey={record => record.profile.id}
@@ -439,6 +449,26 @@ export const EmployeesList = () => {
             className="mt-4"
           />
         )}
+      </Modal>
+
+      <Modal
+        title={
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <ExclamationCircleOutlined style={{ color: "#faad14" }} />
+            Confirm Delete
+          </div>
+        }
+        centered
+        open={deleteModalOpen}
+        onOk={handleDeleteEmployee}
+        onCancel={() => { setDeleteModalOpen(false); setEmployeeToDelete(null); }}
+        okText="Yes, Delete"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+        width={400}
+      >
+        <p>Are you sure you want to delete this employee{employeeToDelete ? ` (${employeeToDelete.name})` : ""}?</p>
+        <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone.</p>
       </Modal>
     </div>
   );

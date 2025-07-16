@@ -187,10 +187,10 @@ export const AppContainer = () => {
                 placement="topLeft"
             >
               <div style={{backgroundColor: "#00aeff", borderRadius: "50%"}}
-                   className="w-36 h-36 shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
-                <Avatar icon={<UserOutlined/>} className="bg-blue-200" size={48}/>
+                   className="w-28 h-28 shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
+                <Avatar icon={<UserOutlined/>} className="bg-blue-200" size="large"/>
                 <span
-                    className="mt-3 text-white text-sm font-medium text-center"> {user?.name || user?.email || "User"} </span>
+                    className="mt-1 text-white text-sm font-medium text-center"> {user?.name || user?.email || "User"} </span>
               </div>
             </Dropdown>
             </div>
