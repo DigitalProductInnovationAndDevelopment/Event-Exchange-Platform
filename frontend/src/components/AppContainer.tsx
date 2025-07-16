@@ -50,11 +50,6 @@ export const AppContainer = () => {
 
   const userMenuItems = [
     {
-      key: "/profile",
-      icon: <UserOutlined />,
-      label: "Profile Settings",
-    },
-    {
       key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",

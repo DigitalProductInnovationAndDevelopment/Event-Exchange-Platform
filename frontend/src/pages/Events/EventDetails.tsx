@@ -2,7 +2,6 @@ import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statis
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
-  BarChartOutlined,
   DeleteOutlined,
   EditOutlined,
   EnvironmentOutlined,
@@ -41,6 +40,7 @@ export const EventDetails = () => {
   } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
+  const [totalGuests, setTotalGuests] = useState<number>(0);
   const [_, setEventParticipants] = useState<ParticipationDetails[]>([]);
 
   useEffect(() => {
@@ -52,18 +52,27 @@ export const EventDetails = () => {
         setEventParticipants(participants || []);
         if (participants) {
           const dietCount: Record<string, number> = {};
-          Object.values(DietaryPreference).forEach(pref => {
-            dietCount[pref] = 0;
-          });
           participants.forEach(emp => {
-            if (emp.dietTypes) {
-              emp.dietTypes.forEach(diet => {
-                const dietValue = DietaryPreference[diet];
-                if (dietValue in dietCount) dietCount[dietValue] += 1;
-              });
+            if (emp.dietTypes && emp.dietTypes.length > 0) {
+              const mappedDietTypes = emp.dietTypes.map(dt => DietaryPreference[dt] ?? dt);
+              const sortedCombo = mappedDietTypes.slice().sort().join(", ");
+              if (sortedCombo in dietCount) {
+                dietCount[sortedCombo] += 1;
+              } else {
+                dietCount[sortedCombo] = 1;
+              }
+            } else {
+              if ("No Preference" in dietCount) {
+                dietCount["No Preference"] += 1;
+              } else {
+                dietCount["No Preference"] = 1;
+              }
             }
           });
           setDietaryStats(dietCount);
+          // Calculate total guests (sum of guestCount for all participants)
+          const guests = participants.reduce((sum, p) => sum + (p.guestCount || 0), 0);
+          setTotalGuests(guests);
         }
         setLoading(false);
       } catch (err) {
@@ -275,7 +284,7 @@ export const EventDetails = () => {
               <Col span={12}>
                 <Space direction="vertical" className="w-full">
                   <Button block icon={<UserAddOutlined />}
-                          onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
+                    onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
                     Manage Participants
                   </Button>
                   <Button block icon={<EditOutlined />} onClick={() => {
@@ -288,13 +297,13 @@ export const EventDetails = () => {
                     Manage Seat Layout
                   </Button>
                   <Button block icon={<EditOutlined />}
-                          onClick={() => {
-                            if (event?.schematics) {
-                              navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`);
-                            } else {
-                              handleCreate(`/events/${eventId}/seat-allocation`);
-                            }
-                          }}>
+                    onClick={() => {
+                      if (event?.schematics) {
+                        navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`);
+                      } else {
+                        handleCreate(`/events/${eventId}/seat-allocation`);
+                      }
+                    }}>
                     Manage Seat Allocation
                   </Button>
                 </Space>
@@ -302,30 +311,32 @@ export const EventDetails = () => {
             </Row>
           </Card>
 
-          <Card title="Event Statistics" className="mb-6">
+          {/* Participation Section */}
+          <Card title="Participation" className="mb-6">
             <div className="flex flex-col">
               <div className="flex md:flex-row justify-around items-stretch gap-4 w-full">
-                <Statistic
-                  title="Participants"
-                  value={event.participantCount}
-                  prefix={<TeamOutlined />}
-                />
                 <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
-                <Statistic
-                  title="Engagement"
-                  value={((event.participantCount / event.capacity) * 100).toFixed(2)}
-                  prefix={<BarChartOutlined />}
-                  suffix="%"
-                />
+                <Statistic title="Total Participants" value={event.participantCount} prefix={<TeamOutlined />} />
+                <Statistic title="Employees" value={event.participantCount - totalGuests} prefix={<TeamOutlined />} />
+                <Statistic title="Guests" value={totalGuests} prefix={<TeamOutlined />} />
               </div>
-              <div className="border-t border-gray-200" />
-              <Title level={5} className="mb-2 text-center">
-                Dietary Preferences
-              </Title>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {Object.entries(dietaryStats).map(([diet, count]) => (
-                  <div key={diet} className="text-center font-medium">
-                    <span>{diet}:</span> {count}
+            </div>
+          </Card>
+
+          {/* Dietary Preferences Section */}
+          <Card title="Dietary Preferences (of employees only)" className="mb-6">
+            <div className="flex flex-col">
+              <div
+                className="grid gap-4 w-full"
+                style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}
+              >
+                {Object.entries(dietaryStats).map(([dietCombo, count]) => (
+                  <div key={dietCombo} className="flex flex-col items-center justify-center">
+                    <Statistic
+                      title={<span className="text-center w-full block">{dietCombo}</span>}
+                      value={count}
+                      valueStyle={{ display: 'block', textAlign: 'center', width: '100%' }}
+                    />
                   </div>
                 ))}
               </div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Avatar, Button, Card, Col, List, message, Row, Space, Spin, Typography } from "antd";
+import { useEffect, useState, useMemo } from "react";
+import { Avatar, Button, Card, Col, List, message, Row, Space, Spin, Typography, Input } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
@@ -17,6 +17,7 @@ import { setChairIdForManualAssignment } from "components/canvas/actions/actions
 import toast from "react-hot-toast";
 import type { SeatAllocationResult } from "types/event.ts";
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
+import { InputNumber } from "antd";
 
 const { Title } = Typography;
 
@@ -39,7 +40,15 @@ const SeatAllocationContent = ({
   const [participants, setParticipants] = useState<SeatAllocationResult[]>([]);
   const [unallocated, setUnallocated] = useState<SeatAllocationResult[]>([]);
   const [allocated, setAllocated] = useState<SeatAllocationResult[]>([]);
+  const [unallocatedSearch, setUnallocatedSearch] = useState("");
+  const [allocatedSearch, setAllocatedSearch] = useState("");
   const { updateSchematics, getSeatAllocations, updateSeatAllocations, generateSeatAllocations } = useApiService();
+  const [inputValues, setInputValues] = useState({
+    pastMatches: 0,
+    location: 0,
+    seniority: 0,
+    gender: 0,
+  });
 
   // Calculate unallocated employees based on current seat assignment
   useEffect(() => {
@@ -193,12 +202,68 @@ const SeatAllocationContent = ({
               <KonvaCanvas />
             </div>
           </Card>
+          <Card className="mb-6" title="Seat Allocation Settings">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4 font-semibold mb-2">
+                <span className="w-1/3 text-left">Constraints</span>
+                <span className="w-1/3 text-left">Weighting</span>
+                <span className="w-1/3 text-left">Explanation</span>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex flex-col w-1/3">
+                  {[
+                    { label: "Guests seated with employee", key: "guestsWithEmployee" },
+                    { label: "Past Matches", key: "pastMatches" },
+                    { label: "Location", key: "location" },
+                    { label: "Seniority", key: "seniority" },
+                    { label: "Gender", key: "gender" },
+                  ].map(({ label, key }) => (
+                    <div key={key} className="flex items-center min-h-[40px] h-full">{/* vertically center */}
+                      <span className="text-left">{label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col w-1/3">
+                  {[
+                    { label: "Guests seated with employee", key: "guestsWithEmployee" },
+                    { label: "Past Matches", key: "pastMatches" },
+                    { label: "Location", key: "location" },
+                    { label: "Seniority", key: "seniority" },
+                    { label: "Gender", key: "gender" },
+                  ].map(({ label, key }, idx) => (
+                    <div key={key} className="flex items-center min-h-[40px] h-full">{/* vertically center */}
+                      {idx === 0 ? (
+                        <span className="text-left text-gray-500">always considered</span>
+                      ) : (
+                        <InputNumber min={0} max={5} defaultValue={0} step={1} style={{ width: 80, marginLeft: 0 }} className="text-left" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col w-1/3">
+                  <span className="text-left text-black" style={{ minHeight: '200px', display: 'flex', alignItems: 'flex-start' }}>
+                    Set the weighting for each constraint to guide how the seat allocation algorithm prioritizes them. Higher values mean greater importance. "Guests seated with employee" is always considered; for the others, choose a value from 0 (not important) to 5 (very important).
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
         </Col>
         <Col span={6}>
           <Card title="Unallocated Employees" className="mb-6">
+            <Input.Search
+              placeholder="Search"
+              value={unallocatedSearch}
+              onChange={e => setUnallocatedSearch(e.target.value)}
+              className="mb-2"
+            />
             {/* List of employees who are not yet assigned to any seat */}
             <List
-              dataSource={unallocated}
+              dataSource={useMemo(() =>
+                unallocated.filter(item =>
+                  (item.profile.fullName?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
+                  (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase())
+                ), [unallocated, unallocatedSearch])}
               pagination={{ pageSize: 10 }}
               renderItem={item => (
                 <List.Item
@@ -237,10 +302,20 @@ const SeatAllocationContent = ({
           </Card>
 
           <Card title="Allocated Employees" className="mb-6">
+            <Input.Search
+              placeholder="Search"
+              value={allocatedSearch}
+              onChange={e => setAllocatedSearch(e.target.value)}
+              className="mb-2"
+            />
             {/* List of employees who are assigned to any seat */}
             <List
               pagination={{ pageSize: 10 }}
-              dataSource={allocated}
+              dataSource={useMemo(() =>
+                allocated.filter(item =>
+                  (item.profile.fullName?.toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
+                  (item.profile.email?.toLowerCase() || "").includes(allocatedSearch.toLowerCase())
+                ), [allocated, allocatedSearch])}
               renderItem={item => (
                 <List.Item
                   actions={[
