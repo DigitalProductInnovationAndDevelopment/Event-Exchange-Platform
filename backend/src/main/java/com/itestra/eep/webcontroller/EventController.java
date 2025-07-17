@@ -69,35 +69,35 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/participants")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EmployeeParticipationDetailsDTO>> getEventParticipants(@PathVariable UUID eventId) {
         Event event = eventService.findById(eventId);
         return new ResponseEntity<>(employeeParticipationMapper.map(event.getEmployeeParticipations()), HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}/participants")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeParticipationDetailsDTO> addEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid EmployeeParticipationUpsertDTO dto) {
         EmployeeParticipation employeeParticipation = eventService.addParticipant(eventId, dto);
         return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipation), HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}/participants/batch")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EmployeeParticipationDetailsDTO>> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<EmployeeParticipationUpsertDTO> dtos) {
         List<EmployeeParticipation> employeeParticipations = eventService.addParticipantsBatch(eventId, dtos);
         return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipations), HttpStatus.OK);
     }
 
     @PutMapping("/{eventId}/participants")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeParticipationDetailsDTO> updateEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid EmployeeParticipationUpsertDTO dto) {
         EmployeeParticipation employeeParticipation = eventService.updateParticipant(eventId, dto);
         return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipation), HttpStatus.OK);
     }
 
     @DeleteMapping("/participants/{participationId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> deleteEventParticipant(@PathVariable UUID participationId) {
         eventService.deleteParticipant(participationId);
         return ResponseEntity.ok(true);

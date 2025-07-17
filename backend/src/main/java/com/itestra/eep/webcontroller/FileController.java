@@ -1,7 +1,7 @@
 package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.FileDetailsDTO;
-import com.itestra.eep.mappers.EventMapper;
+import com.itestra.eep.mappers.FileMapper;
 import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.services.FileService;
 import com.itestra.eep.services.SchematicsService;
@@ -26,7 +26,7 @@ public class FileController {
 
     private final FileService fileService;
     private final SchematicsService schematicsService;
-    private final EventMapper eventMapper;
+    private final FileMapper fileMapper;
 
     @PostMapping("/upload")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -36,7 +36,7 @@ public class FileController {
 
         if (eventId != null) {
             FileEntity savedFile = fileService.storeFile(file, eventId);
-            return new ResponseEntity<>(eventMapper.toFileDetailsDto(savedFile), HttpStatus.OK);
+            return new ResponseEntity<>(fileMapper.toFileDetailsDto(savedFile), HttpStatus.OK);
         } else if (schematicsId != null) {
             schematicsService.updateSchematicOverview(schematicsId, file);
             return new ResponseEntity<>(null, HttpStatus.OK);

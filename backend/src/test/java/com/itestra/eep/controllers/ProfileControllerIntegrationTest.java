@@ -102,14 +102,25 @@ public class ProfileControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"EMPLOYEE"})
-    public void testGetEmployee() throws Exception {
+    @WithMockUser(authorities = {"ADMIN"})
+    public void testGetEmployeeWithAdmin() throws Exception {
 
         Employee employee = randomEntityGenerator.generate(Employee.class);
         employee = employeeRepository.save(employee);
 
         mockMvc.perform(get("/profile/employee/{id}", employee.getId()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"EMPLOYEE"})
+    public void testGetEmployeeWithoutAdmin() throws Exception {
+
+        Employee employee = randomEntityGenerator.generate(Employee.class);
+        employee = employeeRepository.save(employee);
+
+        mockMvc.perform(get("/profile/employee/{id}", employee.getId()))
+                .andExpect(status().isForbidden());
     }
 
     @Test

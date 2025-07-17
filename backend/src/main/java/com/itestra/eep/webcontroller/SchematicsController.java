@@ -51,7 +51,7 @@ public class SchematicsController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Boolean> deleteProject(@PathVariable UUID id) {
+    public ResponseEntity<Boolean> deleteSchematics(@PathVariable UUID id) {
         schematicsService.delete(id);
         return ResponseEntity.ok(true);
     }

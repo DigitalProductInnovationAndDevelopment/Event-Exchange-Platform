@@ -1,7 +1,6 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 

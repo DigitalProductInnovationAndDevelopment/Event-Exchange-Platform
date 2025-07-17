@@ -39,7 +39,8 @@ public interface EmployeeParticipationMapper {
     default List<EmployeeParticipationDetailsDTO> map(List<EmployeeParticipation> employeeParticipations) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
 
-        boolean isAdmin = auth.getAuthorities().stream()
+        // We make employee participations visible only to admins
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> ADMIN.name().equals(a.getAuthority()));
 
         if (!isAdmin || employeeParticipations == null || employeeParticipations.isEmpty()) {

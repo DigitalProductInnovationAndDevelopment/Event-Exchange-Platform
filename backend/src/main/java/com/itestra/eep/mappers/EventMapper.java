@@ -3,15 +3,13 @@ package com.itestra.eep.mappers;
 import com.itestra.eep.dtos.EventCreateDTO;
 import com.itestra.eep.dtos.EventDetailsDTO;
 import com.itestra.eep.dtos.EventUpdateDTO;
-import com.itestra.eep.dtos.FileDetailsDTO;
 import com.itestra.eep.models.Event;
-import com.itestra.eep.models.FileEntity;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = SchematicsMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {SchematicsMapper.class, FileMapper.class})
 public interface EventMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -30,8 +28,6 @@ public interface EventMapper {
             @Mapping(source = "date", target = "status", qualifiedByName = "status")
     })
     EventDetailsDTO toDetailsDto(Event event);
-
-    FileDetailsDTO toFileDetailsDto(FileEntity file);
 
     @Named("status")
     default String status(LocalDateTime eventDate) {

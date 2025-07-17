@@ -3,6 +3,7 @@ package com.itestra.eep.webcontroller;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeDetailsDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
+import com.itestra.eep.dtos.ProfileDetailsDTO;
 import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
@@ -31,21 +32,20 @@ public class ProfileController {
 
     @GetMapping("/own")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
-    public ResponseEntity<Profile> getMyProfile() {
+    public ResponseEntity<ProfileDetailsDTO> getMyProfile() {
         Profile profile = employeeService.getAuthenticatedProfileDetails();
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
     }
 
-    // TODO Authorization fix
     @GetMapping("/employee/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
         Employee employee = employeeService.findById(id);
         return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @GetMapping("/employees")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EmployeeDetailsDTO>> getEmployees() {
         List<Employee> employees = employeeService.findAll();
         return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
