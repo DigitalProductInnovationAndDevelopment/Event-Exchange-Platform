@@ -18,18 +18,6 @@ CREATE TABLE organization.audit_log
     timestamp      TIMESTAMP
 );
 
-CREATE TABLE organization.address
-(
-    id            UUID PRIMARY KEY,
-    postal_code   INTEGER,
-    country       VARCHAR(255) NOT NULL,
-    city          VARCHAR(255) NOT NULL,
-    latitude      DOUBLE PRECISION,
-    longitude     DOUBLE PRECISION,
-    address_line1 TEXT         NULL,
-    address_line2 TEXT         NULL
-);
-
 CREATE TABLE organization.profile
 (
     id              UUID PRIMARY KEY,
@@ -58,19 +46,6 @@ CREATE TABLE organization.employee
     employment_start_date DATE
 );
 
-CREATE TABLE organization.project
-(
-    id           UUID PRIMARY KEY,
-    project_name VARCHAR(255) NOT NULL,
-    abbreviation VARCHAR(10)  NULL
-);
-
-CREATE TABLE organization.employee_project
-(
-    employee_id UUID REFERENCES organization.Employee (profile_id),
-    project_id  UUID REFERENCES organization.Project (id),
-    PRIMARY KEY (employee_id, project_id)
-);
 
 CREATE TABLE organization.previous_matches
 (

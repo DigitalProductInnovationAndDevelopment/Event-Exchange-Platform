@@ -49,12 +49,4 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "second_employee_id"))
     private Set<Employee> employees = new LinkedHashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "employee_project",
-            schema = "organization",
-            joinColumns = @JoinColumn(name = "employee_id", referencedColumnName = "profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id"))
-    private Set<Project> projects = new LinkedHashSet<>();
-
 }

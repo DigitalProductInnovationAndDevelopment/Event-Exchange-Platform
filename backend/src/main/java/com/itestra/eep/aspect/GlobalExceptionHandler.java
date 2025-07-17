@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
             EmployeeNotFoundException.class,
             EventNotFoundException.class,
             ParticipationNotFoundException.class,
-            ProjectNotFoundException.class,
+            FileEntityNotFoundException.class,
             SchematicsNotFoundException.class,
             UserProfileNotFoundException.class,
             EventCapacityExceededException.class})
