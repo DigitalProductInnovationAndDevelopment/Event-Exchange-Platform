@@ -31,7 +31,7 @@ class ProfileServiceTest {
         Profile profile = randomEntityGenerator.generate(Profile.class);
         profile = profileRepository.save(profile);
 
-        Profile fetchedProfile = profileService.findByGitlabUsername(profile.getGitlabUsername());
+        Profile fetchedProfile = profileService.findOrCreateProfile(profile.getGitlabUsername(), null, null, null);
 
         assertEquals(profile.getFullName(), fetchedProfile.getFullName());
         assertEquals(profile.getEmail(), fetchedProfile.getEmail());

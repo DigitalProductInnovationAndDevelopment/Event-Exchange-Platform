@@ -1,10 +1,7 @@
 package com.itestra.eep.gitlabEvents;
 
 import com.itestra.eep.configs.JwtUtil;
-import com.itestra.eep.exceptions.UserProfileNotFoundException;
-import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
-import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.eep.services.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,24 +13,16 @@ import org.springframework.core.env.Profiles;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collections;
 
-import static com.itestra.eep.enums.Role.EMPLOYEE;
-
-@Service
-@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+@Component
 @RequiredArgsConstructor
 public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtService;
     private final ProfileService profileService;
-    private final EmployeeRepository employeeRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final Environment environment;
 
@@ -58,32 +47,7 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String email = oauthToken.getPrincipal().getAttribute("email");
         String name = oauthToken.getPrincipal().getAttribute("name");
 
-        Profile userProfile;
-        try {
-            userProfile = profileService.findByGitlabUsername(gitlabUsername);
-        } catch (UserProfileNotFoundException e) {
-            try {
-
-                userProfile = profileService.findByEmail(gitlabUsername);
-                userProfile.setGitlabUsername(gitlabUsername);
-
-            } catch (UserProfileNotFoundException ex) {
-                Employee newEmployeeRecord = new Employee();
-
-                userProfile = Profile.builder()
-                        .gitlabUsername(gitlabUsername)
-                        .email(email)
-                        .fullName(name)
-                        .build();
-
-                userProfile.setAuthorities(Collections.singleton(EMPLOYEE));
-                newEmployeeRecord.setProfile(userProfile);
-                newEmployeeRecord.setLocation(location);
-                employeeRepository.saveAndFlush(newEmployeeRecord);
-
-            }
-
-        }
+        Profile userProfile = profileService.findOrCreateProfile(gitlabUsername, email, name, location);
 
         String jwt = jwtService.generateToken(userProfile);
 
