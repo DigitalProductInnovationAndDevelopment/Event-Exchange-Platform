@@ -26,7 +26,7 @@ export default function useApiService() {
           ...(options.headers || {}),
         },
         credentials: "include",
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(20000), // abort request after 20 seconds. we can actually reduce this even further
         ...options,
       };
 
