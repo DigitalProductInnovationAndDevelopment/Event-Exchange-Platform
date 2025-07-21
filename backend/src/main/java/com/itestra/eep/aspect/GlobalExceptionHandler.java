@@ -72,6 +72,7 @@ public class GlobalExceptionHandler {
             FileEntityNotFoundException.class,
             SchematicsNotFoundException.class,
             UserProfileNotFoundException.class,
+            VisitorLinkInvalidException.class,
             EventCapacityExceededException.class})
     public ResponseEntity<Object> handleCustomRuntimeException(RuntimeException exception) {
         return ResponseEntity
