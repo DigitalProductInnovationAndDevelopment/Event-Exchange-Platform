@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
-    List<Employee> findByIdIn(List<UUID> ids);
+    List<Employee> findByProfileEmailIn(Set<String> profile_email);
 
     @EntityGraph("Employee.profile_participations")
     List<Employee> findAllByOrderByProfileNameAsc();

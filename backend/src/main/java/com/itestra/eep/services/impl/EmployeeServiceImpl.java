@@ -2,8 +2,11 @@ package com.itestra.eep.services.impl;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
+import com.itestra.eep.dtos.ProfileUpdateDTO;
 import com.itestra.eep.exceptions.EmployeeNotFoundException;
+import com.itestra.eep.exceptions.UserProfileNotFoundException;
 import com.itestra.eep.mappers.EmployeeMapper;
+import com.itestra.eep.mappers.ProfileMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.EmployeeRepository;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final ProfileRepository profileRepository;
     private final EmployeeMapper employeeMapper;
     private final ProfileMapper profileMapper;
     private final Validator validator;
@@ -41,7 +45,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional(readOnly = true)
     public Profile getAuthenticatedProfileDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (Profile) authentication.getPrincipal();
+        return profileRepository.findById(((Profile) authentication.getPrincipal()).getId()).orElseThrow(UserProfileNotFoundException::new);
+    }
+
+    @Override
+    public Profile updateAuthenticatedProfileDetails(ProfileUpdateDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Profile profile = profileRepository.findById(((Profile) authentication.getPrincipal()).getId()).orElseThrow(UserProfileNotFoundException::new);
+        profileMapper.updateProfileFromDto(dto, profile);
+        return profileRepository.save(profile);
     }
 
     @Override

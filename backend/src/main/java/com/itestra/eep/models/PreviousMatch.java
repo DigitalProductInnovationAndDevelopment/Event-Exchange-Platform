@@ -17,10 +17,6 @@ public class PreviousMatch {
     @EmbeddedId
     private PreviousMatchId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event;
-
     @Getter
     @Setter
     @Embeddable
@@ -32,6 +28,10 @@ public class PreviousMatch {
 
         @Column(name = "second_employee_id", nullable = false)
         private UUID secondEmployeeId;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "event_id")
+        private Event event;
 
     }
 }

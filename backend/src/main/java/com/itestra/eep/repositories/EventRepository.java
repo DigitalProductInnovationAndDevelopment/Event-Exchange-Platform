@@ -15,7 +15,9 @@ import java.util.UUID;
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
-    boolean existsByIdAndEmployeeParticipations_Employee_Id(UUID eventId, UUID participantId);
+    boolean existsByIdAndEmployeeParticipations_Employee_Id(UUID eventId, UUID employeeId);
+
+    boolean existsByIdAndVisitorParticipations_Profile_Id(UUID eventId, UUID visitorId);
 
     @Override
     @EntityGraph("Event.participations_files")

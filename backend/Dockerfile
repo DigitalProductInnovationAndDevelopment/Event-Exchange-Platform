@@ -34,6 +34,8 @@ COPY --from=builder /app/target/*.jar app.jar
 COPY --from=builder "/app/algo(table).py" "algo(table).py"
 COPY --from=builder "/app/algo(seat).py" "algo(seat).py"
 
+USER 65532
+
 # Set Python path to include our packages
 ENV PYTHONPATH="/opt/python-packages:$PYTHONPATH"
 
@@ -55,6 +57,8 @@ COPY --from=python-base /opt/python-packages /opt/python-packages
 COPY --from=builder /app/target/*.jar app.jar
 COPY --from=builder "/app/algo(table).py" "algo(table).py"
 COPY --from=builder "/app/algo(seat).py" "algo(seat).py"
+
+USER 65532
 
 # Set Python path to include our packages
 ENV PYTHONPATH="/opt/python-packages:$PYTHONPATH"

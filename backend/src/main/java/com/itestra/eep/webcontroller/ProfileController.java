@@ -1,9 +1,6 @@
 package com.itestra.eep.webcontroller;
 
-import com.itestra.eep.dtos.EmployeeCreateDTO;
-import com.itestra.eep.dtos.EmployeeDetailsDTO;
-import com.itestra.eep.dtos.EmployeeUpdateDTO;
-import com.itestra.eep.dtos.ProfileDetailsDTO;
+import com.itestra.eep.dtos.*;
 import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
@@ -37,6 +34,13 @@ public class ProfileController {
         return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
     }
 
+    @PutMapping("/own")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    public ResponseEntity<ProfileDetailsDTO> updateMyProfile(@RequestBody @Valid ProfileUpdateDTO dto) {
+        Profile profile = employeeService.updateAuthenticatedProfileDetails(dto);
+        return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
+    }
+
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
@@ -61,7 +65,7 @@ public class ProfileController {
     @PostMapping("/employees/batch")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EmployeeDetailsDTO>> createEmployeesBatch(@RequestBody List<@Valid EmployeeCreateDTO> dtos) {
-        List<Employee> employees = employeeService.createEmployeesBatch(dtos);
+        List<Employee> employees = employeeService.upsertEmployeesBatch(dtos);
         return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
     }
 

@@ -41,6 +41,7 @@ public class SchematicsServiceImpl implements SchematicsService {
     private final SchematicsMapper schematicsMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Schematics findById(UUID projectId) {
         return schematicsRepository.findById(projectId).orElseThrow(SchematicsNotFoundException::new);
     }

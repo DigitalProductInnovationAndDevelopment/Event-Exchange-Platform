@@ -95,7 +95,8 @@ CREATE TABLE organization.visitor_participation
     chair_id                 UUID REFERENCES organization.chair (id)                                    NULL,
     created_at               TIMESTAMP,
     updated_at               TIMESTAMP,
-    CONSTRAINT unique_event_participation_for_visitor UNIQUE (profile_id, event_id)
+    CONSTRAINT unique_event_participation_for_visitor UNIQUE (profile_id, event_id),
+    CONSTRAINT unique_visitor_access_link UNIQUE (access_link)
 );
 
 

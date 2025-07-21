@@ -61,6 +61,7 @@ public class EmployeeUpdateDTO implements Serializable {
         String gender;
 
         @Nullable
+        @Size(max = 255)
         @NotBlank(message = "GitLab username cannot be empty.")
         String gitlabUsername;
 

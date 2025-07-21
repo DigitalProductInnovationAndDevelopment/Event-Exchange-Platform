@@ -26,7 +26,8 @@ import static com.itestra.eep.enums.Role.VISITOR;
 public class VisitorParticipationFactory {
 
     private static final String GUEST_NAME_TEMPLATE = "%s Guest: %d";
-    private static final String ACCESS_LINK_TEMPLATE = "accesslink%d";
+    // TODO for now, we just generate a random UUID but later another type of string can be used of course
+    private static final String ACCESS_LINK_TEMPLATE = "%s";
 
     private final ProfileRepository profileRepository;
     private final VisitorParticipationRepository visitorParticipationRepository;
@@ -39,7 +40,7 @@ public class VisitorParticipationFactory {
 
         for (int i = 0; i < guestCount; i++) {
             int guestIndex = startIndex + i + 1;
-            VisitorParticipation visitor = generateVisitorParticipation(guestIndex, participation, startIndex + i);
+            VisitorParticipation visitor = generateVisitorParticipation(guestIndex, participation);
             newVisitors.add(visitor);
         }
 
@@ -64,8 +65,7 @@ public class VisitorParticipationFactory {
 
 
     private VisitorParticipation generateVisitorParticipation(int guestIndexNumber,
-                                                              EmployeeParticipation parentParticipation,
-                                                              int index) {
+                                                              EmployeeParticipation parentParticipation) {
 
         String parentEmployeeName = parentParticipation.getEmployee().getProfile().getFullName();
 
@@ -77,7 +77,8 @@ public class VisitorParticipationFactory {
         VisitorParticipation visitor = new VisitorParticipation(
                 visitorProfile,
                 parentParticipation,
-                String.format(ACCESS_LINK_TEMPLATE, index));
+                String.format(ACCESS_LINK_TEMPLATE, UUID.randomUUID()));
+
 
         visitor.setEvent(parentParticipation.getEvent());
         visitor.setConfirmed(true);

@@ -2,6 +2,7 @@ package com.itestra.eep.services;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
+import com.itestra.eep.dtos.ProfileUpdateDTO;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 
@@ -11,6 +12,8 @@ import java.util.UUID;
 public interface EmployeeService {
 
     Profile getAuthenticatedProfileDetails();
+
+    Profile updateAuthenticatedProfileDetails(ProfileUpdateDTO dto);
 
     Employee findById(UUID id);
 

@@ -8,6 +8,9 @@ import com.itestra.eep.repositories.FileRepository;
 import com.itestra.eep.services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
@@ -41,6 +45,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<FileEntity> getFile(UUID id) {
         return fileRepository.findById(id);
     }
