@@ -54,7 +54,7 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         handleAuthorizationCookie(response, jwt, expiration);
 
-        response.sendRedirect("%s/Event-Exchange-Platform/login_success".formatted(clientAddress));
+        handleRedirect(response, "/login_success");
         eventPublisher.publishEvent(new UserLoginSuccessEvent(this, userProfile, request.getRemoteAddr()));
 
     }
@@ -71,5 +71,9 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
 
         response.setHeader("Set-Cookie", cookieValue);
+    }
+
+    public void handleRedirect(HttpServletResponse response, String redirectUrl) throws IOException {
+        response.sendRedirect("%s/Event-Exchange-Platform%s".formatted(clientAddress, redirectUrl));
     }
 }

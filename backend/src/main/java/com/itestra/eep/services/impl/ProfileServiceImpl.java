@@ -1,6 +1,7 @@
 package com.itestra.eep.services.impl;
 
 import com.itestra.eep.exceptions.UserProfileNotFoundException;
+import com.itestra.eep.exceptions.VisitorLinkInvalidException;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.EmployeeRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static com.itestra.eep.enums.Role.EMPLOYEE;
@@ -31,7 +33,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile findVisitorProfileByAccessLink(String accessLink) {
-        return visitorParticipationRepository.findByAccessLink(accessLink).orElseThrow(UserProfileNotFoundException::new);
+        return visitorParticipationRepository.findByAccessLink(accessLink, LocalDateTime.now()).orElseThrow(VisitorLinkInvalidException::new);
     }
 
     @Override
