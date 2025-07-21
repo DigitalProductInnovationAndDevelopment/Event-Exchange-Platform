@@ -23,7 +23,8 @@ CREATE TABLE organization.profile
     id              UUID PRIMARY KEY,
     gitlab_username VARCHAR(255) NULL UNIQUE,
     email           VARCHAR(255) NULL UNIQUE,
-    full_name       VARCHAR(500) NOT NULL,
+    name      VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NULL,
     gender          VARCHAR(255) NULL,
     diet_types      VARCHAR      NULL,
     created_at      TIMESTAMP,
@@ -41,18 +42,8 @@ CREATE TABLE organization.user_roles
 CREATE TABLE organization.employee
 (
     profile_id      UUID PRIMARY KEY REFERENCES organization.profile (id) ON DELETE CASCADE,
-    employment_type varchar,
     location        VARCHAR(255) NOT NULL,
     employment_start_date DATE
-);
-
-
-CREATE TABLE organization.previous_matches
-(
-    first_employee_id  UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
-    second_employee_id UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
-    event_id UUID REFERENCES organization.event (id),
-    PRIMARY KEY (first_employee_id, second_employee_id)
 );
 
 CREATE TABLE organization.event
@@ -66,6 +57,13 @@ CREATE TABLE organization.event
     address    VARCHAR(1000) NOT NULL
 );
 
+CREATE TABLE organization.previous_matches
+(
+    first_employee_id  UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
+    second_employee_id UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
+    event_id           UUID REFERENCES organization.event (id),
+    PRIMARY KEY (first_employee_id, second_employee_id, event_id)
+);
 
 CREATE TABLE organization.chair
 (

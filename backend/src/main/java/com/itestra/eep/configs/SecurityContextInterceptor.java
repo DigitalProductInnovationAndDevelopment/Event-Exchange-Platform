@@ -114,7 +114,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
     private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
         Set<Role> roles = Set.of(Role.VISITOR);
-        Profile profile = Profile.builder().fullName("Visitor").authorities(roles).build();
+        Profile profile = Profile.builder().name("Visitor").authorities(roles).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
         authentication.setAuthenticated(false);
         return authentication;
@@ -123,6 +123,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
     private UsernamePasswordAuthenticationToken createAuthenticationFromClaims(Claims claims) {
         String userEmail = claims.getSubject();
         String userName = claims.get("name", String.class);
+        String userLastName = claims.get("lastName", String.class);
         UUID userId = UUID.fromString(claims.get("id", String.class));
 
         @SuppressWarnings("unchecked")
@@ -134,7 +135,8 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
         Profile profile = Profile.builder()
                 .id(userId)
-                .fullName(userName)
+                .name(userName)
+                .lastName(userLastName)
                 .email(userEmail)
                 .authorities(roles)
                 .build();

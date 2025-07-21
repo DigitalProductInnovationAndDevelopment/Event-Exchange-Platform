@@ -21,7 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtUtil jwtService;
+    private final JwtUtil jwtUtil;
     private final ProfileService profileService;
     private final ApplicationEventPublisher eventPublisher;
     private final Environment environment;
@@ -46,10 +46,11 @@ public class GitlabOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String location = oauthToken.getPrincipal().getAttribute("location");
         String email = oauthToken.getPrincipal().getAttribute("email");
         String name = oauthToken.getPrincipal().getAttribute("name");
+        String lastName = oauthToken.getPrincipal().getAttribute("lastName");
 
-        Profile userProfile = profileService.findOrCreateProfile(gitlabUsername, email, name, location);
+        Profile userProfile = profileService.findOrCreateProfile(gitlabUsername, email, name, lastName, location);
 
-        String jwt = jwtService.generateToken(userProfile);
+        String jwt = jwtUtil.generateToken(userProfile);
 
         handleAuthorizationCookie(response, jwt, expiration);
 

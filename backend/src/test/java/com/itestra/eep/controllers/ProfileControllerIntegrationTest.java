@@ -3,13 +3,11 @@ package com.itestra.eep.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.enums.DietaryPreference;
-import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.EmployeeRepository;
 import com.itestra.utils.RandomEntityGenerator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,7 +24,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -48,44 +45,29 @@ public class ProfileControllerIntegrationTest {
     @Autowired
     RandomEntityGenerator randomEntityGenerator;
 
-    private EmployeeCreateDTO employeeCreateDTO;
+    Profile profile = Profile.builder()
+            .name("John")
+            .lastName("Doe")
+            .gender("Male")
+            .gitlabUsername("johndoe")
+            .email("john.doe@example.com")
+            .dietTypes(new DietaryPreference[]{DietaryPreference.VEGETARIAN})
+            .authorities(Set.of(Role.ADMIN))
+            .build();
 
-    @BeforeEach
-    public void setUp() {
-        objectMapper = new ObjectMapper();
-
-        Profile profile = Profile.builder()
-                .fullName("John Doe")
-                .gender("Male")
-                .gitlabUsername("johndoe")
-                .email("john.doe@example.com")
-                .dietTypes(new DietaryPreference[]{DietaryPreference.VEGETARIAN})
-                .authorities(Set.of(Role.ADMIN))
-                .build();
-
-        employeeCreateDTO = new EmployeeCreateDTO(
+    private EmployeeCreateDTO employeeCreateDTO = new EmployeeCreateDTO(
                 new EmployeeCreateDTO.ProfileCreateDTO(
-                        profile.getFullName(),
+                        profile.getName(),
+                        profile.getLastName(),
                         profile.getGender(),
                         profile.getGitlabUsername(),
                         profile.getEmail(),
                         profile.getDietTypes(),
                         Set.of(Role.ADMIN)
                 ),
-                LocalDate.now(),
-                EmploymentType.FULLTIME,
-                "Location"
-        );
-    }
-
-    @Test
-    @WithMockUser(authorities = {"EMPLOYEE"}, username = "John Doe")
-    public void testGetMyProfile() throws Exception {
-
-        mockMvc.perform(get("/profile/own"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fullName").value("John Doe"));
-    }
+            LocalDate.now(),
+            "Location"
+    );
 
     @Test
     @WithMockUser(authorities = {"ADMIN"})

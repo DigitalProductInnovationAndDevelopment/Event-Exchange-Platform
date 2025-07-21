@@ -33,7 +33,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
                 .collect(Collectors.toSet());
 
         com.itestra.eep.models.Profile authenticatedTestUserProfile = com.itestra.eep.models.Profile.builder()
-                .fullName(((User) authentication.getPrincipal()).getUsername())
+                .name(((User) authentication.getPrincipal()).getUsername())
                 .authorities(roles)
                 .build();
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -14,5 +15,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     List<Employee> findByIdIn(List<UUID> ids);
 
     @EntityGraph("Employee.profile_participations")
-    List<Employee> findAllByOrderByProfileFullNameAsc();
+    List<Employee> findAllByOrderByProfileNameAsc();
+
 }

@@ -71,7 +71,7 @@ public class VisitorParticipationFactory {
 
         Profile visitorProfile = Profile.builder()
                 .authorities(Set.of(VISITOR))
-                .fullName(String.format(GUEST_NAME_TEMPLATE, parentEmployeeName, guestIndexNumber))
+                .name(String.format(GUEST_NAME_TEMPLATE, parentEmployeeName, guestIndexNumber))
                 .build();
 
         VisitorParticipation visitor = new VisitorParticipation(

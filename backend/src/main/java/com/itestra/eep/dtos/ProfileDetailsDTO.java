@@ -19,7 +19,9 @@ public class ProfileDetailsDTO implements Serializable {
 
     UUID id;
 
-    String fullName;
+    String name;
+
+    String lastName;
 
     String gender;
 

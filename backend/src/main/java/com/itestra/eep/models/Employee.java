@@ -1,6 +1,5 @@
 package com.itestra.eep.models;
 
-import com.itestra.eep.enums.EmploymentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,10 +32,6 @@ public class Employee {
 
     @Column(name = "location", nullable = false)
     private String location;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "employment_type")
-    private EmploymentType employmentType;
 
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<EmployeeParticipation> participations = new LinkedList<>();

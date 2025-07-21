@@ -1,7 +1,6 @@
 package com.itestra.utils;
 
 import com.itestra.eep.enums.DietaryPreference;
-import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.EventType;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Event;
@@ -36,7 +35,6 @@ public class RandomEntityGenerator {
     private Employee generateRandomEmployee() {
         return Employee.builder()
                 .employmentStartDate(generateRandomLocalDateTime().toLocalDate())
-                .employmentType(random.nextBoolean() ? EmploymentType.FULLTIME : EmploymentType.PARTTIME)
                 .location(getRandomString(50))
                 .profile(generateRandomProfile())
                 .build();
@@ -55,8 +53,10 @@ public class RandomEntityGenerator {
 
     private Profile generateRandomProfile() {
         String name = getRandomString(50);
+        String lastName = getRandomString(50);
         return Profile.builder()
-                .fullName(name)
+                .name(name)
+                .lastName(lastName)
                 .gender(random.nextBoolean() ? "Male" : "Female")
                 .gitlabUsername(name)
                 .dietTypes(new DietaryPreference[0])

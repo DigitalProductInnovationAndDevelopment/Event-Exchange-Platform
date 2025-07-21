@@ -14,6 +14,8 @@ public interface EmployeeService {
 
     Employee findById(UUID id);
 
+    List<Employee> upsertEmployeesBatch(List<EmployeeCreateDTO> dtos);
+
     Employee create(EmployeeCreateDTO dto);
 
     Employee update(UUID id, EmployeeUpdateDTO dto);
@@ -22,5 +24,4 @@ public interface EmployeeService {
 
     void delete(UUID id);
 
-    List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> employees);
 }

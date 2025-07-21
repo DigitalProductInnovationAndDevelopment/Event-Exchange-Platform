@@ -7,9 +7,12 @@ import com.itestra.eep.mappers.EmployeeMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.repositories.EmployeeRepository;
+import com.itestra.eep.repositories.ProfileRepository;
 import com.itestra.eep.services.EmployeeService;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,8 +20,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -29,33 +33,62 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private final ProfileMapper profileMapper;
+    private final Validator validator;
 
 
     @Override
+    @Transactional(readOnly = true)
     public Profile getAuthenticatedProfileDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Profile) authentication.getPrincipal();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Employee> findAll() {
-        return employeeRepository.findAllByOrderByProfileFullNameAsc();
+        return employeeRepository.findAllByOrderByProfileNameAsc();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Employee findById(UUID id) {
         return employeeRepository.findById(id).orElseThrow(EmployeeNotFoundException::new);
     }
 
     @Override
-    public List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> dtos) {
-        List<Employee> employeesToCreate = new java.util.ArrayList<>();
+    public List<Employee> upsertEmployeesBatch(List<EmployeeCreateDTO> dtos) {
+
+        Set<String> emails = dtos.stream()
+                .map(dto -> dto.getProfile().getEmail())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<Employee> existingEmployees = employeeRepository.findByProfileEmailIn(emails);
+
+
+        Map<String, Employee> existingByEmail = existingEmployees.stream()
+                .collect(Collectors.toMap(employee -> employee.getProfile().getEmail(), Function.identity()));
+
+        List<Employee> employeesToSave = new ArrayList<>();
+
         for (EmployeeCreateDTO dto : dtos) {
-            Employee employee = new Employee();
-            employeeMapper.createEmployeeFromDto(dto, employee);
-            employeesToCreate.add(employee);
+            Employee employee = existingByEmail.get(dto.getProfile().getEmail());
+            if (employee != null) {
+                // handle existing employee
+                EmployeeUpdateDTO employeeUpdateDTO = new EmployeeUpdateDTO();
+                BeanUtils.copyProperties(dto, employeeUpdateDTO);
+                validator.validate(employeeUpdateDTO);
+                employeeMapper.updateEmployeeFromDto(employeeUpdateDTO, employee);
+            } else {
+                // handle new employees
+                employee = new Employee();
+                employeeMapper.createEmployeeFromDto(dto, employee);
+            }
+            employeesToSave.add(employee);
         }
-        return employeeRepository.saveAll(employeesToCreate);
+
+        return employeeRepository.saveAllAndFlush(employeesToSave);
     }
 
     @Override

@@ -30,13 +30,15 @@ public class SecurityContextInterceptorLocal extends OncePerRequestFilter {
 
         String userEmail = "testuser@itestra.com";
         String userName = "testuser";
+        String lastName = "itestra";
         UUID userId = UUID.fromString("12345678-1234-1234-1234-123456789012");
 
         Set<Role> roles = Set.of(Role.ADMIN);
 
         Profile profile = Profile.builder()
                 .id(userId)
-                .fullName(userName)
+                .name(userName)
+                .lastName(lastName)
                 .email(userEmail)
                 .authorities(roles).build();
 

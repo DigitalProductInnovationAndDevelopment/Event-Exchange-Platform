@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.itestra.eep.enums.DietaryPreference;
-import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.serializers.DateDeserializer;
 import com.itestra.eep.serializers.DateSerializer;
 import lombok.Getter;
@@ -32,10 +31,10 @@ public class ConstraintSolverDTO implements Serializable {
     }
 
     @JsonProperty("Vorname")
-    String employeeProfileFullName;
+    String employeeProfileName;
 
     @JsonProperty("Nachname")
-    String employeeLastName = "";
+    String employeeProfileLastName;
 
     @JsonProperty("Projekt")
     String project = "";
@@ -52,9 +51,6 @@ public class ConstraintSolverDTO implements Serializable {
 
     @JsonProperty("Standort")
     String employeeLocation = null;
-
-    @JsonProperty("Anstellung")
-    EmploymentType employeeEmploymentType;
 
     @JsonProperty("TableNr")
     Object[] tableIds;
