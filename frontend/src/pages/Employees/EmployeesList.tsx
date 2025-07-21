@@ -26,11 +26,6 @@ const columns = (
       sorter: (a, b) => (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
     },
     {
-      title: "Email",
-      dataIndex: ["profile", "email"],
-      key: "profile.email",
-    },
-    {
       title: "Location",
       dataIndex: "location",
       key: "location",
@@ -223,13 +218,16 @@ export const EmployeesList = () => {
     [employees]
   );
 
+  const ALL_LOCATIONS_VALUE = '__ALL__';
+
   // Filter employees by name and location
   const filteredData = useMemo(() => {
     return employees.filter(item => {
       const matchesSearch =
         searchText === "" ||
         item.profile.fullName?.toLowerCase().includes(searchText.toLowerCase());
-      const matchesLocation = !locationFilter || item.location === locationFilter;
+      // If locationFilter is undefined, show all locations
+      const matchesLocation = locationFilter === undefined || item.location === locationFilter;
       return matchesSearch && matchesLocation;
     });
   }, [employees, searchText, locationFilter]);
@@ -359,9 +357,12 @@ export const EmployeesList = () => {
               allowClear
               placeholder="Location"
               style={{ width: "100%" }}
-              value={locationFilter}
-              onChange={value => setLocationFilter(value)}
-              options={uniqueLocations.map(location => ({ value: location, label: location }))}
+              value={locationFilter === undefined ? ALL_LOCATIONS_VALUE : locationFilter}
+              onChange={value => setLocationFilter(value === ALL_LOCATIONS_VALUE ? undefined : value)}
+              options={[
+                { value: ALL_LOCATIONS_VALUE, label: "All Locations" },
+                ...uniqueLocations.map(location => ({ value: location, label: location }))
+              ]}
             />
           </Col>
           <Col span={6}>

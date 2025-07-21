@@ -8,13 +8,10 @@ export type ShapeType = "chair" | "room" | "rectTable" | "circleTable" | "wall" 
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGETARIAN: "green",
-  PESCATARIAN: "blue",
-  HALAL: "orange",
-  KOSHER: "purple",
-  VEGAN: "magenta",
-  LACTOSE_FREE: "cyan",
-  GLUTEN_FREE: "lime",
-  KETO: "gold",
+  VEGAN: "lime",
+  LACTOSE_FREE: "blue",
+  GLUTEN_FREE: "magenta",
+  FRUCTOSE_FREE: "orange"
 };
 
 export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {

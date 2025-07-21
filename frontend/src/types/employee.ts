@@ -42,13 +42,10 @@ export interface ParticipationDetails {
 
 export enum DietaryPreference {
   VEGETARIAN = "Vegetarian",
-  PESCATARIAN = "Pescatarian",
-  HALAL = "Halal",
-  KOSHER = "Kosher",
   VEGAN = "Vegan",
-  LACTOSE_FREE = "Lactose free",
-  GLUTEN_FREE = "Gluten free",
-  KETO = "Keto",
+  LACTOSE_FREE = "Lactose Free",
+  FRUCTOSE_FREE = "Fructose Free",
+  GLUTEN_FREE = "Gluten Free",
 }
 
 export enum EmploymentType {
