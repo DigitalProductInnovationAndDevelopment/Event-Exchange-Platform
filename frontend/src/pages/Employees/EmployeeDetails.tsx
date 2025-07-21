@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Button, Card, Descriptions, message, Modal, Space, Spin, Table, Typography } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { type Employee, type ParticipationDetails } from "types/employee.ts";
+import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import { Breadcrumb } from "components/Breadcrumb";
 import { DIET_TYPES } from "./EmployeeForm";
 import type { EventType } from "types/event.ts";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
-import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 
 const { Title } = Typography;
 
@@ -81,7 +80,8 @@ export const EmployeeDetails = () => {
   }, [employeeId, getEmployeeById]);
 
   const basicFields = [
-    { label: "Full Name", value: employee?.profile.fullName },
+    { label: "Name", value: employee?.profile.name },
+    { label: "Last Name", value: employee?.profile.lastName },
     { label: "Gitlab Username", value: employee?.profile.gitlabUsername },
     {
       label: "Gender",
@@ -106,12 +106,6 @@ export const EmployeeDetails = () => {
         : undefined,
     },
     { label: "Location", value: employee?.location },
-    {
-      label: "Employment Type",
-      value: employee?.employmentType ? (
-        <EmployeeTypeTag type={employee.employmentType} />
-      ) : undefined,
-    },
     { label: "Date Joined", value: employee?.employmentStartDate },
   ];
 
@@ -163,14 +157,14 @@ export const EmployeeDetails = () => {
           { path: "/employees", label: "Employees" },
           {
             path: `/employees/${employeeId}`,
-            label: employee?.profile?.fullName || "Employee Details",
+            label: getFullName(employee?.profile) || "Employee Details",
           },
         ]}
       />
       {/* Page Title */}
       <div className="flex justify-between items-center mb-6">
         <Title level={2} className="m-0">
-          {employee?.profile?.fullName || "Employee Details"}
+          {getFullName(employee?.profile) || "Employee Details"}
         </Title>
         <Space>
           <Button

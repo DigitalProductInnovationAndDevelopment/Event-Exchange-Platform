@@ -4,7 +4,7 @@ import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
 import useApiService from "../../services/apiService";
 import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
-import type { Employee, ParticipationDetails } from "types/employee.ts";
+import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";
 import Papa, { parse } from "papaparse";
 import type { UUID } from "components/canvas/utils/constants.tsx";
 
@@ -58,11 +58,11 @@ export const EventParticipants = () => {
   const allEmployeesFiltered = allEmployees
     .filter(
       p =>
-        (p.profile.fullName.toLowerCase().includes(employeeSearch.toLowerCase()) ||
+        (getFullName(p.profile).toLowerCase().includes(employeeSearch.toLowerCase()) ||
           p.profile.email.toLowerCase().includes(employeeSearch.toLowerCase())) &&
         !participants.some(participant => participant.employeeId === p.profile.id),
     )
-    .sort((a, b) => a.profile.fullName.localeCompare(b.profile.fullName));
+    .sort((a, b) => getFullName(a.profile).localeCompare(getFullName(b.profile)));
 
   const handleDelete = async (id: string) => {
     const result = await deleteParticipation(id);
@@ -133,17 +133,24 @@ export const EventParticipants = () => {
 
   const filteredParticipants = participants.filter(
     e =>
-      e.fullName.toLowerCase().includes(participantSearch.toLowerCase()) ||
+      (getFullName(e)).toLowerCase().includes(participantSearch.toLowerCase()) ||
       e.email.toLowerCase().includes(participantSearch.toLowerCase()),
   );
 
   const columns = [
     {
       title: "Name",
-      dataIndex: "fullName",
-      key: "fullName",
+      dataIndex: "name",
+      key: "name",
       sorter: (a: Employee, b: Employee) =>
-        (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
+        (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastName",
+      key: "lastName",
+      sorter: (a: Employee, b: Employee) =>
+        (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
     },
     { title: "Email", dataIndex: "email", key: "email" },
     {
@@ -283,7 +290,8 @@ export const EventParticipants = () => {
           rowKey={r => r.profile.id}
           loading={loading}
           columns={[
-            { title: "Name", dataIndex: ["profile", "fullName"], key: "fullName" },
+            { title: "Name", dataIndex: ["profile", "name"], key: "name" },
+            { title: "Last Name", dataIndex: ["profile", "lastName"], key: "lastName" },
             { title: "Email", dataIndex: ["profile", "email"], key: "email" },
             {
               title: "Guests",

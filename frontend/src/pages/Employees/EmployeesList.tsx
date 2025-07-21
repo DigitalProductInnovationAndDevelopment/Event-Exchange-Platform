@@ -3,12 +3,10 @@ import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography 
 import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
-import type { Employee } from "types/employee.ts";
-import { Role } from "types/employee.ts";
+import { type Employee, getFullName, Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
-import { EmployeeTypeTag } from "components/EmployeeTypeTag.tsx";
 import { exportToCSV } from "../../utils/utils";
 import { parse } from "papaparse";
 import moment from "moment/moment";
@@ -24,10 +22,16 @@ const columns = (
   onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
 ): ColumnsType<Employee> => [
   {
-    title: "Full Name",
-    dataIndex: ["profile", "fullName"],
-    key: "profile.fullName",
-    sorter: (a, b) => (a.profile?.fullName ?? "").localeCompare(b.profile?.fullName ?? ""),
+    title: "Name",
+    dataIndex: ["profile", "name"],
+    key: "profile.name",
+    sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
+  },
+  {
+    title: "Last Name",
+    dataIndex: ["profile", "lastName"],
+    key: "profile.lastName",
+    sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
   },
   {
     title: "Email",
@@ -38,12 +42,6 @@ const columns = (
     title: "Location",
     dataIndex: "location",
     key: "location",
-  },
-  {
-    title: "Employment Type",
-    dataIndex: "employmentType",
-    key: "employmentType",
-    render: (type: string) => <EmployeeTypeTag type={type} />,
   },
   {
     title: "Date Joined",
@@ -86,58 +84,54 @@ function downloadCSV(): void {
   const employees: Employee[] = [
     {
       profile: {
-        fullName: "Alice Smith",
+        name: "Alice",
+        lastName: "Smith",
         gender: "Female",
-        gitlabUsername: "asmith",
         email: "alice.smith@example.com",
         dietTypes: [],
         id: "",
       },
       location: "Munich",
       employmentStartDate: "2023-01-15",
-      employmentType: "FULLTIME",
       projects: [],
     },
     {
       profile: {
-        fullName: "Bob Johnson",
+        name: "Bob",
+        lastName: "Johnson",
         gender: "Male",
-        gitlabUsername: "bjohnson",
         email: "bob.johnson@example.com",
         dietTypes: [],
         id: "",
       },
       location: "Berlin",
       employmentStartDate: "2022-09-01",
-      employmentType: "PARTTIME",
       projects: [],
     },
     {
       profile: {
-        fullName: "Clara Lee",
+        name: "Clara",
+        lastName: "Lee",
         gender: "Female",
-        gitlabUsername: "clee",
         email: "clara.lee@example.com",
         dietTypes: [],
         id: "",
       },
       location: "Munich",
       employmentStartDate: "2024-03-10",
-      employmentType: "WORKING_STUDENT",
       projects: [],
     },
     {
       profile: {
-        fullName: "David Brown",
+        name: "David",
+        lastName: "Brown",
         gender: "Female",
-        gitlabUsername: "dbrown",
         email: "david.brown@example.com",
         dietTypes: [],
         id: "",
       },
       location: "Frankfurt",
       employmentStartDate: "2023-11-20",
-      employmentType: "THESIS",
       projects: [],
     },
   ];
@@ -146,21 +140,17 @@ function downloadCSV(): void {
     "Last Name",
     "Location",
     "Employment Start Date",
-    "Employment Type",
     "Email",
     "Gender",
-    "Gitlab Username",
   ];
 
   const rows = employees.map(emp => [
-    emp.profile.fullName.split(" ")[0],
-    emp.profile.fullName.split(" ")[1],
+    emp.profile.name,
+    emp.profile.lastName,
     emp.location,
     emp.employmentStartDate,
-    emp.employmentType,
     emp.profile.email,
     emp.profile.gender,
-    emp.profile.gitlabUsername,
   ]);
 
   const csvContent = [headers, ...rows].map(e => e.map(val => `${val}`).join(";")).join("\n");
@@ -217,7 +207,7 @@ export const EmployeesList = () => {
     return employees.filter(item => {
       const matchesSearch =
         searchText === "" ||
-        item.profile.fullName?.toLowerCase().includes(searchText.toLowerCase());
+        (getFullName(item.profile)).toLowerCase().includes(searchText.toLowerCase());
       const matchesLocation = !locationFilter || item.location === locationFilter;
       return matchesSearch && matchesLocation;
     });
@@ -291,7 +281,8 @@ export const EmployeesList = () => {
     const payload = importedRows.map(row => ({
       profile: {
         id: "", // Required by Employee/Profile type, will be ignored by backend
-        fullName: `${row.name} ${row.lastName}`.trim(),
+        name: row.name.trim(),
+        lastName: row.lastName.trim(),
         gender: row.gender,
         gitlabUsername: row.gitlabUsername,
         email: row.email,
