@@ -26,6 +26,7 @@ export default function useApiService() {
           ...(options.headers || {}),
         },
         credentials: "include",
+        signal: AbortSignal.timeout(5000),
         ...options,
       };
 

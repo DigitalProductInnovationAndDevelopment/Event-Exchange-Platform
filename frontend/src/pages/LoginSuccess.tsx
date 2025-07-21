@@ -36,7 +36,7 @@ export const LoginSuccess = () => {
       }
     };
     doLogin();
-  }, [login, navigate, from, isAuthenticated, getOwnProfile, logout]);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
