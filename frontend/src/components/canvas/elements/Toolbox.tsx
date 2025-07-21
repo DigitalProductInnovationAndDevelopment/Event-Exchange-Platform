@@ -39,6 +39,7 @@ function Toolbox({
   const { updateSchematics } = useApiService();
   const { schematicsId } = useParams();
   const toolboxLayer = useRef<Konva.Layer | null>(null);
+  const toolboxHeight = TOOLBOX_ITEMS.length * 65;
 
   return (
     <div>
@@ -47,7 +48,7 @@ function Toolbox({
           <Group x={TOOLBOX_X} y={TOOLBOX_Y}>
             <Rect
               width={100}
-              height={TOOLBOX_ITEMS.length * 65}
+              height={toolboxHeight}
               fill="#f0f0f0"
               stroke="#aaa"
               strokeWidth={1}
@@ -79,7 +80,7 @@ function Toolbox({
               </Group>
             ))}
 
-            <Group y={400} onClick={async () => {
+            <Group y={toolboxHeight + 10} onClick={async () => {
               const uri = await handleExport(stageRef);
               downloadURI(uri!, "stage.jpeg");
             }}>
@@ -96,7 +97,7 @@ function Toolbox({
             </Group>
 
             <Group
-              y={460}
+              y={toolboxHeight + 70}
               onClick={() =>
                 updateSchematics(
                   schematicsId!,

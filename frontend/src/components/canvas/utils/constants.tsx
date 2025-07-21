@@ -1,10 +1,11 @@
 import { Table, TableRender } from "../elements/Table.tsx";
-import { Room, RoomRender } from "../elements/Room.tsx";
 import { Wall, WallRender } from "../elements/Wall.tsx";
 import { Chair, ChairRender } from "../elements/Chair.tsx";
+import { Arrow, ArrowRender } from "components/canvas/elements/Arrow.tsx";
+import { Text, TextRender } from "components/canvas/elements/Text.tsx";
 
 export type UUID = string;
-export type ShapeType = "chair" | "room" | "rectTable" | "circleTable" | "wall" | "quickWall";
+export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickWall" | "arrow" | "text";
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGETARIAN: "green",
@@ -59,8 +60,8 @@ export const TABLE_TYPES = {
     type: "rectTable" as ShapeType,
     label: "Rect Table",
     color: "#294d69",
-    width: 80,
-    height: 50,
+    width: 140,
+    height: 80,
   },
   CIRCLE: {
     id: "" as UUID,
@@ -75,7 +76,7 @@ export const TABLE_TYPES = {
     type: "circleTable" as ShapeType,
     label: "Circle Table",
     color: "#294d69",
-    radius: 40,
+    radius: 60,
   },
 };
 
@@ -85,7 +86,8 @@ export const TOOLBOX_ITEMS: { type: ShapeType; label: string }[] = [
   { type: "circleTable", label: "Circle Table" },
   { type: "wall", label: "Wall" },
   { type: "quickWall", label: "Quick Wall" },
-  { type: "room", label: "Room" },
+  { type: "arrow", label: "Arrow" },
+  { type: "text", label: "Text" },
 ];
 
 export const TOOLBOX_X = 20;
@@ -100,8 +102,10 @@ export const renderElement = (el: ElementProperties, areTextsEnabled: boolean) =
       return TableRender(el as Table, areTextsEnabled);
     case "wall":
       return WallRender(el as Wall);
-    case "room":
-      return RoomRender(el as Room);
+    case "arrow":
+      return ArrowRender(el as Arrow);
+    case "text":
+      return TextRender(el as Text);
     default:
       return null;
   }
@@ -149,13 +153,20 @@ export const getEditableParameters = (
         y2: "number",
         color: "string",
       };
-    case "room":
+    case "arrow":
+      return {
+        name: "string",
+        x1: "number",
+        y1: "number",
+        x2: "number",
+        y2: "number",
+        color: "string",
+      };
+    case "text":
       return {
         name: "string",
         x: "number",
         y: "number",
-        width: "number",
-        height: "number",
         rotation: "number",
         color: "string",
       };
@@ -174,9 +185,11 @@ export const shapeFactory = (type: ShapeType) => {
       return new Table(TABLE_TYPES.CIRCLE);
     case "wall":
       return new Wall();
-    case "room":
-      return new Room();
+    case "arrow":
+      return new Arrow();
+    case "text":
+      return new Text();
     default:
-      return null;
+      throw new Error("Unsupported shape type! Check code for this error");
   }
 };

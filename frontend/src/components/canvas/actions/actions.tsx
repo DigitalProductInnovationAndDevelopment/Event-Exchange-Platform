@@ -1,10 +1,11 @@
-import type { Dispatch, SetStateAction } from "react";
+import type {Dispatch, SetStateAction} from "react";import type { Dispatch, SetStateAction } from "react";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import { Chair } from "../elements/Chair.tsx";
 import { Wall } from "../elements/Wall.tsx";
-import { Room } from "../elements/Room.tsx";
 import type { Table } from "../elements/Table.tsx";
 import type { UUID } from "components/canvas/utils/constants.tsx";
+import type { Arrow } from "components/canvas/elements/Arrow.tsx";
+import type { Text } from "components/canvas/elements/Text.tsx";
 
 export interface Action {
   type: string;
@@ -31,7 +32,7 @@ export const setState = (payload: AppState): Action => ({
   payload,
 });
 
-export const addElement = (payload: Chair | Table | Wall | Room | null): Action => ({
+export const addElement = (payload: Chair | Table | Wall | Arrow | Text | null): Action => ({
   type: ADD_ELEMENT,
   payload,
 });

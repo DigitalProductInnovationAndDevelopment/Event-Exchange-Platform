@@ -22,7 +22,7 @@ export class Chair implements ElementProperties {
     this.x = 200;
     this.y = 100;
     this.color = "#aaa";
-    this.radius = 10;
+    this.radius = 16;
     this.attachedTo = undefined;
     this.draggable = true;
     this.offset = { dx: 0, dy: 0 };

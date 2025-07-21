@@ -41,7 +41,7 @@ export const EventDetails = () => {
   } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
-  const [_, setEventParticipants] = useState<ParticipationDetails[]>([]);
+  const [, setEventParticipants] = useState<ParticipationDetails[]>([]);
 
   useEffect(() => {
     (async () => {

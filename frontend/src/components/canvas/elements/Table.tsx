@@ -37,13 +37,21 @@ export class Table implements ElementProperties {
   }
 }
 
+function handleTableTitle(table: Table) {
+  let chairLabel = table.attachedChairs.length > 0 ? `${table.attachedChairs.length} chair` : "";
+  if (table.attachedChairs.length > 1) {
+    chairLabel += "s";
+  }
+  return `${table.name}\n${chairLabel}`;
+}
+
 export function TableRender(table: Table, areTextsEnabled: boolean) {
   return table.type === "circleTable" ? (
     <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
       <Circle radius={table.radius} fill={table.color || "#294d69"} />
       {areTextsEnabled && (
         <Text
-          text={`${table.name}\n${table.attachedChairs.length} chairs`}
+          text={`${handleTableTitle(table)}`}
           fill="white"
           fontSize={12}
           align="center"
@@ -64,7 +72,7 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
       />
       {areTextsEnabled && (
         <Text
-          text={`${table.name}\n${table.attachedChairs.length} chairs`}
+          text={`${handleTableTitle(table)}`}
           fill="white"
           fontSize={12}
           align="center"
