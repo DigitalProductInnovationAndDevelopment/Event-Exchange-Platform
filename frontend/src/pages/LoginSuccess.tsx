@@ -8,32 +8,35 @@ import { getFullName } from "types/employee.ts";
 export const LoginSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { login, logout, isAuthenticated } = useAuth();
   const { getOwnProfile } = useApiService();
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
 
   useEffect(() => {
     const doLogin = async () => {
-      const ownProfile = await getOwnProfile();
-
-      const values = {
-        name: getFullName(ownProfile!) || "",
-        email: ownProfile!.email || "",
-        roles: ownProfile!.authorities || [],
-      };
-
       try {
+
+        const ownProfile = await getOwnProfile();
+
+        const values = {
+          name: getFullName(ownProfile!) || "",
+          email: ownProfile!.email || "",
+          roles: ownProfile!.authorities || [],
+        };
+
         await login(values);
         message.success("Welcome!");
         navigate(from, { replace: true });
       } catch (err) {
         message.error("Login failed");
         console.error(err);
+        logout();
+        navigate("/", { replace: true });
       }
     };
     doLogin();
-  }, [login, navigate, from, isAuthenticated, getOwnProfile]);
+  }, [login, navigate, from, isAuthenticated, getOwnProfile, logout]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

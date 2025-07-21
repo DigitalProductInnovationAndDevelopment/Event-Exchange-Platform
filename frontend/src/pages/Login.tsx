@@ -75,7 +75,7 @@ export const Login = () => {
               icon={isVisitorExpanded ? <UpOutlined /> : <DownOutlined />}
               onClick={toggleVisitorLogin}
             >
-              Guest Login
+              Visitor Login
             </Button>
 
             {isVisitorExpanded && (
