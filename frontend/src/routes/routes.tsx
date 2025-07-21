@@ -17,6 +17,7 @@ import { EventSeatAllocation } from "../pages/Events/EventSeatAllocation.tsx";
 import { EmployeeEdit } from "../pages/Employees/EmployeeEdit";
 import { EmployeeCreate } from "../pages/Employees/EmployeeCreate";
 import { ProfileEdit } from "../pages/Profile/ProfileEdit.tsx";
+import { Role } from "types/employee.ts";
 
 const routes: RouteObject[] = [
   // Public routes
@@ -33,66 +34,122 @@ const routes: RouteObject[] = [
   {
     path: "/",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EMPLOYEE, Role.PARTNER, Role.VISITOR]}>
         <AppContainer />
       </ProtectedRoute>
     ),
     children: [
       {
         index: true,
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EMPLOYEE, Role.PARTNER, Role.VISITOR]}>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EMPLOYEE, Role.PARTNER, Role.VISITOR]}>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "profile",
-        element: <ProfileEdit />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EMPLOYEE, Role.PARTNER, Role.VISITOR]}>
+            <ProfileEdit />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events",
-        element: <EventsList />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EMPLOYEE, Role.PARTNER, Role.VISITOR]}>
+            <EventsList />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events/create",
-        element: <EventCreate />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EventCreate />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events/:eventId",
-        element: <EventDetails />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EMPLOYEE, Role.PARTNER, Role.VISITOR]}>
+            <EventDetails />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events/:eventId/edit",
-        element: <EventEdit />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EventEdit />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events/:eventId/manage-participants",
-        element: <EventParticipants />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EventParticipants />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events/:eventId/seat-plan/:schematicsId",
-        element: <EventSeatPlan />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EventSeatPlan />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "events/:eventId/seat-allocation/:schematicsId",
-        element: <EventSeatAllocation />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EventSeatAllocation />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "employees",
-        element: <EmployeesList />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EmployeesList />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "employees/new",
-        element: <EmployeeCreate />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EmployeeCreate />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "employees/:employeeId",
-        element: <EmployeeDetails />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EmployeeDetails />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "employees/:employeeId/edit",
-        element: <EmployeeEdit />,
+        element: (
+          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
+            <EmployeeEdit />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

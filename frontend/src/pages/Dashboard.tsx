@@ -48,17 +48,20 @@ export const Dashboard = () => {
       <Row gutter={[16, 16]}>
         <Col span={16}>
           <Row gutter={[16, 16]} className="mb-4">
-            <Col span={8}>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                size="large"
-                block
-                onClick={() => navigate("/events/create")}
-              >
-                Create New Event
-              </Button>
-            </Col>
+            {
+              isAdmin && (
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="large"
+                    block
+                    onClick={() => navigate("/events/create")}
+                  >
+                    Create New Event
+                  </Button>
+                </Col>)
+            }
             <Col span={8}>
               <Button
                 type="primary"
