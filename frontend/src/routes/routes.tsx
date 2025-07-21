@@ -1,5 +1,4 @@
-import { type RouteObject } from "react-router-dom";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { AppContainer } from "../components/AppContainer";
 import { Login } from "../pages/Login";
@@ -17,6 +16,7 @@ import { EventSeatPlan } from "../pages/Events/EventSeatPlan.tsx";
 import { EventSeatAllocation } from "../pages/Events/EventSeatAllocation.tsx";
 import { EmployeeEdit } from "../pages/Employees/EmployeeEdit";
 import { EmployeeCreate } from "../pages/Employees/EmployeeCreate";
+import { ProfileEdit } from "../pages/Profile/ProfileEdit.tsx";
 
 const routes: RouteObject[] = [
   // Public routes
@@ -45,6 +45,10 @@ const routes: RouteObject[] = [
       {
         path: "dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "profile",
+        element: <ProfileEdit />,
       },
       {
         path: "events",
@@ -86,7 +90,6 @@ const routes: RouteObject[] = [
         path: "employees/:employeeId",
         element: <EmployeeDetails />,
       },
-      // TODO: Unnecessary route, remove it
       {
         path: "employees/:employeeId/edit",
         element: <EmployeeEdit />,

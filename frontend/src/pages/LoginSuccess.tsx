@@ -3,6 +3,7 @@ import { message } from "antd";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect } from "react";
 import useApiService from "../services/apiService";
+import { getFullName } from "types/employee.ts";
 
 export const LoginSuccess = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const LoginSuccess = () => {
       const ownProfile = await getOwnProfile();
 
       const values = {
-        name: ownProfile!.fullName || "",
+        name: getFullName(ownProfile!) || "",
         email: ownProfile!.email || "",
         roles: ownProfile!.authorities || [],
       };
