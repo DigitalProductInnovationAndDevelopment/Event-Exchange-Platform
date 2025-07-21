@@ -1,4 +1,4 @@
-import type {Dispatch, SetStateAction} from "react";import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import { Chair } from "../elements/Chair.tsx";
 import { Wall } from "../elements/Wall.tsx";

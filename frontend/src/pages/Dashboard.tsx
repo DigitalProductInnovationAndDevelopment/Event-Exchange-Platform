@@ -1,25 +1,22 @@
 import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from "antd";
-import {
-  CalendarOutlined,
-  EyeOutlined,
-  FireOutlined,
-  PlusOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined, EyeOutlined, FireOutlined, PlusOutlined, TeamOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Event } from "../types/event";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
+import { useAuth } from "../contexts/AuthContext.tsx";
 
 const { Title, Text } = Typography;
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const { getEvents } = useApiService();
   const [loading, setLoading] = useState(true);
+  const isAdmin = user?.roles?.find(role => role === "ADMIN");
 
   useEffect(() => {
     (async () => {
@@ -73,17 +70,20 @@ export const Dashboard = () => {
                 Events
               </Button>
             </Col>
-            <Col span={8}>
-              <Button
-                type="primary"
-                icon={<TeamOutlined />}
-                size="large"
-                block
-                onClick={() => navigate("/employees")}
-              >
-                Employees
-              </Button>
-            </Col>
+            {
+              isAdmin && (
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    icon={<TeamOutlined />}
+                    size="large"
+                    block
+                    onClick={() => navigate("/employees")}
+                  >
+                    Employees
+                  </Button>
+                </Col>)
+            }
           </Row>
 
           <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: "12px" }}>

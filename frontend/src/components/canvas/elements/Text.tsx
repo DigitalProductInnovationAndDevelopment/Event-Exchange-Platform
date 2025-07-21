@@ -9,6 +9,7 @@ export class Text implements ElementProperties {
   type: ShapeType;
   x: number;
   y: number;
+  size: number;
   rotation: number;
   stroke: string;
   color: string;
@@ -20,7 +21,8 @@ export class Text implements ElementProperties {
     this.name = "text";
     this.x = 200;
     this.y = 100;
-    this.color = "#EEE";
+    this.size = 20;
+    this.color = "#000000";
     this.stroke = "#333";
     this.rotation = 0;
     this.draggable = true;
@@ -31,6 +33,7 @@ export function TextRender(text: Text) {
   return (
     <TextKonva
       text={text.name}
+      fontSize={text.size}
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
       perfectDrawEnabled={false}

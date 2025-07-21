@@ -36,6 +36,7 @@ export interface ElementProperties {
   y2?: number;
   radius?: number;
   color: string;
+  size?: number;
   name?: string;
   width?: number;
   height?: number;
@@ -167,6 +168,7 @@ export const getEditableParameters = (
         name: "string",
         x: "number",
         y: "number",
+        size: "number",
         rotation: "number",
         color: "string",
       };
