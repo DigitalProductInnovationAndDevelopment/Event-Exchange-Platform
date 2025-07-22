@@ -39,7 +39,9 @@ public class EmployeeParticipationDetailsDTO implements Serializable {
 
     String eventAddress;
 
-    String fullName;
+    String name;
+
+    String lastName;
 
     String gitlabUsername;
 

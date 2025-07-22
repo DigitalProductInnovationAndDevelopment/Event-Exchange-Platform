@@ -3,7 +3,9 @@ package com.itestra.eep.mappers;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeDetailsDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
+import com.itestra.eep.dtos.ProfileDetailsDTO;
 import com.itestra.eep.models.Employee;
+import com.itestra.eep.models.Profile;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -21,4 +23,5 @@ public interface EmployeeMapper {
 
     List<EmployeeDetailsDTO> toDetailsDto(List<Employee> employees);
 
+    ProfileDetailsDTO toProfileDetailsDto(Profile profile);
 }

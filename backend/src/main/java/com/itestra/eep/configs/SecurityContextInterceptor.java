@@ -2,6 +2,7 @@ package com.itestra.eep.configs;
 
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.exceptions.UnauthorizedException;
+import com.itestra.eep.gitlabEvents.GitlabOAuth2SuccessHandler;
 import com.itestra.eep.models.Profile;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -37,6 +38,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final GitlabOAuth2SuccessHandler authenticationSuccessHandler;
 
     private static final String[] WHITELIST = {
             "/actuator/**",
@@ -72,6 +74,9 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("Access Denied, You are logged out!");
+            // we delete any cached Authorization cookie if exists.
+            authenticationSuccessHandler.handleAuthorizationCookie(response, "", 0);
+            authenticationSuccessHandler.handleRedirect(response, "/login");
             return;
         }
         filterChain.doFilter(request, response);
@@ -114,7 +119,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
     private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
         Set<Role> roles = Set.of(Role.VISITOR);
-        Profile profile = Profile.builder().fullName("Visitor").authorities(roles).build();
+        Profile profile = Profile.builder().name("Visitor").authorities(roles).build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
         authentication.setAuthenticated(false);
         return authentication;
@@ -123,6 +128,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
     private UsernamePasswordAuthenticationToken createAuthenticationFromClaims(Claims claims) {
         String userEmail = claims.getSubject();
         String userName = claims.get("name", String.class);
+        String userLastName = claims.get("lastName", String.class);
         UUID userId = UUID.fromString(claims.get("id", String.class));
 
         @SuppressWarnings("unchecked")
@@ -134,7 +140,8 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
 
         Profile profile = Profile.builder()
                 .id(userId)
-                .fullName(userName)
+                .name(userName)
+                .lastName(userLastName)
                 .email(userEmail)
                 .authorities(roles)
                 .build();

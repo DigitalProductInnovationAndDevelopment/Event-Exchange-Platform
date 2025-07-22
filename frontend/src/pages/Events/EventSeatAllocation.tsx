@@ -5,7 +5,7 @@ import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
 import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
 import KonvaCanvas from "components/canvas/KonvaCanvas";
-import type { ParticipationDetails, Profile } from "types/employee";
+import { getFullName, type ParticipationDetails, type Profile } from "types/employee";
 import type { AppState } from "components/canvas/reducers/CanvasReducer";
 import { type ElementProperties } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
@@ -132,7 +132,7 @@ const SeatAllocationContent = ({
       ?.forEach((e: ElementProperties) => {
         if (e.type === "chair" && chairProfileMap.has(e.id)) {
           (e as Chair).assigneeProfileId = chairProfileMap.get(e.id)!.id;
-          (e as Chair).assigneeName = chairProfileMap.get(e.id)!.fullName;
+          (e as Chair).assigneeName = getFullName(chairProfileMap.get(e.id)!);
         } else if (e.type === "chair") {
           (e as Chair).assigneeProfileId = undefined;
           (e as Chair).assigneeName = undefined;
@@ -292,8 +292,8 @@ const SeatAllocationContent = ({
                   ].filter(Boolean)}
                 >
                   <List.Item.Meta
-                    avatar={<Avatar>{item.profile.fullName?.[0]}</Avatar>}
-                    title={item.profile.fullName}
+                    avatar={<Avatar>{getFullName(item.profile)?.[0]}</Avatar>}
+                    title={getFullName(item.profile)}
                     description={item.profile.email}
                   />
                 </List.Item>
@@ -337,7 +337,7 @@ const SeatAllocationContent = ({
                   ]}
                 >
                   <List.Item.Meta
-                    title={item.profile.fullName}
+                    title={getFullName(item.profile)}
                     description={item.profile.email}
                   />
                 </List.Item>
@@ -356,7 +356,7 @@ export const EventSeatAllocation = () => {
   const { eventId } = useParams();
   const { getEventById, getEventParticipants, getSchematics } = useApiService();
   const [eventName, setEventName] = useState("");
-  const [participants, setParticipants] = useState<ParticipationDetails[]>([]);
+  const [, setParticipants] = useState<ParticipationDetails[]>([]);
   const [schematics, setSchematics] = useState<AppState | null>(null);
   const [schematicsId, setSchematicsId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

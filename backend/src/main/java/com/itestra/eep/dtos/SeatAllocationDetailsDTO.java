@@ -21,7 +21,8 @@ public final class SeatAllocationDetailsDTO {
     public SeatAllocationDetailsDTO(Profile profile, UUID participationId, UUID invitorId, UUID chairId, String accessLink) {
         this.profile = new ProfileDetailsDTO(
                 profile.getId(),
-                profile.getFullName(),
+                profile.getName(),
+                profile.getLastName(),
                 profile.getGender(),
                 profile.getGitlabUsername(),
                 profile.getEmail(),

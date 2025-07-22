@@ -6,14 +6,16 @@ export const exportParticipationToCSV = (data: ParticipationDetails[]) => {
   // Define CSV headers
   const headers = [
     "Gitlab ID",
-    "Full Name",
+    "Name",
+    "Last Name",
     "Email",
   ];
   // Map data to CSV rows
   const rows = data.map(emp => [
-    emp.gitlabUsername,
-    emp.fullName,
-    emp.email,
+    emp.profile.gitlabUsername,
+    emp.profile.name,
+    emp.profile.lastName,
+    emp.profile.email,
   ]);
   // Combine headers and rows
   const csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");

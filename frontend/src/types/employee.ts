@@ -3,17 +3,24 @@ import type { UUID } from "components/canvas/utils/constants.tsx";
 export interface Employee {
   profile: Profile;
   employmentStartDate: string;
-  employmentType: string;
   location: string;
   projects: Project[];
   participations?: ParticipationDetails[];
 }
 
+export function getFullName(profile: Profile | ParticipationDetails | undefined): string | "" {
+  if (profile) {
+    return profile.lastName ? `${profile.name} ${profile.lastName}` : profile.name;
+  }
+  return "";
+}
+
 export interface Profile {
   id: UUID;
-  fullName: string;
+  name: string;
+  lastName: string;
   gender: string;
-  gitlabUsername: string;
+  gitlabUsername?: string;
   email: string;
   dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];
@@ -34,7 +41,8 @@ export interface ParticipationDetails {
   eventType: string;
   eventDate: string;
   eventAddress: string;
-  fullName: string;
+  name: string;
+  lastName: string;
   gitlabUsername: string;
   email: string;
   dietTypes: (keyof typeof DietaryPreference)[];
@@ -58,5 +66,6 @@ export enum EmploymentType {
 export enum Role {
   ADMIN = "ADMIN",
   EMPLOYEE = "EMPLOYEE",
+  PARTNER = "PARTNER",
   VISITOR = "VISITOR",
 }

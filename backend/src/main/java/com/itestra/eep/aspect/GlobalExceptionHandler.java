@@ -69,9 +69,10 @@ public class GlobalExceptionHandler {
             EmployeeNotFoundException.class,
             EventNotFoundException.class,
             ParticipationNotFoundException.class,
-            ProjectNotFoundException.class,
+            FileEntityNotFoundException.class,
             SchematicsNotFoundException.class,
             UserProfileNotFoundException.class,
+            VisitorLinkInvalidException.class,
             EventCapacityExceededException.class})
     public ResponseEntity<Object> handleCustomRuntimeException(RuntimeException exception) {
         return ResponseEntity

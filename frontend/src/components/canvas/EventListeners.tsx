@@ -447,7 +447,7 @@ export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (a
           x: el.x!,
           y: el.y!,
         }
-        : el.type !== "wall"
+        : el.type !== "wall" && el.type !== "arrow"
           ? {
             id,
             x: node.x()! / scaleX,

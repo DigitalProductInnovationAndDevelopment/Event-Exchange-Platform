@@ -3,24 +3,24 @@ import { Tooltip } from "antd";
 
 const tooltipSteps = [
   {
-    text: 'Select multiple items: Hold ",<b>SHIFT</b>" and drag your mouse.',
+    text: "Select multiple items: Hold \"<b>SHIFT</b>\" and drag your mouse.",
     icon: '⇧',
   },
   {
-    text: 'Delete selected items: Press ",<b>BACKSPACE</b>".',
+    text: "Delete selected items: Press \"<b>BACKSPACE</b>\".",
     icon: '⌫',
   },
   {
-    text: 'Deactivate Quick Wall: Press ",<b>ESC</b>".',
-    icon: '⎋',
+    text: "Deactivate Quick Wall: Press \"<b>ESC</b>\".",
+    icon: "␛",
   },
   {
-    text: 'Duplicate selected items: Press ",<b>D</b>".',
+    text: "Duplicate selected items: Press \"<b>D</b>\".",
     icon: 'D',
   },
   {
-    text: 'Undo/Redo: Press ",<b>CTRL + Z</b>" / ",<b>CTRL + SHIFT + Z</b>".',
-    icon: '⎌',
+    text: "Undo/Redo: Press \"<b>CTRL + Z</b>\" / \"<b>CTRL + SHIFT + Z</b>\".",
+    icon: "↩️",
   },
 ];
 
@@ -29,7 +29,7 @@ export const CanvasTooltip = () => {
     <Tooltip
       className="ms-3 mt-2"
       title={
-        <div style={{ minWidth: 320, padding: 4 }}>
+        <div style={{ minWidth: 500, padding: 4 }}>
           <div style={{ fontWeight: 600, marginBottom: 8, color: '#1677ff', display: 'flex', alignItems: 'center' }}>
             <InfoCircleOutlined style={{ marginRight: 8, fontSize: 18 }} />
             Canvas Shortcuts
@@ -58,8 +58,7 @@ export const CanvasTooltip = () => {
         </div>
       }
       placement="rightBottom"
-      overlayInnerStyle={{ borderRadius: 12, boxShadow: '0 4px 24px #1677ff22' }}
-    >
+      styles={{ body: { borderRadius: 12, boxShadow: "0 4px 24px #1677ff22", width: "500px" } }}>
       <InfoCircleOutlined style={{ fontSize: 28, cursor: "pointer", color: "#1677ff", filter: 'drop-shadow(0 2px 6px #1677ff44)' }} />
     </Tooltip>
   );

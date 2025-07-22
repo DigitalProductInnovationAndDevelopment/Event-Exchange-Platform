@@ -1,4 +1,4 @@
-import { Button, Card, List, Row, Space, Typography, Tag, Spin } from "antd";
+import { Button, Card, List, Row, Space, Typography, Spin } from "antd";
 import {
   CalendarOutlined,
   EyeOutlined,
@@ -7,9 +7,6 @@ import {
   TeamOutlined,
   UserOutlined,
   UsergroupAddOutlined,
-  AppleOutlined,
-  ForkOutlined,
-  CoffeeOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,19 +15,9 @@ import { type ParticipationDetails } from "../types/employee";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
-import { DietTypeTag } from "components/DietTypeTag";
+import { useAuth } from "../contexts/AuthContext.tsx";
 
 const { Title, Text } = Typography;
-
-function aggregateDietaryCounts(participants: ParticipationDetails[]): Record<string, number> {
-  const counts: Record<string, number> = {};
-  for (const p of participants) {
-    for (const diet of p.dietTypes || []) {
-      counts[diet] = (counts[diet] || 0) + 1;
-    }
-  }
-  return counts;
-}
 
 // Helper to aggregate dietary combinations
 function aggregateDietaryCombinations(participants: ParticipationDetails[]): Record<string, number> {
@@ -49,11 +36,13 @@ function aggregateDietaryCombinations(participants: ParticipationDetails[]): Rec
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const { getEvents, getEventParticipants } = useApiService();
   const [loading, setLoading] = useState(true);
   const [participantsMap, setParticipantsMap] = useState<Record<string, ParticipationDetails[]>>({});
   const [participantsLoading, setParticipantsLoading] = useState<Record<string, boolean>>({});
+  const isAdmin = user?.isAdmin();
 
   useEffect(() => {
     (async () => {
@@ -96,16 +85,51 @@ export const Dashboard = () => {
         <Text type="secondary">Comprehensive analytics and insights for your events</Text>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          size="large"
-          onClick={() => navigate("/events/create")}
-        >
-          Create New Event
-        </Button>
-      </div>
+      <Row gutter={[16, 16]}>
+        <Col span={16}>
+          <Row gutter={[16, 16]} className="mb-4">
+            {
+              isAdmin && (
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="large"
+                    block
+                    onClick={() => navigate("/events/create")}
+                  >
+                    Create New Event
+                  </Button>
+                </Col>)
+            }
+            <Col span={8}>
+              <Button
+                type="primary"
+                icon={<CalendarOutlined />}
+                size="large"
+                block
+                onClick={() => navigate("/events")}
+              >
+                Events
+              </Button>
+            </Col>
+            {
+              isAdmin && (
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    icon={<TeamOutlined />}
+                    size="large"
+                    block
+                    onClick={() => navigate("/employees")}
+                  >
+                    Employees
+                  </Button>
+                </Col>)
+            }
+          </Row>
+        </Col>
+      </Row>
 
       <Card title="Upcoming Events" className="shadow-sm w-full" bodyStyle={{ padding: "12px" }}>
         <List
@@ -118,7 +142,6 @@ export const Dashboard = () => {
             const isLoading = participantsLoading[event.id];
             const employeeCount = participants.length;
             const guestCount = participants.reduce((sum, p) => sum + (p.guestCount || 0), 0);
-            const dietarySummary = aggregateDietaryCounts(participants);
             const dietaryCombinations = aggregateDietaryCombinations(participants);
             const engagement = event.capacity > 0 ? Number(((event.participantCount / event.capacity) * 100).toFixed(2)) : 0;
             return (

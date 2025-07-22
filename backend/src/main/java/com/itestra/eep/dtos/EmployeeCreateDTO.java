@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.itestra.eep.enums.DietaryPreference;
-import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,10 +35,6 @@ public class EmployeeCreateDTO implements Serializable {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate employmentStartDate;
 
-    @NotNull(message = "Employment type cannot be empty.")
-    @Enumerated(EnumType.STRING)
-    EmploymentType employmentType;
-
     @NotNull(message = "Employee location cannot be empty.")
     String location;
 
@@ -48,9 +43,13 @@ public class EmployeeCreateDTO implements Serializable {
     @AllArgsConstructor
     public static class ProfileCreateDTO implements Serializable {
 
-        @Size(max = 500)
-        @NotBlank(message = "Full name cannot be empty.")
-        String fullName;
+        @NotBlank(message = "Name cannot be empty.")
+        @Size(max = 255)
+        String name;
+
+        @Size(max = 255)
+        @NotBlank(message = "Last name cannot be empty.")
+        String lastName;
 
         @Size(max = 255)
         @NotBlank(message = "Gender cannot be empty.")

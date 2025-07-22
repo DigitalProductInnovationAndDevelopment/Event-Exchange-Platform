@@ -45,11 +45,13 @@ public class EventServiceImpl implements EventService {
     private final VisitorParticipationFactory visitorParticipationFactory;
 
     @Override
+    @Transactional(readOnly = true)
     public Event findById(UUID id) {
         return eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Event> findAll(Authentication authentication) {
         if (Objects.isNull(authentication)) {
             return new ArrayList<>();
@@ -151,8 +153,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isParticipant(UUID eventId, UUID userId) {
-        return eventRepository.existsByIdAndEmployeeParticipations_Employee_Id(eventId, userId);
+        boolean employeeParticipates = eventRepository.existsByIdAndEmployeeParticipations_Employee_Id(eventId, userId);
+
+        boolean visitorParticipates = eventRepository.existsByIdAndVisitorParticipations_Profile_Id(eventId, userId);
+
+        return employeeParticipates || visitorParticipates;
     }
 
     private void handleVisitorProfilesForGuests(EmployeeParticipation participation, int oldGuestCount, int newGuestCount) {

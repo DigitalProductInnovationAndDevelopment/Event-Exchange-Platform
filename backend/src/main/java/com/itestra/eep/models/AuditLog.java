@@ -2,7 +2,6 @@ package com.itestra.eep.models;
 
 import com.itestra.eep.enums.OperationType;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

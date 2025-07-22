@@ -1,7 +1,10 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.itestra.eep.enums.DietaryPreference;
-import com.itestra.eep.enums.EmploymentType;
 import com.itestra.eep.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,11 +34,9 @@ public class EmployeeUpdateDTO implements Serializable {
 
     @Nullable
     @PastOrPresent(message = "Employment start date cannot be in the future.")
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate employmentStartDate;
-
-    @Nullable
-    @Enumerated(EnumType.STRING)
-    EmploymentType employmentType;
 
     @Nullable
     String location;
@@ -46,8 +47,13 @@ public class EmployeeUpdateDTO implements Serializable {
 
         @Nullable
         @Size(max = 255)
-        @NotBlank(message = "Full name cannot be empty.")
-        String fullName;
+        @NotBlank(message = "Name cannot be empty.")
+        String name;
+
+        @Nullable
+        @Size(max = 255)
+        @NotBlank(message = "Last name cannot be empty.")
+        String lastName;
 
         @Nullable
         @Size(max = 255)
@@ -55,6 +61,7 @@ public class EmployeeUpdateDTO implements Serializable {
         String gender;
 
         @Nullable
+        @Size(max = 255)
         @NotBlank(message = "GitLab username cannot be empty.")
         String gitlabUsername;
 

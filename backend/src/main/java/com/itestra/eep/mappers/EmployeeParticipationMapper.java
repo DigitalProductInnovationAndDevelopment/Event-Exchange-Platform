@@ -20,12 +20,12 @@ public interface EmployeeParticipationMapper {
 
     @Mappings({
             @Mapping(source = "employee.id", target = "profileId"),
-            @Mapping(source = "employee.profile.fullName", target = "employeeProfileFullName"),
+            @Mapping(source = "employee.profile.name", target = "employeeProfileName"),
+            @Mapping(source = "employee.profile.lastName", target = "employeeProfileLastName"),
             @Mapping(source = "employee.profile.gender", target = "employeeProfileGender"),
             @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes"),
             @Mapping(source = "employee.employmentStartDate", target = "employeeEmploymentStartDate"),
             @Mapping(source = "employee.location", target = "employeeLocation"),
-            @Mapping(source = "employee.employmentType", target = "employeeEmploymentType"),
     })
     ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipation employeeParticipation);
 
@@ -39,7 +39,8 @@ public interface EmployeeParticipationMapper {
     default List<EmployeeParticipationDetailsDTO> map(List<EmployeeParticipation> employeeParticipations) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
 
-        boolean isAdmin = auth.getAuthorities().stream()
+        // We make employee participations visible only to admins
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> ADMIN.name().equals(a.getAuthority()));
 
         if (!isAdmin || employeeParticipations == null || employeeParticipations.isEmpty()) {
@@ -59,7 +60,8 @@ public interface EmployeeParticipationMapper {
                             .eventType(e.getEventType())
                             .eventDate(e.getDate())
                             .eventAddress(e.getAddress())
-                            .fullName(p.getEmployee().getProfile().getFullName())
+                            .name(p.getEmployee().getProfile().getName())
+                            .lastName(p.getEmployee().getProfile().getLastName())
                             .gitlabUsername(p.getEmployee().getProfile().getGitlabUsername())
                             .email(p.getEmployee().getProfile().getEmail())
                             .dietTypes(p.getEmployee().getProfile().getDietTypes())

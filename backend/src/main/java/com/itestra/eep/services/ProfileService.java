@@ -4,10 +4,8 @@ import com.itestra.eep.models.Profile;
 
 public interface ProfileService {
 
-    Profile findByGitlabUsername(String gitlabUsername);
+    Profile findVisitorProfileByAccessLink(String accessLink);
 
-    Profile findByEmail(String email);
-
-    Profile initiateUserProfile(Profile user);
+    Profile findOrCreateProfile(String gitlabUsername, String email, String name, String lastName, String location);
 
 }

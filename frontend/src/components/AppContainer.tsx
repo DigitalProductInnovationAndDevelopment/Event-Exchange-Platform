@@ -1,12 +1,6 @@
 import { Avatar, ConfigProvider, Dropdown, Layout, Menu, theme as antdTheme } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import {
-  CalendarOutlined,
-  DashboardOutlined,
-  LogoutOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
 import useApiService from "../services/apiService.ts";
 import { useState } from "react";
@@ -33,12 +27,12 @@ export const AppContainer = () => {
       icon: <CalendarOutlined />,
       label: "Events",
     },
-    {
+    ...(user?.roles?.find(role => role === "ADMIN") ? [{
       key: "/employees",
       icon: <TeamOutlined />,
       label: "Employees",
-    },
-  ];
+    }] : [])
+  ].filter(Boolean);
 
   const handleMenuClick = (key: string) => {
     if (key === "logout") {

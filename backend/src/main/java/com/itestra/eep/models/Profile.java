@@ -25,8 +25,11 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(name = "gender")
     private String gender;
@@ -66,6 +69,11 @@ public class Profile {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Transient
+    public String getFullName() {
+        return "%s %s".formatted(getName(), getLastName());
     }
 
 }

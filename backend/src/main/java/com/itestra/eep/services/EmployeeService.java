@@ -2,6 +2,7 @@ package com.itestra.eep.services;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
+import com.itestra.eep.dtos.ProfileUpdateDTO;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 
@@ -12,7 +13,11 @@ public interface EmployeeService {
 
     Profile getAuthenticatedProfileDetails();
 
+    Profile updateAuthenticatedProfileDetails(ProfileUpdateDTO dto);
+
     Employee findById(UUID id);
+
+    List<Employee> upsertEmployeesBatch(List<EmployeeCreateDTO> dtos);
 
     Employee create(EmployeeCreateDTO dto);
 
@@ -22,5 +27,4 @@ public interface EmployeeService {
 
     void delete(UUID id);
 
-    List<Employee> createEmployeesBatch(List<EmployeeCreateDTO> employees);
 }

@@ -1,13 +1,15 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Spin } from "antd";
+import type { Role } from "types/employee.ts";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  allowedRoles: Role[];
 }
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+  const { isLoading, user } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -25,7 +27,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  if (!isAuthenticated) {
+  const hasRequiredRole = user?.roles?.some(role => allowedRoles.includes(role as Role));
+
+  if (!hasRequiredRole) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

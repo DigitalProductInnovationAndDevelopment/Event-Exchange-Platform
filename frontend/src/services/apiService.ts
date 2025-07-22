@@ -26,6 +26,7 @@ export default function useApiService() {
           ...(options.headers || {}),
         },
         credentials: "include",
+        signal: AbortSignal.timeout(20000), // abort request after 20 seconds. we can actually reduce this even further
         ...options,
       };
 
@@ -49,7 +50,7 @@ export default function useApiService() {
         toast.error("Access denied. You don't have permission for this action.");
         //logout();
         throw new Error("Access denied. You don't have permission for this action.");
-      } else if (response.status === 404) {
+      } else if (response.status === 404 || response.status === 405) {
         toast.error("This operation is not found.");
         throw new Error("This operation is not found.");
       } else if (response.status >= 500 || response.status === 409) {
@@ -84,9 +85,40 @@ export default function useApiService() {
     });
   }, [request]);
 
+  const visitorLogin = useCallback(
+    async (accessCode: string) => {
+      try {
+        const success = await request<boolean>(`/login/visitor/${accessCode}`, {
+          method: "GET",
+        });
+        toast.success("Visitor login is successful!");
+        return success;
+      } catch (error) {
+        console.error("Failed to login as visitor", error);
+        return null;
+      }
+    }, [request]);
+
   const getOwnProfile = useCallback(async (): Promise<Profile> => {
     return await request<Profile>("/profile/own");
   }, [request]);
+
+  const updateOwnProfile = useCallback(
+    async (profile: Profile): Promise<Profile | null> => {
+      try {
+        const response = await request<Profile>(`/profile/own`, {
+          method: "PUT",
+          body: JSON.stringify(profile),
+        });
+        toast.success("Profile edited successfully!");
+        return response;
+      } catch (error) {
+        console.error("Failed to update profile", error);
+        return null;
+      }
+    },
+    [request],
+  );
 
   const getEventById = useCallback(
     async (id: string): Promise<Event | null> => {
@@ -546,7 +578,9 @@ export default function useApiService() {
   return {
     request,
     logoutRequest,
+    visitorLogin,
     getOwnProfile,
+    updateOwnProfile,
     getEventById,
     getEvents,
     createEvent,
