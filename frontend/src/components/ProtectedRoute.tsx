@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
-  const { isLoading, user, logout } = useAuth();
+  const { isLoading, user } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -30,7 +30,6 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const hasRequiredRole = user?.roles?.some(role => allowedRoles.includes(role as Role));
 
   if (!hasRequiredRole) {
-    logout();
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

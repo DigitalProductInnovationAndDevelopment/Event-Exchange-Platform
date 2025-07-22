@@ -1,13 +1,12 @@
-import type { User } from "../types/auth";
+import { User, type UserType } from "../types/auth";
 
 const AUTH_KEY = "auth_user";
 
 export const authService = {
-  login: async (user: User): Promise<User> => {
+  login: async (userType: UserType): Promise<User> => {
     // Store user in localStorage
-    localStorage.setItem(AUTH_KEY, JSON.stringify(user));
-
-    return user;
+    localStorage.setItem(AUTH_KEY, JSON.stringify(userType));
+    return new User(userType.email, userType.name, userType.roles);
   },
 
   logout: () => {
@@ -19,7 +18,8 @@ export const authService = {
     if (!userStr) return null;
 
     try {
-      return JSON.parse(userStr);
+      const userObj = JSON.parse(userStr);
+      return new User(userObj.email, userObj.name, userObj.roles);
     } catch {
       return null;
     }

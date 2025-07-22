@@ -16,7 +16,7 @@ export const Dashboard = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const { getEvents } = useApiService();
   const [loading, setLoading] = useState(true);
-  const isAdmin = user?.roles?.find(role => role === "ADMIN");
+  const isAdmin = user?.isAdmin();
 
   useEffect(() => {
     (async () => {

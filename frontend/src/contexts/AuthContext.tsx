@@ -1,5 +1,5 @@
-import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
-import type { AuthState, User } from "../types/auth";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import type { AuthState, User, UserType } from "../types/auth";
 import { authService } from "../services/authService";
 
 interface AuthContextType extends AuthState {
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const login = async (credentials: User) => {
+  const login = async (credentials: UserType) => {
     setAuthState(prev => ({ ...prev, isLoading: true }));
     try {
       const user = await authService.login(credentials);
@@ -41,14 +41,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     authService.logout();
     setAuthState({
       user: null,
       isAuthenticated: false,
       isLoading: false,
     });
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ ...authState, login, logout }}>{children}</AuthContext.Provider>
