@@ -84,6 +84,7 @@ function downloadCSV(): void {
         gender: "Female",
         email: "alice.smith@example.com",
         dietTypes: [],
+        gitlabUsername: "asmith",
         id: "",
       },
       location: "Munich",
@@ -97,6 +98,7 @@ function downloadCSV(): void {
         gender: "Male",
         email: "bob.johnson@example.com",
         dietTypes: [],
+        gitlabUsername: "bjohn",
         id: "",
       },
       location: "Berlin",
@@ -110,6 +112,7 @@ function downloadCSV(): void {
         gender: "Female",
         email: "clara.lee@example.com",
         dietTypes: [],
+        gitlabUsername: "clee",
         id: "",
       },
       location: "Munich",
@@ -123,6 +126,7 @@ function downloadCSV(): void {
         gender: "Female",
         email: "david.brown@example.com",
         dietTypes: [],
+        gitlabUsername: "dbrown",
         id: "",
       },
       location: "Frankfurt",
@@ -137,6 +141,7 @@ function downloadCSV(): void {
     "Employment Start Date",
     "Email",
     "Gender",
+    "Gitlab Username"
   ];
 
   const rows = employees.map(emp => [
@@ -146,6 +151,7 @@ function downloadCSV(): void {
     emp.employmentStartDate,
     emp.profile.email,
     emp.profile.gender,
+    emp.profile.gitlabUsername,
   ]);
 
   const csvContent = [headers, ...rows].map(e => e.map(val => `${val}`).join(";")).join("\n");
@@ -314,7 +320,7 @@ export const EmployeesList = () => {
       const result = await createEmployeeBatch(payload);
       if (result) {
         const createdCount = Array.isArray(result) ? result.length : 0;
-        toast.success(`Employees imported successfully! Created: ${createdCount}`);
+        toast.success(`Employees imported successfully! Created: ${createdCount}, Updated: ${}`);
         setImportModalOpen(false);
         setImportFile(null);
         setImportedRows([]);

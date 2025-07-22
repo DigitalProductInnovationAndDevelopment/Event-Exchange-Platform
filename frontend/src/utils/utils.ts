@@ -12,10 +12,10 @@ export const exportParticipationToCSV = (data: ParticipationDetails[]) => {
   ];
   // Map data to CSV rows
   const rows = data.map(emp => [
-    emp.profile.gitlabUsername,
-    emp.profile.name,
-    emp.profile.lastName,
-    emp.profile.email,
+    emp.gitlabUsername,
+    emp.name,
+    emp.lastName,
+    emp.email,
   ]);
   // Combine headers and rows
   const csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");
@@ -33,7 +33,8 @@ export const exportParticipationToCSV = (data: ParticipationDetails[]) => {
 // Utility function to export a list of Employee objects as CSV
 export const exportEmployeesToCSV = (employees: Employee[]) => {
   const headers = [
-    "Full Name",
+    "First Name",
+    "Last Name",
     "Email",
     "Location",
     "Date Joined",
@@ -41,7 +42,8 @@ export const exportEmployeesToCSV = (employees: Employee[]) => {
     "Gitlab Username"
   ];
   const rows = employees.map(emp => [
-    emp.profile.fullName,
+    emp.profile.name,
+    emp.profile.lastName,
     emp.profile.email,
     emp.location,
     emp.employmentStartDate,

@@ -1,4 +1,4 @@
-import { Button, Card, List, Row, Space, Typography, Spin } from "antd";
+import { Button, Card, List, Row, Col, Space, Typography, Spin } from "antd";
 import {
   CalendarOutlined,
   EyeOutlined,
@@ -89,18 +89,17 @@ export const Dashboard = () => {
         <Col span={16}>
           <Row gutter={[16, 16]} className="mb-4">
             {
-              isAdmin && (
-                <Col span={8}>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    size="large"
-                    block
-                    onClick={() => navigate("/events/create")}
-                  >
-                    Create New Event
-                  </Button>
-                </Col>)
+              isAdmin && ( 
+              <Col span={8}>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  block
+                  onClick={() => navigate("/events/create")}
+                > Create New Event
+                </Button>
+              </Col>)
             }
             <Col span={8}>
               <Button
