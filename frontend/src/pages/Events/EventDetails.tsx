@@ -245,7 +245,7 @@ export const EventDetails = () => {
           {/* Seat Layout Tile */}
           <Card title="Seat Layout" className="mb-6">
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={16}>
                 {event.schematics?.overviewFileId ? (
                   <div
                     className="flex justify-center items-center"
@@ -282,20 +282,11 @@ export const EventDetails = () => {
                   </div>
                 )}
               </Col>
-              <Col span={12}>
+              <Col span={8} style={{ height: "100%"}}>
                 <Space direction="vertical" className="w-full">
                   <Button block icon={<UserAddOutlined />}
                     onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
                     Manage Participants
-                  </Button>
-                  <Button block icon={<EditOutlined />} onClick={() => {
-                    if (event?.schematics) {
-                      navigate(`/events/${eventId}/seat-plan/${event.schematics.id}`);
-                    } else {
-                      handleCreate(`/events/${eventId}/seat-plan`);
-                    }
-                  }}>
-                    Manage Seat Layout
                   </Button>
                   <Button block icon={<EditOutlined />}
                     onClick={() => {

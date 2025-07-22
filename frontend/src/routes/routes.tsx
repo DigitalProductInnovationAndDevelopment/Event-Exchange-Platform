@@ -12,7 +12,6 @@ import { LoginSuccess } from "../pages/LoginSuccess.tsx";
 import { EmployeeDetails } from "../pages/Employees/EmployeeDetails";
 import { NotFound } from "../pages/NotFound";
 import { EventParticipants } from "../pages/Events/EventParticipants.tsx";
-import { EventSeatPlan } from "../pages/Events/EventSeatPlan.tsx";
 import { EventSeatAllocation } from "../pages/Events/EventSeatAllocation.tsx";
 import { EmployeeEdit } from "../pages/Employees/EmployeeEdit";
 import { EmployeeCreate } from "../pages/Employees/EmployeeCreate";
@@ -100,14 +99,6 @@ const routes: RouteObject[] = [
         element: (
           <ProtectedRoute allowedRoles={[Role.ADMIN]}>
             <EventParticipants />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "events/:eventId/seat-plan/:schematicsId",
-        element: (
-          <ProtectedRoute allowedRoles={[Role.ADMIN]}>
-            <EventSeatPlan />
           </ProtectedRoute>
         ),
       },
