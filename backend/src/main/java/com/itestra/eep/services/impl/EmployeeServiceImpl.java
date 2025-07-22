@@ -96,8 +96,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 // handle new employees
                 employee = new Employee();
                 employeeMapper.createEmployeeFromDto(dto, employee);
+                employeesToSave.add(employee);
             }
-            employeesToSave.add(employee);
         }
 
         return employeeRepository.saveAllAndFlush(employeesToSave);

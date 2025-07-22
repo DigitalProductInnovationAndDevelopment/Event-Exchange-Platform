@@ -178,7 +178,7 @@ export const Dashboard = () => {
                             <UsergroupAddOutlined style={{ marginLeft: 16 }} /> <b>Guests:</b> {guestCount}
                           </Space>
                           <Space direction="vertical" size="small">
-                            <b>Dietary Preference Combinations:</b>
+                            <b>Dietary Preference Combinations: (Employees Only) </b>
                             <Space wrap>
                               {Object.keys(dietaryCombinations).length === 0 && <span style={{ color: '#aaa' }}>No data</span>}
                               {Object.entries(dietaryCombinations).map(([combo, count]) => {

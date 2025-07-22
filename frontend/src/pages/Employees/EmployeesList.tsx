@@ -320,7 +320,8 @@ export const EmployeesList = () => {
       const result = await createEmployeeBatch(payload);
       if (result) {
         const createdCount = Array.isArray(result) ? result.length : 0;
-        toast.success(`Employees imported successfully! Created: ${createdCount}, Updated: ${}`);
+        // TODO: Fix updated count
+        toast.success(`Employees imported successfully! Created: ${createdCount}, Updated: ${createdCount}`);
         setImportModalOpen(false);
         setImportFile(null);
         setImportedRows([]);
