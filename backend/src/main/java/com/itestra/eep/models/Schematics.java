@@ -25,10 +25,6 @@ public class Schematics {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id", nullable = false)
-    private FileEntity overview;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

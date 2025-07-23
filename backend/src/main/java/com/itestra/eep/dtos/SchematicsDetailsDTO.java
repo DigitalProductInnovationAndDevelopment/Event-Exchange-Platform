@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 
-public record SchematicsDetailsDTO(UUID id, UUID eventId, UUID overviewFileId,
+public record SchematicsDetailsDTO(UUID id, UUID eventId,
                                    @JsonSerialize(using = LocalDateTimeSerializer.class)
                                    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
                                    LocalDateTime createdAt,

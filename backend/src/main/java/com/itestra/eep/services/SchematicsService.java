@@ -3,9 +3,8 @@ package com.itestra.eep.services;
 import com.itestra.eep.dtos.SchematicsCreateDTO;
 import com.itestra.eep.dtos.SchematicsUpdateDTO;
 import com.itestra.eep.models.Schematics;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public interface SchematicsService {
@@ -18,5 +17,6 @@ public interface SchematicsService {
 
     void delete(UUID id);
 
-    void updateSchematicOverview(UUID schematicsId, MultipartFile file) throws IOException;
+    @Transactional(readOnly = true)
+    boolean isSchematicsVisibleToUser(UUID schematicsId, UUID userId);
 }

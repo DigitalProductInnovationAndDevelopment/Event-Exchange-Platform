@@ -31,18 +31,12 @@ public class FileController {
     @PostMapping("/upload")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<FileDetailsDTO> uploadFile(@RequestParam("file") MultipartFile file,
-                                                     @RequestParam(value = "eventId", required = false) UUID eventId,
-                                                     @RequestParam(value = "schematicsId", required = false) UUID schematicsId) throws IOException {
-
+                                                     @RequestParam(value = "eventId") UUID eventId) throws IOException {
         if (eventId != null) {
             FileEntity savedFile = fileService.storeFile(file, eventId);
             return new ResponseEntity<>(fileMapper.toFileDetailsDto(savedFile), HttpStatus.OK);
-        } else if (schematicsId != null) {
-            schematicsService.updateSchematicOverview(schematicsId, file);
-            return new ResponseEntity<>(null, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-
     }
 
     @DeleteMapping("/{id}")
