@@ -3,6 +3,7 @@ package com.itestra.eep.models;
 import com.itestra.eep.enums.EventType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,9 +17,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedEntityGraph(name = "Event.files_schematics", attributeNodes = {
-        @NamedAttributeNode("fileEntities"),
-                @NamedAttributeNode("schematics")}
+@NamedEntityGraph(name = "Event.files_schematics",
+        attributeNodes = {@NamedAttributeNode("fileEntities"), @NamedAttributeNode("schematics")}
 )
 public class Event {
 
@@ -62,22 +62,10 @@ public class Event {
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
 
-    @Transient
-    public int getEmployeeParticipantCount() {
-        return employeeParticipations.size();
-    }
+    @Formula("(select count(*) from organization.employee_participation ep where ep.event_id = id)")
+    private int employeeParticipantCount;
 
-    @Transient
-    public int getVisitorParticipantCount() {
-        return visitorParticipations.size();
-    }
-
-    @Transient
-    public int getAllParticipantCount(EmployeeParticipation excludeCertainEmployeeParticipation) {
-        return employeeParticipations.stream()
-                .filter(p -> excludeCertainEmployeeParticipation == null || !p.getId().equals(excludeCertainEmployeeParticipation.getId()))
-                .mapToInt(p -> p.getGuestCount() + 1)
-                .sum();
-    }
+    @Formula("(select count(*) from organization.visitor_participation vp where vp.event_id = id)")
+    private int visitorParticipantCount;
 
 }

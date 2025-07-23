@@ -126,4 +126,33 @@ CREATE TABLE organization.schematics
 GRANT USAGE, SELECT ON SEQUENCE organization.audit_log_id_seq TO organization_user;
 
 
-
+CREATE INDEX idx_profile_email ON organization.profile (email) WHERE email IS NOT NULL;
+CREATE INDEX idx_profile_gitlab_username ON organization.profile (gitlab_username) WHERE gitlab_username IS NOT NULL;
+CREATE INDEX idx_profile_id ON organization.profile (id);
+CREATE INDEX idx_profile_id_email ON organization.profile (id, email);
+CREATE INDEX idx_profile_id_gitlab_username ON organization.profile (id, gitlab_username);
+--
+CREATE INDEX idx_user_roles_role ON organization.user_roles (role);
+CREATE INDEX idx_user_roles_profile_id ON organization.user_roles (profile_id);
+CREATE INDEX idx_employee_profile_id ON organization.employee (profile_id);
+--
+CREATE INDEX idx_event_date ON organization.event (date);
+CREATE INDEX idx_event_id ON organization.event (id);
+--
+CREATE INDEX idx_employee_participation_event_id ON organization.employee_participation (event_id);
+CREATE INDEX idx_employee_participation_profile_id ON organization.employee_participation (profile_id);
+CREATE INDEX idx_employee_participation_event_profile ON organization.employee_participation (event_id, profile_id);
+CREATE INDEX idx_employee_participation_chair_id ON organization.employee_participation (chair_id) WHERE chair_id IS NOT NULL;
+--
+CREATE INDEX idx_visitor_participation_event_id ON organization.visitor_participation (event_id);
+CREATE INDEX idx_visitor_participation_profile_id ON organization.visitor_participation (profile_id);
+CREATE INDEX idx_visitor_participation_event_profile ON organization.visitor_participation (event_id, profile_id);
+CREATE INDEX idx_visitor_participation_invitor ON organization.visitor_participation (invitor_participation_id) WHERE invitor_participation_id IS NOT NULL;
+CREATE INDEX idx_visitor_participation_access_link ON organization.visitor_participation (access_link);
+--
+CREATE INDEX idx_files_event_id ON organization.files (event_id);
+CREATE INDEX idx_files_name ON organization.files (name);
+--
+CREATE INDEX idx_schematics_event_id ON organization.schematics (event_id);
+--
+CREATE INDEX idx_chair_event_id ON organization.chair (event_id);

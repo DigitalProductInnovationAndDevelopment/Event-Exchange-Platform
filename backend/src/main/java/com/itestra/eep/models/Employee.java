@@ -2,6 +2,7 @@ package com.itestra.eep.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -44,11 +45,7 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "second_employee_id"))
     private Set<Employee> employees = new LinkedHashSet<>();
 
-    @Transient
+    @Formula("(select count(*) from organization.employee_participation ep where ep.profile_id = profile_id)")
     private int participationCount;
-
-    public int getParticipationCount() {
-        return participations.size();
-    }
 
 }

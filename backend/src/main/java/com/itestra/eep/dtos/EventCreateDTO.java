@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -36,6 +37,10 @@ public class EventCreateDTO implements Serializable {
     @Size(message = "Event description should be shorter than 10000 characters", max = 10000)
     @NotBlank(message = "Event description cannot be empty.")
     String description;
+
+    @Nullable
+    @Size(message = "Notes cannot be more than 10000 characters", max = 10000)
+    String notes;
 
     @NotNull(message = "Event capacity cannot be empty.")
     Integer capacity;

@@ -77,7 +77,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event update(UUID id, EventUpdateDTO dto) {
         Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
-        if (dto.getCapacity() != null && event.getAllParticipantCount(null) > dto.getCapacity()) {
+        if (dto.getCapacity() != null && (event.getEmployeeParticipantCount() + event.getVisitorParticipantCount()) > dto.getCapacity()) {
             throw new EventCapacityExceededException();
         }
         eventMapper.updateEventFromDto(dto, event);

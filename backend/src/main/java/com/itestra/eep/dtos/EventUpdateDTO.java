@@ -37,6 +37,10 @@ public class EventUpdateDTO implements Serializable {
     String description;
 
     @Nullable
+    @Size(message = "Notes cannot be more than 10000 characters", max = 10000)
+    String notes;
+
+    @Nullable
     Integer capacity;
 
     @Nullable
