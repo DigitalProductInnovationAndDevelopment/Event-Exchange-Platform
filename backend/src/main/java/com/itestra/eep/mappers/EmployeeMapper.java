@@ -18,7 +18,7 @@ public interface EmployeeMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEmployeeFromDto(EmployeeUpdateDTO dto, @MappingTarget Employee employee);
 
-    @Mapping(target = "notes", expression = "java(filterNotes(employee, authentication))")
+    @Mapping(target = "profile.notes", expression = "java(filterNotes(profile, authentication))")
     EmployeeDetailsDTO toDetailsDto(Employee employee, @Context Authentication authentication);
 
     List<EmployeeDetailsDTO> toDetailsDto(List<Employee> employees, @Context Authentication authentication);
@@ -29,8 +29,8 @@ public interface EmployeeMapper {
 
     List<ProfileDetailsDTO> toProfileDetailsDto(List<Profile> profile);
 
-    default String filterNotes(Employee employee, Authentication authentication) {
+    default String filterNotes(Profile profile, Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities().contains(Role.ADMIN);
-        return isAdmin ? employee.getProfile().getNotes() : null;
+        return isAdmin ? profile.getNotes() : null;
     }
 }
