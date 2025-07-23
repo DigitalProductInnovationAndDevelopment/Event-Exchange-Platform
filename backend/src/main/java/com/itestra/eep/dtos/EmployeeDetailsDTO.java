@@ -20,8 +20,6 @@ public class EmployeeDetailsDTO implements Serializable {
 
     LocalDate employmentStartDate;
 
-    String notes;
-
     String location;
 
     List<EmployeeParticipationDetailsDTO> participations;
