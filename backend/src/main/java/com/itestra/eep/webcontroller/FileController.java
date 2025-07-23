@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @Validated

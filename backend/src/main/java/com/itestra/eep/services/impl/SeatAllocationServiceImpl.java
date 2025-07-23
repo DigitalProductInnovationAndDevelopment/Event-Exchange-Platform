@@ -47,6 +47,7 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
     private final EmployeeParticipationRepository employeeParticipationRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<SeatAllocationDetailsDTO> getSeatAllocations(UUID eventId) {
         eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
         return eventRepository.findSeatAllocationsByEventId(eventId);
