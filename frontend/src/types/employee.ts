@@ -21,7 +21,7 @@ export interface Profile {
   lastName: string;
   gender: string;
   gitlabUsername?: string | null;
-  notes: string | null;
+  notes?: string | null;
   email: string;
   dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];

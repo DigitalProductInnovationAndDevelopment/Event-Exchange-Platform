@@ -120,16 +120,13 @@ export const EventsList = () => {
       title: "Employees",
       key: "employees",
       width: "8%",
-      render: (_, record) => {
-        return typeof record.employeeParticipantCount;
-      },
+      render: (_, record) => record.employeeParticipantCount,
     },
     {
       title: "Guests",
       key: "guests",
       width: "8%",
-      render: (_, record) =>
-        typeof record.visitorParticipantCount,
+      render: (_, record) => record.visitorParticipantCount,
     },
     {
       title: "Status",
