@@ -2,6 +2,7 @@ package com.itestra.eep.repositories;
 
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.models.Event;
+import com.itestra.eep.models.Profile;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,12 +21,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     boolean existsByIdAndVisitorParticipations_Profile_Id(UUID eventId, UUID visitorId);
 
-    @Override
-    @EntityGraph("Event.participations_files")
-    List<Event> findAll();
+    @EntityGraph("Event.files_schematics")
+    List<Event> findAllByDateAfter(LocalDateTime dateAfter);
 
-    @EntityGraph("Event.participations_files")
-    List<Event> findByVisitorParticipations_Profile_Id(UUID participantId);
+    @EntityGraph("Event.files_schematics")
+    List<Event> findByDateAfterAndVisitorParticipations_Profile_Id(LocalDateTime from, UUID participantId);
 
 
     @Query("""
@@ -53,6 +54,23 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             WHERE e.id = :eventId
             """)
     List<SeatAllocationDetailsDTO> findSeatAllocationsByEventId(@Param("eventId") UUID eventId);
+
+
+    @Query("""
+            SELECT p.employee.profile
+            FROM Event e
+            JOIN e.employeeParticipations p
+            WHERE e.id = :eventId
+            
+            UNION
+            
+            SELECT v.profile
+            FROM Event e
+            JOIN e.visitorParticipations v
+            WHERE e.id = :eventId
+            """)
+    List<Profile> findAllParticipantProfilesByEventId(@Param("eventId") UUID eventId);
+
 
     @Modifying
     @Query("""

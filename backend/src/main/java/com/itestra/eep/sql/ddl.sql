@@ -27,6 +27,7 @@ CREATE TABLE organization.profile
     last_name VARCHAR(255) NULL,
     gender          VARCHAR(255) NULL,
     diet_types      VARCHAR      NULL,
+    notes VARCHAR(10000) NULL,
     created_at      TIMESTAMP,
     updated_at      TIMESTAMP
 );
@@ -51,6 +52,7 @@ CREATE TABLE organization.event
     id          UUID PRIMARY KEY,
     name        VARCHAR(255)   NOT NULL,
     description VARCHAR(10000) NOT NULL,
+    notes VARCHAR(10000) NULL,
     date       TIMESTAMP     NULL,
     capacity    INT            NOT NULL,
     event_type VARCHAR,
@@ -115,7 +117,6 @@ CREATE TABLE organization.schematics
 (
     id         UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.event (id) ON DELETE CASCADE,
-    file_id    UUID REFERENCES organization.files (file_id),
     state      TEXT NOT NULL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,

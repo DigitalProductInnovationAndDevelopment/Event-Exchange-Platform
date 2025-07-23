@@ -1,5 +1,6 @@
 package com.itestra.eep.services.impl;
 
+import com.itestra.eep.dtos.EmployeeBatchUpsertResultDTO;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.dtos.ProfileUpdateDTO;
@@ -69,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> upsertEmployeesBatch(List<EmployeeCreateDTO> dtos) {
+    public EmployeeBatchUpsertResultDTO upsertEmployeesBatch(List<EmployeeCreateDTO> dtos) {
 
         Set<String> emails = dtos.stream()
                 .map(dto -> dto.getProfile().getEmail())
@@ -83,6 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .collect(Collectors.toMap(employee -> employee.getProfile().getEmail(), Function.identity()));
 
         List<Employee> employeesToSave = new ArrayList<>();
+        List<Employee> employeesToUpdate = new ArrayList<>();
 
         for (EmployeeCreateDTO dto : dtos) {
             Employee employee = existingByEmail.get(dto.getProfile().getEmail());
@@ -92,6 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 BeanUtils.copyProperties(dto, employeeUpdateDTO);
                 validator.validate(employeeUpdateDTO);
                 employeeMapper.updateEmployeeFromDto(employeeUpdateDTO, employee);
+                employeesToUpdate.add(employee);
             } else {
                 // handle new employees
                 employee = new Employee();
@@ -100,7 +103,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
         }
 
-        return employeeRepository.saveAllAndFlush(employeesToSave);
+        employeeRepository.saveAllAndFlush(employeesToSave);
+        return new EmployeeBatchUpsertResultDTO(employeeMapper.toMinimalDetailsDto(employeesToSave), employeeMapper.toMinimalDetailsDto(employeesToUpdate));
     }
 
     @Override

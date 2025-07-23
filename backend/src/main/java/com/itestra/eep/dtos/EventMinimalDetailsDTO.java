@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class EventDetailsDTO implements Serializable {
+public class EventMinimalDetailsDTO implements Serializable {
 
     UUID id;
 
@@ -28,17 +28,13 @@ public class EventDetailsDTO implements Serializable {
     @Enumerated(EnumType.STRING)
     EventType eventType;
 
-    String description;
-
-    String notes;
-
-    Integer capacity;
-
     String address;
 
     Long employeeParticipantCount;
 
     Long visitorParticipantCount;
+
+    Integer capacity;
 
     String status;
 
@@ -47,9 +43,5 @@ public class EventDetailsDTO implements Serializable {
     LocalDateTime date;
 
     List<FileDetailsDTO> fileEntities = new ArrayList<>();
-
-    List<ProfileDetailsDTO> participantDetails = new ArrayList<>();
-
-    SchematicsDetailsDTO schematics;
 
 }

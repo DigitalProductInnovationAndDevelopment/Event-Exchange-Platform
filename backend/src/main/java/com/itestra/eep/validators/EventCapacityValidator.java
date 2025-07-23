@@ -12,7 +12,7 @@ public class EventCapacityValidator {
 
     public void validateCapacity(Event event, int newGuestCount, EmployeeParticipation excludedExistingParticipation) {
 
-        int currentParticipantCount = event.getParticipantCount(null);
+        int currentParticipantCount = event.getAllParticipantCount(null);
 
         int additionalParticipants = newGuestCount + 1; // +1 for the employee itself
 
@@ -28,7 +28,7 @@ public class EventCapacityValidator {
 
     public void validateBatchCapacity(Event event, List<EmployeeParticipation> participations) {
 
-        int initialParticipantCount = event.getParticipantCount(null);
+        int initialParticipantCount = event.getAllParticipantCount(null);
 
         int additionalParticipants = participations.stream()
                 .mapToInt(p -> p.getGuestCount() + 1)

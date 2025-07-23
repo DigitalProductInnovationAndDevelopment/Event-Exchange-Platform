@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -14,8 +16,8 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedEntityGraph(name = "Event.participations_files",
-        attributeNodes = {@NamedAttributeNode("employeeParticipations"),
+@NamedEntityGraph(name = "Event.files_schematics", attributeNodes = {
+        @NamedAttributeNode("fileEntities"),
                 @NamedAttributeNode("schematics")}
 )
 public class Event {
@@ -37,6 +39,9 @@ public class Event {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "notes")
+    private String notes;
+
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
@@ -54,19 +59,21 @@ public class Event {
     @OrderBy("id ASC")
     private List<VisitorParticipation> visitorParticipations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Chair> chairs = new LinkedHashSet<>();
-
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
 
     @Transient
-    public int getParticipantCount() {
-        return getParticipantCount(null);
+    public int getEmployeeParticipantCount() {
+        return employeeParticipations.size();
     }
 
     @Transient
-    public int getParticipantCount(EmployeeParticipation excludeCertainEmployeeParticipation) {
+    public int getVisitorParticipantCount() {
+        return visitorParticipations.size();
+    }
+
+    @Transient
+    public int getAllParticipantCount(EmployeeParticipation excludeCertainEmployeeParticipation) {
         return employeeParticipations.stream()
                 .filter(p -> excludeCertainEmployeeParticipation == null || !p.getId().equals(excludeCertainEmployeeParticipation.getId()))
                 .mapToInt(p -> p.getGuestCount() + 1)

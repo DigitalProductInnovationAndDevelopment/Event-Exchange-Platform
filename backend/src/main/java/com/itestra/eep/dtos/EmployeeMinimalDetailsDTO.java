@@ -7,23 +7,20 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeDetailsDTO implements Serializable {
+public class EmployeeMinimalDetailsDTO implements Serializable {
 
     ProfileDetailsDTO profile;
 
     LocalDate employmentStartDate;
 
-    String notes;
-
     String location;
 
-    List<EmployeeParticipationDetailsDTO> participations;
+    int participationCount;
 
 }

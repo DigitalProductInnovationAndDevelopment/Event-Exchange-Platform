@@ -1,5 +1,6 @@
 package com.itestra.eep.services;
 
+import com.itestra.eep.dtos.EmployeeBatchUpsertResultDTO;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.dtos.ProfileUpdateDTO;
@@ -17,7 +18,7 @@ public interface EmployeeService {
 
     Employee findById(UUID id);
 
-    List<Employee> upsertEmployeesBatch(List<EmployeeCreateDTO> dtos);
+    EmployeeBatchUpsertResultDTO upsertEmployeesBatch(List<EmployeeCreateDTO> dtos);
 
     Employee create(EmployeeCreateDTO dto);
 

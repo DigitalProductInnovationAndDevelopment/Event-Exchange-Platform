@@ -41,6 +41,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
     private final GitlabOAuth2SuccessHandler authenticationSuccessHandler;
 
     private static final String[] WHITELIST = {
+            "/login/**",
             "/actuator/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
@@ -76,7 +77,6 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
             response.getWriter().write("Access Denied, You are logged out!");
             // we delete any cached Authorization cookie if exists.
             authenticationSuccessHandler.handleAuthorizationCookie(response, "", 0);
-            authenticationSuccessHandler.handleRedirect(response, "/login");
             return;
         }
         filterChain.doFilter(request, response);
@@ -104,7 +104,7 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
         }
 
         if (jwt == null || jwt.isEmpty()) {
-            return createAnonymousAuthentication();
+            throw new UnauthorizedException();
         }
 
         try {
@@ -115,14 +115,6 @@ public class SecurityContextInterceptor extends OncePerRequestFilter {
         } catch (ExpiredJwtException | SecurityException e) {
             throw new UnauthorizedException();
         }
-    }
-
-    private UsernamePasswordAuthenticationToken createAnonymousAuthentication() {
-        Set<Role> roles = Set.of(Role.VISITOR);
-        Profile profile = Profile.builder().name("Visitor").authorities(roles).build();
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile, null, roles);
-        authentication.setAuthenticated(false);
-        return authentication;
     }
 
     private UsernamePasswordAuthenticationToken createAuthenticationFromClaims(Claims claims) {

@@ -40,6 +40,9 @@ public class Profile {
     @Column(name = "email", unique = true, length = 255)
     private String email;
 
+    @Column(name = "notes")
+    private String notes;
+
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(
             schema = "organization",

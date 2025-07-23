@@ -44,4 +44,11 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "second_employee_id"))
     private Set<Employee> employees = new LinkedHashSet<>();
 
+    @Transient
+    private int participationCount;
+
+    public int getParticipationCount() {
+        return participations.size();
+    }
+
 }

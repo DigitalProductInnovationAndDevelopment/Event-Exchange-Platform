@@ -61,9 +61,12 @@ public class EmployeeUpdateDTO implements Serializable {
         String gender;
 
         @Nullable
-        @Size(max = 255)
-        @NotBlank(message = "GitLab username cannot be empty.")
+        @Size(min = 1, max = 255, message = "GitLab username cannot be empty, and it should be shorter than 255 characters")
         String gitlabUsername;
+
+        @Nullable
+        @Size(max = 10_000, message = "Notes cannot be more than 10000 characters")
+        String notes;
 
         @Nullable
         @NotBlank(message = "Email cannot be empty.")

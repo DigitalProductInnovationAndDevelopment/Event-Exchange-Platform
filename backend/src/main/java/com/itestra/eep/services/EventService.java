@@ -5,8 +5,10 @@ import com.itestra.eep.dtos.EventCreateDTO;
 import com.itestra.eep.dtos.EventUpdateDTO;
 import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
+import com.itestra.eep.models.Profile;
 import org.springframework.security.core.Authentication;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,13 +16,15 @@ public interface EventService {
 
     Event findById(UUID id);
 
-    List<Event> findAll(Authentication authentication);
+    List<Event> findAll(LocalDateTime from, Authentication authentication);
 
     Event create(EventCreateDTO dto);
 
     Event update(UUID id, EventUpdateDTO dto);
 
     void delete(UUID id);
+
+    List<Profile> findAllParticipantDetails(UUID eventId);
 
     EmployeeParticipation addParticipant(UUID eventId, EmployeeParticipationUpsertDTO dto);
 

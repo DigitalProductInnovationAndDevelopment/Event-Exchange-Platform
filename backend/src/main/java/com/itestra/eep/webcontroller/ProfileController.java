@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -28,14 +28,14 @@ public class ProfileController {
     private final EmployeeService employeeService;
 
     @GetMapping("/own")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'PARTNER', 'VISITOR')")
     public ResponseEntity<ProfileDetailsDTO> getMyProfile() {
         Profile profile = employeeService.getAuthenticatedProfileDetails();
         return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
     }
 
     @PutMapping("/own")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'VISITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'PARTNER', 'VISITOR')")
     public ResponseEntity<ProfileDetailsDTO> updateMyProfile(@RequestBody @Valid ProfileUpdateDTO dto) {
         Profile profile = employeeService.updateAuthenticatedProfileDetails(dto);
         return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
@@ -43,37 +43,37 @@ public class ProfileController {
 
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
+    public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id, Authentication authentication) {
         Employee employee = employeeService.findById(id);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/employees")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<EmployeeDetailsDTO>> getEmployees() {
+    public ResponseEntity<List<EmployeeMinimalDetailsDTO>> getEmployees() {
         List<Employee> employees = employeeService.findAll();
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toMinimalDetailsDto(employees), HttpStatus.OK);
     }
 
     @PostMapping("/employee")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeDetailsDTO> createEmployee(@RequestBody @Valid EmployeeCreateDTO dto) {
+    public ResponseEntity<EmployeeDetailsDTO> createEmployee(@RequestBody @Valid EmployeeCreateDTO dto, Authentication authentication) {
         Employee employee = employeeService.create(dto);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee, authentication), HttpStatus.OK);
     }
 
     @PostMapping("/employees/batch")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<EmployeeDetailsDTO>> createEmployeesBatch(@RequestBody List<@Valid EmployeeCreateDTO> dtos) {
-        List<Employee> employees = employeeService.upsertEmployeesBatch(dtos);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employees), HttpStatus.OK);
+    public ResponseEntity<EmployeeBatchUpsertResultDTO> createEmployeesBatch(@RequestBody List<@Valid EmployeeCreateDTO> dtos) {
+        EmployeeBatchUpsertResultDTO result = employeeService.upsertEmployeesBatch(dtos);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto) {
+    public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto, Authentication authentication) {
         Employee employee = employeeService.update(id, dto);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee, authentication), HttpStatus.OK);
     }
 
     @DeleteMapping("/employee/{id}")

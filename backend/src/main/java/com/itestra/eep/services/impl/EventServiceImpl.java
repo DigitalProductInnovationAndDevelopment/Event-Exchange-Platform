@@ -26,7 +26,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.itestra.eep.enums.Role.VISITOR;
 
@@ -52,13 +55,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Event> findAll(Authentication authentication) {
-        if (Objects.isNull(authentication)) {
-            return new ArrayList<>();
-        } else if (authentication.getAuthorities().contains(VISITOR)) {
-            return eventRepository.findByVisitorParticipations_Profile_Id(((Profile) authentication.getPrincipal()).getId());
+    public List<Event> findAll(LocalDateTime from, Authentication authentication) {
+        if (from == null) {
+            from = LocalDateTime.now().minusYears(20);
+        }
+
+        if (authentication.getAuthorities().contains(VISITOR)) {
+            return eventRepository.findByDateAfterAndVisitorParticipations_Profile_Id(from, ((Profile) authentication.getPrincipal()).getId());
         } else {
-            return eventRepository.findAll();
+            return eventRepository.findAllByDateAfter(from);
         }
     }
 
@@ -72,7 +77,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event update(UUID id, EventUpdateDTO dto) {
         Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
-        if (dto.getCapacity() != null && event.getParticipantCount(null) > dto.getCapacity()) {
+        if (dto.getCapacity() != null && event.getAllParticipantCount(null) > dto.getCapacity()) {
             throw new EventCapacityExceededException();
         }
         eventMapper.updateEventFromDto(dto, event);
@@ -83,6 +88,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public void delete(UUID id) {
         eventRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Profile> findAllParticipantDetails(UUID eventId) {
+        return eventRepository.findAllParticipantProfilesByEventId(eventId);
     }
 
     @Override
