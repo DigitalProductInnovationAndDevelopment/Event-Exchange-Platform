@@ -36,29 +36,52 @@ import { EventStatusTag } from "components/EventStatusTag.tsx";
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
+type EventWithCount = Event & {
+  guestCount?: number;
+};
+
 export const EventsList = () => {
   const navigate = useNavigate();
   const [isTableView, setIsTableView] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [selectedType, setSelectedType] = useState<EventType | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
-  const [fetchedEvents, setEvents] = useState<Event[]>([]);
+  const [fetchedEvents, setEvents] = useState<EventWithCount[]>([]);
   const [loading, setLoading] = useState(true);
-  const { getEvents } = useApiService();
+  const { getEvents, getEventParticipants } = useApiService();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const data = await getEvents();
-        setEvents(data ?? []);
+        if (!data) {
+          setEvents([]);
+          setLoading(false);
+          return;
+        }
+        // Fetch participants for all events in parallel
+        const eventsWithCounts = await Promise.all(
+          data.map(async event => {
+            try {
+              const participants = await getEventParticipants(event.id);
+              const guestCount = Array.isArray(participants)
+                ? participants.reduce((sum, p) => sum + (p.guestCount || 0), 0)
+                : 0;
+              return { ...event, guestCount };
+            } catch {
+              return { ...event, guestCount: 0};
+            }
+          })
+        );
+        setEvents(eventsWithCounts);
       } catch (err) {
         console.error("Failed to fetch events:", err);
       } finally {
         setLoading(false);
       }
     })();
-  }, [getEvents]);
+  }, [getEvents, getEventParticipants]);
 
   const events = useMemo(() => fetchedEvents.map(e => ({ ...e, key: e.id })), [fetchedEvents]);
 
@@ -86,19 +109,19 @@ export const EventsList = () => {
     });
   }, [events, searchText, selectedType, dateRange]);
 
-  const columns: ColumnsType<Event> = [
+  const columns: ColumnsType<EventWithCount> = [
     {
       title: "Event Name",
       dataIndex: "name",
       key: "name",
-      width: "34%",
+      width: "28%",
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
-      width: "20%",
+      width: "16%",
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       render: (date: string) => dayjs(date).format("MMMM D, YYYY, HH:mm"),
     },
@@ -106,8 +129,8 @@ export const EventsList = () => {
       title: "Type",
       dataIndex: "eventType",
       key: "eventType",
-      width: "14%",
-      render: (type: EventType) => <EventTypeTag type={type} />,
+      width: "10%",
+      render: (type: EventType) => <EventTypeTag type={type} />, 
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type]) => ({
         text: type.replace(/_/g, " "),
         value: type,
@@ -122,11 +145,26 @@ export const EventsList = () => {
       sorter: (a, b) => a.participantCount - b.participantCount,
     },
     {
+      title: "Employees",
+      key: "employees",
+      width: "8%",
+      render: (_, record) => {
+        return typeof record.guestCount === 'number' ? record.participantCount - record.guestCount : '-';
+      },
+    },
+    {
+      title: "Guests",
+      key: "guests",
+      width: "8%",
+      render: (_, record) =>
+        typeof record.guestCount === 'number' ? record.guestCount : '-',
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
       width: "10%",
-      render: (status: EventStatus) => <EventStatusTag status={status} />,
+      render: (status: EventStatus) => <EventStatusTag status={status} />, 
       filters: Object.entries(EVENT_STATUS_COLORS).map(([status]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
         value: status,
