@@ -8,6 +8,8 @@ import { Breadcrumb } from "components/Breadcrumb";
 import { DIET_TYPES } from "./EmployeeForm";
 import type { EventType } from "types/event.ts";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { useAuth } from "../../contexts/AuthContext.tsx";
+
 
 const { Title } = Typography;
 
@@ -110,6 +112,8 @@ export const EmployeeDetails = () => {
   ];
 
   const contactFields = [{ label: "Email", value: employee?.profile.email }];
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin();
 
   // Scroll to events section if hash is #events
   useEffect(() => {
@@ -213,6 +217,9 @@ export const EmployeeDetails = () => {
                 : field.value || ""}
             </Descriptions.Item>
           ))}
+          {isAdmin && (<Descriptions.Item label = "Notes" span = {3}>
+            {employee?.profile.notes || "Write your notes here. Only visible to admins."}
+          </Descriptions.Item>)}
         </Descriptions>
       </Card>
 

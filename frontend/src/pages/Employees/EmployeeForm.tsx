@@ -142,6 +142,13 @@ const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: Employe
             </Form.Item>
           </div>
         )}
+        <Form.Item
+          label="Notes"
+          name={["profile", "notes"]}
+          rules={[{ required: false, message: "Please enter notes" }]}
+        >
+          <Input.TextArea placeholder="Enter notes" rows={4} />
+        </Form.Item>
     </Form>
   );
 };

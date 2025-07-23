@@ -25,6 +25,8 @@ import { useEffect, useRef, useState } from "react";
 import Konva from "konva";
 import { handleExport } from "components/canvas/utils/functions.tsx";
 import { EventSeatAllocation } from "pages/Events/EventSeatAllocation.tsx";
+import { useAuth } from "../../contexts/AuthContext.tsx";
+
 
 const { Title } = Typography;
 
@@ -47,6 +49,8 @@ export const EventDetails = () => {
   const [, setEventParticipantProfiles] = useState<Profile[]>([]);
   const stageRef = useRef<Konva.Stage | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin();
 
   // here, we try to render the schematics preview. we repeat until the render is ready.
   const stageWidth = stageRef.current?.size()?.width;
@@ -277,6 +281,9 @@ export const EventDetails = () => {
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
               </Descriptions.Item>
+              {isAdmin && (<Descriptions.Item label = "Notes" span = {3}>
+                {event.notes || "Write your notes here. Only visible to admins."}
+              </Descriptions.Item>)}
             </Descriptions>
           </Card>
 
