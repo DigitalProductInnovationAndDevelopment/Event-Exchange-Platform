@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => ({
       types: "/src/types",
       services: "/src/services",
       canvas: "/src/components/canvas",
+      pages: "/src/pages",
+      utils: "/src/utils",
     },
   },
 }))

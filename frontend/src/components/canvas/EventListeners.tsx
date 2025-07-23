@@ -29,8 +29,10 @@ export const handleKeyUp = (e: KeyboardEvent,
                             stageRef: React.RefObject<Konva.Stage | null>) => {
   if (e.key === "Shift") {
     setIsShiftPressed(false);
-    const container = stageRef!.current!.container();
-    container.style.cursor = "grab";
+    const container = stageRef!.current?.container();
+    if (container) {
+      container.style.cursor = "grab";
+    }
   }
 };
 
@@ -71,7 +73,6 @@ export const handleKeyDown =
     }
 
     if (e.key === "Backspace" || e.key === "Delete") {
-      debugger;
       dispatch(removeElements(selectedIds));
       setSelectedIds([]);
       dispatch(setChairIdForManualAssignment(null));
@@ -176,10 +177,10 @@ export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRe
 export const handleMouseMove = (e: {
   evt: MouseEvent,
   target: Konva.Stage
-}, isShiftPressed, state: AppState, scale: number, stageRef: React.RefObject<Konva.Stage | null>, isSelecting: React.RefObject<boolean>, selectionRectangle: SelectionRectangleType, setSelectionRectangle) => {
+}, isShiftPressed: boolean, state: AppState, scale: number, stageRef: React.RefObject<Konva.Stage | null>, isSelecting: React.RefObject<boolean>, selectionRectangle: SelectionRectangleType, setSelectionRectangle) => {
 
-  const container = stageRef!.current!.container();
-  if (isShiftPressed || state.buildMode === 1) {
+  const container = stageRef!.current?.container();
+  if (container && (isShiftPressed || state.buildMode === 1)) {
     container.style.cursor = "default";
   }
 

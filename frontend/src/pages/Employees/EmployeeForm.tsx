@@ -25,13 +25,35 @@ const ROLE_OPTIONS = Object.entries(Role).map(([, value]) => ({
   value: value,
 }));
 
+function replaceEmptyStringsWithNull(value: any): any {
+  if (typeof value === "string" && value === "") {
+    return null;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(replaceEmptyStringsWithNull);
+  }
+
+  if (typeof value === "object" && value !== null) {
+    const result: any = {};
+    for (const [key, val] of Object.entries(value)) {
+      result[key] = replaceEmptyStringsWithNull(val);
+    }
+    return result;
+  }
+
+  return value;
+}
+
 const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: EmployeeFormProps) => {
   const handleFinish = (values: any) => {
 
     if (!isOwnProfileEdit) {
       values.employmentStartDate = values.employmentStartDate.format("YYYY-MM-DD");
     }
-    onSave(values);
+
+    const cleanedValues = replaceEmptyStringsWithNull(values);
+    onSave(cleanedValues);
   };
 
   if (!isOwnProfileEdit) {
@@ -46,7 +68,7 @@ const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: Employe
       <Form.Item
         label="GitLab Username"
         name={["profile", "gitlabUsername"]}
-        rules={[{ required: true, message: "Please enter GitLab Username" }]}
+        rules={[{ required: false, message: "Please enter GitLab Username" }]}
       >
         <Input placeholder="Enter GitLab Username" maxLength={500} />
       </Form.Item>

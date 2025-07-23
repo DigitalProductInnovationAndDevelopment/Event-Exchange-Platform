@@ -2,6 +2,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Spin } from "antd";
 import type { Role } from "types/employee.ts";
+import toast from "react-hot-toast";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const hasRequiredRole = user?.roles?.some(role => allowedRoles.includes(role as Role));
 
   if (!hasRequiredRole) {
+    toast.error("You are not authorized for this action.");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

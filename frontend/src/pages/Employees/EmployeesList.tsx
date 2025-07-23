@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
-import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  ExclamationCircleOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 import { type Employee, getFullName, Role } from "types/employee.ts";
@@ -9,9 +16,13 @@ import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
 import { exportEmployeesToCSV } from "../../utils/utils";
 import { parse } from "papaparse";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import moment from "moment/moment";
 
 const { Title } = Typography;
+
+function parseDate(dateStr: string) {
+  return moment(dateStr, ["DD.MM.YYYY", "YYYY-MM-DD"]).toDate();
+}
 
 // Define table columns with correct types
 const columns = (
@@ -50,7 +61,7 @@ const columns = (
         style={{ color: "black" }}
         onClick={() => onNavigate(record.profile.id, "events")}
       >
-        {record.participations?.length || 0}
+        {record.participationCount}
       </Button>
     ),
   },
@@ -67,7 +78,7 @@ const columns = (
         >
           View
         </Button>
-        <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, record.profile.fullName)}>
+        <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, getFullName(record.profile))}>
           Delete
         </Button>
       </Space>
@@ -89,7 +100,6 @@ function downloadCSV(): void {
       },
       location: "Munich",
       employmentStartDate: "2023-01-15",
-      projects: [],
     },
     {
       profile: {
@@ -103,7 +113,6 @@ function downloadCSV(): void {
       },
       location: "Berlin",
       employmentStartDate: "2022-09-01",
-      projects: [],
     },
     {
       profile: {
@@ -117,7 +126,6 @@ function downloadCSV(): void {
       },
       location: "Munich",
       employmentStartDate: "2024-03-10",
-      projects: [],
     },
     {
       profile: {
@@ -131,7 +139,6 @@ function downloadCSV(): void {
       },
       location: "Frankfurt",
       employmentStartDate: "2023-11-20",
-      projects: [],
     },
   ];
   const headers = [
@@ -306,26 +313,27 @@ export const EmployeesList = () => {
         name: row.name.trim(),
         lastName: row.lastName.trim(),
         gender: row.gender,
-        gitlabUsername: row.gitlabUsername,
+        gitlabUsername: row.gitlabUsername.length > 0 ? row.gitlabUsername : null,
+        notes: null,
         email: row.email,
         dietTypes: [], // Could be extended to parse from CSV
         authorities: [Role.EMPLOYEE],
       },
-      employmentStartDate: row.startDate,
-      employmentType: row.employmentType,
+      employmentStartDate: parseDate(row.startDate),
       location: row.location,
-      projects: [],
     }));
     try {
+      // @ts-ignore
       const result = await createEmployeeBatch(payload);
       if (result) {
         const createdCount = Array.isArray(result) ? result.length : 0;
         // TODO: Fix updated count
-        toast.success(`Employees imported successfully! Created: ${createdCount}, Updated: ${createdCount}`);
+        toast.success(`Employees imported successfully! Created: ${result.insertedEmployees.length}, Updated: ${result.updatedEmployees.length}`);
         setImportModalOpen(false);
         setImportFile(null);
         setImportedRows([]);
-        employees.push(...result.map(e => ({ ...e, key: e.profile.id })));
+        employees.push(...result.insertedEmployees.map(e => ({ ...e, key: e.profile.id })));
+        // TODO update employees as well
         setEmployees([...employees]);
       }
     } catch (err) {

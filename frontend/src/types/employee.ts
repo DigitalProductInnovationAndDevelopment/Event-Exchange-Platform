@@ -4,8 +4,8 @@ export interface Employee {
   profile: Profile;
   employmentStartDate: string;
   location: string;
-  projects: Project[];
   participations?: ParticipationDetails[];
+  participationCount?: number;
 }
 
 export function getFullName(profile: Profile | ParticipationDetails | undefined): string | "" {
@@ -20,7 +20,8 @@ export interface Profile {
   name: string;
   lastName: string;
   gender: string;
-  gitlabUsername?: string;
+  gitlabUsername?: string | null;
+  notes: string | null;
   email: string;
   dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];
@@ -29,6 +30,11 @@ export interface Profile {
 export interface Project {
   name: string | null;
   abbreviation: string | null;
+}
+
+export interface EmployeeBatchUpsertResponse {
+  insertedEmployees: Employee[],
+  updatedEmployees: Employee[];
 }
 
 export interface ParticipationDetails {

@@ -1,17 +1,17 @@
-import { Button, Card, List, Row, Col, Space, Typography, Spin } from "antd";
+import { Button, Card, Col, List, Row, Space, Spin, Typography } from "antd";
 import {
   CalendarOutlined,
   EyeOutlined,
   FireOutlined,
   PlusOutlined,
   TeamOutlined,
-  UserOutlined,
   UsergroupAddOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Event } from "../types/event";
-import { type ParticipationDetails } from "../types/employee";
+import { type Profile } from "../types/employee";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
@@ -20,9 +20,9 @@ import { useAuth } from "../contexts/AuthContext.tsx";
 const { Title, Text } = Typography;
 
 // Helper to aggregate dietary combinations
-function aggregateDietaryCombinations(participants: ParticipationDetails[]): Record<string, number> {
+function aggregateDietaryCombinations(participantProfiles: Profile[]): Record<string, number> {
   const comboCounts: Record<string, number> = {};
-  for (const p of participants) {
+  for (const p of participantProfiles) {
     if (p.dietTypes && p.dietTypes.length > 0) {
       // Sort to ensure consistent key for same combinations
       const comboKey = p.dietTypes.slice().sort().join(", ");
@@ -37,19 +37,17 @@ function aggregateDietaryCombinations(participants: ParticipationDetails[]): Rec
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [events, setEvents] = useState<Event[]>([]);
-  const { getEvents, getEventParticipants } = useApiService();
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const { getEvents } = useApiService();
   const [loading, setLoading] = useState(true);
-  const [participantsMap, setParticipantsMap] = useState<Record<string, ParticipationDetails[]>>({});
-  const [participantsLoading, setParticipantsLoading] = useState<Record<string, boolean>>({});
   const isAdmin = user?.isAdmin();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const data = await getEvents();
-        setEvents(data ?? []);
+        const data = await getEvents(dayjs().startOf("day").toISOString());
+        setUpcomingEvents(data?.filter(event => new Date(event.date).getTime() > new Date().getTime()) ?? []);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -57,26 +55,6 @@ export const Dashboard = () => {
       }
     })();
   }, [getEvents]);
-
-  useEffect(() => {
-    // Fetch participants for each event using getEventParticipants
-    const fetchParticipants = async (eventId: string) => {
-      setParticipantsLoading(prev => ({ ...prev, [eventId]: true }));
-      try {
-        const data = await getEventParticipants(eventId);
-        setParticipantsMap(prev => ({ ...prev, [eventId]: (data ?? []) as ParticipationDetails[] }));
-      } catch (e) {
-        setParticipantsMap(prev => ({ ...prev, [eventId]: [] }));
-      } finally {
-        setParticipantsLoading(prev => ({ ...prev, [eventId]: false }));
-      }
-    };
-    events.forEach(event => {
-      if (event.id && !participantsMap[event.id]) {
-        fetchParticipants(event.id);
-      }
-    });
-  }, [events, getEventParticipants]);
 
   return (
     <div className="space-y-4">
@@ -133,16 +111,15 @@ export const Dashboard = () => {
       <Card title="Upcoming Events" className="shadow-sm w-full" bodyStyle={{ padding: "12px" }}>
         <List
           loading={loading}
-          dataSource={events
+          dataSource={upcomingEvents
             .filter(event => new Date(event.date).getTime() > new Date().getTime())
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
           renderItem={event => {
-            const participants = participantsMap[event.id] || [];
-            const isLoading = participantsLoading[event.id];
-            const employeeCount = participants.length;
-            const guestCount = participants.reduce((sum, p) => sum + (p.guestCount || 0), 0);
+            const participants = event.participantDetails || [];
+            const employeeCount = event.employeeParticipantCount;
+            const guestCount = event.visitorParticipantCount;
             const dietaryCombinations = aggregateDietaryCombinations(participants);
-            const engagement = event.capacity > 0 ? Number(((event.participantCount / event.capacity) * 100).toFixed(2)) : 0;
+            const engagement = event.capacity > 0 ? Number((((event.employeeParticipantCount + event.visitorParticipantCount) / event.capacity) * 100).toFixed(2)) : 0;
             return (
               <List.Item
                 actions={[
@@ -162,14 +139,14 @@ export const Dashboard = () => {
                   }
                   description={
                     <div>
-                      {isLoading ? (
+                      {loading ? (
                         <Spin size="small" />
                       ) : (
                         <Space direction="vertical" size="small">
                           <Space>
                             <CalendarOutlined /> {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}
                             <span style={{ marginLeft: 24 }} />
-                            <TeamOutlined /> {event.participantCount}/{event.capacity} participants
+                            <TeamOutlined /> {event.employeeParticipantCount + event.visitorParticipantCount}/{event.capacity} participants
                             <span style={{ marginLeft: 24 }} />
                             <FireOutlined /> {engagement} % engagement
                           </Space>
@@ -178,7 +155,7 @@ export const Dashboard = () => {
                             <UsergroupAddOutlined style={{ marginLeft: 16 }} /> <b>Guests:</b> {guestCount}
                           </Space>
                           <Space direction="vertical" size="small">
-                            <b>Dietary Preference Combinations: (Employees Only) </b>
+                            <b>Dietary Preference Combinations </b>
                             <Space wrap>
                               {Object.keys(dietaryCombinations).length === 0 && <span style={{ color: '#aaa' }}>No data</span>}
                               {Object.entries(dietaryCombinations).map(([combo, count]) => {

@@ -13,20 +13,14 @@ import {
   Table,
   Typography,
 } from "antd";
-import {
-  AppstoreOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Breadcrumb } from "components/Breadcrumb";
 import type { ColumnsType } from "antd/es/table";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import type { Event, EventStatus, EventType, FileEntity } from "types/event";
+import type { Event, EventMinimal, EventStatus, EventType, FileEntity } from "types/event";
 import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "types/event";
 import useApiService, { BASE_URL } from "services/apiService.ts";
 import "./carousel_arrows.css";
@@ -36,52 +30,29 @@ import { EventStatusTag } from "components/EventStatusTag.tsx";
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
-type EventWithCount = Event & {
-  guestCount?: number;
-};
-
 export const EventsList = () => {
   const navigate = useNavigate();
   const [isTableView, setIsTableView] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [selectedType, setSelectedType] = useState<EventType | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
-  const [fetchedEvents, setEvents] = useState<EventWithCount[]>([]);
+  const [fetchedEvents, setEvents] = useState<EventMinimal[]>([]);
   const [loading, setLoading] = useState(true);
-  const { getEvents, getEventParticipants } = useApiService();
+  const { getEvents } = useApiService();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const data = await getEvents();
-        if (!data) {
-          setEvents([]);
-          setLoading(false);
-          return;
-        }
-        // Fetch participants for all events in parallel
-        const eventsWithCounts = await Promise.all(
-          data.map(async event => {
-            try {
-              const participants = await getEventParticipants(event.id);
-              const guestCount = Array.isArray(participants)
-                ? participants.reduce((sum, p) => sum + (p.guestCount || 0), 0)
-                : 0;
-              return { ...event, guestCount };
-            } catch {
-              return { ...event, guestCount: 0};
-            }
-          })
-        );
-        setEvents(eventsWithCounts);
+        setEvents(data ?? []);
       } catch (err) {
         console.error("Failed to fetch events:", err);
       } finally {
         setLoading(false);
       }
     })();
-  }, [getEvents, getEventParticipants]);
+  }, [getEvents]);
 
   const events = useMemo(() => fetchedEvents.map(e => ({ ...e, key: e.id })), [fetchedEvents]);
 
@@ -109,7 +80,7 @@ export const EventsList = () => {
     });
   }, [events, searchText, selectedType, dateRange]);
 
-  const columns: ColumnsType<EventWithCount> = [
+  const columns: ColumnsType<Event> = [
     {
       title: "Event Name",
       dataIndex: "name",
@@ -130,7 +101,7 @@ export const EventsList = () => {
       dataIndex: "eventType",
       key: "eventType",
       width: "10%",
-      render: (type: EventType) => <EventTypeTag type={type} />, 
+      render: (type: EventType) => <EventTypeTag type={type} />,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type]) => ({
         text: type.replace(/_/g, " "),
         value: type,
@@ -142,14 +113,15 @@ export const EventsList = () => {
       dataIndex: "participantCount",
       key: "participantCount",
       width: "8%",
-      sorter: (a, b) => a.participantCount - b.participantCount,
+      render: (_: number, record: Event) => (record.employeeParticipantCount + record.visitorParticipantCount),
+      sorter: (a, b) => (a.employeeParticipantCount + a.visitorParticipantCount) - (b.employeeParticipantCount + b.visitorParticipantCount),
     },
     {
       title: "Employees",
       key: "employees",
       width: "8%",
       render: (_, record) => {
-        return typeof record.guestCount === 'number' ? record.participantCount - record.guestCount : '-';
+        return typeof record.employeeParticipantCount;
       },
     },
     {
@@ -157,14 +129,14 @@ export const EventsList = () => {
       key: "guests",
       width: "8%",
       render: (_, record) =>
-        typeof record.guestCount === 'number' ? record.guestCount : '-',
+        typeof record.visitorParticipantCount,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       width: "10%",
-      render: (status: EventStatus) => <EventStatusTag status={status} />, 
+      render: (status: EventStatus) => <EventStatusTag status={status} />,
       filters: Object.entries(EVENT_STATUS_COLORS).map(([status]) => ({
         text: status?.charAt(0).toUpperCase() + status.slice(1),
         value: status,
@@ -291,7 +263,7 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participantCount}</div>
+                          <div>Participants: {event.employeeParticipantCount + event.visitorParticipantCount} </div>
                           <div>
                             {(() => {
                               const filteredImages = event.fileEntities?.filter(
@@ -381,7 +353,7 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participantCount}</div>
+                          <div>Participants: {event.employeeParticipantCount + event.visitorParticipantCount}</div>
                         </div>
                       </div>
                     }

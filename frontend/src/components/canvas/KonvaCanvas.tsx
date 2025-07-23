@@ -1,5 +1,5 @@
 import { useCanvas } from "./contexts/CanvasContext.tsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Group, Layer, Stage, Transformer } from "react-konva";
 import { type ElementProperties, renderElement, type UUID } from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
@@ -28,9 +28,24 @@ import {
   handleWheel,
 } from "components/canvas/EventListeners.tsx";
 
-function KonvaCanvas() {
+export interface KonvaCanvasProps {
+  stageReference?: React.RefObject<Konva.Stage | null>,
+  schematicsUUID?: UUID,
+  eventName?: string,
+}
+
+function KonvaCanvas({ stageReference, schematicsUUID }: KonvaCanvasProps) {
   const { state, dispatch } = useCanvas();
-  const stageRef = useRef<Konva.Stage | null>(null);
+  let stageRef = useRef<Konva.Stage | null>(null);
+  let { schematicsId } = useParams();
+
+  if (stageReference) {
+    stageRef = stageReference;
+  }
+  if (schematicsUUID) {
+    schematicsId = schematicsUUID;
+  }
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
@@ -41,7 +56,6 @@ function KonvaCanvas() {
   const { getSchematics } = useApiService();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [initiated, setInitiated] = useState(false);
-  const { schematicsId } = useParams();
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const dragLayer = useRef<Konva.Layer | null>(null);
   const mainLayer = useRef<Konva.Layer | null>(null);
@@ -56,21 +70,22 @@ function KonvaCanvas() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!initiated && schematicsId) {
+      if (schematicsId && !initiated) {
         const fetchedAppState = await getSchematics(schematicsId);
-        if (fetchedAppState && !initiated) {
-          dispatch(setState({ ...fetchedAppState, buildMode: 0 }));
+        setInitiated(true);
+        dispatch(setState({ ...fetchedAppState!, buildMode: 0 }));
+        setScale(fetchedAppState!.scale);
+        stageRef.current?.setPosition(fetchedAppState!.canvasPosition ? fetchedAppState!.canvasPosition : {
+          x: 0,
+          y: 0,
+        });
+        const container = stageRef!.current?.container();
+        if (container) {
+          container.style.cursor = "grab";
         }
       }
     };
-    fetchData().then(() => {
-      stageRef.current?.setPosition(state.canvasPosition ? state.canvasPosition : { x: 0, y: 0 });
-      const container = stageRef!.current!.container();
-      container.style.cursor = "grab";
-
-      setScale(state.scale);
-      setInitiated(true);
-    });
+    fetchData();
   }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
 
   useEffect(() => {
@@ -81,7 +96,7 @@ function KonvaCanvas() {
   useEffect(() => {
     const updateContainerSize = () => {
       if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
+        const rect = containerRef?.current.getBoundingClientRect();
         setContainerSize({
           width: rect.width,
           height: rect.height,
@@ -127,7 +142,7 @@ function KonvaCanvas() {
     };
   }, [dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, stageRef]);
 
-  function getTableConnectedChairIds(tableId: UUID): UUID[] {
+  function getConnectedChairIdsOfTable(tableId: UUID): UUID[] {
     const table: ElementProperties | undefined = state.elements?.find(el => (el.type === "rectTable" || el.type === "circleTable") && el.id === tableId);
     if (table) {
       const chairIds: UUID[] = (table as unknown as Table).attachedChairs ?? [];
@@ -137,7 +152,7 @@ function KonvaCanvas() {
     }
   }
 
-  const selectedIdsProxy = [...selectedIds, ...(selectedIds.length === 1 ? getTableConnectedChairIds(selectedIds[0]) : [])];
+  const selectedIdsProxy = [...selectedIds, ...(selectedIds.length === 1 ? getConnectedChairIdsOfTable(selectedIds[0]) : [])];
 
   return (
     <div className="space-y-6">

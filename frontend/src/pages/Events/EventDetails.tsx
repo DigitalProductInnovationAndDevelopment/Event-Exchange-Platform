@@ -12,7 +12,6 @@ import {
   TeamOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
 import type { Event, FileEntity } from "types/event.ts";
 import useApiService, { BASE_URL } from "../../services/apiService.ts";
 import FileUploadButton from "./components/FileUploadButton.tsx";
@@ -20,8 +19,12 @@ import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
-import { DietaryPreference, type ParticipationDetails } from "types/employee.ts";
-import { exportParticipationToCSV } from "../../utils/utils";
+import { DietaryPreference, type Profile } from "types/employee.ts";
+import { exportParticipationToCSV } from "utils/utils.ts";
+import { useEffect, useRef, useState } from "react";
+import Konva from "konva";
+import { handleExport } from "components/canvas/utils/functions.tsx";
+import { EventSeatAllocation } from "pages/Events/EventSeatAllocation.tsx";
 
 const { Title } = Typography;
 
@@ -41,19 +44,37 @@ export const EventDetails = () => {
   } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
-  const [totalGuests, setTotalGuests] = useState<number>(0);
-  const [_, setEventParticipants] = useState<ParticipationDetails[]>([]);
+  const [, setEventParticipantProfiles] = useState<Profile[]>([]);
+  const stageRef = useRef<Konva.Stage | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  // here, we try to render the schematics preview. we repeat until the render is ready.
+  const stageWidth = stageRef.current?.size()?.width;
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      let url = null;
+      const stage = stageRef.current?.getStage();
+      if (stage && stage.getLayers().length > 1) {
+        url = await handleExport(stageRef);
+        if (url) {
+          clearInterval(interval);
+          setImageUrl(url);
+        }
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [stageWidth]);
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const [eventDetailsData, participants] = await Promise.all([getEventById(eventId!), getEventParticipants(eventId!)]);
+        const eventDetailsData = await getEventById(eventId!);
         setEvent(eventDetailsData);
-        setEventParticipants(participants || []);
-        if (participants) {
+        setEventParticipantProfiles(eventDetailsData?.participantDetails ?? []);
+        if (eventDetailsData?.participantDetails) {
           const dietCount: Record<string, number> = {};
-          participants.forEach(emp => {
+          eventDetailsData?.participantDetails.forEach(emp => {
             if (emp.dietTypes && emp.dietTypes.length > 0) {
               const mappedDietTypes = emp.dietTypes.map(dt => DietaryPreference[dt] ?? dt);
               const sortedCombo = mappedDietTypes.slice().sort().join(", ");
@@ -71,9 +92,6 @@ export const EventDetails = () => {
             }
           });
           setDietaryStats(dietCount);
-          // Calculate total guests (sum of guestCount for all participants)
-          const guests = participants.reduce((sum, p) => sum + (p.guestCount || 0), 0);
-          setTotalGuests(guests);
         }
         setLoading(false);
       } catch (err) {
@@ -81,7 +99,7 @@ export const EventDetails = () => {
         setLoading(false);
       }
     })();
-  }, [eventId, getEventById, getEventParticipants]);
+  }, [eventId]);
 
   async function onDelete() {
     try {
@@ -171,6 +189,26 @@ export const EventDetails = () => {
         ]}
       />
 
+      {/* this is important because this allows the component to fully render (including Konva or canvas) and doesn't interfere with event details layout */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-9999px",
+          left: "-9999px",
+          zIndex: -9999,
+          width: "1px",
+          height: "1px",
+          visibility: "hidden",
+          overflow: "hidden",
+        }}
+      >
+        <EventSeatAllocation
+          stageReference={stageRef}
+          eventName={event.name}
+          schematicsUUID={event.schematics?.id}
+        />
+      </div>
+
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <Title level={2} className="!my-2 max-w-xl">{event.name}</Title>
@@ -246,7 +284,7 @@ export const EventDetails = () => {
           <Card title="Seat Layout" className="mb-6">
             <Row gutter={16}>
               <Col span={16}>
-                {event.schematics?.overviewFileId ? (
+                {event.schematics?.id ? (
                   <div
                     className="flex justify-center items-center"
                     style={{
@@ -257,15 +295,21 @@ export const EventDetails = () => {
                       overflow: "hidden",
                     }}
                   >
-                    <Image
-                      src={`${BASE_URL}/files/${event.schematics?.overviewFileId}?t=${Date.now()}`}
-                      alt="Event Seat Plan Image"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
+                    {
+                      imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt="Event Seat Plan Image"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <p>Loading schematics...</p>
+                      )
+                    }
                   </div>
                 ) : (
                   <div
@@ -308,32 +352,36 @@ export const EventDetails = () => {
             <div className="flex flex-col">
               <div className="flex md:flex-row justify-around items-stretch gap-4 w-full">
                 <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
-                <Statistic title="Total Participants" value={event.participantCount} prefix={<TeamOutlined />} />
-                <Statistic title="Employees" value={event.participantCount - totalGuests} prefix={<TeamOutlined />} />
-                <Statistic title="Guests" value={totalGuests} prefix={<TeamOutlined />} />
+                <Statistic title="Total Participants"
+                           value={event.employeeParticipantCount + event.visitorParticipantCount}
+                           prefix={<TeamOutlined />} />
+                <Statistic title="Employees" value={event.employeeParticipantCount} prefix={<TeamOutlined />} />
+                <Statistic title="Guests" value={event.visitorParticipantCount} prefix={<TeamOutlined />} />
               </div>
             </div>
           </Card>
 
           {/* Dietary Preferences Section */}
-          <Card title="Dietary Preferences (of employees only)" className="mb-6">
-            <div className="flex flex-col">
-              <div
-                className="grid gap-4 w-full"
-                style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}
-              >
-                {Object.entries(dietaryStats).map(([dietCombo, count]) => (
-                  <div key={dietCombo} className="flex flex-col items-center justify-center">
-                    <Statistic
-                      title={<span className="text-center w-full block">{dietCombo}</span>}
-                      value={count}
-                      valueStyle={{ display: 'block', textAlign: 'center', width: '100%' }}
-                    />
-                  </div>
-                ))}
+          {Object.entries(dietaryStats).length > 0 && (
+            <Card title="Dietary Preferences" className="mb-6">
+              <div className="flex flex-col">
+                <div
+                  className="grid gap-4 w-full"
+                  style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
+                >
+                  {Object.entries(dietaryStats).map(([dietCombo, count]) => (
+                    <div key={dietCombo} className="flex flex-col items-center justify-center">
+                      <Statistic
+                        title={<span className="text-center w-full block">{dietCombo}</span>}
+                        value={count}
+                        valueStyle={{ display: "block", textAlign: "center", width: "100%" }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          )}
         </Col>
 
         <Col span={8}>

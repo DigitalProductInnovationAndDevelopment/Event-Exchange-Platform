@@ -1,23 +1,23 @@
-import { useEffect, useState, useMemo } from "react";
-import { Avatar, Button, Card, Col, List, message, Row, Space, Spin, Typography, Input } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
 import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
-import KonvaCanvas from "components/canvas/KonvaCanvas";
-import { getFullName, type ParticipationDetails, type Profile } from "types/employee";
-import type { AppState } from "components/canvas/reducers/CanvasReducer";
+import KonvaCanvas, { type KonvaCanvasProps } from "components/canvas/KonvaCanvas";
+import { getFullName, type Profile } from "types/employee";
 import { type ElementProperties } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { Table } from "components/canvas/elements/Table.tsx";
 
 import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours } from "components/canvas/utils/functions.tsx";
-import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
+import { setChairIdForManualAssignment, setState } from "components/canvas/actions/actions.tsx";
 import toast from "react-hot-toast";
 import type { SeatAllocationResult } from "types/event.ts";
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
-import { InputNumber } from "antd";
+import Konva from "konva";
+import { useAuth } from "../../contexts/AuthContext.tsx";
 
 const { Title } = Typography;
 
@@ -26,23 +26,24 @@ const { Title } = Typography;
 const SeatAllocationContent = ({
                                  eventId,
                                  eventName,
-                                 schematicsState,
                                  schematicsId,
+                                 stageRefs,
                                }: {
   eventId: string,
   eventName: string,
-  schematicsState: AppState,
-  schematicsId: string
+  schematicsId: string,
+  stageRefs?: React.RefObject<Konva.Stage | null>,
 }) => {
   const navigate = useNavigate();
   const { state, dispatch } = useCanvas();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [participants, setParticipants] = useState<SeatAllocationResult[]>([]);
   const [unallocated, setUnallocated] = useState<SeatAllocationResult[]>([]);
   const [allocated, setAllocated] = useState<SeatAllocationResult[]>([]);
   const [unallocatedSearch, setUnallocatedSearch] = useState("");
   const [allocatedSearch, setAllocatedSearch] = useState("");
-  const { updateSchematics, getSeatAllocations, updateSeatAllocations, generateSeatAllocations } = useApiService();
+  const { getSeatAllocations, updateSeatAllocations, generateSeatAllocations } = useApiService();
   const [inputValues, setInputValues] = useState({
     pastMatches: 0,
     location: 0,
@@ -54,12 +55,14 @@ const SeatAllocationContent = ({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await getSeatAllocations(eventId!).then((results: SeatAllocationResult[] | undefined) => {
-        if (results) {
-          setParticipants(results);
-        }
-        setLoading(false);
-      });
+      if (!user?.isVisitor()) {
+        await getSeatAllocations(eventId!).then((results: SeatAllocationResult[] | undefined) => {
+          if (results) {
+            setParticipants(results);
+          }
+          setLoading(false);
+        });
+      }
     })();
 
   }, [eventId, getSeatAllocations]);
@@ -71,7 +74,7 @@ const SeatAllocationContent = ({
       setLoading(false);
     })();
 
-  }, [participants]);
+  }, [participants, state.elements.length]);
 
   const generateChairNeighborMap = () => {
     const tables: Table[] = (state.elements.filter((el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable") as Table[]);
@@ -139,6 +142,7 @@ const SeatAllocationContent = ({
         }
       });
 
+    dispatch(setState({ ...state }));
     setAllocated(assigned);
     setUnallocated(unassigned);
   };
@@ -157,11 +161,7 @@ const SeatAllocationContent = ({
 
   // Save the current seat allocation to the backend
   const handleSave = async () => {
-    if (!schematicsState || !state) return;
-    setLoading(true);
-    await updateSchematics(schematicsId, state, null);
-    setLoading(false);
-    message.success("Allocation saved!");
+
   };
 
   return (
@@ -199,7 +199,7 @@ const SeatAllocationContent = ({
         <Col span={18}>
           <Card className="mb-6">
             <div style={{ height: "600px", overflow: "hidden" }}>
-              <KonvaCanvas />
+              <KonvaCanvas schematicsUUID={schematicsId} stageReference={stageRefs} />
             </div>
           </Card>
           <Card className="mb-6" title="Seat Allocation Settings">
@@ -261,7 +261,7 @@ const SeatAllocationContent = ({
             <List
               dataSource={useMemo(() =>
                 unallocated.filter(item =>
-                  (item.profile.fullName?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
+                  (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
                   (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase())
                 ), [unallocated, unallocatedSearch])}
               pagination={{ pageSize: 10 }}
@@ -313,7 +313,7 @@ const SeatAllocationContent = ({
               pagination={{ pageSize: 10 }}
               dataSource={useMemo(() =>
                 allocated.filter(item =>
-                  (item.profile.fullName?.toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
+                  (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
                   (item.profile.email?.toLowerCase() || "").includes(allocatedSearch.toLowerCase())
                 ), [allocated, allocatedSearch])}
               renderItem={item => (
@@ -352,39 +352,27 @@ const SeatAllocationContent = ({
 };
 
 // Main page component: fetches data and provides context
-export const EventSeatAllocation = () => {
+export const EventSeatAllocation = ({ stageReference, schematicsUUID, eventName }: KonvaCanvasProps) => {
   const { eventId } = useParams();
-  const { getEventById, getEventParticipants, getSchematics } = useApiService();
-  const [eventName, setEventName] = useState("");
-  const [, setParticipants] = useState<ParticipationDetails[]>([]);
-  const [schematics, setSchematics] = useState<AppState | null>(null);
+  const [eventNameState] = useState<string>(eventName!);
   const [schematicsId, setSchematicsId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
   // Fetch event info, participants, and seat map on mount
   useEffect(() => {
     (async () => {
       if (!eventId) return;
       setLoading(true);
       try {
-        const event = await getEventById(eventId);
-        if (event) setEventName(event.name);
-        const parts = await getEventParticipants(eventId);
-        setParticipants(parts || []);
-        if (event?.schematics?.id) {
-          const sch = await getSchematics(event.schematics.id);
-          setSchematics(sch || null);
-          setSchematicsId(event.schematics.id || null);
-        }
+        setSchematicsId(schematicsUUID || null);
       } catch (e) {
         console.error(e);
       } finally {
         setLoading(false);
       }
     })();
-  }, [eventId, getEventById, getEventParticipants, getSchematics]);
+  }, [eventId, eventName, schematicsUUID]);
 
-  if (loading || !eventId || !schematics) {
+  if (loading || !eventId) {
     return (<div className="flex justify-center items-center h-screen">
       <Spin size="large" tip="Loading event details..." />
     </div>);
@@ -394,9 +382,9 @@ export const EventSeatAllocation = () => {
     <CanvasProvider>
       <SeatAllocationContent
         eventId={eventId}
-        eventName={eventName}
+        eventName={eventNameState}
         schematicsId={schematicsId!}
-        schematicsState={schematics}
+        stageRefs={stageReference}
       />
     </CanvasProvider>
   );

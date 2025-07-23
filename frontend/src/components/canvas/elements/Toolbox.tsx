@@ -105,8 +105,7 @@ function Toolbox({
                     ...state,
                     canvasPosition: stageRef!.current!.getPosition(),
                     scale: stageRef!.current!.scaleX(),
-                  },
-                  stageRef,
+                  }
                 )
               }
             >

@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { Employee, ParticipationDetails, Profile } from "types/employee.ts";
+import type { Employee, EmployeeBatchUpsertResponse, ParticipationDetails, Profile } from "types/employee.ts";
 import type { Event, FileEntity, SchematicsEntity, SeatAllocationResult, SeatAllocationUpsert } from "types/event.ts";
 import toast from "react-hot-toast";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
-import Konva from "konva";
-import { handleExport } from "components/canvas/utils/functions.tsx";
 import { Chair } from "components/canvas/elements/Chair.tsx";
+import { useNavigate } from "react-router-dom";
 
 export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
 export default function useApiService() {
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const request = useCallback(
     async <T = never>(endpoint: string, options: RequestInit = {}): Promise<T> => {
@@ -45,10 +45,12 @@ export default function useApiService() {
       } else if (response.status === 401) {
         toast.error("Access denied. You are logged out.");
         logout();
+        navigate(`/login`);
         throw new Error("Access denied. You are logged out.");
       } else if (response.status === 403) {
         toast.error("Access denied. You don't have permission for this action.");
-        //logout();
+        logout();
+        navigate(`/login`);
         throw new Error("Access denied. You don't have permission for this action.");
       } else if (response.status === 404 || response.status === 405) {
         toast.error("This operation is not found.");
@@ -132,11 +134,14 @@ export default function useApiService() {
     [request],
   );
 
-  const getEvents = useCallback(async (): Promise<Event[] | null> => {
+  const getEvents = useCallback(async (from?: string): Promise<Event[] | null> => {
     try {
-      return await request<Event[]>(`/events/all`);
+      const params = new URLSearchParams();
+      if (from) params.append("from", from);
+
+      return await request<Event[]>(`/events/all${params.toString() ? "?" + params : ""}`);
     } catch (error) {
-      console.error(`Failed to fetch events:`, error);
+      console.error("Failed to fetch events:", error);
       return null;
     }
   }, [request]);
@@ -278,12 +283,11 @@ export default function useApiService() {
     [request],
   );
 
-  const updateSchematics = useCallback(async (id: string, canvasState: AppState, stageRef: React.RefObject<Konva.Stage | null> | null): Promise<SchematicsEntity | null> => {
+  const updateSchematics = useCallback(async (id: string, canvasState: AppState): Promise<SchematicsEntity | null> => {
       const historyTemp = { ...canvasState.history };
-
       try {
         delete canvasState.history;
-
+        canvasState.buildMode = 0;
         // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/Visitor participation Tables
         canvasState.elements.forEach((el) => {
           if (el.type === "chair") {
@@ -298,28 +302,6 @@ export default function useApiService() {
             state: JSON.stringify(canvasState),
           }),
         });
-        if (stageRef && stageRef!.current) {
-          const dataUrl = await handleExport(stageRef);
-          if (dataUrl) {
-            const arr = dataUrl!.split(",");
-            const mime = arr[0].match(/:(.*?);/)![1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-
-            while (n--) {
-              u8arr[n] = bstr.charCodeAt(n);
-            }
-
-            const file = new File([u8arr], id, { type: mime });
-
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("schematicsId", id);
-            await fileUpload(formData);
-          }
-        }
-
         toast.success("Schematics saved successfully!");
         // @ts-ignore
         canvasState.history = historyTemp;
@@ -331,7 +313,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [fileUpload, request],
+    [request],
   );
 
   const deleteSchematics = useCallback(
@@ -386,9 +368,9 @@ export default function useApiService() {
   );
 
   const createEmployeeBatch = useCallback(
-    async (employeeDataList: Employee[]): Promise<Employee[] | null> => {
+    async (employeeDataList: Employee[]): Promise<EmployeeBatchUpsertResponse | null> => {
       try {
-        const response = await request<Employee[]>("/profile/employees/batch", {
+        const response = await request<EmployeeBatchUpsertResponse>("/profile/employees/batch", {
           method: "POST",
           body: JSON.stringify(employeeDataList),
         });

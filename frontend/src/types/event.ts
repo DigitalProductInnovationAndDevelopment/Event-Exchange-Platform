@@ -42,20 +42,34 @@ export interface SeatAllocationUpsert {
   chairId: UUID | null,
 }
 
+export interface EventMinimal {
+  id: string;
+  name: string;
+  date: string;
+  address: string;
+  fileEntities: FileEntity[];
+  capacity: number;
+  employeeParticipantCount: number;
+  visitorParticipantCount: number;
+  status: EventStatus;
+  eventType: EventType;
+}
+
 export interface Event {
   id: string;
   name: string;
   date: string;
   address: string;
-  participantCount: number;
+  employeeParticipantCount: number;
+  visitorParticipantCount: number;
   capacity: number;
   status: EventStatus;
   eventType: EventType;
   engagement?: number;
-  year: number;
   description: string;
-  cost: number;
+  notes?: string;
   fileEntities: FileEntity[];
+  participantDetails: Profile[];
   schematics: SchematicsEntity | null;
 }
 
