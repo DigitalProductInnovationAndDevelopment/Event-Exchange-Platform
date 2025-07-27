@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import com.itestra.eep.dtos.ParticipationBatchResultDTO;
 
 public interface EventService {
 
@@ -32,7 +33,7 @@ public interface EventService {
 
     void deleteParticipant(UUID participationId);
 
-    List<EmployeeParticipation> addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos);
+    ParticipationBatchResultDTO addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos);
 
     boolean isParticipant(UUID eventId, UUID userId);
 

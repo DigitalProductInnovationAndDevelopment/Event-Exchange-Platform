@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Employee, EmployeeBatchUpsertResponse, ParticipationDetails, Profile } from "types/employee.ts";
 import type { Event, FileEntity, SchematicsEntity, SeatAllocationResult, SeatAllocationUpsert } from "types/event.ts";
+import type { ParticipationBatchResult } from "types/employee.ts";
 import toast from "react-hot-toast";
 import { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
@@ -284,35 +285,35 @@ export default function useApiService() {
   );
 
   const updateSchematics = useCallback(async (id: string, canvasState: AppState): Promise<SchematicsEntity | null> => {
-      const historyTemp = { ...canvasState.history };
-      try {
-        delete canvasState.history;
-        canvasState.buildMode = 0;
-        // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/Visitor participation Tables
-        canvasState.elements.forEach((el) => {
-          if (el.type === "chair") {
-            delete (el as Chair).assigneeProfileId;
-            delete (el as Chair).assigneeName;
-          }
-        });
+    const historyTemp = { ...canvasState.history };
+    try {
+      delete canvasState.history;
+      canvasState.buildMode = 0;
+      // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/Visitor participation Tables
+      canvasState.elements.forEach((el) => {
+        if (el.type === "chair") {
+          delete (el as Chair).assigneeProfileId;
+          delete (el as Chair).assigneeName;
+        }
+      });
 
-        const response = await request(`/schematics/${id}`, {
-          method: "PUT",
-          body: JSON.stringify({
-            state: JSON.stringify(canvasState),
-          }),
-        });
-        toast.success("Schematics saved successfully!");
-        // @ts-ignore
-        canvasState.history = historyTemp;
-        return response;
-      } catch (err) {
-        toast.error("Schematics save failed");
-        // @ts-ignore
-        canvasState.history = historyTemp;
-        return null;
-      }
-    },
+      const response = await request(`/schematics/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          state: JSON.stringify(canvasState),
+        }),
+      });
+      toast.success("Schematics saved successfully!");
+      // @ts-ignore
+      canvasState.history = historyTemp;
+      return response;
+    } catch (err) {
+      toast.error("Schematics save failed");
+      // @ts-ignore
+      canvasState.history = historyTemp;
+      return null;
+    }
+  },
     [request],
   );
 
@@ -457,10 +458,10 @@ export default function useApiService() {
         guestCount: number;
         employeeId: string;
       }[],
-    ): Promise<ParticipationDetails[] | null> => {
+    ): Promise<ParticipationBatchResult | null> => {
       try {
-        if (participations.length === 0) return [];
-        const response = await request<ParticipationDetails[]>(
+        if (participations.length === 0) return { createdParticipations: [], updatedParticipations: [] };
+        const response = await request<ParticipationBatchResult>(
           `/events/${eventId}/participants/batch`,
           {
             method: "POST",

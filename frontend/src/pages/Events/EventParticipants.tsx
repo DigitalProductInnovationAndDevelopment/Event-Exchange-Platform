@@ -7,6 +7,7 @@ import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/ico
 import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";
 import Papa, { parse } from "papaparse";
 import type { UUID } from "components/canvas/utils/constants.tsx";
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
@@ -109,7 +110,6 @@ export const EventParticipants = () => {
   const handleAddParticipantBatch = async (
     eventId: UUID, rows: { guestCount: number; email: string; }[],
   ) => {
-    console.log(rows);
     if (!rows.length) return;
     const emailToEmployee = Object.fromEntries(
       allEmployees.map(e => [e.profile.email, e.profile.id]),
@@ -121,12 +121,30 @@ export const EventParticipants = () => {
       }))
       .filter(p => p.employeeId);
     if (batch.length) {
-      const newParticipants = await addParticipantsBatch(eventId, batch);
+      // Expecting response: { createdParticipations: [...], updatedParticipations: [...] }
+      const batchResult = await addParticipantsBatch(eventId, batch);
       setImportModalOpen(false);
       setImportFile(null);
       setImportedRows([]);
-      if (newParticipants) {
-        setParticipants([...participants, ...newParticipants]);
+      if (batchResult) {
+        const createdCount = batchResult.createdParticipations?.length ?? 0;
+        const updatedCount = batchResult.updatedParticipations?.length ?? 0;
+        toast.success(
+          `Participants imported! Created: ${createdCount}, Updated: ${updatedCount}`,
+          { duration: 6000 }
+        );
+        const allNew = [
+          ...(batchResult.createdParticipations ?? []),
+          ...(batchResult.updatedParticipations ?? []),
+        ];
+        // Remove duplicates by employeeId
+        const merged = [
+          ...participants.filter(
+            p => !allNew.some(np => np.employeeId === p.employeeId)
+          ),
+          ...allNew,
+        ];
+        setParticipants(merged);
       }
     }
   };
@@ -372,6 +390,26 @@ export const EventParticipants = () => {
           </Button>,
         ]}
       >
+        <div style={{ marginBottom: 12, color: '#faad14' }}>
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>email</code> and <code>guestCount</code>.
+        </div>
+        <Button
+          style={{ marginBottom: 12 }}
+          onClick={() => {
+            const csvContent = 'email,guestCount\nexample@email.com,2\n';
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'participants_template.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }}
+        >
+          Download CSV Template
+        </Button>
         <Input type="file" accept=".csv" onChange={handleImportFile} className="mb-4" />
         {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
         {importedRows.length > 0 && (

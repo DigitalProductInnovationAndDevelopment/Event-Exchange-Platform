@@ -28,6 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.itestra.eep.dtos.ParticipationBatchResultDTO;
+import com.itestra.eep.dtos.EmployeeParticipationDetailsDTO;
+import com.itestra.eep.mappers.EmployeeParticipationMapper;
+import com.itestra.eep.models.EmployeeParticipation;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,6 +50,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final EventCapacityValidator eventCapacityValidator;
     private final VisitorParticipationFactory visitorParticipationFactory;
+    private final EmployeeParticipationMapper employeeParticipationMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -137,25 +142,50 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EmployeeParticipation> addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos) {
+    public ParticipationBatchResultDTO addParticipantsBatch(UUID eventId, List<EmployeeParticipationUpsertDTO> dtos) {
         List<EmployeeParticipation> participationsToCreate = new java.util.ArrayList<>();
+        List<EmployeeParticipation> participationsToUpdate = new java.util.ArrayList<>();
 
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
 
         for (EmployeeParticipationUpsertDTO dto : dtos) {
             Employee employee = employeeRepository.findById(dto.getEmployeeId()).orElseThrow(EmployeeNotFoundException::new);
-            EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
-            participationsToCreate.add(employeeParticipation);
+            // Check if participation already exists
+            EmployeeParticipation existingParticipation = employeeParticipationRepository
+                .findByEmployee_IdAndEvent_Id(dto.getEmployeeId(), eventId)
+                .orElse(null);
+            if (existingParticipation != null) {
+                int oldGuestCount = existingParticipation.getGuestCount();
+                existingParticipation.setGuestCount(dto.getGuestCount());
+                participationsToUpdate.add(existingParticipation);
+                handleVisitorProfilesForGuests(existingParticipation, oldGuestCount, dto.getGuestCount());
+            } else {
+                EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
+                participationsToCreate.add(employeeParticipation);
+            }
         }
 
-        eventCapacityValidator.validateBatchCapacity(event, participationsToCreate);
-        List<EmployeeParticipation> employeeParticipations = employeeParticipationRepository.saveAllAndFlush(participationsToCreate);
+        // Validate capacity for both new and updated participations
+        List<EmployeeParticipation> allParticipations = new java.util.ArrayList<>();
+        allParticipations.addAll(participationsToCreate);
+        allParticipations.addAll(participationsToUpdate);
+        eventCapacityValidator.validateBatchCapacity(event, allParticipations);
 
-        for (EmployeeParticipation employeeParticipation : employeeParticipations) {
+        // Save new participations
+        List<EmployeeParticipation> createdParticipations = employeeParticipationRepository.saveAllAndFlush(participationsToCreate);
+        for (EmployeeParticipation employeeParticipation : createdParticipations) {
             handleVisitorProfilesForGuests(employeeParticipation, 0, employeeParticipation.getGuestCount());
         }
 
-        return employeeParticipations;
+        // Save updated participations
+        List<EmployeeParticipation> updatedParticipations = employeeParticipationRepository.saveAllAndFlush(participationsToUpdate);
+
+        // Map entities to DTOs here
+        List<EmployeeParticipationDetailsDTO> createdDtos = employeeParticipationMapper.map(createdParticipations);
+        List<EmployeeParticipationDetailsDTO> updatedDtos = employeeParticipationMapper.map(updatedParticipations);
+
+        // Return DTO with both lists
+        return new ParticipationBatchResultDTO(createdDtos, updatedDtos);
     }
 
     @Override

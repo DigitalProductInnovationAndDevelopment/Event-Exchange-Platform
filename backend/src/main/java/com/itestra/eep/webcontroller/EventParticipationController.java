@@ -2,6 +2,7 @@ package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.EmployeeParticipationDetailsDTO;
 import com.itestra.eep.dtos.EmployeeParticipationUpsertDTO;
+import com.itestra.eep.dtos.ParticipationBatchResultDTO;
 import com.itestra.eep.mappers.EmployeeParticipationMapper;
 import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
@@ -43,9 +44,9 @@ public class EventParticipationController {
 
     @PostMapping("/{eventId}/participants/batch")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<EmployeeParticipationDetailsDTO>> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<EmployeeParticipationUpsertDTO> dtos) {
-        List<EmployeeParticipation> employeeParticipations = eventService.addParticipantsBatch(eventId, dtos);
-        return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipations), HttpStatus.OK);
+    public ResponseEntity<ParticipationBatchResultDTO> addEventParticipantsBatch(@PathVariable UUID eventId, @RequestBody @Valid List<EmployeeParticipationUpsertDTO> dtos) {
+        var batchResult = eventService.addParticipantsBatch(eventId, dtos);
+        return new ResponseEntity<>(batchResult, HttpStatus.OK);
     }
 
     @PutMapping("/{eventId}/participants")

@@ -54,6 +54,12 @@ export interface ParticipationDetails {
   dietTypes: (keyof typeof DietaryPreference)[];
 }
 
+export type ParticipationBatchResult = {
+  createdParticipations: ParticipationDetails[];
+  updatedParticipations: ParticipationDetails[];
+};
+
+
 export enum DietaryPreference {
   VEGETARIAN = "Vegetarian",
   VEGAN = "Vegan",
