@@ -29,62 +29,62 @@ const columns = (
   onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
   onDeleteClick: (employeeId: string, employeeName: string) => void
 ): ColumnsType<Employee> => [
-  {
-    title: "Name",
-    dataIndex: ["profile", "name"],
-    key: "profile.name",
-    sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
-  },
-  {
-    title: "Last Name",
-    dataIndex: ["profile", "lastName"],
-    key: "profile.lastName",
-    sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
-  },
-  {
-    title: "Location",
-    dataIndex: "location",
-    key: "location",
-  },
-  {
-    title: "Date Joined",
-    dataIndex: "employmentStartDate",
-    key: "employmentStartDate",
-  },
-  {
-    title: "Events",
-    dataIndex: "attendedEventsCount",
-    key: "attendedEventsCount",
-    render: (_count: number, record: Employee) => (
-      <Button
-        type="link"
-        style={{ color: "black" }}
-        onClick={() => onNavigate(record.profile.id, "events")}
-      >
-        {record.participationCount}
-      </Button>
-    ),
-  },
-  {
-    title: "Actions",
-    key: "actions",
-    render: (_: any, record: Employee) => (
-      <Space size="small" align="end">
+    {
+      title: "Name",
+      dataIndex: ["profile", "name"],
+      key: "profile.name",
+      sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
+    },
+    {
+      title: "Last Name",
+      dataIndex: ["profile", "lastName"],
+      key: "profile.lastName",
+      sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+    },
+    {
+      title: "Date Joined",
+      dataIndex: "employmentStartDate",
+      key: "employmentStartDate",
+    },
+    {
+      title: "Events",
+      dataIndex: "attendedEventsCount",
+      key: "attendedEventsCount",
+      render: (_count: number, record: Employee) => (
         <Button
-          type="default"
-          icon={<EyeOutlined />}
-          onClick={() => onNavigate(record.profile.id)}
-          style={{ background: "#fff", border: "1px solid #d9d9d9" }}
+          type="link"
+          style={{ color: "black" }}
+          onClick={() => onNavigate(record.profile.id, "events")}
         >
-          View
+          {record.participationCount}
         </Button>
-        <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, getFullName(record.profile))}>
-          Delete
-        </Button>
-      </Space>
-    ),
-  },
-];
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_: any, record: Employee) => (
+        <Space size="small" align="end">
+          <Button
+            type="default"
+            icon={<EyeOutlined />}
+            onClick={() => onNavigate(record.profile.id)}
+            style={{ background: "#fff", border: "1px solid #d9d9d9" }}
+          >
+            View
+          </Button>
+          <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, getFullName(record.profile))}>
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
 function downloadCSV(): void {
   const employees: Employee[] = [
@@ -244,12 +244,6 @@ export const EmployeesList = () => {
   }, [employees, searchText, locationFilter]);
 
   // Handle export action
-  const handleImportEmployeeTemplate = () => {
-    downloadCSV();
-    toast.success("Downloaded employee import template .csv");
-  };
-
-  // Handle export action
   const handleExport = () => {
     exportEmployeesToCSV(filteredData);
     toast.success("Exported employee data as CSV");
@@ -326,14 +320,14 @@ export const EmployeesList = () => {
       // @ts-ignore
       const result = await createEmployeeBatch(payload);
       if (result) {
-        const createdCount = Array.isArray(result) ? result.length : 0;
-        // TODO: Fix updated count
-        toast.success(`Employees imported successfully! Created: ${result.insertedEmployees.length}, Updated: ${result.updatedEmployees.length}`);
+        toast.success(
+          `Employees imported successfully! Created: ${result.insertedEmployees.length}, Updated: ${result.updatedEmployees.length}`,
+          { duration: 6000 }
+        );
         setImportModalOpen(false);
         setImportFile(null);
         setImportedRows([]);
         employees.push(...result.insertedEmployees.map(e => ({ ...e, key: e.profile.id })));
-        // TODO update employees as well
         setEmployees([...employees]);
       }
     } catch (err) {
@@ -357,7 +351,7 @@ export const EmployeesList = () => {
       </div>
       <Card className="mb-6">
         <Row gutter={16}>
-          <Col span={8}>
+          <Col span={12}>
             <Input
               placeholder="Search Employee Name or ID"
               prefix={<SearchOutlined />}
@@ -381,15 +375,6 @@ export const EmployeesList = () => {
             />
           </Col>
           <Col span={6}>
-            <Button
-              icon={<DownloadOutlined />}
-              onClick={handleImportEmployeeTemplate}
-              style={{ width: "100%" }}
-            >
-              Download Import Template
-            </Button>
-          </Col>
-          <Col span={4}>
             <Button icon={<DownloadOutlined />} onClick={handleExport} style={{ width: "100%" }}>
               Export
             </Button>
@@ -450,6 +435,15 @@ export const EmployeesList = () => {
           </Button>,
         ]}
       >
+        <div style={{ marginBottom: 12, color: '#faad14' }}>
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last Name</code>, <code>Location</code>, <code>Employment Start Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>.
+        </div>
+        <Button
+          style={{ marginBottom: 12 }}
+          onClick={downloadCSV}
+        >
+          Download CSV Template
+        </Button>
         <Input type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
         {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
         {importedRows.length > 0 && (

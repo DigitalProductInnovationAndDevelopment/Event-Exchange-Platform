@@ -235,14 +235,14 @@ const SeatAllocationContent = ({
                       {idx === 0 ? (
                         <span className="text-left text-gray-500">always considered</span>
                       ) : (
-                        <InputNumber min={0} max={5} defaultValue={0} step={1} style={{ width: 80, marginLeft: 0 }} className="text-left" />
+                        <InputNumber min={0} max={3} defaultValue={0} step={1} style={{ width: 80, marginLeft: 0 }} className="text-left" />
                       )}
                     </div>
                   ))}
                 </div>
                 <div className="flex flex-col w-1/3">
                   <span className="text-left text-black" style={{ minHeight: '200px', display: 'flex', alignItems: 'flex-start' }}>
-                    Set the weighting for each constraint to guide how the seat allocation algorithm prioritizes them. Higher values mean greater importance. "Guests seated with employee" is always considered; for the others, choose a value from 0 (not important) to 5 (very important).
+                    Set the weighting for each constraint to guide how the seat allocation algorithm prioritizes them. Higher values mean greater importance. "Guests seated with employee" is always considered; for the others, choose a value from 0 (not considered at all) to 3 (very important).
                   </span>
                 </div>
               </div>

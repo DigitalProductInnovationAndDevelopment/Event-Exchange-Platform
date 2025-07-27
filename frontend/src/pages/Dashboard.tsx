@@ -2,7 +2,6 @@ import { Button, Card, Col, List, Row, Space, Spin, Typography } from "antd";
 import {
   CalendarOutlined,
   EyeOutlined,
-  FireOutlined,
   PlusOutlined,
   TeamOutlined,
   UsergroupAddOutlined,
@@ -67,17 +66,17 @@ export const Dashboard = () => {
         <Col span={16}>
           <Row gutter={[16, 16]} className="mb-4">
             {
-              isAdmin && ( 
-              <Col span={8}>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  size="large"
-                  block
-                  onClick={() => navigate("/events/create")}
-                > Create New Event
-                </Button>
-              </Col>)
+              isAdmin && (
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="large"
+                    block
+                    onClick={() => navigate("/events/create")}
+                  > Create New Event
+                  </Button>
+                </Col>)
             }
             <Col span={8}>
               <Button
@@ -119,7 +118,6 @@ export const Dashboard = () => {
             const employeeCount = event.employeeParticipantCount;
             const guestCount = event.visitorParticipantCount;
             const dietaryCombinations = aggregateDietaryCombinations(participants);
-            const engagement = event.capacity > 0 ? Number((((event.employeeParticipantCount + event.visitorParticipantCount) / event.capacity) * 100).toFixed(2)) : 0;
             return (
               <List.Item
                 actions={[
@@ -143,16 +141,25 @@ export const Dashboard = () => {
                         <Spin size="small" />
                       ) : (
                         <Space direction="vertical" size="small">
-                          <Space>
-                            <CalendarOutlined /> {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}
-                            <span style={{ marginLeft: 24 }} />
-                            <TeamOutlined /> {event.employeeParticipantCount + event.visitorParticipantCount}/{event.capacity} participants
-                            <span style={{ marginLeft: 24 }} />
-                            <FireOutlined /> {engagement} % engagement
-                          </Space>
-                          <Space>
-                            <UserOutlined /> <b>Employees:</b> {employeeCount}
-                            <UsergroupAddOutlined style={{ marginLeft: 16 }} /> <b>Guests:</b> {guestCount}
+                          <Space className="flex flex-wrap items-center gap-x-8 gap-y-2">
+                            <Space className="items-center">
+                              <CalendarOutlined />
+                              <span>{dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</span>
+                            </Space>
+                            <Space className="items-center">
+                              <TeamOutlined />
+                              <span>
+                                {event.employeeParticipantCount + event.visitorParticipantCount}/{event.capacity} participants
+                              </span>
+                            </Space>
+                            <Space className="items-center">
+                              <UserOutlined />
+                              <span><b>Employees:</b> {employeeCount}</span>
+                            </Space>
+                            <Space className="items-center">
+                              <UsergroupAddOutlined />
+                              <span><b>Guests:</b> {guestCount}</span>
+                            </Space>
                           </Space>
                           <Space direction="vertical" size="small">
                             <b>Dietary Preference Combinations </b>
@@ -163,11 +170,11 @@ export const Dashboard = () => {
                                 const prettyCombo = diets.length === 0
                                   ? 'Regular'
                                   : diets.map(diet =>
-                                      diet
-                                        .replace(/_/g, ' ')
-                                        .toLowerCase()
-                                        .replace(/(^|\s)\S/g, l => l.toUpperCase())
-                                    ).join(', ');
+                                    diet
+                                      .replace(/_/g, ' ')
+                                      .toLowerCase()
+                                      .replace(/(^|\s)\S/g, l => l.toUpperCase())
+                                  ).join(', ');
                                 return (
                                   <span key={combo} style={{ marginLeft: 4 }}>
                                     {prettyCombo} x {count}
