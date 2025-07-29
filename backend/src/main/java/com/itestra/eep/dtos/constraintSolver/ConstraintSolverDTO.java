@@ -42,6 +42,9 @@ public class ConstraintSolverDTO implements Serializable {
     @JsonProperty("Geschlecht")
     String employeeProfileGender;
 
+    @JsonProperty("last neighborhood")
+    UUID[] lastNeighbourhood;
+
     DietaryPreference[] employeeProfileDietTypes;
 
     @JsonSerialize(using = DateSerializer.class)

@@ -1,0 +1,18 @@
+package com.itestra.eep.repositories;
+
+import com.itestra.eep.models.PreviousMatch;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface PreviousMatchesRepository extends JpaRepository<PreviousMatch, PreviousMatch.PreviousMatchId> {
+
+    @Modifying(clearAutomatically = true)
+    @Query("delete from PreviousMatch p where p.id.eventId = ?1")
+    void deleteAllByEventId(UUID eventId);
+
+}

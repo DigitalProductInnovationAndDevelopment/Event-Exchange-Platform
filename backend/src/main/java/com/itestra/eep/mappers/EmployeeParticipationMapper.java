@@ -10,6 +10,7 @@ import org.mapstruct.MappingConstants;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.itestra.eep.enums.Role.ADMIN;
 
@@ -25,10 +26,14 @@ public interface EmployeeParticipationMapper {
     @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes")
     @Mapping(source = "employee.employmentStartDate", target = "employeeEmploymentStartDate")
     @Mapping(source = "employee.location", target = "employeeLocation")
+    @Mapping(target = "lastNeighbourhood", expression = "java(findPreviouslyMatchedEmployeeIds(employeeParticipation))")
     ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipation employeeParticipation);
 
     List<ConstraintSolverDTO> toConstraintSolverDTO(List<EmployeeParticipation> employeeParticipations);
 
+    default UUID[] findPreviouslyMatchedEmployeeIds(EmployeeParticipation employeeParticipation) {
+        return employeeParticipation.getEmployee().getPreviousMatches().toArray(UUID[]::new);
+    }
 
     default EmployeeParticipationDetailsDTO map(EmployeeParticipation employeeParticipation) {
         return this.map(List.of(employeeParticipation)).get(0);

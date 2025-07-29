@@ -1,9 +1,7 @@
 package com.itestra.eep.models;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -12,6 +10,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "previous_matches", schema = "organization")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PreviousMatch {
 
     @EmbeddedId
@@ -21,6 +21,8 @@ public class PreviousMatch {
     @Setter
     @Embeddable
     @EqualsAndHashCode
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class PreviousMatchId implements Serializable {
 
         @Column(name = "first_employee_id", nullable = false)
@@ -29,9 +31,9 @@ public class PreviousMatch {
         @Column(name = "second_employee_id", nullable = false)
         private UUID secondEmployeeId;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "event_id")
-        private Event event;
+        @Column(name = "event_id", nullable = false)
+        private UUID eventId;
+
 
     }
 }

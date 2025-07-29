@@ -20,6 +20,10 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     boolean existsByIdAndVisitorParticipations_Profile_Id(UUID eventId, UUID visitorId);
 
+    @Query("select e from Event e where e.id = ?1")
+    @EntityGraph(attributePaths = {"employeeParticipations.employee.previousMatches"})
+    Optional<Event> findByIdJoinedWithPreviousMatches(UUID id);
+
     @EntityGraph("Event.files_schematics")
     List<Event> findAllByDateAfter(LocalDateTime dateAfter);
 
