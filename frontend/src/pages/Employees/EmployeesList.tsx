@@ -201,8 +201,8 @@ export const EmployeesList = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [loading, setLoading] = useState<boolean>(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
-  const [importFile, setImportFile] = useState<File | null>(null);
   const [importedRows, setImportedRows] = useState<any[]>([]);
+  const [fileInputKey, setFileInputKey] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -265,7 +265,6 @@ export const EmployeesList = () => {
   // CSV file parsing handler for employee import
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImportFile(file || null);
     if (file) {
       const reader = new FileReader();
       reader.onload = event => {
@@ -325,8 +324,9 @@ export const EmployeesList = () => {
           { duration: 6000 }
         );
         setImportModalOpen(false);
-        setImportFile(null);
         setImportedRows([]);
+        // Force file input to re-render and clear
+        setFileInputKey(prev => prev + 1);
         employees.push(...result.insertedEmployees.map(e => ({ ...e, key: e.profile.id })));
         setEmployees([...employees]);
       }
@@ -423,8 +423,9 @@ export const EmployeesList = () => {
         open={importModalOpen}
         onCancel={() => {
           setImportModalOpen(false);
-          setImportFile(null);
           setImportedRows([]);
+          // Force file input to re-render and clear
+          setFileInputKey(prev => prev + 1);
         }}
         footer={[
           <Button
@@ -438,7 +439,10 @@ export const EmployeesList = () => {
         ]}
       >
         <div style={{ marginBottom: 12, color: '#faad14' }}>
-          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last Name</code>, <code>Location</code>, <code>Employment Start Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>.
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last
+          Name</code>, <code>Location</code>, <code>Employment Start
+          Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>. Note: <code>Gitlab
+          Username</code> is optional and can stay empty.
         </div>
         <Button
           style={{ marginBottom: 12 }}
@@ -446,8 +450,7 @@ export const EmployeesList = () => {
         >
           Download CSV Template
         </Button>
-        <Input type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
-        {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
+        <Input key={fileInputKey} type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
         {importedRows.length > 0 && (
           <Table
             columns={[
