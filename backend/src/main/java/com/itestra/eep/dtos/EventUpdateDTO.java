@@ -44,7 +44,7 @@ public class EventUpdateDTO implements Serializable {
     Integer capacity;
 
     @Nullable
-    @FutureOrPresent(message = "Event cannot be in the past.")
+    @FutureOrPresent(message = "You cannot create or edit events in the past.")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;

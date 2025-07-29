@@ -43,7 +43,7 @@ public class Profile {
     @Column(name = "notes")
     private String notes;
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
     @CollectionTable(
             schema = "organization",
             name = "user_roles",

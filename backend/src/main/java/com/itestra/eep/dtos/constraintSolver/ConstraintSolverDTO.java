@@ -1,4 +1,4 @@
-package com.itestra.eep.dtos;
+package com.itestra.eep.dtos.constraintSolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

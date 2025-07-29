@@ -1,13 +1,12 @@
 package com.itestra.eep.mappers;
 
-import com.itestra.eep.dtos.ConstraintSolverDTO;
 import com.itestra.eep.dtos.EmployeeParticipationDetailsDTO;
+import com.itestra.eep.dtos.constraintSolver.ConstraintSolverDTO;
 import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.Mappings;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
@@ -18,15 +17,14 @@ import static com.itestra.eep.enums.Role.ADMIN;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface EmployeeParticipationMapper {
 
-    @Mappings({
-            @Mapping(source = "employee.id", target = "profileId"),
-            @Mapping(source = "employee.profile.name", target = "employeeProfileName"),
-            @Mapping(source = "employee.profile.lastName", target = "employeeProfileLastName"),
-            @Mapping(source = "employee.profile.gender", target = "employeeProfileGender"),
-            @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes"),
-            @Mapping(source = "employee.employmentStartDate", target = "employeeEmploymentStartDate"),
-            @Mapping(source = "employee.location", target = "employeeLocation"),
-    })
+
+    @Mapping(source = "employee.id", target = "profileId")
+    @Mapping(source = "employee.profile.name", target = "employeeProfileName")
+    @Mapping(source = "employee.profile.lastName", target = "employeeProfileLastName")
+    @Mapping(source = "employee.profile.gender", target = "employeeProfileGender")
+    @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes")
+    @Mapping(source = "employee.employmentStartDate", target = "employeeEmploymentStartDate")
+    @Mapping(source = "employee.location", target = "employeeLocation")
     ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipation employeeParticipation);
 
     List<ConstraintSolverDTO> toConstraintSolverDTO(List<EmployeeParticipation> employeeParticipations);

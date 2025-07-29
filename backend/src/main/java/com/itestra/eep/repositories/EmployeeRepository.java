@@ -14,9 +14,8 @@ import java.util.UUID;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
-
-    @EntityGraph("Employee.profile_participations")
     @Override
+    @EntityGraph("Employee.profile_participations")
     @NonNull
     Optional<Employee> findById(@NonNull UUID id);
 
