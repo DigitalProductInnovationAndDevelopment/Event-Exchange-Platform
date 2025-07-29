@@ -49,6 +49,11 @@ public class FileEntity {
     private byte[] content;
 
 
+    public void setEvent(Event event) {
+        this.event = event;
+        this.eventId = event.getId();
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
