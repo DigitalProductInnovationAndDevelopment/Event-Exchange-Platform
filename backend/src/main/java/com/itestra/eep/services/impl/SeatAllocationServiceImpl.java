@@ -19,6 +19,8 @@ import com.itestra.eep.services.SeatAllocationService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,6 +41,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public class SeatAllocationServiceImpl implements SeatAllocationService {
+
+    @Autowired
+    @Lazy
+    private SeatAllocationService seatAllocationServiceProxy;
 
     private final EventRepository eventRepository;
     private final ChairRepository chairRepository;
@@ -152,12 +158,12 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
                             UUID tableKey = UUID.fromString(Arrays.copyOf(solvedConstraint.getTableIds(), solvedConstraint.getTableIds().length, String[].class)[0]);
                             // first the employee is seated
                             if (j == 0) {
-                                updateSeatAllocation(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, EmployeeParticipation.class);
+                                seatAllocationServiceProxy.updateSeatAllocation(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, EmployeeParticipation.class);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
                                 // we also track employee's table assignment so that we can reference them back whn we clculate new entites for PreviousMatches table
                                 employeeToTableMap.put(employeeParticipation.getEmployee().getId(), tableKey);
                             } else {
-                                updateSeatAllocation(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, VisitorParticipation.class);
+                                seatAllocationServiceProxy.updateSeatAllocation(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, VisitorParticipation.class);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
                             }
                         }
