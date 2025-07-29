@@ -4,8 +4,8 @@ export interface Employee {
   profile: Profile;
   employmentStartDate: string;
   location: string;
-  projects: Project[];
   participations?: ParticipationDetails[];
+  participationCount?: number;
 }
 
 export function getFullName(profile: Profile | ParticipationDetails | undefined): string | "" {
@@ -20,7 +20,8 @@ export interface Profile {
   name: string;
   lastName: string;
   gender: string;
-  gitlabUsername?: string;
+  gitlabUsername?: string | null;
+  notes?: string | null;
   email: string;
   dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];
@@ -29,6 +30,11 @@ export interface Profile {
 export interface Project {
   name: string | null;
   abbreviation: string | null;
+}
+
+export interface EmployeeBatchUpsertResponse {
+  insertedEmployees: Employee[],
+  updatedEmployees: Employee[];
 }
 
 export interface ParticipationDetails {
@@ -48,15 +54,18 @@ export interface ParticipationDetails {
   dietTypes: (keyof typeof DietaryPreference)[];
 }
 
+export type ParticipationBatchResult = {
+  createdParticipations: ParticipationDetails[];
+  updatedParticipations: ParticipationDetails[];
+};
+
+
 export enum DietaryPreference {
   VEGETARIAN = "Vegetarian",
-  PESCATARIAN = "Pescatarian",
-  HALAL = "Halal",
-  KOSHER = "Kosher",
   VEGAN = "Vegan",
-  LACTOSE_FREE = "Lactose free",
-  GLUTEN_FREE = "Gluten free",
-  KETO = "Keto",
+  LACTOSE_FREE = "Lactose Free",
+  FRUCTOSE_FREE = "Fructose Free",
+  GLUTEN_FREE = "Gluten Free",
 }
 
 export enum EmploymentType {

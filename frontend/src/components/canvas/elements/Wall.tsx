@@ -13,13 +13,13 @@ export class Wall implements ElementProperties {
   color: string;
   draggable: boolean;
 
-  constructor() {
+  constructor(stageCenter?: { x: number, y: number }) {
     this.id = uuidv4();
     this.type = "wall";
-    this.x1 = 200;
-    this.y1 = 100;
-    this.x2 = 350;
-    this.y2 = 100;
+    this.x1 = stageCenter?.x ?? 200;
+    this.y1 = stageCenter?.y ?? 100;
+    this.x2 = stageCenter?.x ?? 200 + 150;
+    this.y2 = stageCenter?.y ?? 100;
     this.color = "#444";
     this.draggable = true;
   }

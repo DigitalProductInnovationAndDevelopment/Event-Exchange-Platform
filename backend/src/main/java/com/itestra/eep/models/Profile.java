@@ -40,7 +40,10 @@ public class Profile {
     @Column(name = "email", unique = true, length = 255)
     private String email;
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @Column(name = "notes")
+    private String notes;
+
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
     @CollectionTable(
             schema = "organization",
             name = "user_roles",

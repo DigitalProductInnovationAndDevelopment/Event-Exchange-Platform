@@ -25,6 +25,7 @@ public final class SeatAllocationDetailsDTO {
                 profile.getLastName(),
                 profile.getGender(),
                 profile.getGitlabUsername(),
+                profile.getNotes(),
                 profile.getEmail(),
                 profile.getDietTypes(),
                 profile.getAuthorities()

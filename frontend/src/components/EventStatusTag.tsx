@@ -1,4 +1,4 @@
-import { Tag } from "antd";
+import { Tag } from "utils/antd.tsx";
 import { EVENT_STATUS_COLORS, type EventStatus } from "../types/event.ts";
 
 export type EventStatusTagSize = "big" | "small";

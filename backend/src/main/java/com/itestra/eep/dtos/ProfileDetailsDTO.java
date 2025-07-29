@@ -27,6 +27,8 @@ public class ProfileDetailsDTO implements Serializable {
 
     String gitlabUsername;
 
+    String notes;
+
     String email;
 
     DietaryPreference[] dietTypes;

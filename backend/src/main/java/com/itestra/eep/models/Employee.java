@@ -2,9 +2,13 @@ package com.itestra.eep.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -34,14 +38,18 @@ public class Employee {
     private String location;
 
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<EmployeeParticipation> participations = new LinkedList<>();
+    private Set<EmployeeParticipation> participations = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
             name = "previous_matches",
             schema = "organization",
-            joinColumns = @JoinColumn(name = "first_employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "second_employee_id"))
-    private Set<Employee> employees = new LinkedHashSet<>();
+            joinColumns = @JoinColumn(name = "first_employee_id")
+    )
+    @Column(name = "second_employee_id")
+    private Set<UUID> previousMatches = new LinkedHashSet<>();
+
+    @Formula("(select count(*) from organization.employee_participation ep where ep.profile_id = profile_id)")
+    private int participationCount;
 
 }

@@ -52,6 +52,7 @@ public class ProfileControllerIntegrationTest {
             .gitlabUsername("johndoe")
             .email("john.doe@example.com")
             .dietTypes(new DietaryPreference[]{DietaryPreference.VEGETARIAN})
+            .notes("test note")
             .authorities(Set.of(Role.ADMIN))
             .build();
 
@@ -61,6 +62,7 @@ public class ProfileControllerIntegrationTest {
                         profile.getLastName(),
                         profile.getGender(),
                         profile.getGitlabUsername(),
+                        profile.getNotes(),
                         profile.getEmail(),
                         profile.getDietTypes(),
                         Set.of(Role.ADMIN)

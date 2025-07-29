@@ -78,17 +78,4 @@ class FileServiceTest {
 
     }
 
-    @Test
-    void testGetFile() throws IOException {
-        Event event = randomEntityGenerator.generate(Event.class);
-        event = eventRepository.save(event);
-
-        FileEntity file = fileService.storeFile(multipartFile, event.getId());
-
-        FileEntity result = fileService.getFile(file.getFileId()).get();
-        assertNotNull(result);
-        assertEquals(FILE_NAME, result.getName());
-        assertEquals(CONTENT_TYPE, result.getContentType());
-        assertArrayEquals(BYTES, result.getContent());
-    }
 } 

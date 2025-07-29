@@ -2,14 +2,15 @@ package com.itestra.eep.repositories;
 
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.models.Event;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import com.itestra.eep.models.Profile;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,13 +20,27 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     boolean existsByIdAndVisitorParticipations_Profile_Id(UUID eventId, UUID visitorId);
 
-    @Override
-    @EntityGraph("Event.participations_files")
-    List<Event> findAll();
+    @Query("select e from Event e where e.id = ?1")
+    @EntityGraph(attributePaths = {"employeeParticipations.employee.previousMatches"})
+    Optional<Event> findByIdJoinedWithPreviousMatches(UUID id);
 
-    @EntityGraph("Event.participations_files")
-    List<Event> findByVisitorParticipations_Profile_Id(UUID participantId);
+    @EntityGraph("Event.files_schematics")
+    List<Event> findAllByDateAfter(LocalDateTime dateAfter);
 
+    @EntityGraph("Event.files_schematics")
+    List<Event> findByDateAfterAndVisitorParticipations_Profile_Id(LocalDateTime from, UUID participantId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT e FROM Event e WHERE e.id = :id")
+    Optional<Event> findByIdWithUpdateLock(@Param("id") UUID id);
+
+    @Modifying
+    @Query("UPDATE EmployeeParticipation p SET p.chair.id = :chairId WHERE p.id = :participationId")
+    void updateEmployeeParticipationChairId(@Param("participationId") UUID participationId, @Param("chairId") UUID chairId);
+
+    @Modifying
+    @Query("UPDATE VisitorParticipation v SET v.chair.id = :chairId WHERE v.id = :participationId")
+    void updateVisitorParticipationChairId(@Param("participationId") UUID participationId, @Param("chairId") UUID chairId);
 
     @Query("""
             SELECT new com.itestra.eep.dtos.SeatAllocationDetailsDTO(
@@ -52,22 +67,22 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             JOIN e.visitorParticipations v
             WHERE e.id = :eventId
             """)
-    List<SeatAllocationDetailsDTO> findSeatAllocationsByEventId(@Param("eventId") UUID eventId);
+    List<SeatAllocationDetailsDTO> findCurrentSeatAllocationsByEventId(@Param("eventId") UUID eventId);
 
-    @Modifying
-    @Query("""
-                UPDATE EmployeeParticipation p
-                SET p.chair.id = :chairId
-                WHERE p.id = :participationId
-            """)
-    void updateEmployeeParticipationChairId(@Param("participationId") UUID participationId, @Param("chairId") UUID chairId);
 
-    @Modifying
     @Query("""
-                UPDATE VisitorParticipation v
-                SET v.chair.id = :chairId
-                WHERE v.id = :participationId
+            SELECT p.employee.profile
+            FROM Event e
+            JOIN e.employeeParticipations p
+            WHERE e.id = :eventId
+            
+            UNION
+            
+            SELECT v.profile
+            FROM Event e
+            JOIN e.visitorParticipations v
+            WHERE e.id = :eventId
             """)
-    void updateVisitorParticipationChairId(@Param("participationId") UUID participationId, @Param("chairId") UUID chairId);
+    List<Profile> findAllParticipantProfilesByEventId(@Param("eventId") UUID eventId);
 
 }

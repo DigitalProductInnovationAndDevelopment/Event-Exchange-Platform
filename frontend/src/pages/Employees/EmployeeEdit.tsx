@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
-import { Button, Card, Form, message, Spin, Typography } from "antd";
+import { Button, Card, Form, Spin, Typography } from "utils/antd.tsx";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
 import type { Employee } from "types/employee.ts";
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
@@ -24,7 +25,7 @@ export const EmployeeEdit = () => {
         const data = (await getEmployeeById(employeeId!)) ?? null;
         setEmployee(data);
       } catch (err) {
-        message.error("Failed to fetch employee");
+        toast.error("Failed to fetch employee");
         console.error("Failed to fetch employee:", err);
       } finally {
         setLoading(false);
@@ -45,10 +46,8 @@ export const EmployeeEdit = () => {
       }
       // No gender normalization
       await updateEmployee(employeeId!, values);
-      message.success("Employee updated successfully");
       navigate(`/employees/${employeeId!}`);
     } catch (error) {
-      message.error("Failed to update employee");
       console.error("Error updating employee:", error);
     } finally {
       setSaving(false);

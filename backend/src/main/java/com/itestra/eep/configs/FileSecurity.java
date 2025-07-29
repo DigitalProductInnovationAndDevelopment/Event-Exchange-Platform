@@ -38,7 +38,7 @@ public class FileSecurity {
         // allow visitors or employees to download if they are participants of the event
         Optional<FileEntity> fileOpt = fileService.getFile(fileId);
         return fileOpt.isPresent() &&
-                eventService.isParticipant(fileOpt.get().getEvent().getId(), ((Profile) authentication.getPrincipal()).getId());
+                eventService.isParticipant(fileOpt.get().getEventId(), ((Profile) authentication.getPrincipal()).getId());
     }
 }
 

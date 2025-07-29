@@ -1,3 +1,5 @@
+import { Role } from "types/employee.ts";
+
 export interface UserType {
   email: string;
   name: string;
@@ -16,7 +18,11 @@ export class User implements UserType {
   }
 
   isAdmin() {
-    return Array.isArray(this.roles) && this.roles.includes("ADMIN");
+    return Array.isArray(this.roles) && this.roles.includes(Role.ADMIN);
+  }
+
+  isVisitor() {
+    return Array.isArray(this.roles) && this.roles.includes(Role.VISITOR);
   }
 }
 

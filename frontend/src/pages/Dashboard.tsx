@@ -1,8 +1,16 @@
-import { Button, Card, Col, Divider, List, Row, Space, Statistic, Typography } from "antd";
-import { CalendarOutlined, EyeOutlined, FireOutlined, PlusOutlined, TeamOutlined } from "@ant-design/icons";
+import { Button, Card, Col, List, Row, Space, Spin, Typography } from "utils/antd.tsx";
+import {
+  CalendarOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  TeamOutlined,
+  UsergroupAddOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Event } from "../types/event";
+import { type Profile } from "../types/employee";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
@@ -10,10 +18,25 @@ import { useAuth } from "../contexts/AuthContext.tsx";
 
 const { Title, Text } = Typography;
 
+// Helper to aggregate dietary combinations
+function aggregateDietaryCombinations(participantProfiles: Profile[]): Record<string, number> {
+  const comboCounts: Record<string, number> = {};
+  for (const p of participantProfiles) {
+    if (p.dietTypes && p.dietTypes.length > 0) {
+      // Sort to ensure consistent key for same combinations
+      const comboKey = p.dietTypes.slice().sort().join(", ");
+      comboCounts[comboKey] = (comboCounts[comboKey] || 0) + 1;
+    } else {
+      comboCounts["None"] = (comboCounts["None"] || 0) + 1;
+    }
+  }
+  return comboCounts;
+}
+
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const { getEvents } = useApiService();
   const [loading, setLoading] = useState(true);
   const isAdmin = user?.isAdmin();
@@ -21,17 +44,11 @@ export const Dashboard = () => {
   useEffect(() => {
     (async () => {
       try {
-        // Mock API calls - replace with actual API endpoints
-        // const eventsResponse = await fetch('/api/events');
-        // const statsResponse = await fetch('/api/dashboard/stats');
-        // const eventsData = await eventsResponse.json();
-        // const statsData = await statsResponse.json();
         setLoading(true);
-        const data = await getEvents();
-        setEvents(data ?? []);
+        const data = await getEvents(dayjs().startOf("day").toISOString());
+        setUpcomingEvents(data?.filter(event => new Date(event.date).getTime() > new Date().getTime()) ?? []);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
-        // TODO: Handle error appropriately
       } finally {
         setLoading(false);
       }
@@ -57,8 +74,7 @@ export const Dashboard = () => {
                     size="large"
                     block
                     onClick={() => navigate("/events/create")}
-                  >
-                    Create New Event
+                  > Create New Event
                   </Button>
                 </Col>)
             }
@@ -88,101 +104,95 @@ export const Dashboard = () => {
                 </Col>)
             }
           </Row>
-
-          <Card title="Upcoming Events" className="shadow-sm" bodyStyle={{ padding: "12px" }}>
-            <List
-              loading={loading}
-              dataSource={events
-                .filter(event => new Date(event.date).getTime() > new Date().getTime())
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
-              renderItem={event => (
-                <List.Item
-                  actions={[
-                    <Button icon={<EyeOutlined />} onClick={() => navigate(`/events/${event.id}`)}>
-                      View
-                    </Button>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={
-                      <Space>
-                        <Link className="text-xl" to={`/events/${event.id}`}>
-                          {event.name}
-                        </Link>
-                        <EventStatusTag status={event.status} />
-                      </Space>
-                    }
-                    description={
-                      <Space direction="vertical" size="small">
-                        <Space>
-                          <CalendarOutlined /> {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}
-                          <span style={{ marginLeft: 24 }} />
-                          <TeamOutlined /> {event.participantCount}/{event.capacity} participants
-                        </Space>
-                        <Space>
-                          <FireOutlined />{" "}
-                          {Number(((event.participantCount / event.capacity) * 100).toFixed(2))} %
-                          engagement
-                        </Space>
-                      </Space>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card
-            className="shadow-sm h-full"
-            title={
-              <Title level={4} className="mb-0">
-                Event Statistics
-              </Title>
-            }
-          >
-            <div className="space-y-2">
-              <Statistic
-                loading={loading}
-                title="Total Events"
-                value={events.length}
-                prefix={<CalendarOutlined />}
-              />
-              <Divider className="my-4" />
-
-              <Statistic
-                loading={loading}
-                title="Total Participants"
-                value={events.reduce((sum, event) => sum + event.participantCount, 0)}
-                prefix={<TeamOutlined />}
-              />
-              <Divider className="my-4" />
-
-              <Statistic
-                loading={loading}
-                title="Average Engagement"
-                value={
-                  // TODO: Fix this calculation
-                  Number(
-                    (
-                      events.reduce(
-                        (sum, event) =>
-                          sum +
-                          (event.capacity > 0
-                            ? (event.participantCount / event.capacity) * 100
-                            : 0),
-                        0
-                      ) / (events.length || 1)
-                    ).toFixed(2)
-                  )
-                }
-                suffix="%"
-                prefix={<FireOutlined />}
-              />
-            </div>
-          </Card>
         </Col>
       </Row>
+
+      <Card title="Upcoming Events" className="shadow-sm w-full" bodyStyle={{ padding: "12px" }}>
+        <List
+          loading={loading}
+          dataSource={upcomingEvents
+            .filter(event => new Date(event.date).getTime() > new Date().getTime())
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())}
+          renderItem={event => {
+            const participants = event.participantDetails || [];
+            const employeeCount = event.employeeParticipantCount;
+            const guestCount = event.visitorParticipantCount;
+            const dietaryCombinations = aggregateDietaryCombinations(participants);
+            return (
+              <List.Item
+                actions={[
+                  <Button icon={<EyeOutlined />} onClick={() => navigate(`/events/${event.id}`)}>
+                    View
+                  </Button>,
+                ]}
+              >
+                <List.Item.Meta
+                  title={
+                    <Space>
+                      <Link className="text-xl" to={`/events/${event.id}`}>
+                        {event.name}
+                      </Link>
+                      <EventStatusTag status={event.status} />
+                    </Space>
+                  }
+                  description={
+                    <div>
+                      {loading ? (
+                        <Spin size="small" />
+                      ) : (
+                        <Space direction="vertical" size="small">
+                          <Space className="flex flex-wrap items-center gap-x-8 gap-y-2">
+                            <Space className="items-center">
+                              <CalendarOutlined />
+                              <span>{dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</span>
+                            </Space>
+                            <Space className="items-center">
+                              <TeamOutlined />
+                              <span>
+                                {event.employeeParticipantCount + event.visitorParticipantCount}/{event.capacity} participants
+                              </span>
+                            </Space>
+                            <Space className="items-center">
+                              <UserOutlined />
+                              <span><b>Employees:</b> {employeeCount}</span>
+                            </Space>
+                            <Space className="items-center">
+                              <UsergroupAddOutlined />
+                              <span><b>Guests:</b> {guestCount}</span>
+                            </Space>
+                          </Space>
+                          <Space direction="vertical" size="small">
+                            <b>Dietary Preference Combinations </b>
+                            <Space wrap>
+                              {Object.keys(dietaryCombinations).length === 0 && <span style={{ color: '#aaa' }}>No data</span>}
+                              {Object.entries(dietaryCombinations).map(([combo, count]) => {
+                                const diets = combo === "None" ? [] : combo.split(", ");
+                                const prettyCombo = diets.length === 0
+                                  ? 'Regular'
+                                  : diets.map(diet =>
+                                    diet
+                                      .replace(/_/g, ' ')
+                                      .toLowerCase()
+                                      .replace(/(^|\s)\S/g, l => l.toUpperCase())
+                                  ).join(', ');
+                                return (
+                                  <span key={combo} style={{ marginLeft: 4 }}>
+                                    {prettyCombo} x {count}
+                                  </span>
+                                );
+                              })}
+                            </Space>
+                          </Space>
+                        </Space>
+                      )}
+                    </div>
+                  }
+                />
+              </List.Item>
+            );
+          }}
+        />
+      </Card>
     </div>
   );
 };

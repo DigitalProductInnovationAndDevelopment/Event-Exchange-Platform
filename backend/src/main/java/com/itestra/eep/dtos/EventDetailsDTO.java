@@ -30,11 +30,15 @@ public class EventDetailsDTO implements Serializable {
 
     String description;
 
+    String notes;
+
     Integer capacity;
 
     String address;
 
-    Long participantCount;
+    Long employeeParticipantCount;
+
+    Long visitorParticipantCount;
 
     String status;
 
@@ -43,6 +47,8 @@ public class EventDetailsDTO implements Serializable {
     LocalDateTime date;
 
     List<FileDetailsDTO> fileEntities = new ArrayList<>();
+
+    List<ProfileMinimalDetailsDTO> participantDetails = new ArrayList<>();
 
     SchematicsDetailsDTO schematics;
 

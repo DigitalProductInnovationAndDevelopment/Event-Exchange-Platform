@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Descriptions, message, Modal, Space, Spin, Table, Typography } from "antd";
+import { Button, Card, Descriptions, Modal, Space, Spin, Table, Typography } from "utils/antd.tsx";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";
@@ -8,6 +8,8 @@ import { Breadcrumb } from "components/Breadcrumb";
 import { DIET_TYPES } from "./EmployeeForm";
 import type { EventType } from "types/event.ts";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
+import { useAuth } from "../../contexts/AuthContext.tsx";
+
 
 const { Title } = Typography;
 
@@ -64,6 +66,8 @@ export const EmployeeDetails = () => {
   const { getEmployeeById, deleteEmployee } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin();
 
   useEffect(() => {
     (async () => {
@@ -128,10 +132,8 @@ export const EmployeeDetails = () => {
   const handleDeleteConfirm = async () => {
     try {
       await deleteEmployee(employeeId!);
-      message.success("Employee deleted successfully");
       navigate("/employees");
     } catch (error) {
-      message.error("Failed to delete employee");
       console.error("Error deleting employee:", error);
     } finally {
       setDeleteModalOpen(false);
@@ -213,6 +215,11 @@ export const EmployeeDetails = () => {
                 : field.value || ""}
             </Descriptions.Item>
           ))}
+          {isAdmin && employee?.profile.notes ?
+            (<Descriptions.Item label="Notes" span={3}>
+              {employee?.profile.notes}
+            </Descriptions.Item>) : null
+          }
         </Descriptions>
       </Card>
 

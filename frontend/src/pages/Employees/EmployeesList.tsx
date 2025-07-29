@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
-import { DownloadOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "utils/antd.tsx";
+import {
+  DownloadOutlined,
+  ExclamationCircleOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 import { type Employee, getFullName, Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
-import { exportToCSV } from "../../utils/utils";
+import { exportEmployeesToCSV } from "utils/utils.ts";
 import { parse } from "papaparse";
 import moment from "moment/moment";
 
@@ -19,66 +26,65 @@ function parseDate(dateStr: string) {
 
 // Define table columns with correct types
 const columns = (
-  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void
+  onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
+  onDeleteClick: (employeeId: string, employeeName: string) => void
 ): ColumnsType<Employee> => [
-  {
-    title: "Name",
-    dataIndex: ["profile", "name"],
-    key: "profile.name",
-    sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
-  },
-  {
-    title: "Last Name",
-    dataIndex: ["profile", "lastName"],
-    key: "profile.lastName",
-    sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
-  },
-  {
-    title: "Email",
-    dataIndex: ["profile", "email"],
-    key: "profile.email",
-  },
-  {
-    title: "Location",
-    dataIndex: "location",
-    key: "location",
-  },
-  {
-    title: "Date Joined",
-    dataIndex: "employmentStartDate",
-    key: "employmentStartDate",
-  },
-  {
-    title: "Events",
-    dataIndex: "attendedEventsCount",
-    key: "attendedEventsCount",
-    render: (_count: number, record: Employee) => (
-      <Button
-        type="link"
-        style={{ color: "black" }}
-        onClick={() => onNavigate(record.profile.id, "events")}
-      >
-        {record.participations?.length || 0}
-      </Button>
-    ),
-  },
-  {
-    title: "Actions",
-    key: "actions",
-    render: (_, record: Employee) => (
-      <Space size="small" align="end">
+    {
+      title: "Name",
+      dataIndex: ["profile", "name"],
+      key: "profile.name",
+      sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
+    },
+    {
+      title: "Last Name",
+      dataIndex: ["profile", "lastName"],
+      key: "profile.lastName",
+      sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+    },
+    {
+      title: "Date Joined",
+      dataIndex: "employmentStartDate",
+      key: "employmentStartDate",
+    },
+    {
+      title: "Events",
+      dataIndex: "attendedEventsCount",
+      key: "attendedEventsCount",
+      render: (_count: number, record: Employee) => (
         <Button
-          type="default"
-          icon={<EyeOutlined />}
-          onClick={() => onNavigate(record.profile.id)}
-          style={{ background: "#fff", border: "1px solid #d9d9d9" }}
+          type="link"
+          style={{ color: "black" }}
+          onClick={() => onNavigate(record.profile.id, "events")}
         >
-          View
+          {record.participationCount}
         </Button>
-      </Space>
-    ),
-  },
-];
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record: Employee) => (
+        <Space size="small" align="end">
+          <Button
+            type="default"
+            icon={<EyeOutlined />}
+            onClick={() => onNavigate(record.profile.id)}
+            style={{ background: "#fff", border: "1px solid #d9d9d9" }}
+          >
+            View
+          </Button>
+          <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, getFullName(record.profile))}>
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
 function downloadCSV(): void {
   const employees: Employee[] = [
@@ -89,11 +95,11 @@ function downloadCSV(): void {
         gender: "Female",
         email: "alice.smith@example.com",
         dietTypes: [],
+        gitlabUsername: "asmith",
         id: "",
       },
       location: "Munich",
       employmentStartDate: "2023-01-15",
-      projects: [],
     },
     {
       profile: {
@@ -102,11 +108,11 @@ function downloadCSV(): void {
         gender: "Male",
         email: "bob.johnson@example.com",
         dietTypes: [],
+        gitlabUsername: "bjohn",
         id: "",
       },
       location: "Berlin",
       employmentStartDate: "2022-09-01",
-      projects: [],
     },
     {
       profile: {
@@ -115,11 +121,11 @@ function downloadCSV(): void {
         gender: "Female",
         email: "clara.lee@example.com",
         dietTypes: [],
+        gitlabUsername: "clee",
         id: "",
       },
       location: "Munich",
       employmentStartDate: "2024-03-10",
-      projects: [],
     },
     {
       profile: {
@@ -128,11 +134,11 @@ function downloadCSV(): void {
         gender: "Female",
         email: "david.brown@example.com",
         dietTypes: [],
+        gitlabUsername: "dbrown",
         id: "",
       },
       location: "Frankfurt",
       employmentStartDate: "2023-11-20",
-      projects: [],
     },
   ];
   const headers = [
@@ -142,6 +148,7 @@ function downloadCSV(): void {
     "Employment Start Date",
     "Email",
     "Gender",
+    "Gitlab Username"
   ];
 
   const rows = employees.map(emp => [
@@ -151,6 +158,7 @@ function downloadCSV(): void {
     emp.employmentStartDate,
     emp.profile.email,
     emp.profile.gender,
+    emp.profile.gitlabUsername,
   ]);
 
   const csvContent = [headers, ...rows].map(e => e.map(val => `${val}`).join(";")).join("\n");
@@ -171,11 +179,30 @@ export const EmployeesList = () => {
   const [locationFilter, setLocationFilter] = useState<string | undefined>(undefined);
   const [fetchedEmployees, setEmployees] = useState<Employee[]>([]);
   const { getEmployees, createEmployeeBatch } = useApiService();
+  const { deleteEmployee } = useApiService();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState<{ id: string; name: string } | null>(null);
+
+  const handleDeleteEmployee = async () => {
+    if (!employeeToDelete) return;
+    const res = await deleteEmployee(employeeToDelete.id);
+    if (res !== undefined) {
+      setEmployees(prev => prev.filter(e => e.profile.id !== employeeToDelete.id));
+    }
+    setDeleteModalOpen(false);
+    setEmployeeToDelete(null);
+  };
+
+  const handleDeleteClick = (employeeId: string, employeeName: string) => {
+    setEmployeeToDelete({ id: employeeId, name: employeeName });
+    setDeleteModalOpen(true);
+  };
+
   const [pageSize, setPageSize] = useState<number>(10);
   const [loading, setLoading] = useState<boolean>(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
-  const [importFile, setImportFile] = useState<File | null>(null);
   const [importedRows, setImportedRows] = useState<any[]>([]);
+  const [fileInputKey, setFileInputKey] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -202,26 +229,23 @@ export const EmployeesList = () => {
     [employees]
   );
 
+  const ALL_LOCATIONS_VALUE = '__ALL__';
+
   // Filter employees by name and location
   const filteredData = useMemo(() => {
     return employees.filter(item => {
       const matchesSearch =
         searchText === "" ||
         (getFullName(item.profile)).toLowerCase().includes(searchText.toLowerCase());
-      const matchesLocation = !locationFilter || item.location === locationFilter;
+      // If locationFilter is undefined, show all locations
+      const matchesLocation = locationFilter === undefined || item.location === locationFilter;
       return matchesSearch && matchesLocation;
     });
   }, [employees, searchText, locationFilter]);
 
   // Handle export action
-  const handleImportEmployeeTemplate = () => {
-    downloadCSV();
-    toast.success("Downloaded employee import template .csv");
-  };
-
-  // Handle export action
   const handleExport = () => {
-    exportToCSV(filteredData);
+    exportEmployeesToCSV(filteredData);
     toast.success("Exported employee data as CSV");
   };
 
@@ -241,7 +265,6 @@ export const EmployeesList = () => {
   // CSV file parsing handler for employee import
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImportFile(file || null);
     if (file) {
       const reader = new FileReader();
       reader.onload = event => {
@@ -250,14 +273,13 @@ export const EmployeesList = () => {
           header: true,
           skipEmptyLines: true,
           complete: results => {
-            // Expecting columns: name, last name, location, employment start date, employment type, email, gender, gitlab username
+            // Expecting columns: name, last name, location, employment start date, email, gender, gitlab username
             const rows = (results.data as any[])
               .map(row => ({
                 name: row["Name"]?.trim() || "",
                 lastName: row["Last Name"]?.trim() || "",
                 location: row["Location"]?.trim() || "",
                 startDate: row["Employment Start Date"]?.trim() || "",
-                employmentType: row["Employment Type"]?.trim() || "",
                 email: row["Email"]?.trim() || "",
                 gender: row["Gender"]?.trim() || "",
                 gitlabUsername: row["Gitlab Username"]?.trim() || "",
@@ -284,28 +306,34 @@ export const EmployeesList = () => {
         name: row.name.trim(),
         lastName: row.lastName.trim(),
         gender: row.gender,
-        gitlabUsername: row.gitlabUsername,
+        gitlabUsername: row.gitlabUsername.length > 0 ? row.gitlabUsername : null,
+        notes: null,
         email: row.email,
         dietTypes: [], // Could be extended to parse from CSV
         authorities: [Role.EMPLOYEE],
       },
       employmentStartDate: parseDate(row.startDate),
-      employmentType: row.employmentType,
       location: row.location,
-      projects: [],
     }));
     try {
+      setLoading(true);
       const result = await createEmployeeBatch(payload);
       if (result) {
-        toast.success("Employees imported successfully!");
+        toast.success(
+          `Employees imported successfully! Created: ${result.insertedEmployees.length}, Updated: ${result.updatedEmployees.length}`,
+          { duration: 6000 }
+        );
         setImportModalOpen(false);
-        setImportFile(null);
         setImportedRows([]);
-        employees.push(...result.map(e => ({ ...e, key: e.profile.id })));
+        // Force file input to re-render and clear
+        setFileInputKey(prev => prev + 1);
+        employees.push(...result.insertedEmployees.map(e => ({ ...e, key: e.profile.id })));
         setEmployees([...employees]);
       }
     } catch (err) {
       toast.error("Failed to import employees");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -316,7 +344,7 @@ export const EmployeesList = () => {
         <Title level={2}>Employees</Title>
         <Space>
           <Button type="primary" icon={<UploadOutlined />} onClick={() => setImportModalOpen(true)}>
-            Import Employees
+            Import / Update Employees
           </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => handleNavigate()}>
             Add Employee
@@ -325,7 +353,7 @@ export const EmployeesList = () => {
       </div>
       <Card className="mb-6">
         <Row gutter={16}>
-          <Col span={8}>
+          <Col span={12}>
             <Input
               placeholder="Search Employee Name or ID"
               prefix={<SearchOutlined />}
@@ -340,21 +368,15 @@ export const EmployeesList = () => {
               allowClear
               placeholder="Location"
               style={{ width: "100%" }}
-              value={locationFilter}
-              onChange={value => setLocationFilter(value)}
-              options={uniqueLocations.map(location => ({ value: location, label: location }))}
+              value={locationFilter === undefined ? ALL_LOCATIONS_VALUE : locationFilter}
+              onChange={value => setLocationFilter(value === ALL_LOCATIONS_VALUE ? undefined : value)}
+              options={[
+                { value: ALL_LOCATIONS_VALUE, label: "All Locations" },
+                ...uniqueLocations.map(location => ({ value: location, label: location }))
+              ]}
             />
           </Col>
           <Col span={6}>
-            <Button
-              icon={<DownloadOutlined />}
-              onClick={handleImportEmployeeTemplate}
-              style={{ width: "100%" }}
-            >
-              Download Import Template
-            </Button>
-          </Col>
-          <Col span={4}>
             <Button icon={<DownloadOutlined />} onClick={handleExport} style={{ width: "100%" }}>
               Export
             </Button>
@@ -362,7 +384,7 @@ export const EmployeesList = () => {
         </Row>
       </Card>
       <Table
-        columns={columns(handleNavigate)}
+        columns={columns(handleNavigate, handleDeleteClick)}
         dataSource={filteredData}
         bordered={false}
         rowKey={record => record.profile.id}
@@ -401,22 +423,34 @@ export const EmployeesList = () => {
         open={importModalOpen}
         onCancel={() => {
           setImportModalOpen(false);
-          setImportFile(null);
           setImportedRows([]);
+          // Force file input to re-render and clear
+          setFileInputKey(prev => prev + 1);
         }}
         footer={[
           <Button
             key="addall"
             type="primary"
-            disabled={importedRows.length === 0}
+            disabled={importedRows.length === 0 || loading}
             onClick={handleAddAllEmployees}
           >
             Add All
           </Button>,
         ]}
       >
-        <Input type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
-        {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
+        <div style={{ marginBottom: 12, color: '#faad14' }}>
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last
+          Name</code>, <code>Location</code>, <code>Employment Start
+          Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>. Note: <code>Gitlab
+          Username</code> is optional and can stay empty.
+        </div>
+        <Button
+          style={{ marginBottom: 12 }}
+          onClick={downloadCSV}
+        >
+          Download CSV Template
+        </Button>
+        <Input key={fileInputKey} type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
         {importedRows.length > 0 && (
           <Table
             columns={[
@@ -428,8 +462,29 @@ export const EmployeesList = () => {
             dataSource={importedRows.map((row, idx) => ({ ...row, key: idx }))}
             pagination={false}
             className="mt-4"
+            loading={loading}
           />
         )}
+      </Modal>
+
+      <Modal
+        title={
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <ExclamationCircleOutlined style={{ color: "#faad14" }} />
+            Confirm Delete
+          </div>
+        }
+        centered
+        open={deleteModalOpen}
+        onOk={handleDeleteEmployee}
+        onCancel={() => { setDeleteModalOpen(false); setEmployeeToDelete(null); }}
+        okText="Yes, Delete"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+        width={400}
+      >
+        <p>Are you sure you want to delete this employee{employeeToDelete ? ` (${employeeToDelete.name})` : ""}?</p>
+        <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone.</p>
       </Modal>
     </div>
   );

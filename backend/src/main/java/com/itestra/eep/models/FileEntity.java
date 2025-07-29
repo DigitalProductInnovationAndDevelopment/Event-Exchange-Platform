@@ -23,8 +23,11 @@ public class FileEntity {
     @Column(name = "file_id", nullable = false)
     private UUID fileId;
 
+    @Column(name = "event_id")
+    private UUID eventId;
+
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
 
     @Column(name = "name", nullable = false)
@@ -45,6 +48,11 @@ public class FileEntity {
     @JdbcType(value = VarbinaryJdbcType.class)
     private byte[] content;
 
+
+    public void setEvent(Event event) {
+        this.event = event;
+        this.eventId = event.getId();
+    }
 
     @PrePersist
     protected void onCreate() {

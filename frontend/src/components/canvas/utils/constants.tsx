@@ -9,13 +9,10 @@ export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickW
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGETARIAN: "green",
-  PESCATARIAN: "blue",
-  HALAL: "orange",
-  KOSHER: "purple",
-  VEGAN: "magenta",
-  LACTOSE_FREE: "cyan",
-  GLUTEN_FREE: "lime",
-  KETO: "gold",
+  VEGAN: "lime",
+  LACTOSE_FREE: "blue",
+  GLUTEN_FREE: "magenta",
+  FRUCTOSE_FREE: "orange"
 };
 
 export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
@@ -177,20 +174,20 @@ export const getEditableParameters = (
   }
 };
 
-export const shapeFactory = (type: ShapeType) => {
+export const shapeFactory = (type: ShapeType, stageCenter: { x: number, y: number }) => {
   switch (type) {
     case "chair":
-      return new Chair();
+      return new Chair(stageCenter);
     case "rectTable":
-      return new Table(TABLE_TYPES.RECT);
+      return new Table(TABLE_TYPES.RECT, stageCenter);
     case "circleTable":
-      return new Table(TABLE_TYPES.CIRCLE);
+      return new Table(TABLE_TYPES.CIRCLE, stageCenter);
     case "wall":
-      return new Wall();
+      return new Wall(stageCenter);
     case "arrow":
-      return new Arrow();
+      return new Arrow(stageCenter);
     case "text":
-      return new Text();
+      return new Text(stageCenter);
     default:
       throw new Error("Unsupported shape type! Check code for this error");
   }

@@ -32,6 +32,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final VisitorParticipationRepository visitorParticipationRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Profile findVisitorProfileByAccessLink(String accessLink) {
         return visitorParticipationRepository.findByAccessLink(accessLink, LocalDateTime.now()).orElseThrow(VisitorLinkInvalidException::new);
     }

@@ -12,21 +12,15 @@ import {
   Switch,
   Table,
   Typography,
-} from "antd";
-import {
-  AppstoreOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+} from "utils/antd.tsx";
+import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Breadcrumb } from "components/Breadcrumb";
 import type { ColumnsType } from "antd/es/table";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import type { Event, EventStatus, EventType, FileEntity } from "types/event";
+import type { Event, EventMinimal, EventStatus, EventType, FileEntity } from "types/event";
 import { EVENT_STATUS_COLORS, EVENT_TYPE_COLORS } from "types/event";
 import useApiService, { BASE_URL } from "services/apiService.ts";
 import "./carousel_arrows.css";
@@ -42,7 +36,7 @@ export const EventsList = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedType, setSelectedType] = useState<EventType | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
-  const [fetchedEvents, setEvents] = useState<Event[]>([]);
+  const [fetchedEvents, setEvents] = useState<EventMinimal[]>([]);
   const [loading, setLoading] = useState(true);
   const { getEvents } = useApiService();
 
@@ -91,14 +85,14 @@ export const EventsList = () => {
       title: "Event Name",
       dataIndex: "name",
       key: "name",
-      width: "34%",
+      width: "28%",
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
-      width: "20%",
+      width: "16%",
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       render: (date: string) => dayjs(date).format("MMMM D, YYYY, HH:mm"),
     },
@@ -106,7 +100,7 @@ export const EventsList = () => {
       title: "Type",
       dataIndex: "eventType",
       key: "eventType",
-      width: "14%",
+      width: "10%",
       render: (type: EventType) => <EventTypeTag type={type} />,
       filters: Object.entries(EVENT_TYPE_COLORS).map(([type]) => ({
         text: type.replace(/_/g, " "),
@@ -119,7 +113,20 @@ export const EventsList = () => {
       dataIndex: "participantCount",
       key: "participantCount",
       width: "8%",
-      sorter: (a, b) => a.participantCount - b.participantCount,
+      render: (_: number, record: Event) => (record.employeeParticipantCount + record.visitorParticipantCount),
+      sorter: (a, b) => (a.employeeParticipantCount + a.visitorParticipantCount) - (b.employeeParticipantCount + b.visitorParticipantCount),
+    },
+    {
+      title: "Employees",
+      key: "employees",
+      width: "8%",
+      render: (_, record) => record.employeeParticipantCount,
+    },
+    {
+      title: "Guests",
+      key: "guests",
+      width: "8%",
+      render: (_, record) => record.visitorParticipantCount,
     },
     {
       title: "Status",
@@ -253,7 +260,7 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participantCount}</div>
+                          <div>Participants: {event.employeeParticipantCount + event.visitorParticipantCount} </div>
                           <div>
                             {(() => {
                               const filteredImages = event.fileEntities?.filter(
@@ -343,7 +350,7 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.participantCount}</div>
+                          <div>Participants: {event.employeeParticipantCount + event.visitorParticipantCount}</div>
                         </div>
                       </div>
                     }

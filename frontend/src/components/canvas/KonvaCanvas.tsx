@@ -1,12 +1,12 @@
 import { useCanvas } from "./contexts/CanvasContext.tsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Group, Layer, Stage, Transformer } from "react-konva";
 import { type ElementProperties, renderElement, type UUID } from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
 import Konva from "konva";
 import type { Table } from "./elements/Table.tsx";
 
-import { setState } from "./actions/actions.tsx";
+import { setChairIdForManualAssignment, setState } from "./actions/actions.tsx";
 import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import StagePreview from "components/canvas/elements/StagePreview.tsx";
@@ -27,10 +27,26 @@ import {
   handleTransformEnd,
   handleWheel,
 } from "components/canvas/EventListeners.tsx";
+import type { Chair } from "components/canvas/elements/Chair.tsx";
 
-function KonvaCanvas() {
+export interface KonvaCanvasProps {
+  stageReference?: React.RefObject<Konva.Stage | null>,
+  schematicsUUID?: UUID,
+  eventName?: string,
+}
+
+function KonvaCanvas({ stageReference, schematicsUUID }: KonvaCanvasProps) {
   const { state, dispatch } = useCanvas();
-  const stageRef = useRef<Konva.Stage | null>(null);
+  let stageRef = useRef<Konva.Stage | null>(null);
+  let { schematicsId } = useParams();
+
+  if (stageReference) {
+    stageRef = stageReference;
+  }
+  if (schematicsUUID) {
+    schematicsId = schematicsUUID;
+  }
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
@@ -41,7 +57,6 @@ function KonvaCanvas() {
   const { getSchematics } = useApiService();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [initiated, setInitiated] = useState(false);
-  const { schematicsId } = useParams();
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const dragLayer = useRef<Konva.Layer | null>(null);
   const mainLayer = useRef<Konva.Layer | null>(null);
@@ -56,21 +71,22 @@ function KonvaCanvas() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!initiated && schematicsId) {
+      if (schematicsId && !initiated) {
         const fetchedAppState = await getSchematics(schematicsId);
-        if (fetchedAppState && !initiated) {
-          dispatch(setState({ ...fetchedAppState, buildMode: 0 }));
+        setInitiated(true);
+        dispatch(setState({ ...fetchedAppState!, buildMode: 0 }));
+        setScale(fetchedAppState!.scale);
+        stageRef.current?.setPosition(fetchedAppState!.canvasPosition ? fetchedAppState!.canvasPosition : {
+          x: 0,
+          y: 0,
+        });
+        const container = stageRef!.current?.container();
+        if (container) {
+          container.style.cursor = "grab";
         }
       }
     };
-    fetchData().then(() => {
-      stageRef.current?.setPosition(state.canvasPosition ? state.canvasPosition : { x: 0, y: 0 });
-      const container = stageRef!.current!.container();
-      container.style.cursor = "grab";
-
-      setScale(state.scale);
-      setInitiated(true);
-    });
+    fetchData();
   }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
 
   useEffect(() => {
@@ -81,7 +97,7 @@ function KonvaCanvas() {
   useEffect(() => {
     const updateContainerSize = () => {
       if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
+        const rect = containerRef?.current.getBoundingClientRect();
         setContainerSize({
           width: rect.width,
           height: rect.height,
@@ -109,11 +125,11 @@ function KonvaCanvas() {
   }, [selectedIds]);
 
   useEffect(() => {
-    const handleKeyDownWrapper = (e) => {
+    const handleKeyDownWrapper = (e: KeyboardEvent) => {
       handleKeyDown(e, dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates);
     };
 
-    const handleKeyUpWrapper = (e) => {
+    const handleKeyUpWrapper = (e: KeyboardEvent) => {
       handleKeyUp(e, setIsShiftPressed, stageRef);
     };
 
@@ -127,7 +143,7 @@ function KonvaCanvas() {
     };
   }, [dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, stageRef]);
 
-  function getTableConnectedChairIds(tableId: UUID): UUID[] {
+  function getConnectedChairIdsOfTable(tableId: UUID): UUID[] {
     const table: ElementProperties | undefined = state.elements?.find(el => (el.type === "rectTable" || el.type === "circleTable") && el.id === tableId);
     if (table) {
       const chairIds: UUID[] = (table as unknown as Table).attachedChairs ?? [];
@@ -137,12 +153,30 @@ function KonvaCanvas() {
     }
   }
 
-  const selectedIdsProxy = [...selectedIds, ...(selectedIds.length === 1 ? getTableConnectedChairIds(selectedIds[0]) : [])];
+  function handleManualInsertionLogicForSeatAllocation() {
+    if (selectedIds.length === 1) {
+      const chairs = state.elements.filter((el) => el.type === "chair") as Chair[];
+
+      const selectedChair = chairs.find((chair) => chair.id === selectedIds[0]);
+      if (selectedChair) {
+        if (!selectedChair.assigneeProfileId && (state.chairIdForManualAssignment === null || (state.chairIdForManualAssignment !== selectedChair.id))) {
+          dispatch(setChairIdForManualAssignment(selectedChair.id));
+        } else if (selectedChair.assigneeProfileId && state.chairIdForManualAssignment !== null && state.chairIdForManualAssignment === selectedChair.id) {
+          dispatch(setChairIdForManualAssignment(null));
+        }
+      }
+    }
+  }
+
+  handleManualInsertionLogicForSeatAllocation();
+
+
+  const extendedSelectedIds = [...selectedIds, ...(selectedIds.length === 1 ? getConnectedChairIdsOfTable(selectedIds[0]) : [])];
 
   return (
     <div className="space-y-6">
       <div className="App overflow-hidden bg-white"
-           style={{ display: "flex", border: "1px solid #e0e0e0", flexDirection: "row" }}>
+           style={{ display: "flex", height: 600, border: "1px solid #e0e0e0", flexDirection: "row" }}>
 
         <Toolbox dispatch={dispatch} stageRef={stageRef} state={state} selectedIds={selectedIds} />
 
@@ -166,7 +200,7 @@ function KonvaCanvas() {
 
             <Layer ref={mainLayer}>
               {/* this is where we display elements */}
-              {state.elements?.filter(el => !selectedIdsProxy.includes(el.id)).map((el) => {
+              {state.elements?.filter(el => !extendedSelectedIds.includes(el.id)).map((el) => {
                 return (
                   <Group
                     key={el.id}
@@ -206,7 +240,6 @@ function KonvaCanvas() {
                 state.elements.find((el) => el.type === "chair") && (
                   <NeighbourArrows
                     state={state}
-                    dispatch={dispatch}
                     table={(state.elements.find(
                       (a) =>
                         a.id ===
@@ -225,13 +258,13 @@ function KonvaCanvas() {
                     // Handle group drag end
                     const deltaX = e.target.x();
                     const deltaY = e.target.y();
-                    handleGroupDragEnd(deltaX, deltaY, dispatch, state, selectedIdsProxy);
+                    handleGroupDragEnd(deltaX, deltaY, dispatch, state, extendedSelectedIds);
                     // Reset group position to remove glitch
                     e.target.position({ x: 0, y: 0 });
                   }}
                   onDragStart={() => handleGroupDragStart(dispatch)}
                 >
-                  {state.elements?.filter(el => selectedIdsProxy.includes(el.id)).map((el) => {
+                  {state.elements?.filter(el => extendedSelectedIds.includes(el.id)).map((el) => {
                     return (
                       <Group
                         key={el.id}

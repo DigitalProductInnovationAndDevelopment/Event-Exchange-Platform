@@ -1,4 +1,4 @@
-package com.itestra.eep.dtos;
+package com.itestra.eep.dtos.constraintSolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,6 +41,9 @@ public class ConstraintSolverDTO implements Serializable {
 
     @JsonProperty("Geschlecht")
     String employeeProfileGender;
+
+    @JsonProperty("last neighborhood")
+    UUID[] lastNeighbourhood;
 
     DietaryPreference[] employeeProfileDietTypes;
 
