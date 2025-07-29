@@ -21,8 +21,12 @@ public abstract class Participation {
     @Column(name = "id")
     private UUID id;
 
+    // We can use this field instead of event.getId() which might cause unnecessary fetch of event
+    @Column(name = "event_id")
+    private UUID eventId;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -37,6 +41,13 @@ public abstract class Participation {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public Participation(UUID id, UUID eventId, Chair chair, Boolean confirmed) {
+        this.id = id;
+        this.eventId = eventId;
+        this.chair = chair;
+        this.confirmed = confirmed;
+    }
 
     @PrePersist
     protected void onCreate() {

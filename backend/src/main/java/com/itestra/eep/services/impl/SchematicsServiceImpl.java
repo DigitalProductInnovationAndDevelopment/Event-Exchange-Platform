@@ -60,7 +60,7 @@ public class SchematicsServiceImpl implements SchematicsService {
     @Transactional(readOnly = true)
     public boolean isSchematicsVisibleToUser(UUID schematicsId, UUID userId) {
         Schematics schematics = schematicsRepository.findById(schematicsId).orElseThrow(SchematicsNotFoundException::new);
-        return eventService.isParticipant(schematics.getEvent().getId(), userId);
+        return eventService.isParticipant(schematics.getEventId(), userId);
     }
 
 }

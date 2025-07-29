@@ -21,8 +21,11 @@ public class Schematics {
     @Column(name = "state", nullable = false, length = Integer.MAX_VALUE)
     private String state;
 
+    @Column(name = "event_id")
+    private UUID eventId;
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id", nullable = false, insertable = false, updatable = false)
     private Event event;
 
     @Column(name = "created_at", updatable = false)

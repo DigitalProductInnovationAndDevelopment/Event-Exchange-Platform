@@ -23,8 +23,11 @@ public class FileEntity {
     @Column(name = "file_id", nullable = false)
     private UUID fileId;
 
+    @Column(name = "event_id")
+    private UUID eventId;
+
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
 
     @Column(name = "name", nullable = false)
