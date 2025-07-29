@@ -64,7 +64,7 @@ export const EventDetails = () => {
           setImageUrl(url);
         }
       }
-    }, 1000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [stageWidth, stageRef.current?.getLayers()]);
 
