@@ -10,7 +10,6 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -25,25 +24,19 @@ public class EventUpdateDTO implements Serializable {
     @Size(message = "Event name should be shorter than 255 characters", max = 255)
     String name;
 
-    @Nullable
     EventType eventType;
 
-    @Nullable
     @Size(message = "Event address should be shorter than 1000 characters", max = 1000)
     String address;
 
-    @Nullable
     @Size(message = "Event description should be shorter than 10000 characters", max = 10000)
     String description;
 
-    @Nullable
     @Size(message = "Notes cannot be more than 10000 characters", max = 10000)
     String notes;
 
-    @Nullable
     Integer capacity;
 
-    @Nullable
     @FutureOrPresent(message = "You cannot create or edit events in the past.")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -56,10 +55,9 @@ public class EmployeeCreateDTO implements Serializable {
         @NotBlank(message = "Gender cannot be empty.")
         String gender;
 
-        @Size(min = 1, max = 255, message = "GitLab username cannot be empty, and it should be shorter than 255 characters")
+        @Size(max = 255, message = "GitLab username should be shorter than 255 characters")
         String gitlabUsername;
 
-        @Nullable
         @Size(max = 10_000, message = "Notes cannot be more than 10000 characters")
         String notes;
 

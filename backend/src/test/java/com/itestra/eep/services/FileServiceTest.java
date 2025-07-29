@@ -86,11 +86,10 @@ class FileServiceTest {
 
         FileEntity file = fileService.storeFile(multipartFile, event.getId());
 
-        FileEntity result = fileService.getFile(file.getFileId()).get();
+        FileEntity result = (FileEntity) Hibernate.unproxy(fileService.getFile(file.getFileId()).get());
         assertNotNull(result);
         assertEquals(FILE_NAME, result.getName());
         assertEquals(CONTENT_TYPE, result.getContentType());
-        Hibernate.initialize(result.getContent());
         assertArrayEquals(BYTES, result.getContent());
     }
 } 
