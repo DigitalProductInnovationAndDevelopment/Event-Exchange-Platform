@@ -43,12 +43,12 @@ const SeatAllocationContent = ({
   const [allocated, setAllocated] = useState<SeatAllocationResult[]>([]);
   const [unallocatedSearch, setUnallocatedSearch] = useState("");
   const [allocatedSearch, setAllocatedSearch] = useState("");
-  const { getSeatAllocations, updateSeatAllocations, generateSeatAllocations } = useApiService();
+  const { getSeatAllocations, updateSeatAllocation, generateSeatAllocations } = useApiService();
   const [constraintInputValues, setConstraintInputValues] = useState({
-    pastMatches: 0,
-    location: 0,
-    seniority: 0,
-    gender: 0,
+    "last neighborhood": 0,
+    "Standort": 0,
+    "Anstellung": 0,
+    "Geschlecht": 0,
   });
 
   // Calculate unallocated employees based on current seat assignment
@@ -226,10 +226,10 @@ const SeatAllocationContent = ({
                 <div className="flex flex-col w-1/3">
                   {[
                     { label: "Guests seated with employee", key: "guestsWithEmployee" },
-                    { label: "Past Matches", key: "pastMatches" },
-                    { label: "Location", key: "location" },
-                    { label: "Seniority", key: "seniority" },
-                    { label: "Gender", key: "gender" },
+                    { label: "Past Matches", key: "last neighborhood" },
+                    { label: "Location", key: "Standort" },
+                    { label: "Seniority", key: "Anstellung" },
+                    { label: "Gender", key: "Geschlecht" },
                   ].map(({ label, key }) => (
                     <div key={key} className="flex items-center min-h-[40px] h-full">
                       <span className="text-left">{label}</span>
@@ -239,10 +239,10 @@ const SeatAllocationContent = ({
                 <div className="flex flex-col w-1/3">
                   {[
                     { label: "Guests seated with employee", key: "guestsWithEmployee" },
-                    { label: "Past Matches", key: "pastMatches" },
-                    { label: "Location", key: "location" },
-                    { label: "Seniority", key: "seniority" },
-                    { label: "Gender", key: "gender" },
+                    { label: "Past Matches", key: "last neighborhood" },
+                    { label: "Location", key: "Standort" },
+                    { label: "Seniority", key: "Anstellung" },
+                    { label: "Gender", key: "Geschlecht" },
                   ].map(({ label, key }, idx) => (
                     <div key={key} className="flex items-center min-h-[40px] h-full">
                       {idx === 0 ? (
@@ -294,10 +294,10 @@ const SeatAllocationContent = ({
                         key="assign"
                         icon={<ImportOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
                         onClick={() => {
-                          updateSeatAllocations(eventId, [{
+                          updateSeatAllocation(eventId, {
                             participationId: item.participationId,
                             chairId: state.chairIdForManualAssignment,
-                          }]).then(
+                          }).then(
                             (assignmentResponse) => {
                               if (assignmentResponse) {
                                 participants.find(p => p.participationId === item.participationId)!.chairId = state.chairIdForManualAssignment;
@@ -342,10 +342,10 @@ const SeatAllocationContent = ({
                   actions={[
                     <Button icon={<ExportOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
                             onClick={() => {
-                              updateSeatAllocations(eventId, [{
+                              updateSeatAllocation(eventId, {
                                 participationId: item.participationId,
                                 chairId: null,
-                              }]).then(
+                              }).then(
                                 (assignmentResponse) => {
                                   if (assignmentResponse) {
                                     participants.find(p => p.participationId === item.participationId)!.chairId = null;

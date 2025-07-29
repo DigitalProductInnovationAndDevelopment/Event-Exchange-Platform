@@ -554,7 +554,7 @@ export default function useApiService() {
     }
   }, [request]);
 
-  const updateSeatAllocations = useCallback(async (eventId: string, newSeatAllocations: SeatAllocationUpsert[]) => {
+  const updateSeatAllocation = useCallback(async (eventId: string, newSeatAllocations: SeatAllocationUpsert) => {
     try {
       const response = await request<boolean>(
         `/seat-allocation/${eventId}/allocations`,
@@ -602,6 +602,6 @@ export default function useApiService() {
     deleteParticipation,
     generateSeatAllocations,
     getSeatAllocations,
-    updateSeatAllocations,
+    updateSeatAllocation,
   };
 }
