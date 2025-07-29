@@ -29,7 +29,7 @@ public abstract class Participation {
     @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "chair_id")
     private Chair chair;
 

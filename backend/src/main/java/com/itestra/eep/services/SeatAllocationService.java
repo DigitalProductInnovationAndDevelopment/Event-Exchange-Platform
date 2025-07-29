@@ -1,8 +1,8 @@
 package com.itestra.eep.services;
 
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
-import com.itestra.eep.dtos.SeatAllocationUpsertDTO;
 import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
+import com.itestra.eep.models.Participation;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +12,7 @@ public interface SeatAllocationService {
 
     List<SeatAllocationDetailsDTO> getSeatAllocations(UUID eventId);
 
-    void updateSeatAllocation(List<SeatAllocationUpsertDTO> dtos, UUID eventId);
+    <T extends Participation> void updateSeatAllocation(UUID participationId, UUID chairId, UUID eventId, Class<T> participationClass);
 
     void performTableBasedSeatAllocation(UUID eventId, StageMapDTO stageMap) throws IOException, InterruptedException;
 }

@@ -41,8 +41,8 @@ public class SeatAllocationController {
 
     @PutMapping("/{eventId}/allocations")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Boolean> setSeatAllocations(@RequestBody List<SeatAllocationUpsertDTO> dtos, @PathVariable UUID eventId) {
-        seatAllocationService.updateSeatAllocation(dtos, eventId);
+    public ResponseEntity<Boolean> setSeatAllocations(@RequestBody SeatAllocationUpsertDTO dto, @PathVariable UUID eventId) {
+        seatAllocationService.updateSeatAllocation(dto.getParticipationId(), dto.getChairId(), eventId, null);
         return ResponseEntity.ok(true);
     }
 
