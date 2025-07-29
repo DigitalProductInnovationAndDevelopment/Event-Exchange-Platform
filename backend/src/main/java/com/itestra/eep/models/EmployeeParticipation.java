@@ -26,8 +26,8 @@ public class EmployeeParticipation extends Participation {
     @OrderBy("createdAt ASC")
     private Set<VisitorParticipation> visitorParticipations = new LinkedHashSet<>();
 
-    public EmployeeParticipation(UUID id, int guestCount, Boolean confirmed, Employee employee, UUID eventId, Chair chair) {
-        super(id, eventId, chair, confirmed);
+    public EmployeeParticipation(UUID id, int guestCount, Boolean confirmed, Employee employee, Event event, Chair chair) {
+        super(id, event, chair, confirmed);
         this.guestCount = guestCount;
         this.employee = employee;
     }

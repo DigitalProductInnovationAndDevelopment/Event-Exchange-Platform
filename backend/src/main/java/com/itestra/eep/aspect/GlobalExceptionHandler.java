@@ -77,7 +77,8 @@ public class GlobalExceptionHandler {
             ParticipantOfPastEventException.class,
             PastEventUpdateException.class,
             EventCapacityExceededException.class,
-            NotEnoughSeatForSeatAllocationException.class})
+            NotEnoughSeatForSeatAllocationException.class,
+            InfeasibleSeatAllocationException.class})
     public ResponseEntity<Object> handleCustomRuntimeException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -102,7 +103,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         List<String> messages = new ArrayList<>();
-        messages.add("A data integrity error occurred. Please check your input.");
+        messages.add("Please check your input");
         Throwable rootCause = ex.getRootCause();
 
         if (rootCause instanceof SQLException sqlEx) {

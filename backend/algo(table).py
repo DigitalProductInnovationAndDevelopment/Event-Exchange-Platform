@@ -168,7 +168,7 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
     else:
         status_name = solver.StatusName(status)
         print(f"\nNo solution found. Solver status: {status_name}")
-        return employees_data
+        sys.exit(-1)
 
 
 # --- Main Execution Block ---

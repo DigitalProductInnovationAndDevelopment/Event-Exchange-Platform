@@ -2,7 +2,7 @@ package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.dtos.SeatAllocationUpsertDTO;
-import com.itestra.eep.dtos.StageMapDTO;
+import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
 import com.itestra.eep.services.SeatAllocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,8 +41,8 @@ public class SeatAllocationController {
 
     @PutMapping("/{eventId}/allocations")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Boolean> setSeatAllocations(@RequestBody SeatAllocationUpsertDTO dto, @PathVariable UUID eventId) {
-        seatAllocationService.updateSeatAllocation(dto.getParticipationId(), dto.getChairId(), eventId);
+    public ResponseEntity<Boolean> setSeatAllocations(@RequestBody List<SeatAllocationUpsertDTO> dtos, @PathVariable UUID eventId) {
+        seatAllocationService.updateSeatAllocation(dtos, eventId);
         return ResponseEntity.ok(true);
     }
 

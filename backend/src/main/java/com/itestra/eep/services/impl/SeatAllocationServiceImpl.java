@@ -3,10 +3,15 @@ package com.itestra.eep.services.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itestra.eep.dtos.ConstraintSolverDTO;
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
-import com.itestra.eep.dtos.StageMapDTO;
+import com.itestra.eep.dtos.SeatAllocationUpsertDTO;
+import com.itestra.eep.dtos.constraintSolver.ConstraintSolverDTO;
+import com.itestra.eep.dtos.constraintSolver.ConstraintSolverTableDTO;
+import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
 import com.itestra.eep.exceptions.EventNotFoundException;
+import com.itestra.eep.exceptions.InfeasibleSeatAllocationException;
+import com.itestra.eep.exceptions.NotEnoughSeatForSeatAllocationException;
+import com.itestra.eep.exceptions.ParticipantOfPastEventException;
 import com.itestra.eep.mappers.EmployeeParticipationMapper;
 import com.itestra.eep.models.Chair;
 import com.itestra.eep.models.EmployeeParticipation;
@@ -15,6 +20,7 @@ import com.itestra.eep.models.VisitorParticipation;
 import com.itestra.eep.repositories.ChairRepository;
 import com.itestra.eep.repositories.EmployeeParticipationRepository;
 import com.itestra.eep.repositories.EventRepository;
+import com.itestra.eep.repositories.VisitorParticipationRepository;
 import com.itestra.eep.services.EventService;
 import com.itestra.eep.services.SeatAllocationService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,27 +52,56 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
     private final EventService eventService;
     private final EmployeeParticipationMapper employeeParticipationMapper;
     private final EmployeeParticipationRepository employeeParticipationRepository;
+    private final VisitorParticipationRepository visitorParticipationRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<SeatAllocationDetailsDTO> getSeatAllocations(UUID eventId) {
         eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
-        return eventRepository.findSeatAllocationsByEventId(eventId);
+        return eventRepository.findCurrentSeatAllocationsByEventId(eventId);
     }
 
 
-    /**
-     * @param chairId set UUID null for seat un-allocation
-     */
     @Override
-    public void updateSeatAllocation(UUID participationId, UUID chairId, UUID eventId) {
+    // TODO open for further optimization, maybe chair updates in the end can be batched.
+    public void updateSeatAllocation(List<SeatAllocationUpsertDTO> dtos, UUID eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
-        if (chairId != null && !chairRepository.existsById(chairId)) {
-            chairRepository.saveAndFlush(new Chair(chairId, event));
+
+        if (event.getDate().isBefore(LocalDateTime.now())) {
+            throw new ParticipantOfPastEventException();
         }
 
-        eventRepository.updateEmployeeParticipationChairId(participationId, chairId);
-        eventRepository.updateVisitorParticipationChairId(participationId, chairId);
+        List<UUID> allChairIds = new ArrayList<>();
+        List<UUID> allParticipationIds = new ArrayList<>();
+
+        for (SeatAllocationUpsertDTO dto : dtos) {
+            allChairIds.add(dto.getChairId());
+            allParticipationIds.add(dto.getParticipationId());
+        }
+
+        Set<UUID> existingChairIds = chairRepository.findAllByIdIn(allChairIds);
+        Set<UUID> employeeParticipantIds = employeeParticipationRepository.findExistingEmployeeParticipationIdsIn(allParticipationIds);
+        Set<UUID> visitorParticipantIds = visitorParticipationRepository.findExistingVisitorParticipationIdsIn(allParticipationIds);
+
+        List<UUID> missingChairIds = allChairIds.stream()
+                .filter(id -> Objects.nonNull(id) && !existingChairIds.contains(id))
+                .toList();
+
+
+        List<Chair> newChairs = missingChairIds.stream().map(chairId -> new Chair(chairId, event)).toList();
+
+        if (!newChairs.isEmpty()) {
+            chairRepository.saveAllAndFlush(newChairs);
+        }
+
+        for (SeatAllocationUpsertDTO dto : dtos) {
+            if (employeeParticipantIds.contains(dto.getParticipationId())) {
+                eventRepository.updateEmployeeParticipationChairId(dto.getParticipationId(), dto.getChairId());
+            } else if (visitorParticipantIds.contains(dto.getParticipationId())) {
+                eventRepository.updateVisitorParticipationChairId(dto.getParticipationId(), dto.getChairId());
+            }
+        }
+
     }
 
     // TODO refactor and think of optimization
@@ -75,6 +111,22 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
         List<EmployeeParticipation> employeeParticipations = event.getEmployeeParticipations();
         List<ConstraintSolverDTO> formattedData = employeeParticipationMapper.toConstraintSolverDTO(employeeParticipations);
+
+
+        Map<UUID, List<UUID>> tablesAndTheirSeats = stageMap.getSeatMap().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> new ArrayList<>(entry.getValue().keySet())
+                ));
+
+        int totalAvailableSeat = tablesAndTheirSeats.values().stream()
+                .mapToInt(List::size)
+                .sum();
+
+        if (event.getParticipantCount() > totalAvailableSeat) {
+            throw new NotEnoughSeatForSeatAllocationException();
+        }
+
 
         // we create input and output temp files
         Path tempInputFile = Files.createTempFile("input", ".json");
@@ -87,28 +139,13 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         String jsonString = mapper.writeValueAsString(formattedData);
         Files.writeString(tempInputFile, jsonString);
 
-        Set<UUID> tableKeys = stageMap.getSeatMap().keySet();
-        Map<Integer, UUID> tableKeyTempMapper = new HashMap<>();
+        Set<ConstraintSolverTableDTO> tableDTOS = stageMap.getSeatMap().entrySet().stream()
+                .map(entry -> new ConstraintSolverTableDTO(entry.getKey(), entry.getValue().size()))
+                .collect(Collectors.toSet());
 
-        StringBuilder jsonBuilder = new StringBuilder("[");
-        boolean first = true;
-        int i = 0;
-        for (UUID tableKey : tableKeys) {
-            tableKeyTempMapper.put(i, tableKey);
-            if (!first) {
-                jsonBuilder.append(",");
-            }
-            jsonBuilder.append("{\"table_id\": \"")
-                    .append(i)
-                    .append("\",\"Anzahl\": ")
-                    .append(stageMap.getSeatMap().get(tableKey).size())
-                    .append("}");
-            first = false;
-            i++;
-        }
-        jsonBuilder.append("]");
-        Files.writeString(tempTableFile, jsonBuilder.toString());
-        Files.writeString(tempConstraintsFile, "{\"Standort\": 1, \"Projekt\": 1, \"Anstellung\": 1, \"Geschlecht\": 0, \"last neighborhood\": 3}");
+        Files.writeString(tempTableFile, mapper.writeValueAsString(tableDTOS));
+        // Files.writeString(tempConstraintsFile, stageMap.getConstraints().toString());
+        Files.writeString(tempConstraintsFile, mapper.writeValueAsString(stageMap.getConstraints()));
 
 
         ProcessBuilder pb;
@@ -140,6 +177,7 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
         int exitCode = process.waitFor();
         log.info("Exited with code: {}", exitCode);
+        if (exitCode == 255) throw new InfeasibleSeatAllocationException();
 
         BufferedReader fileReader = Files.newBufferedReader(tempOutputFile);
         List<ConstraintSolverDTO> solved = objectMapper.readValue(fileReader, new TypeReference<>() {
@@ -152,23 +190,17 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
             }
         */
 
-        Map<UUID, List<UUID>> tablesAndTheirSeats = stageMap.getSeatMap().entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> new ArrayList<>(entry.getValue().keySet())
-                ));
-
         solved.forEach(solvedConstraint -> {
                     EmployeeParticipation employeeParticipation = employeeParticipationRepository.findByEmployee_IdAndEvent_Id(solvedConstraint.getProfileId(), eventId).get();
                     VisitorParticipation[] visitorParticipations = employeeParticipation.getVisitorParticipations().toArray(new VisitorParticipation[0]);
-                    for (int j = 0; j < ((ArrayList<Integer>) solvedConstraint.getTableIds()[0]).size(); j++) {
-                        int tableIndex = ((ArrayList<Integer>) solvedConstraint.getTableIds()[0]).get(0);
-                        UUID tableKey = tableKeyTempMapper.get(tableIndex);
+            for (int j = 0; j < (solvedConstraint.getTableIds()).length; j++) {
+                UUID tableKey = UUID.fromString(Arrays.copyOf(solvedConstraint.getTableIds(), solvedConstraint.getTableIds().length, String[].class)[0]);
+
                         if (j == 0) {
-                            updateSeatAllocation(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId);
+                            updateSeatAllocation(Collections.singletonList(new SeatAllocationUpsertDTO(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0))), eventId);
                             tablesAndTheirSeats.get(tableKey).remove(0);
                         } else {
-                            updateSeatAllocation(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId);
+                            updateSeatAllocation(Collections.singletonList(new SeatAllocationUpsertDTO(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0))), eventId);
                             tablesAndTheirSeats.get(tableKey).remove(0);
                         }
                     }

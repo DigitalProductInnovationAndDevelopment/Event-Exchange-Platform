@@ -4,6 +4,7 @@ import com.itestra.eep.enums.EventType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyGroup;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,9 +64,17 @@ public class Event {
     private Schematics schematics;
 
     @Formula("(select count(*) from organization.employee_participation ep where ep.event_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    @LazyGroup("participantCounts")
     private int employeeParticipantCount;
 
     @Formula("(select count(*) from organization.visitor_participation vp where vp.event_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    @LazyGroup("participantCounts")
     private int visitorParticipantCount;
+
+    public int getParticipantCount() {
+        return employeeParticipantCount + visitorParticipantCount;
+    }
 
 }

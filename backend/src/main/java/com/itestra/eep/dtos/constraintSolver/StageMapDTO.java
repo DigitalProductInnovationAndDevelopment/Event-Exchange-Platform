@@ -1,4 +1,4 @@
-package com.itestra.eep.dtos;
+package com.itestra.eep.dtos.constraintSolver;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +11,8 @@ import java.util.UUID;
 @Setter
 @Getter
 public class StageMapDTO {
+
+    private ConstraintSolverConstraintsDTO constraints;
 
     /*{
         "table1Id": {

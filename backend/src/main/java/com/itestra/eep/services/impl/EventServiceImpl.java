@@ -112,7 +112,7 @@ public class EventServiceImpl implements EventService {
 
         eventCapacityValidator.validateCapacity(event, dto.getGuestCount(), null);
 
-        EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, eventId, null);
+        EmployeeParticipation employeeParticipation = new EmployeeParticipation(null, dto.getGuestCount(), true, employee, event, null);
         employeeParticipationRepository.saveAndFlush(employeeParticipation);
 
         handleVisitorProfilesForGuests(employeeParticipation, 0, dto.getGuestCount());
@@ -195,7 +195,7 @@ public class EventServiceImpl implements EventService {
                     throw new EmployeeNotFoundException();
                 }
                 EmployeeParticipation employeeParticipation = new EmployeeParticipation(
-                        null, dto.getGuestCount(), true, employee, eventId, null
+                        null, dto.getGuestCount(), true, employee, event, null
                 );
                 participationsToCreate.add(employeeParticipation);
             }
