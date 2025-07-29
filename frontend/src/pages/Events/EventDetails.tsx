@@ -64,9 +64,9 @@ export const EventDetails = () => {
           setImageUrl(url);
         }
       }
-    }, 100);
+    }, 1000);
     return () => clearInterval(interval);
-  }, [stageWidth]);
+  }, [stageWidth, stageRef.current?.getLayers()]);
 
   useEffect(() => {
     (async () => {
