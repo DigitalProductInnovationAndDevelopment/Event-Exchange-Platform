@@ -26,8 +26,10 @@ export const EmployeeCreate = () => {
         values.profile.authorities = [values.profile.authorities];
       }
       // No gender normalization
-      await createEmployee(values);
-      navigate("/employees");
+      const result = await createEmployee(values);
+      if (result) {
+        navigate("/employees");
+      }
     } catch (error) {
       console.error("Error creating employee:", error);
     } finally {

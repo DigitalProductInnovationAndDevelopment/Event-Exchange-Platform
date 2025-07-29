@@ -7,7 +7,6 @@ import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import { type Action, addElement, changeBuildMode } from "../actions/actions.tsx";
 import { ElementInspector } from "components/canvas/elements/ElementInspector.tsx";
-import FPSText from "components/canvas/elements/FPSText.tsx";
 
 
 const handleToolboxClick =
@@ -29,11 +28,11 @@ const handleToolboxClick =
   };
 
 function Toolbox({
-                   dispatch,
-                   stageRef,
-                   state,
-                   selectedIds,
-                 }: {
+  dispatch,
+  stageRef,
+  state,
+  selectedIds,
+}: {
   dispatch: (action: Action) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   state: AppState;
@@ -107,32 +106,6 @@ function Toolbox({
               />
               <Text text="Save" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
             </Group>
-
-            {/*<Group y={toolboxHeight + 70} onClick={async () => {
-              const uri = await handleExport(stageRef);
-              downloadURI(uri!, "stage.jpeg");
-            }}>
-              <Rect
-                width={80}
-                height={50}
-                fill="#f66"
-                cornerRadius={8}
-                x={10}
-                stroke="#900"
-                strokeWidth={1}
-              />
-              <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
-            </Group>*/}
-
-            <Group
-              y={510}>
-              <Text text={"#undo: " + state.history?.past?.length + "\n#redo: " + state.history?.future?.length} x={25}
-                    y={15} fill="black" fontSize={10} fontStyle="bold" />
-            </Group>
-            <Group x={15} y={560}>
-              <FPSText layer={toolboxLayer}></FPSText>
-            </Group>
-
           </Group>
         </Layer>
       </Stage>

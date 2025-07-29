@@ -424,7 +424,7 @@ export const EventDetails = () => {
               if (imageUrl) {
                 const link = document.createElement("a");
                 link.href = imageUrl;
-                link.download = `${event?.name?.replace(/\s+/g, "_")}_Seat_Layout_.png`;
+                link.download = `${event?.name?.replace(/\s+/g, "_")}_Seat_Layout.png`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
