@@ -90,6 +90,7 @@ class FileServiceTest {
         assertNotNull(result);
         assertEquals(FILE_NAME, result.getName());
         assertEquals(CONTENT_TYPE, result.getContentType());
-        assertArrayEquals(BYTES, Hibernate.unproxy(result.getContent(), byte[].class));
+        Hibernate.initialize(result.getContent());
+        assertArrayEquals(BYTES, result.getContent());
     }
 } 
