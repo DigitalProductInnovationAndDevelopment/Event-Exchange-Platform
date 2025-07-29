@@ -5,6 +5,7 @@ import com.itestra.eep.models.FileEntity;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.repositories.FileRepository;
 import com.itestra.utils.RandomEntityGenerator;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -89,6 +90,6 @@ class FileServiceTest {
         assertNotNull(result);
         assertEquals(FILE_NAME, result.getName());
         assertEquals(CONTENT_TYPE, result.getContentType());
-        assertArrayEquals(BYTES, result.getContent());
+        assertArrayEquals(BYTES, Hibernate.unproxy(result.getContent(), byte[].class));
     }
 } 
