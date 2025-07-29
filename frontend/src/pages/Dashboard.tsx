@@ -1,4 +1,4 @@
-import { Button, Card, Col, List, Row, Space, Spin, Typography } from "antd";
+import { Button, Card, Col, List, Row, Space, Spin, Typography } from "utils/antd.tsx";
 import {
   CalendarOutlined,
   EyeOutlined,

@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { message } from "antd";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect } from "react";
 import useApiService from "../services/apiService";
 import { getFullName } from "types/employee.ts";
+import toast from "react-hot-toast";
 
 export const LoginSuccess = () => {
   const navigate = useNavigate();
@@ -26,10 +26,10 @@ export const LoginSuccess = () => {
         };
 
         await login(values);
-        message.success("Welcome!");
+        toast.success("Welcome!");
         navigate(from, { replace: true });
       } catch (err) {
-        message.error("Login failed");
+        toast.error("Login failed");
         console.error(err);
         logout();
         navigate("/", { replace: true });

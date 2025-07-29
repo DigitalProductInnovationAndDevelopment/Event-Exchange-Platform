@@ -1,6 +1,6 @@
 import { Group, Rect, Text } from "react-konva";
 
-export type SelectionRectangleProps = {
+export type SelectionRectangleType = {
   visible: boolean;
   x1: number;
   y1: number;
@@ -11,7 +11,7 @@ export type SelectionRectangleProps = {
 function SelectionRectangle({
   selectionRectangle,
 }: {
-  selectionRectangle: SelectionRectangleProps;
+  selectionRectangle: SelectionRectangleType;
 }) {
   return (
     <Group>

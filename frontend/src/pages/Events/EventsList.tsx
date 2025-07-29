@@ -12,7 +12,7 @@ import {
   Switch,
   Table,
   Typography,
-} from "antd";
+} from "utils/antd.tsx";
 import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";

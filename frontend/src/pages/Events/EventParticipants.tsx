@@ -1,4 +1,16 @@
-import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Row,
+  Space,
+  Table,
+  Typography,
+} from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
@@ -29,8 +41,8 @@ export const EventParticipants = () => {
   const [employeeSearch, setEmployeeSearch] = useState("");
   const [employeeGuests, setEmployeeGuests] = useState<{ [id: string]: number }>({});
   const [importModalOpen, setImportModalOpen] = useState(false);
-  const [importFile, setImportFile] = useState<File | null>(null);
   const [importedRows, setImportedRows] = useState<{ email: string; guestCount: number }[]>([]);
+  const [fileInputKey, setFileInputKey] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,18 +92,23 @@ export const EventParticipants = () => {
       employeeId: string;
     },
   ) => {
-    const participant = await updateParticipant(values);
-    if (participant) {
-      setParticipants(prev =>
-        prev.map(p =>
-          p.id === participationId
-            ? {
-              ...p,
-              guestCount: values.guestCount ?? 0,
-            }
-            : p,
-        ),
-      );
+    try {
+      setLoading(true);
+      const participant = await updateParticipant(values);
+      if (participant) {
+        setParticipants(prev =>
+          prev.map(p =>
+            p.id === participationId
+              ? {
+                ...p,
+                guestCount: values.guestCount ?? 0,
+              }
+              : p,
+          ),
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,10 +117,15 @@ export const EventParticipants = () => {
     eventId: string;
     employeeId: string;
   }) => {
-    const participant = await addParticipant(values);
-    if (participant) {
-      participants.push(participant);
-      setParticipants([...participants]);
+    try {
+      setLoading(true);
+      const participant = await addParticipant(values);
+      if (participant) {
+        participants.push(participant);
+        setParticipants([...participants]);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,31 +142,48 @@ export const EventParticipants = () => {
         employeeId: emailToEmployee[row.email],
       }))
       .filter(p => p.employeeId);
+
+    if (batch.length != rows.length) {
+      const missingEmails = rows
+        .filter(row => !emailToEmployee[row.email])
+        .map(row => row.email);
+      toast.error(
+        `Some emails could not be mapped to employees: ${missingEmails.join(", ")}`,
+        { duration: 8000 },
+      );
+    }
+
     if (batch.length) {
-      // Expecting response: { createdParticipations: [...], updatedParticipations: [...] }
-      const batchResult = await addParticipantsBatch(eventId, batch);
-      setImportModalOpen(false);
-      setImportFile(null);
-      setImportedRows([]);
-      if (batchResult) {
-        const createdCount = batchResult.createdParticipations?.length ?? 0;
-        const updatedCount = batchResult.updatedParticipations?.length ?? 0;
-        toast.success(
-          `Participants imported! Created: ${createdCount}, Updated: ${updatedCount}`,
-          { duration: 6000 }
-        );
-        const allNew = [
-          ...(batchResult.createdParticipations ?? []),
-          ...(batchResult.updatedParticipations ?? []),
-        ];
-        // Remove duplicates by employeeId
-        const merged = [
-          ...participants.filter(
-            p => !allNew.some(np => np.employeeId === p.employeeId)
-          ),
-          ...allNew,
-        ];
-        setParticipants(merged);
+      try {
+        setLoading(true);
+        // Expecting response: { createdParticipations: [...], updatedParticipations: [...] }
+        const batchResult = await addParticipantsBatch(eventId, batch);
+        setImportModalOpen(false);
+        setImportedRows([]);
+        // Force file input to re-render and clear
+        setFileInputKey(prev => prev + 1);
+        if (batchResult) {
+          const createdCount = batchResult.createdParticipations?.length ?? 0;
+          const updatedCount = batchResult.updatedParticipations?.length ?? 0;
+          toast.success(
+            `Participants imported! Created: ${createdCount}, Updated: ${updatedCount}`,
+            { duration: 6000 },
+          );
+          const allNew = [
+            ...(batchResult.createdParticipations ?? []),
+            ...(batchResult.updatedParticipations ?? []),
+          ];
+          // Remove duplicates by employeeId
+          const merged = [
+            ...participants.filter(
+              p => !allNew.some(np => np.employeeId === p.employeeId),
+            ),
+            ...allNew,
+          ];
+          setParticipants(merged);
+        }
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -160,15 +199,17 @@ export const EventParticipants = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a: Employee, b: Employee) =>
-        (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
+      sorter: (a: ParticipationDetails, b: ParticipationDetails) =>
+        getFullName(a).localeCompare(getFullName(b)),
+      render: (_: any, record: ParticipationDetails) => getFullName(record),
     },
     {
       title: "Last Name",
       dataIndex: "lastName",
       key: "lastName",
-      sorter: (a: Employee, b: Employee) =>
-        (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
+      sorter: (a: ParticipationDetails, b: ParticipationDetails) =>
+        (a.lastName ?? "").localeCompare(b.lastName ?? ""),
+      render: (_: any, record: ParticipationDetails) => record.lastName ?? "",
     },
     { title: "Email", dataIndex: "email", key: "email" },
     {
@@ -192,7 +233,7 @@ export const EventParticipants = () => {
     {
       title: "",
       key: "actions",
-      render: (_: never, record: ParticipationDetails) => (
+      render: (_: any, record: ParticipationDetails) => (
         <Popconfirm
           placement="right"
           title="Are you sure you want to delete this participant?"
@@ -210,7 +251,6 @@ export const EventParticipants = () => {
 
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImportFile(file || null);
     if (file) {
       const reader = new FileReader();
       reader.onload = event => {
@@ -348,7 +388,7 @@ export const EventParticipants = () => {
               ),
             },
           ]}
-          dataSource={allEmployeesFiltered}
+          dataSource={allEmployeesFiltered.map(e => ({ ...e, id: e.profile.id }))}
           pagination={false}
         />
       </Modal>
@@ -371,8 +411,9 @@ export const EventParticipants = () => {
         open={importModalOpen}
         onCancel={() => {
           setImportModalOpen(false);
-          setImportFile(null);
           setImportedRows([]);
+          // Force file input to re-render and clear
+          setFileInputKey(prev => prev + 1);
         }}
         footer={[
           <Button
@@ -396,7 +437,7 @@ export const EventParticipants = () => {
         <Button
           style={{ marginBottom: 12 }}
           onClick={() => {
-            const csvContent = 'email,guestCount\nexample@email.com,2\n';
+            const csvContent = "email;guestCount\nexample@email.com;2\n";
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -410,8 +451,7 @@ export const EventParticipants = () => {
         >
           Download CSV Template
         </Button>
-        <Input type="file" accept=".csv" onChange={handleImportFile} className="mb-4" />
-        {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
+        <Input key={fileInputKey} type="file" accept=".csv" onChange={handleImportFile} className="mb-4" />
         {importedRows.length > 0 && (
           <Table
             columns={[

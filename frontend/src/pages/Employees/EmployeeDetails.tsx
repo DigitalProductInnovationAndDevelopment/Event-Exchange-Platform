@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Descriptions, message, Modal, Space, Spin, Table, Typography } from "antd";
+import { Button, Card, Descriptions, Modal, Space, Spin, Table, Typography } from "utils/antd.tsx";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";
@@ -66,6 +66,8 @@ export const EmployeeDetails = () => {
   const { getEmployeeById, deleteEmployee } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin();
 
   useEffect(() => {
     (async () => {
@@ -112,8 +114,6 @@ export const EmployeeDetails = () => {
   ];
 
   const contactFields = [{ label: "Email", value: employee?.profile.email }];
-  const { user } = useAuth();
-  const isAdmin = user?.isAdmin();
 
   // Scroll to events section if hash is #events
   useEffect(() => {
@@ -132,10 +132,8 @@ export const EmployeeDetails = () => {
   const handleDeleteConfirm = async () => {
     try {
       await deleteEmployee(employeeId!);
-      message.success("Employee deleted successfully");
       navigate("/employees");
     } catch (error) {
-      message.error("Failed to delete employee");
       console.error("Error deleting employee:", error);
     } finally {
       setDeleteModalOpen(false);
@@ -217,9 +215,11 @@ export const EmployeeDetails = () => {
                 : field.value || ""}
             </Descriptions.Item>
           ))}
-          {isAdmin && (<Descriptions.Item label = "Notes" span = {3}>
-            {employee?.profile.notes || "Write your notes here. Only visible to admins."}
-          </Descriptions.Item>)}
+          {isAdmin && employee?.profile.notes ?
+            (<Descriptions.Item label="Notes" span={3}>
+              {employee?.profile.notes}
+            </Descriptions.Item>) : null
+          }
         </Descriptions>
       </Card>
 

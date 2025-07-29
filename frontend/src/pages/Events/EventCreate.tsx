@@ -11,7 +11,7 @@ import {
   Select,
   Space,
   Typography,
-} from "antd";
+} from "utils/antd.tsx";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useState } from "react";

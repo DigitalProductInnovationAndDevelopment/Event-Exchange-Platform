@@ -19,13 +19,11 @@ import React from "react";
 import type { Table } from "components/canvas/elements/Table.tsx";
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { Wall } from "components/canvas/elements/Wall.tsx";
-
-
-export type SelectionRectangleType = { x1: number; x2: number; y1: number; y2: number; }
+import type { SelectionRectangleType } from "components/canvas/elements/SelectionRectangle.tsx";
 
 
 export const handleKeyUp = (e: KeyboardEvent,
-                            setIsShiftPressed: any,
+                            setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
                             stageRef: React.RefObject<Konva.Stage | null>) => {
   if (e.key === "Shift") {
     setIsShiftPressed(false);
@@ -36,59 +34,65 @@ export const handleKeyUp = (e: KeyboardEvent,
   }
 };
 
-export const handleKeyDown =
-  (e: KeyboardEvent, dispatch: (action: Action) => void, setSelectedIds: any, setIsShiftPressed: any, selectedIds: UUID[], setQuickWallCoordinates: any) => {
-    // we have to skip key handling if user is typing in an input or textarea
-    const tag = (e.target as HTMLElement).tagName.toLowerCase();
-    if (tag === "input" || tag === "textarea") return;
+export const handleKeyDown = (
+  e: KeyboardEvent,
+  dispatch: (action: Action) => void,
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
+  setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
+  selectedIds: UUID[], setQuickWallCoordinates: any) => {
+  // we have to skip key handling if user is typing in an input or textarea
+  const tag = (e.target as HTMLElement).tagName.toLowerCase();
+  if (tag === "input" || tag === "textarea") return;
 
-    const isUndo = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && !e.shiftKey;
-    const isRedoX = (e.key === "x" || e.key === "X") && (e.ctrlKey || e.metaKey);
-    const isRedoShiftZ = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && e.shiftKey;
+  const isUndo = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && !e.shiftKey;
+  const isRedoX = (e.key === "x" || e.key === "X") && (e.ctrlKey || e.metaKey);
+  const isRedoShiftZ = (e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey) && e.shiftKey;
 
-    if (isUndo) {
-      e.preventDefault();
-      dispatch(undo());
-      return;
-    }
+  if (isUndo) {
+    e.preventDefault();
+    dispatch(undo());
+    return;
+  }
 
-    if (isRedoX || isRedoShiftZ) {
-      e.preventDefault();
-      dispatch(redo());
-      return;
-    }
+  if (isRedoX || isRedoShiftZ) {
+    e.preventDefault();
+    dispatch(redo());
+    return;
+  }
 
-    if (e.key === "Escape") {
-      setSelectedIds([]);
-      dispatch(setChairIdForManualAssignment(null));
-      setQuickWallCoordinates({ x1: undefined, y1: undefined });
+  if (e.key === "Escape") {
+    setSelectedIds([]);
+    dispatch(setChairIdForManualAssignment(null));
+    setQuickWallCoordinates({ x1: undefined, y1: undefined });
 
-      dispatch(changeBuildMode(0));
-      return;
-    }
+    dispatch(changeBuildMode(0));
+    return;
+  }
 
-    if (e.key === "Shift") {
-      setIsShiftPressed(true);
-      return;
-    }
+  if (e.key === "Shift") {
+    setIsShiftPressed(true);
+    return;
+  }
 
-    if (e.key === "Backspace" || e.key === "Delete") {
-      dispatch(removeElements(selectedIds));
-      setSelectedIds([]);
-      dispatch(setChairIdForManualAssignment(null));
-      return;
-    }
+  if (e.key === "Backspace" || e.key === "Delete") {
+    dispatch(removeElements(selectedIds));
+    setSelectedIds([]);
+    dispatch(setChairIdForManualAssignment(null));
+    return;
+  }
 
-    if (e.key === "D" || e.key === "d") {
-      dispatch(duplicateMultipleElements(selectedIds, setSelectedIds));
-      return;
-    }
-  };
+  if (e.key === "D" || e.key === "d") {
+    dispatch(duplicateMultipleElements(selectedIds, setSelectedIds));
+    return;
+  }
+};
 
 
-export const handleWheel = (e: {
-  evt: WheelEvent
-}, stageRef: React.RefObject<Konva.Stage | null>, scale: number, setScale: any) => {
+export const handleWheel = (
+  e: { evt: WheelEvent },
+  stageRef: React.RefObject<Konva.Stage | null>,
+  scale: number,
+  setScale: React.Dispatch<React.SetStateAction<number>>) => {
   e.evt.preventDefault();
   const scaleBy = 1.05;
   const stage = stageRef.current;
@@ -102,7 +106,11 @@ export const handleWheel = (e: {
 };
 
 // for drag movement for elements
-export const handleDragMove = (e: Konva.KonvaEventObject<DragEvent>, el: ElementProperties, state: AppState, dispatch: (action: Action) => void) => {
+export const handleDragMove = (
+  e: Konva.KonvaEventObject<DragEvent>,
+  el: ElementProperties,
+  state: AppState,
+  dispatch: (action: Action) => void) => {
   // If it's a table with attached chairs, update the chairs position during dragging
   if ((el.type === "rectTable" || el.type === "circleTable") && el.attachedChairs!.length > 0) {
     const shape: Konva.Stage | Konva.Shape = e.target;
@@ -133,7 +141,10 @@ export const handleDragMove = (e: Konva.KonvaEventObject<DragEvent>, el: Element
 };
 
 
-export function handleDoubleClickOnElement(_e: KonvaEventObject<MouseEvent>, el: ElementProperties, setSelectedIds: any) {
+export function handleDoubleClickOnElement(
+  _e: KonvaEventObject<MouseEvent>,
+  el: ElementProperties,
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) {
   // setSelectedIds([...selectedIds, el.id]);
   setSelectedIds([el.id]);
 }
@@ -143,8 +154,8 @@ export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRe
                               stageRef: React.RefObject<Konva.Stage | null>,
                               rectRefs: any,
                               dispatch: (action: Action) => void,
-                              setSelectionRectangle: any,
-                              setSelectedIds: any) {
+                              setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>,
+                              setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) {
   // Do nothing if we didn't start selection
   if (!isSelecting.current) {
     return;
@@ -174,10 +185,14 @@ export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRe
   setSelectedIds(selected.map(rect => rect.id));
 }
 
-export const handleMouseMove = (e: {
-  evt: MouseEvent,
-  target: Konva.Stage
-}, isShiftPressed: boolean, state: AppState, scale: number, stageRef: React.RefObject<Konva.Stage | null>, isSelecting: React.RefObject<boolean>, selectionRectangle: SelectionRectangleType, setSelectionRectangle) => {
+export const handleMouseMove = (
+  e: { evt: MouseEvent, target: Konva.Stage },
+  isShiftPressed: boolean,
+  state: AppState, scale: number,
+  stageRef: React.RefObject<Konva.Stage | null>,
+  isSelecting: React.RefObject<boolean>,
+  selectionRectangle: SelectionRectangleType,
+  setSelectionRectangle) => {
 
   const container = stageRef!.current?.container();
   if (container && (isShiftPressed || state.buildMode === 1)) {
@@ -197,10 +212,17 @@ export const handleMouseMove = (e: {
   });
 };
 
-export const handleMouseDown = (e: {
-  evt: MouseEvent;
-  target: Konva.Node
-}, stageRef: React.RefObject<Konva.Stage | null>, isSelecting: React.RefObject<boolean>, dispatch: (action: Action) => void, setSelectedIds, setSelectionRectangle, scale: number, state: AppState, quickWallCoordinates, setQuickWallCoordinates) => {
+export const handleMouseDown = (
+  e: { evt: MouseEvent; target: Konva.Node },
+  stageRef: React.RefObject<Konva.Stage | null>,
+  isSelecting: React.RefObject<boolean>,
+  dispatch: (action: Action) => void,
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
+  setSelectionRectangle,
+  scale: number,
+  state: AppState,
+  quickWallCoordinates,
+  setQuickWallCoordinates) => {
   const stage = e.target.getStage()!;
   const pointer = stageRef.current!.getPointerPosition()!;
   isSelecting.current = e.evt.shiftKey;
@@ -424,7 +446,7 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
 
 };
 
-export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (action: Action) => void, setSelectedIds) => {
+export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (action: Action) => void, setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) => {
   const nodes = transformerRef.current!.nodes();
 
   const selectedIds = [];

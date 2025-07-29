@@ -22,8 +22,8 @@ import {
 export interface AppState {
   buildMode: number;
   chairIdForManualAssignment: UUID | null;
+  activeToolboxTooltip?: UUID | null;
   elements: ElementProperties[];
-  groups: { id: string }[];
   canvasPosition: { x: number; y: number };
   scale: number;
   history?: HistoryState;
@@ -37,8 +37,8 @@ interface HistoryState {
 export class initialState implements AppState {
   buildMode: number;
   chairIdForManualAssignment: UUID | null;
+  activeToolboxTooltip?: UUID | null;
   elements: ElementProperties[];
-  groups: { id: string }[];
   canvasPosition: { x: number; y: number };
   scale: number;
   history: HistoryState;
@@ -46,10 +46,10 @@ export class initialState implements AppState {
   constructor() {
     this.buildMode = 0;
     this.elements = [];
-    this.groups = [];
     this.canvasPosition = { x: 0, y: 0 };
     this.scale = 1;
     this.chairIdForManualAssignment = null;
+    this.activeToolboxTooltip = null;
     this.history = {
       past: [],
       future: [],
@@ -68,12 +68,13 @@ export function reducer(state: AppState, action: Action) {
           return { ...action.payload, history: { past: [], future: [] } };
         }
       } else return { ...state, history: { past: [], future: [] } };
-    case ADD_ELEMENT:
+    case ADD_ELEMENT: {
       return {
         ...state,
         elements: [...state.elements, action.payload],
         history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
+    }
     case REMOVE_ELEMENTS:
       return {
         ...state,
@@ -118,6 +119,7 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         chairIdForManualAssignment: action.payload,
+        history: { ...state.history },
       };
     case DUPLICATE_MULTIPLE_ELEMENTS: {
       const idMap: { [key: string]: string } = {};
@@ -141,7 +143,6 @@ export function reducer(state: AppState, action: Action) {
             delete (newChair as Chair).assigneeProfileId;
             newElements.push(newChair);
           } else if (
-            original.type === "room" ||
             original.type === "rectTable" ||
             original.type === "circleTable"
           ) {

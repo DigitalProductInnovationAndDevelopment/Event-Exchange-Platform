@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
+import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "utils/antd.tsx";
 import {
   DownloadOutlined,
   ExclamationCircleOutlined,
@@ -14,7 +14,7 @@ import { type Employee, getFullName, Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
-import { exportEmployeesToCSV } from "../../utils/utils";
+import { exportEmployeesToCSV } from "utils/utils.ts";
 import { parse } from "papaparse";
 import moment from "moment/moment";
 
@@ -68,7 +68,7 @@ const columns = (
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: Employee) => (
+      render: (_, record: Employee) => (
         <Space size="small" align="end">
           <Button
             type="default"
@@ -201,8 +201,8 @@ export const EmployeesList = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [loading, setLoading] = useState<boolean>(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
-  const [importFile, setImportFile] = useState<File | null>(null);
   const [importedRows, setImportedRows] = useState<any[]>([]);
+  const [fileInputKey, setFileInputKey] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -265,7 +265,6 @@ export const EmployeesList = () => {
   // CSV file parsing handler for employee import
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImportFile(file || null);
     if (file) {
       const reader = new FileReader();
       reader.onload = event => {
@@ -317,7 +316,7 @@ export const EmployeesList = () => {
       location: row.location,
     }));
     try {
-      // @ts-ignore
+      setLoading(true);
       const result = await createEmployeeBatch(payload);
       if (result) {
         toast.success(
@@ -325,13 +324,16 @@ export const EmployeesList = () => {
           { duration: 6000 }
         );
         setImportModalOpen(false);
-        setImportFile(null);
         setImportedRows([]);
+        // Force file input to re-render and clear
+        setFileInputKey(prev => prev + 1);
         employees.push(...result.insertedEmployees.map(e => ({ ...e, key: e.profile.id })));
         setEmployees([...employees]);
       }
     } catch (err) {
       toast.error("Failed to import employees");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -421,14 +423,15 @@ export const EmployeesList = () => {
         open={importModalOpen}
         onCancel={() => {
           setImportModalOpen(false);
-          setImportFile(null);
           setImportedRows([]);
+          // Force file input to re-render and clear
+          setFileInputKey(prev => prev + 1);
         }}
         footer={[
           <Button
             key="addall"
             type="primary"
-            disabled={importedRows.length === 0}
+            disabled={importedRows.length === 0 || loading}
             onClick={handleAddAllEmployees}
           >
             Add All
@@ -436,7 +439,10 @@ export const EmployeesList = () => {
         ]}
       >
         <div style={{ marginBottom: 12, color: '#faad14' }}>
-          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last Name</code>, <code>Location</code>, <code>Employment Start Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>.
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last
+          Name</code>, <code>Location</code>, <code>Employment Start
+          Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>. Note: <code>Gitlab
+          Username</code> is optional and can stay empty.
         </div>
         <Button
           style={{ marginBottom: 12 }}
@@ -444,8 +450,7 @@ export const EmployeesList = () => {
         >
           Download CSV Template
         </Button>
-        <Input type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
-        {importFile && <div className="mt-2 text-green-600">Selected file: {importFile.name}</div>}
+        <Input key={fileInputKey} type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
         {importedRows.length > 0 && (
           <Table
             columns={[
@@ -457,6 +462,7 @@ export const EmployeesList = () => {
             dataSource={importedRows.map((row, idx) => ({ ...row, key: idx }))}
             pagination={false}
             className="mt-4"
+            loading={loading}
           />
         )}
       </Modal>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "antd";
+import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
@@ -12,12 +12,12 @@ import type { Table } from "components/canvas/elements/Table.tsx";
 
 import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours } from "components/canvas/utils/functions.tsx";
-import { setChairIdForManualAssignment, setState } from "components/canvas/actions/actions.tsx";
-import toast from "react-hot-toast";
+import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
 import Konva from "konva";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
@@ -44,7 +44,7 @@ const SeatAllocationContent = ({
   const [unallocatedSearch, setUnallocatedSearch] = useState("");
   const [allocatedSearch, setAllocatedSearch] = useState("");
   const { getSeatAllocations, updateSeatAllocations, generateSeatAllocations } = useApiService();
-  const [inputValues, setInputValues] = useState({
+  const [constraintInputValues, setConstraintInputValues] = useState({
     pastMatches: 0,
     location: 0,
     seniority: 0,
@@ -76,7 +76,7 @@ const SeatAllocationContent = ({
 
   }, [participants, state.elements.length]);
 
-  const generateChairNeighborMap = () => {
+  const generateChairNeighborMap = (isTableBased: boolean) => {
     const tables: Table[] = (state.elements.filter((el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable") as Table[]);
     const chairs: Chair[] = (state.elements.filter((el: ElementProperties) => el.type === "chair") as Chair[]);
 
@@ -103,7 +103,9 @@ const SeatAllocationContent = ({
 
           const chairB = chairMap.get(attachedChairIds[j]);
           if (!chairB) continue;
-          if (areNeighbours(chairA, chairB)) {
+          if (!isTableBased && areNeighbours(chairA, chairB)) {
+            neighbors[chairA.id].push(chairB.id);
+          } else if (isTableBased && chairA.attachedTo === chairB.attachedTo) {
             neighbors[chairA.id].push(chairB.id);
           }
         }
@@ -142,7 +144,6 @@ const SeatAllocationContent = ({
         }
       });
 
-    dispatch(setState({ ...state }));
     setAllocated(assigned);
     setUnallocated(unassigned);
   };
@@ -150,19 +151,31 @@ const SeatAllocationContent = ({
   // Generate initial seat allocation: assign unallocated employees to empty chairs
   const handleGenerate = async () => {
     //console.log(generateChairNeighborMap());
-    setLoading(true);
-    const results: SeatAllocationResult[] | undefined = await generateSeatAllocations(eventId!, generateChairNeighborMap());
-    if (results) {
-      setParticipants(results);
+    try {
+      setLoading(true);
+      const results: SeatAllocationResult[] | null = await generateSeatAllocations(eventId!, generateChairNeighborMap(true), constraintInputValues);
+      if (results) {
+        toast.success("Seats are allocated successfully!");
+        setParticipants(results);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    toast.success("Initial allocation generated!");
+
   };
 
   // Save the current seat allocation to the backend
   const handleSave = async () => {
 
   };
+
+  const handleConstraintInputChange = (key, value) => {
+    setConstraintInputValues(prev => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
 
   return (
     <div className="space-y-2">
@@ -218,7 +231,7 @@ const SeatAllocationContent = ({
                     { label: "Seniority", key: "seniority" },
                     { label: "Gender", key: "gender" },
                   ].map(({ label, key }) => (
-                    <div key={key} className="flex items-center min-h-[40px] h-full">{/* vertically center */}
+                    <div key={key} className="flex items-center min-h-[40px] h-full">
                       <span className="text-left">{label}</span>
                     </div>
                   ))}
@@ -231,11 +244,19 @@ const SeatAllocationContent = ({
                     { label: "Seniority", key: "seniority" },
                     { label: "Gender", key: "gender" },
                   ].map(({ label, key }, idx) => (
-                    <div key={key} className="flex items-center min-h-[40px] h-full">{/* vertically center */}
+                    <div key={key} className="flex items-center min-h-[40px] h-full">
                       {idx === 0 ? (
                         <span className="text-left text-gray-500">always considered</span>
                       ) : (
-                        <InputNumber min={0} max={3} defaultValue={0} step={1} style={{ width: 80, marginLeft: 0 }} className="text-left" />
+                        <InputNumber
+                          min={0}
+                          max={3}
+                          value={constraintInputValues[key]}
+                          onChange={(value) => handleConstraintInputChange(key, value)}
+                          step={1}
+                          style={{ width: 80, marginLeft: 0 }}
+                          className="text-left"
+                        />
                       )}
                     </div>
                   ))}
@@ -264,7 +285,7 @@ const SeatAllocationContent = ({
                   (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
                   (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase())
                 ), [unallocated, unallocatedSearch])}
-              pagination={{ pageSize: 10 }}
+              pagination={{ pageSize: 5 }}
               renderItem={item => (
                 <List.Item
                   actions={[
@@ -273,10 +294,10 @@ const SeatAllocationContent = ({
                         key="assign"
                         icon={<ImportOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
                         onClick={() => {
-                          updateSeatAllocations(eventId, {
+                          updateSeatAllocations(eventId, [{
                             participationId: item.participationId,
                             chairId: state.chairIdForManualAssignment,
-                          }).then(
+                          }]).then(
                             (assignmentResponse) => {
                               if (assignmentResponse) {
                                 participants.find(p => p.participationId === item.participationId)!.chairId = state.chairIdForManualAssignment;
@@ -310,7 +331,7 @@ const SeatAllocationContent = ({
             />
             {/* List of employees who are assigned to any seat */}
             <List
-              pagination={{ pageSize: 10 }}
+              pagination={{ pageSize: 5 }}
               dataSource={useMemo(() =>
                 allocated.filter(item =>
                   (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
@@ -321,10 +342,10 @@ const SeatAllocationContent = ({
                   actions={[
                     <Button icon={<ExportOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
                             onClick={() => {
-                              updateSeatAllocations(eventId, {
+                              updateSeatAllocations(eventId, [{
                                 participationId: item.participationId,
                                 chairId: null,
-                              }).then(
+                              }]).then(
                                 (assignmentResponse) => {
                                   if (assignmentResponse) {
                                     participants.find(p => p.participationId === item.participationId)!.chairId = null;

@@ -16,11 +16,11 @@ export class Chair implements ElementProperties {
   assigneeProfileId?: string;
   assigneeName?: string;
 
-  constructor() {
+  constructor(stageCenter: { x: number, y: number }) {
     this.id = uuidv4();
     this.type = "chair";
-    this.x = 200;
-    this.y = 100;
+    this.x = stageCenter.x;
+    this.y = stageCenter.y;
     this.color = "#aaa";
     this.radius = 16;
     this.attachedTo = undefined;

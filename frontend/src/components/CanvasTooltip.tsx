@@ -1,5 +1,5 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
-import { Tooltip } from "antd";
+import { Tooltip } from "utils/antd.tsx";
 
 const tooltipSteps = [
   {

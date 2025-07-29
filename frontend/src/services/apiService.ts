@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { Employee, EmployeeBatchUpsertResponse, ParticipationDetails, Profile } from "types/employee.ts";
+import type {
+  Employee,
+  EmployeeBatchUpsertResponse,
+  ParticipationBatchResult,
+  ParticipationDetails,
+  Profile,
+} from "types/employee.ts";
 import type { Event, FileEntity, SchematicsEntity, SeatAllocationResult, SeatAllocationUpsert } from "types/event.ts";
-import type { ParticipationBatchResult } from "types/employee.ts";
 import toast from "react-hot-toast";
 import { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
@@ -58,7 +63,8 @@ export default function useApiService() {
         throw new Error("This operation is not found.");
       } else if (response.status >= 500 || response.status === 409) {
         const errorMessage = await response.text();
-        toast.error(errorMessage);
+        // these messages are usually more important. so we keep them longer.
+        toast.error(errorMessage, { duration: 10000 });
         throw new Error("Server error. Please try again later.");
       }
 
@@ -285,35 +291,41 @@ export default function useApiService() {
   );
 
   const updateSchematics = useCallback(async (id: string, canvasState: AppState): Promise<SchematicsEntity | null> => {
-    const historyTemp = { ...canvasState.history };
-    try {
-      delete canvasState.history;
-      canvasState.buildMode = 0;
-      // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/Visitor participation Tables
-      canvasState.elements.forEach((el) => {
-        if (el.type === "chair") {
-          delete (el as Chair).assigneeProfileId;
-          delete (el as Chair).assigneeName;
-        }
-      });
 
-      const response = await request(`/schematics/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          state: JSON.stringify(canvasState),
-        }),
-      });
-      toast.success("Schematics saved successfully!");
-      // @ts-ignore
-      canvasState.history = historyTemp;
-      return response;
-    } catch (err) {
-      toast.error("Schematics save failed");
-      // @ts-ignore
-      canvasState.history = historyTemp;
-      return null;
-    }
-  },
+      try {
+        canvasState.buildMode = 0;
+
+        const canvasStateToPersist = {
+          ...canvasState,
+          history: undefined,
+          activeToolboxTooltip: undefined,
+          chairIdForManualAssignment: null,
+        };
+
+        delete canvasStateToPersist.history;
+        delete canvasStateToPersist.activeToolboxTooltip;
+        canvasStateToPersist.chairIdForManualAssignment = null;
+
+        // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/VisitorParticipation Tables
+        canvasStateToPersist.elements.forEach((el) => {
+          if (el.type === "chair") {
+            delete (el as Chair).assigneeProfileId;
+            delete (el as Chair).assigneeName;
+          }
+        });
+        const response = await request(`/schematics/${id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            state: JSON.stringify(canvasStateToPersist),
+          }),
+        });
+        toast.success("Schematics saved successfully!");
+        return response;
+      } catch (err) {
+        toast.error("Schematics save failed");
+        return null;
+      }
+    },
     [request],
   );
 
@@ -517,19 +529,20 @@ export default function useApiService() {
     [request],
   );
 
-  const generateSeatAllocations = useCallback(async (eventId: string, seatMap: any) => {
+  const generateSeatAllocations = useCallback(async (eventId: string, seatMap: any, constraintInputValues: any) => {
     try {
       return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/assign`,
         {
           method: "POST",
           body: JSON.stringify({
             seatMap: seatMap,
+            constraints: constraintInputValues,
           }),
         },
       );
     } catch (err) {
       toast.error("Seat allocation failed!");
-      return [];
+      return null;
     }
   }, [request]);
 
@@ -541,13 +554,13 @@ export default function useApiService() {
     }
   }, [request]);
 
-  const updateSeatAllocations = useCallback(async (eventId: string, newSeatAllocation: SeatAllocationUpsert) => {
+  const updateSeatAllocations = useCallback(async (eventId: string, newSeatAllocations: SeatAllocationUpsert[]) => {
     try {
       const response = await request<boolean>(
         `/seat-allocation/${eventId}/allocations`,
         {
           method: "PUT",
-          body: JSON.stringify(newSeatAllocation),
+          body: JSON.stringify(newSeatAllocations),
         },
       );
       toast.success("Seat assignment is set successfully!");

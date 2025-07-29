@@ -1,4 +1,4 @@
-import { Tag } from "antd";
+import { Tag } from "utils/antd.tsx";
 import { EVENT_TYPE_COLORS, type EventType } from "../types/event.ts";
 
 export const EventTypeTag = ({ type }: { type: EventType }) => {

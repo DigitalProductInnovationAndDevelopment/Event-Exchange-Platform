@@ -1,4 +1,4 @@
-import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "antd";
+import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
@@ -20,153 +20,16 @@ import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
 import { DietaryPreference, type Profile } from "types/employee.ts";
-import { exportParticipationToCSV } from "utils/utils.ts";
+import { exportDietaryPreferencesToCSV, exportParticipationToCSV } from "utils/utils.ts";
 import { useEffect, useRef, useState } from "react";
 import Konva from "konva";
 import { handleExport } from "components/canvas/utils/functions.tsx";
 import { EventSeatAllocation } from "pages/Events/EventSeatAllocation.tsx";
 import { useAuth } from "../../contexts/AuthContext.tsx";
-import jsPDF from "jspdf";
 
 const { Title } = Typography;
 
 export const EventDetails = () => {
-  // Improved: Export event data as PDF with separate pages for each section
-  const handleExportEventPDF = () => {
-    if (!event) return;
-    const doc = new jsPDF();
-
-    // Margins and page size
-    const margin = 18;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-
-    // Page 1: Event Details
-    doc.setFontSize(18);
-    doc.text("Event Details", margin, margin);
-    doc.setFontSize(12);
-    let y = margin + 12;
-    doc.text(`Name: ${event.name}`, margin, y); y += 8;
-    doc.text(`Date: ${new Date(event.date).toLocaleString()}`, margin, y); y += 8;
-    doc.text(`Address: ${event.address}`, margin, y); y += 8;
-    doc.text(`Type: ${event.eventType}`, margin, y); y += 8;
-    doc.text(`Description: ${event.description || "-"}`, margin, y); y += 8;
-    if (isAdmin) {
-      doc.text(`Notes: ${event.notes || "-"}`, margin, y); y += 8;
-    }
-
-    // Page 2: Participants Table
-    doc.addPage();
-    doc.setFontSize(18);
-    doc.text("Participants", margin, margin);
-    doc.setFontSize(12);
-    const participantRows = (event.participantDetails || []).map((p, idx) => ({
-      "#": (idx + 1).toString(),
-      "Name": p.name || "",
-      "Last Name": p.lastName || "",
-      "Email": p.email || "",
-      "Dietary Preferences": (p.dietTypes || []).join(", ") || "None"
-    }));
-    if (participantRows.length > 0) {
-      // Calculate max table height and split if needed
-      const maxRowsPerPage = Math.floor((pageHeight - margin * 2 - 20) / 10); // estimate 10px per row
-      let start = 0;
-      while (start < participantRows.length) {
-        const rows = participantRows.slice(start, start + maxRowsPerPage);
-        doc.table(margin, margin + 12, rows, [
-          { name: "#", prompt: "#", width: 10, align: "left", padding: 2 },
-          { name: "Name", prompt: "Name", width: 30, align: "left", padding: 2 },
-          { name: "Last Name", prompt: "Last Name", width: 40, align: "left", padding: 2 },
-          { name: "Email", prompt: "Email", width: 50, align: "left", padding: 2 },
-          { name: "Dietary Preferences", prompt: "Dietary Preferences", width: 50, align: "left", padding: 2 }
-        ], { autoSize: true });
-        start += maxRowsPerPage;
-        if (start < participantRows.length) doc.addPage();
-      }
-    } else {
-      doc.text("No participants available.", margin, margin + 12);
-    }
-
-    // Page 3: Seat Layout
-    doc.addPage();
-    doc.setFontSize(18);
-    doc.text("Seat Layout", margin, margin);
-    if (imageUrl) {
-      // Load image and get its natural size
-      const img = new window.Image();
-      img.src = imageUrl;
-      img.onload = function () {
-        const imgRatio = img.width / img.height;
-        const maxWidth = pageWidth - margin * 2;
-        const maxHeight = pageHeight - margin * 2 - 20;
-        let drawWidth = maxWidth;
-        let drawHeight = maxWidth / imgRatio;
-        if (drawHeight > maxHeight) {
-          drawHeight = maxHeight;
-          drawWidth = maxHeight * imgRatio;
-        }
-        const x = (pageWidth - drawWidth) / 2;
-        const y = margin + 12;
-        doc.addImage(imageUrl, "PNG", x, y, drawWidth, drawHeight);
-        // Page 4: Dietary Preferences Table
-        doc.addPage();
-        doc.setFontSize(18);
-        doc.text("Dietary Preferences", margin, margin);
-        doc.setFontSize(12);
-        const dietRows = Object.entries(dietaryStats).map(([combo, count]) => ({
-          Combination: combo,
-          Count: count.toString(),
-        }));
-        if (dietRows.length > 0) {
-          doc.table(margin, margin + 12, dietRows, [
-            { name: "Combination", prompt: "Combination", width: 80, align: "left", padding: 2 },
-            { name: "Count", prompt: "Count", width: 20, align: "left", padding: 2 }
-          ], { autoSize: true });
-        } else {
-          doc.text("No dietary data available.", margin, margin + 12);
-        }
-        doc.save(`event_${event.name.replace(/\s+/g, "_")}.pdf`);
-      };
-      // If image not loaded yet, wait for onload
-      if (!img.complete) return;
-    } else {
-      doc.setFontSize(12);
-      doc.text("No seat layout available.", margin, margin + 12);
-      // Page 4: Dietary Preferences Table
-      doc.addPage();
-      doc.setFontSize(18);
-      doc.text("Dietary Preferences", margin, margin);
-      doc.setFontSize(12);
-      const dietRows = Object.entries(dietaryStats).map(([combo, count]) => ({
-        Combination: combo,
-        Count: count.toString(),
-      }));
-      if (dietRows.length > 0) {
-        doc.table(margin, margin + 12, dietRows, [
-          { name: "Combination", prompt: "Combination", width: 80, align: "left", padding: 2 },
-          { name: "Count", prompt: "Count", width: 20, align: "left", padding: 2 }
-        ], { autoSize: true });
-      } else {
-        doc.text("No dietary data available.", margin, margin + 12);
-      }
-      doc.save(`event_${event.name.replace(/\s+/g, "_")}.pdf`);
-    }
-  };
-
-  // Helper to export seat allocation as full-page PDF
-  const handleExportSeatAllocationPDF = () => {
-    if (!imageUrl) {
-      toast.error("No seat plan image available.");
-      return;
-    }
-    const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: "a4" });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    // Add image to fill the page
-    pdf.addImage(imageUrl, "PNG", 0, 0, pageWidth, pageHeight);
-    pdf.save(`seat_layout_${event?.name?.replace(/\s+/g, "_")}.pdf`);
-  };
-
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
@@ -341,6 +204,7 @@ export const EventDetails = () => {
           visibility: "hidden",
           overflow: "hidden",
         }}
+        aria-hidden="true"
       >
         <EventSeatAllocation
           stageReference={stageRef}
@@ -417,9 +281,11 @@ export const EventDetails = () => {
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
               </Descriptions.Item>
-              {isAdmin && (<Descriptions.Item label = "Notes" span = {3}>
-                {event.notes || "Write your notes here. Only visible to admins."}
-              </Descriptions.Item>)}
+              {isAdmin && event.notes ?
+                (<Descriptions.Item label="Notes" span={3}>
+                  {event.notes}
+                </Descriptions.Item>) : null
+              }
             </Descriptions>
           </Card>
 
@@ -512,7 +378,9 @@ export const EventDetails = () => {
                   className="grid gap-4 w-full"
                   style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
                 >
-                  {Object.entries(dietaryStats).map(([dietCombo, count]) => (
+                  {Object.entries(dietaryStats)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([dietCombo, count]) => (
                     <div key={dietCombo} className="flex flex-col items-center justify-center">
                       <Statistic
                         title={<span className="text-center w-full block">{dietCombo}</span>}
@@ -531,23 +399,37 @@ export const EventDetails = () => {
           {/* Participants Tile */}
       <Card title="Export Information" className="mb-6">
         <Space direction="vertical" className="w-full">
-          <Button block icon={<FileTextOutlined />} onClick={handleExportEventPDF}>
-            Export Event Data
+          <Button
+            block
+            icon={<FileTextOutlined />}
+            onClick={() => exportDietaryPreferencesToCSV(dietaryStats, event?.name || "Event")}
+          >
+            Export Dietary Preferences
           </Button>
           <Button
             block
             icon={<FileTextOutlined />}
             onClick={async () => {
               const participants = await getEventParticipants(eventId!);
-              if (participants) exportParticipationToCSV(participants);
+              if (participants) exportParticipationToCSV(participants, event?.name || "Event");
             }}
           >
-            Export Participants List
+            Export Participant List
           </Button>
           <Button
             block
             icon={<FileTextOutlined />}
-            onClick={handleExportSeatAllocationPDF}
+            disabled={!imageUrl}
+            onClick={() => {
+              if (imageUrl) {
+                const link = document.createElement("a");
+                link.href = imageUrl;
+                link.download = `${event?.name?.replace(/\s+/g, "_")}_Seat_Layout_.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+            }}
           >
             Export Seat Layout
           </Button>
