@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {SchematicsMapper.class, FileMapper.class, EmployeeMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {SchematicsMapper.class, FileMapper.class, ProfileMapper.class})
 public abstract class EventMapper {
 
     @Autowired
-    EmployeeMapper employeeMapper;
+    ProfileMapper profileMapper;
     @Autowired
     @Lazy
     EventServiceImpl eventService;
@@ -40,6 +40,12 @@ public abstract class EventMapper {
     @Mapping(target = "participantDetails", expression = "java(filterParticipantDetails(event, authentication))")
     public abstract EventDetailsDTO toDetailsDto(Event event, @Context Authentication authentication);
 
+    @Mapping(source = "date", target = "status", qualifiedByName = "status")
+    @Mapping(source = "fileEntities", target = "fileEntities")
+    public abstract EventMinimalDetailsDTO toMinimalDetailsDto(Event event);
+
+    public abstract List<EventMinimalDetailsDTO> toMinimalDetailsDto(List<Event> events);
+
     @Named("status")
     public String status(LocalDateTime eventDate) {
         return eventDate.isAfter(LocalDateTime.now()) ? "upcoming" : "completed";
@@ -50,18 +56,10 @@ public abstract class EventMapper {
         return isAdmin ? event.getNotes() : null;
     }
 
-    public List<ProfileDetailsDTO> filterParticipantDetails(Event event, Authentication authentication) {
+    public List<ProfileMinimalDetailsDTO> filterParticipantDetails(Event event, Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities().contains(Role.ADMIN);
-
         List<Profile> participantProfiles = eventService.findAllParticipantDetails(event.getId());
-
-        return isAdmin ? employeeMapper.toProfileDetailsDto(participantProfiles) : new ArrayList<>();
+        return isAdmin ? profileMapper.toProfileMinimalDetailsDto(participantProfiles) : new ArrayList<>();
     }
 
-
-    @Mapping(source = "date", target = "status", qualifiedByName = "status")
-    @Mapping(source = "fileEntities", target = "fileEntities")
-    public abstract EventMinimalDetailsDTO toMinimalDetailsDto(Event event);
-
-    public abstract List<EventMinimalDetailsDTO> toMinimalDetailsDto(List<Event> events);
 }

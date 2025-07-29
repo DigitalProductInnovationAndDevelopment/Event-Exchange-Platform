@@ -48,7 +48,7 @@ public class EventDetailsDTO implements Serializable {
 
     List<FileDetailsDTO> fileEntities = new ArrayList<>();
 
-    List<ProfileDetailsDTO> participantDetails = new ArrayList<>();
+    List<ProfileMinimalDetailsDTO> participantDetails = new ArrayList<>();
 
     SchematicsDetailsDTO schematics;
 

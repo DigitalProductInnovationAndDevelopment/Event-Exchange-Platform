@@ -1,6 +1,9 @@
 package com.itestra.eep.mappers;
 
-import com.itestra.eep.dtos.*;
+import com.itestra.eep.dtos.EmployeeCreateDTO;
+import com.itestra.eep.dtos.EmployeeDetailsDTO;
+import com.itestra.eep.dtos.EmployeeMinimalDetailsDTO;
+import com.itestra.eep.dtos.EmployeeUpdateDTO;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
@@ -9,7 +12,7 @@ import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = EmployeeParticipationMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {EmployeeParticipationMapper.class, ProfileMapper.class})
 public interface EmployeeMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -21,13 +24,7 @@ public interface EmployeeMapper {
     @Mapping(target = "profile.notes", expression = "java(filterNotes(profile, authentication))")
     EmployeeDetailsDTO toDetailsDto(Employee employee, @Context Authentication authentication);
 
-    List<EmployeeDetailsDTO> toDetailsDto(List<Employee> employees, @Context Authentication authentication);
-
     List<EmployeeMinimalDetailsDTO> toMinimalDetailsDto(List<Employee> employees);
-
-    ProfileDetailsDTO toProfileDetailsDto(Profile profile);
-
-    List<ProfileDetailsDTO> toProfileDetailsDto(List<Profile> profile);
 
     default String filterNotes(Profile profile, Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities().contains(Role.ADMIN);

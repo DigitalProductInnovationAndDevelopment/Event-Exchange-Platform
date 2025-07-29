@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EmployeeMinimalDetailsDTO implements Serializable {
 
-    ProfileDetailsDTO profile;
+    ProfileMinimalDetailsDTO profile;
 
     LocalDate employmentStartDate;
 

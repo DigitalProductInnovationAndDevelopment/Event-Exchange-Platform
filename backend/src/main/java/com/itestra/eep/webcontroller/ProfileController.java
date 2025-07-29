@@ -2,6 +2,7 @@ package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.*;
 import com.itestra.eep.mappers.EmployeeMapper;
+import com.itestra.eep.mappers.ProfileMapper;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
 import com.itestra.eep.services.EmployeeService;
@@ -25,20 +26,21 @@ import java.util.UUID;
 public class ProfileController {
 
     private final EmployeeMapper employeeMapper;
+    private final ProfileMapper profileMapper;
     private final EmployeeService employeeService;
 
     @GetMapping("/own")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'PARTNER', 'VISITOR')")
     public ResponseEntity<ProfileDetailsDTO> getMyProfile() {
         Profile profile = employeeService.getAuthenticatedProfileDetails();
-        return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
+        return new ResponseEntity<>(profileMapper.toProfileDetailsDto(profile), HttpStatus.OK);
     }
 
     @PutMapping("/own")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'PARTNER', 'VISITOR')")
     public ResponseEntity<ProfileDetailsDTO> updateMyProfile(@RequestBody @Valid ProfileUpdateDTO dto) {
         Profile profile = employeeService.updateAuthenticatedProfileDetails(dto);
-        return new ResponseEntity<>(employeeMapper.toProfileDetailsDto(profile), HttpStatus.OK);
+        return new ResponseEntity<>(profileMapper.toProfileDetailsDto(profile), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
