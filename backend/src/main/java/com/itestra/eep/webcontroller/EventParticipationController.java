@@ -32,7 +32,7 @@ public class EventParticipationController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EmployeeParticipationDetailsDTO>> getEventEmployeeParticipants(@PathVariable UUID eventId) {
         Event event = eventService.findById(eventId);
-        return new ResponseEntity<>(employeeParticipationMapper.map(event.getEmployeeParticipations()), HttpStatus.OK);
+        return new ResponseEntity<>(employeeParticipationMapper.map(event.getEmployeeParticipations().stream().toList()), HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}/participants")

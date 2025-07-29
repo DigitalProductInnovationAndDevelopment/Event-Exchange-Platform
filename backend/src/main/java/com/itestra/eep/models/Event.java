@@ -7,8 +7,8 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.LazyGroup;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -50,15 +50,15 @@ public class Event {
     private String address;
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<FileEntity> fileEntities = new ArrayList<>();
+    private Set<FileEntity> fileEntities = new HashSet<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id ASC")
-    private List<EmployeeParticipation> employeeParticipations = new ArrayList<>();
+    private Set<EmployeeParticipation> employeeParticipations = new HashSet<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id ASC")
-    private List<VisitorParticipation> visitorParticipations = new ArrayList<>();
+    private Set<VisitorParticipation> visitorParticipations = new HashSet<>();
 
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
