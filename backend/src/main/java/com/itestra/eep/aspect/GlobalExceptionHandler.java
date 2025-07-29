@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -73,7 +74,10 @@ public class GlobalExceptionHandler {
             SchematicsNotFoundException.class,
             UserProfileNotFoundException.class,
             VisitorLinkInvalidException.class,
-            EventCapacityExceededException.class})
+            ParticipantOfPastEventException.class,
+            PastEventUpdateException.class,
+            EventCapacityExceededException.class,
+            NotEnoughSeatForSeatAllocationException.class})
     public ResponseEntity<Object> handleCustomRuntimeException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -87,11 +91,12 @@ public class GlobalExceptionHandler {
                 .body("Internal Server Error");
     }
 
-    @ExceptionHandler({CannotAcquireLockException.class})
+    @ExceptionHandler({CannotAcquireLockException.class,
+            PessimisticLockingFailureException.class})
     public ResponseEntity<Object> handleDBLockException(CannotAcquireLockException exception) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("You sent too many requests. Please try again.");
+                .status(HttpStatus.CONFLICT)
+                .body("Unable to complete the request due to concurrent access. Another user or process may be modifying the same (or related) data. Please wait a few seconds and try again.");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
