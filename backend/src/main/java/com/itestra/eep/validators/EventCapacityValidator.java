@@ -12,7 +12,7 @@ public class EventCapacityValidator {
 
     public void validateCapacity(Event event, int newGuestCount, EmployeeParticipation excludedExistingParticipation) {
 
-        int currentParticipantCount = (event.getEmployeeParticipantCount() + event.getVisitorParticipantCount());
+        int currentParticipantCount = event.getParticipantCount();
 
         int additionalParticipants = newGuestCount + 1; // +1 for the employee itself
 
@@ -26,15 +26,15 @@ public class EventCapacityValidator {
         }
     }
 
-    public void validateBatchCapacity(Event event, List<EmployeeParticipation> participations) {
+    public void validateBatchCapacity(Event event, List<EmployeeParticipation> participations, int participantCountOffsetDueToUpdate) {
 
-        int initialParticipantCount = (event.getEmployeeParticipantCount() + event.getVisitorParticipantCount());
+        int initialParticipantCount = event.getParticipantCount();
 
         int additionalParticipants = participations.stream()
                 .mapToInt(p -> p.getGuestCount() + 1)
                 .sum();
 
-        if (initialParticipantCount + additionalParticipants > event.getCapacity()) {
+        if (initialParticipantCount - participantCountOffsetDueToUpdate + additionalParticipants > event.getCapacity()) {
             throw new EventCapacityExceededException(
                     event.getCapacity() - initialParticipantCount);
         }
