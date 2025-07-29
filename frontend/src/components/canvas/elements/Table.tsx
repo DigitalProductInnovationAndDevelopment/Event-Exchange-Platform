@@ -18,12 +18,13 @@ export class Table implements ElementProperties {
   draggable: boolean;
   attachedChairs: UUID[];
 
-  constructor(tableType: ElementProperties) {
+  constructor(tableType: ElementProperties, stageCenter: { x: number, y: number }) {
+    debugger;
     this.id = uuidv4();
     this.type = tableType.type;
     this.name = "Table";
-    this.x = 200;
-    this.y = 100;
+    this.x = stageCenter.x;
+    this.y = stageCenter.y;
 
     this.width = tableType.width || undefined;
     this.height = tableType.height || undefined;

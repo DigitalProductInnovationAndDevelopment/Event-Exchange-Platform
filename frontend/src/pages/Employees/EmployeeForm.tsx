@@ -25,25 +25,6 @@ const ROLE_OPTIONS = Object.entries(Role).map(([, value]) => ({
   value: value,
 }));
 
-function replaceEmptyStringsWithNull(value: any): any {
-  if (typeof value === "string" && value === "") {
-    return null;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(replaceEmptyStringsWithNull);
-  }
-
-  if (typeof value === "object" && value !== null) {
-    const result: any = {};
-    for (const [key, val] of Object.entries(value)) {
-      result[key] = replaceEmptyStringsWithNull(val);
-    }
-    return result;
-  }
-
-  return value;
-}
 
 const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: EmployeeFormProps) => {
   const handleFinish = (values: any) => {
@@ -52,8 +33,14 @@ const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: Employe
       values.employmentStartDate = values.employmentStartDate.format("YYYY-MM-DD");
     }
 
-    const cleanedValues = replaceEmptyStringsWithNull(values);
-    onSave(cleanedValues);
+    if (!values.gitlabUsername) {
+      values.gitlabUsername = null;
+    }
+    if (!values.notes) {
+      values.notes = "";
+    }
+
+    onSave(values);
   };
 
   if (!isOwnProfileEdit) {

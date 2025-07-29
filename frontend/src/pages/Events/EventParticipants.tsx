@@ -1,4 +1,16 @@
-import { Button, Card, Col, Input, InputNumber, Modal, Popconfirm, Row, Space, Table, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Row,
+  Space,
+  Table,
+  Typography,
+} from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
@@ -80,18 +92,23 @@ export const EventParticipants = () => {
       employeeId: string;
     },
   ) => {
-    const participant = await updateParticipant(values);
-    if (participant) {
-      setParticipants(prev =>
-        prev.map(p =>
-          p.id === participationId
-            ? {
-              ...p,
-              guestCount: values.guestCount ?? 0,
-            }
-            : p,
-        ),
-      );
+    try {
+      setLoading(true);
+      const participant = await updateParticipant(values);
+      if (participant) {
+        setParticipants(prev =>
+          prev.map(p =>
+            p.id === participationId
+              ? {
+                ...p,
+                guestCount: values.guestCount ?? 0,
+              }
+              : p,
+          ),
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,10 +117,15 @@ export const EventParticipants = () => {
     eventId: string;
     employeeId: string;
   }) => {
-    const participant = await addParticipant(values);
-    if (participant) {
-      participants.push(participant);
-      setParticipants([...participants]);
+    try {
+      setLoading(true);
+      const participant = await addParticipant(values);
+      if (participant) {
+        participants.push(participant);
+        setParticipants([...participants]);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,30 +143,34 @@ export const EventParticipants = () => {
       }))
       .filter(p => p.employeeId);
     if (batch.length) {
-      // Expecting response: { createdParticipations: [...], updatedParticipations: [...] }
-      const batchResult = await addParticipantsBatch(eventId, batch);
-      setImportModalOpen(false);
-      setImportFile(null);
-      setImportedRows([]);
-      if (batchResult) {
-        const createdCount = batchResult.createdParticipations?.length ?? 0;
-        const updatedCount = batchResult.updatedParticipations?.length ?? 0;
-        toast.success(
-          `Participants imported! Created: ${createdCount}, Updated: ${updatedCount}`,
-          { duration: 6000 }
-        );
-        const allNew = [
-          ...(batchResult.createdParticipations ?? []),
-          ...(batchResult.updatedParticipations ?? []),
-        ];
-        // Remove duplicates by employeeId
-        const merged = [
-          ...participants.filter(
-            p => !allNew.some(np => np.employeeId === p.employeeId)
-          ),
-          ...allNew,
-        ];
-        setParticipants(merged);
+      try {
+        // Expecting response: { createdParticipations: [...], updatedParticipations: [...] }
+        const batchResult = await addParticipantsBatch(eventId, batch);
+        setImportModalOpen(false);
+        setImportFile(null);
+        setImportedRows([]);
+        if (batchResult) {
+          const createdCount = batchResult.createdParticipations?.length ?? 0;
+          const updatedCount = batchResult.updatedParticipations?.length ?? 0;
+          toast.success(
+            `Participants imported! Created: ${createdCount}, Updated: ${updatedCount}`,
+            { duration: 6000 },
+          );
+          const allNew = [
+            ...(batchResult.createdParticipations ?? []),
+            ...(batchResult.updatedParticipations ?? []),
+          ];
+          // Remove duplicates by employeeId
+          const merged = [
+            ...participants.filter(
+              p => !allNew.some(np => np.employeeId === p.employeeId),
+            ),
+            ...allNew,
+          ];
+          setParticipants(merged);
+        }
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -396,7 +422,7 @@ export const EventParticipants = () => {
         <Button
           style={{ marginBottom: 12 }}
           onClick={() => {
-            const csvContent = 'email,guestCount\nexample@email.com,2\n';
+            const csvContent = "email;guestCount\nexample@email.com;2\n";
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');

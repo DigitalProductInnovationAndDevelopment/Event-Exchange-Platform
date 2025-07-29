@@ -15,12 +15,12 @@ export class Text implements ElementProperties {
   color: string;
   draggable: boolean;
 
-  constructor() {
+  constructor(stageCenter: { x: number, y: number }) {
     this.id = uuidv4();
     this.type = "text";
     this.name = "text";
-    this.x = 200;
-    this.y = 100;
+    this.x = stageCenter.x;
+    this.y = stageCenter.y;
     this.size = 20;
     this.color = "#000000";
     this.stroke = "#333";

@@ -8,9 +8,9 @@ import type { UUID } from "components/canvas/utils/constants.tsx";
 import type { FileEntity } from "types/event.ts";
 
 const FileUploadButton = ({
-  eventId,
-  onUpload,
-}: {
+                            eventId,
+                            onUpload,
+                          }: {
   eventId: UUID;
   onUpload: (file: FileEntity | undefined) => Promise<void>;
 }) => {
@@ -49,24 +49,46 @@ const FileUploadButton = ({
     }
   };
 
+  const handleCancel = () => {
+    setFile(null);
+  };
+
   return (
-    <div className="flex flex-row gap-2">
-      <div className="flex">
-        <Upload beforeUpload={handleBeforeUpload} showUploadList={false}>
-          <Button>Select File</Button>
-        </Upload>
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-2">
+        <div className="flex">
+          <Upload beforeUpload={handleBeforeUpload} showUploadList={false}>
+            <Button>Select File</Button>
+          </Upload>
+        </div>
+        <Button
+          className="flex"
+          type="primary"
+          block
+          icon={<UploadOutlined />}
+          onClick={handleUpload}
+          loading={uploading}
+          disabled={!file}
+        >
+          Upload File
+        </Button>
+        {file && (
+          <Button
+            onClick={handleCancel}
+            disabled={uploading}
+            danger
+            icon={<CloseOutlined />}
+          >
+            Cancel
+          </Button>
+        )}
       </div>
-      <Button
-        className="flex"
-        type="primary"
-        block
-        icon={<UploadOutlined />}
-        onClick={handleUpload}
-        loading={uploading}
-        disabled={!file}
-      >
-        Upload File
-      </Button>
+
+      {file && (
+        <div className="text-sm text-gray-600">
+          Selected file: {file.name}
+        </div>
+      )}
     </div>
   );
 };
