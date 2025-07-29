@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import EmployeeForm from "./EmployeeForm";
-import { Button, Card, Form, message, Typography } from "antd";
+import { Button, Card, Form, Typography } from "utils/antd.tsx";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import useApiService from "services/apiService";
 import { useState } from "react";
@@ -27,10 +27,8 @@ export const EmployeeCreate = () => {
       }
       // No gender normalization
       await createEmployee(values);
-      message.success("Employee created successfully");
       navigate("/employees");
     } catch (error) {
-      message.error("Failed to create employee");
       console.error("Error creating employee:", error);
     } finally {
       setLoading(false);

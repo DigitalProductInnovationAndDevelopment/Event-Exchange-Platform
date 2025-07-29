@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "antd";
+import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
@@ -12,12 +12,12 @@ import type { Table } from "components/canvas/elements/Table.tsx";
 
 import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours } from "components/canvas/utils/functions.tsx";
-import { setChairIdForManualAssignment, setState } from "components/canvas/actions/actions.tsx";
-import toast from "react-hot-toast";
+import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
 import Konva from "konva";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 

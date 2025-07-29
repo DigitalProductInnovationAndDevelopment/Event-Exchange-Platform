@@ -1,4 +1,4 @@
-import { Avatar, ConfigProvider, Dropdown, Layout, Menu, theme as antdTheme } from "antd";
+import { Avatar, ConfigProvider, Dropdown, Layout, Menu, theme as antdTheme } from "utils/antd.tsx";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { CalendarOutlined, DashboardOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";

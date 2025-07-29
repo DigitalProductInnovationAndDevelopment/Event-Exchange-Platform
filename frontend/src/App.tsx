@@ -1,5 +1,5 @@
 import { RouterProvider } from "react-router-dom";
-import { ConfigProvider } from "antd";
+import { ConfigProvider } from "utils/antd.tsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { router } from "./routes/routes";
 import { Toaster } from "react-hot-toast";

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, message, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Button, Upload } from "utils/antd.tsx";
+import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
 import useApiService from "../../../services/apiService.ts";
 import toast from "react-hot-toast";
 import type { RcFile } from "antd/es/upload/interface";
@@ -29,7 +29,7 @@ const FileUploadButton = ({
 
   const handleUpload = async () => {
     if (!file) {
-      message.warning("Please select a file first");
+      toast.error("Please select a file first");
       return;
     }
 
@@ -42,7 +42,7 @@ const FileUploadButton = ({
       const uploadedFile: FileEntity | undefined = await fileUpload(formData);
       onUpload(uploadedFile);
     } catch (error) {
-      message.error("Upload failed");
+      toast.error("Upload failed");
     } finally {
       setUploading(false);
       setFile(null);

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
+import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "utils/antd.tsx";
 import {
   DownloadOutlined,
   ExclamationCircleOutlined,
@@ -14,7 +14,7 @@ import { type Employee, getFullName, Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
-import { exportEmployeesToCSV } from "../../utils/utils";
+import { exportEmployeesToCSV } from "utils/utils.ts";
 import { parse } from "papaparse";
 import moment from "moment/moment";
 
@@ -68,7 +68,7 @@ const columns = (
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: Employee) => (
+      render: (_, record: Employee) => (
         <Space size="small" align="end">
           <Button
             type="default"
@@ -317,7 +317,7 @@ export const EmployeesList = () => {
       location: row.location,
     }));
     try {
-      // @ts-ignore
+      setLoading(true);
       const result = await createEmployeeBatch(payload);
       if (result) {
         toast.success(
@@ -332,6 +332,8 @@ export const EmployeesList = () => {
       }
     } catch (err) {
       toast.error("Failed to import employees");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -428,7 +430,7 @@ export const EmployeesList = () => {
           <Button
             key="addall"
             type="primary"
-            disabled={importedRows.length === 0}
+            disabled={importedRows.length === 0 || loading}
             onClick={handleAddAllEmployees}
           >
             Add All
@@ -457,6 +459,7 @@ export const EmployeesList = () => {
             dataSource={importedRows.map((row, idx) => ({ ...row, key: idx }))}
             pagination={false}
             className="mt-4"
+            loading={loading}
           />
         )}
       </Modal>

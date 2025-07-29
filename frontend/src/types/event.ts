@@ -25,8 +25,6 @@ export interface FileEntity {
 
 export interface SchematicsEntity {
   id: string;
-  overviewFileId: string;
-  name: string;
 }
 
 export interface SeatAllocationResult {

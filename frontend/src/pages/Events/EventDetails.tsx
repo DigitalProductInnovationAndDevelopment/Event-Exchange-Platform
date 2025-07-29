@@ -1,4 +1,4 @@
-import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "antd";
+import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
@@ -341,6 +341,7 @@ export const EventDetails = () => {
           visibility: "hidden",
           overflow: "hidden",
         }}
+        aria-hidden="true"
       >
         <EventSeatAllocation
           stageReference={stageRef}
@@ -417,9 +418,11 @@ export const EventDetails = () => {
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
               </Descriptions.Item>
-              {isAdmin && (<Descriptions.Item label = "Notes" span = {3}>
-                {event.notes || "Write your notes here. Only visible to admins."}
-              </Descriptions.Item>)}
+              {isAdmin && event.notes ?
+                (<Descriptions.Item label="Notes" span={3}>
+                  {event.notes}
+                </Descriptions.Item>) : null
+              }
             </Descriptions>
           </Card>
 

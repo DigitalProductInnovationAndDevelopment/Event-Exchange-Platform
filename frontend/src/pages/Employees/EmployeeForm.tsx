@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "utils/antd.tsx";
 import { DietaryPreference, Role } from "types/employee";
 import { DietTypeTag } from "components/DietTypeTag.tsx";
 import dayjs from "dayjs";

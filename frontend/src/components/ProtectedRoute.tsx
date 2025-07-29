@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { Spin } from "antd";
+import { Spin } from "utils/antd.tsx";
 import type { Role } from "types/employee.ts";
 import toast from "react-hot-toast";
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Descriptions, message, Modal, Space, Spin, Table, Typography } from "antd";
+import { Button, Card, Descriptions, Modal, Space, Spin, Table, Typography } from "utils/antd.tsx";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";

@@ -12,7 +12,7 @@ import {
   Space,
   Spin,
   Typography,
-} from "antd";
+} from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";

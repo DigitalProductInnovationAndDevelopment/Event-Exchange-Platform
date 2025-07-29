@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, List, Popconfirm, Space, Typography } from "antd";
+import { Button, List, Popconfirm, Space, Typography } from "utils/antd.tsx";
 import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import type { FileEntity } from "types/event.ts";
 
@@ -13,6 +13,11 @@ const FileListDisplay: React.FC<FileListDisplayProps> = ({ files, onDelete, onDo
         bordered
         size="small"
         locale={{ emptyText: "No files available." }}
+        pagination={{
+          pageSize: 5,
+          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          showQuickJumper: false,
+        }}
         renderItem={file => (
           <List.Item
             actions={[
