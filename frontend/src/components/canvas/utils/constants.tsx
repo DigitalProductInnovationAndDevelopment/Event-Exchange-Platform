@@ -115,33 +115,33 @@ export const getEditableParameters = (
   switch (el.type) {
     case "chair":
       return {
-        color: "string",
+        color: "color",
       };
     case "rectTable":
       return {
         name: "string",
-        color: "string",
+        color: "color",
       };
     case "circleTable":
       return {
         name: "string",
-        color: "string",
+        color: "color",
       };
     case "wall":
       return {
-        color: "string",
+        color: "color",
       };
     case "arrow":
       return {
         name: "string",
-        color: "string",
+        color: "color",
       };
     case "text":
       return {
         name: "string",
         size: "number",
         rotation: "number",
-        color: "string",
+        color: "color",
       };
     default:
       return {};
