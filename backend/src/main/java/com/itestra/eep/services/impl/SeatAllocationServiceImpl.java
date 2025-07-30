@@ -148,8 +148,9 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
 
             // Set eventId to null for all chairs so that all of them unassigned
-            chairRepository.deleteChairsByEvent_Id(eventId);
-            chairRepository.flush();
+            eventRepository.unsetAllEmployeeParticipationChairsByEventId(eventId);
+            eventRepository.unsetAllVisitorParticipationChairsByEventId(eventId);
+            eventRepository.flush();
 
             solved.forEach(solvedConstraint -> {
                         EmployeeParticipation employeeParticipation = existingEmployeeParticipationsMap.get(solvedConstraint.getProfileId());

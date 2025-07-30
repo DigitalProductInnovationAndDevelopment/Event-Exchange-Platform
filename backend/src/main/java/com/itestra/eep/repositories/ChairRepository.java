@@ -9,6 +9,4 @@ import java.util.UUID;
 @Repository
 public interface ChairRepository extends JpaRepository<Chair, UUID> {
 
-    void deleteChairsByEvent_Id(UUID eventId);
-
 }

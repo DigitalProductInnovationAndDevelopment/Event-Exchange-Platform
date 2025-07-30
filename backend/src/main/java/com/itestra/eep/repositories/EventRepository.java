@@ -42,6 +42,14 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("UPDATE VisitorParticipation v SET v.chair.id = :chairId WHERE v.id = :participationId")
     void updateVisitorParticipationChairId(@Param("participationId") UUID participationId, @Param("chairId") UUID chairId);
 
+    @Modifying
+    @Query("UPDATE EmployeeParticipation ep SET ep.chair.id = null WHERE ep.eventId = :eventId")
+    void unsetAllEmployeeParticipationChairsByEventId(@Param("eventId") UUID eventId);
+
+    @Modifying
+    @Query("UPDATE VisitorParticipation vp SET vp.chair.id = null WHERE vp.eventId = :eventId")
+    void unsetAllVisitorParticipationChairsByEventId(@Param("eventId") UUID eventId);
+
     @Query("""
             SELECT new com.itestra.eep.dtos.SeatAllocationDetailsDTO(
                 p.employee.profile,
