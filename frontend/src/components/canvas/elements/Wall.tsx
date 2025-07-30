@@ -18,7 +18,7 @@ export class Wall implements ElementProperties {
     this.type = "wall";
     this.x1 = stageCenter?.x ?? 200;
     this.y1 = stageCenter?.y ?? 100;
-    this.x2 = stageCenter?.x ?? 200 + 150;
+    this.x2 = (stageCenter?.x ?? 200) + 150;
     this.y2 = stageCenter?.y ?? 100;
     this.color = "#444";
     this.draggable = true;

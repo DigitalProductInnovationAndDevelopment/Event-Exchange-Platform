@@ -7,6 +7,7 @@ import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import { type Action, addElement, changeBuildMode } from "../actions/actions.tsx";
 import { ElementInspector } from "components/canvas/elements/ElementInspector.tsx";
+import { findStageCenterCoordinates } from "components/canvas/utils/functions.tsx";
 
 
 const handleToolboxClick =
@@ -74,7 +75,10 @@ function Toolbox({
                 key={item.type}
                 x={10}
                 y={i * 60 + 40}
-                onClick={() => handleToolboxClick(item.type, dispatch, state.buildMode, { x: 200, y: 200 })}
+                onClick={() => {
+                  const stageCenter = findStageCenterCoordinates(stageRef);
+                  handleToolboxClick(item.type, dispatch, state.buildMode, stageCenter);
+                }}
                 cursor="pointer"
               >
                 <Rect width={80} height={40} fill="#ddd" stroke="#999" cornerRadius={6} />
@@ -106,6 +110,16 @@ function Toolbox({
               />
               <Text text="Save" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
             </Group>
+
+            {/* <Group
+              y={510}>
+              <Text text={"#undo: " + state.history?.past?.length + "\n#redo: " + state.history?.future?.length} x={25}
+                    y={15} fill="black" fontSize={10} fontStyle="bold" />
+            </Group>
+            <Group x={15} y={560}>
+              <FPSText layer={toolboxLayer}></FPSText>
+            </Group>*/}
+
           </Group>
         </Layer>
       </Stage>

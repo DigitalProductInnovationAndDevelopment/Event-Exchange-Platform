@@ -19,7 +19,6 @@ export class Table implements ElementProperties {
   attachedChairs: UUID[];
 
   constructor(tableType: ElementProperties, stageCenter: { x: number, y: number }) {
-    debugger;
     this.id = uuidv4();
     this.type = tableType.type;
     this.name = "Table";

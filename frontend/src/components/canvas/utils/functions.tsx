@@ -1,6 +1,10 @@
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import React from "react";
 import Konva from "konva";
+import type { UUID } from "components/canvas/utils/constants.tsx";
+import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
+import toast from "react-hot-toast";
+import type { Table } from "components/canvas/elements/Table.tsx";
 
 export function areNeighbours(sourceChair: Chair, targetChair: Chair): boolean {
   const dx = sourceChair.x - targetChair.x;
@@ -48,15 +52,6 @@ export function makeBackgroundWhite(uri: string): Promise<string> {
 
     img.src = uri;
   });
-}
-
-export function downloadURI(uri: string, name: string) {
-  const link = document.createElement("a");
-  link.download = name;
-  link.href = uri;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
 export function sanitizeDimensions(value: number, fallback = 0) {
@@ -124,6 +119,62 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
   } catch (error) {
     console.error("Export failed:", error);
   }
+};
+
+
+export function findStageCenterCoordinates(stageRef: React.RefObject<Konva.Stage | null>) {
+  const stage = stageRef.current?.getStage();
+  const centerX = (stage?.width() ?? 0) / 2 - (stageRef.current?.x() ?? 0);
+  const centerY = (stage?.height() ?? 0) / 2 - (stageRef.current?.y() ?? 0);
+  return { x: centerX, y: centerY };
+}
+
+export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID[]) => {
+
+  const selectedIdSet = new Set(selectedIds);
+
+  const chairsToBeDeleted: Chair[] = [];
+  const tablesToBeDeleted: Table[] = [];
+  const allChairMap = new Map<UUID, Chair>();
+
+  for (const el of state.elements) {
+
+    if (el.type === "chair") {
+      if (selectedIdSet.has(el.id)) {
+        chairsToBeDeleted.push(el as Chair);
+      }
+      allChairMap.set(el.id, el as Chair);
+    } else if ((el.type === "rectTable" || el.type === "circleTable") && selectedIdSet.has(el.id)) {
+      tablesToBeDeleted.push(el as Table);
+    }
+  }
+
+  // Check directly selected assigned chairs
+  const hasAssignedChairs = chairsToBeDeleted.some(chair => chair.assigneeProfileId);
+  if (hasAssignedChairs) {
+    toast.error("Cannot delete chair(s) that have assigned participants. Please unassign first.");
+    return false;
+  }
+
+  // Check tables with assigned attached chairs
+  if (tablesToBeDeleted.length > 0) {
+
+    for (const table of tablesToBeDeleted) {
+      if (!table.attachedChairs?.length) continue;
+
+      const hasAssignedAttachedChairs = table.attachedChairs.some(chairId => {
+        const chair = allChairMap.get(chairId);
+        return chair?.assigneeProfileId;
+      });
+
+      if (hasAssignedAttachedChairs) {
+        toast.error("Cannot delete table(s) that have chairs with assigned guests. Please unassign first.");
+        return false;
+      }
+    }
+  }
+
+  return true;
 };
 
 export const handleMouseOver = (e: Konva.KonvaEventObject<PointerEvent>) => {
