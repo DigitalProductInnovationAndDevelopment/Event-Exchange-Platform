@@ -115,56 +115,30 @@ export const getEditableParameters = (
   switch (el.type) {
     case "chair":
       return {
-        x: "number",
-        y: "number",
-        radius: "number",
         color: "string",
-        employeeId: "string",
-        employeeName: "string",
       };
     case "rectTable":
       return {
         name: "string",
-        type: ["rectTable", "circleTable"],
-        x: "number",
-        y: "number",
-        width: "number",
-        height: "number",
-        rotation: "number",
         color: "string",
       };
     case "circleTable":
       return {
         name: "string",
-        type: ["rectTable", "circleTable"],
-        x: "number",
-        y: "number",
-        radius: "number",
-        rotation: "number",
         color: "string",
       };
     case "wall":
       return {
-        x1: "number",
-        y1: "number",
-        x2: "number",
-        y2: "number",
         color: "string",
       };
     case "arrow":
       return {
         name: "string",
-        x1: "number",
-        y1: "number",
-        x2: "number",
-        y2: "number",
         color: "string",
       };
     case "text":
       return {
         name: "string",
-        x: "number",
-        y: "number",
         size: "number",
         rotation: "number",
         color: "string",

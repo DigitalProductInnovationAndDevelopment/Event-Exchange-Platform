@@ -127,15 +127,15 @@ const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: Employe
             >
               <Select placeholder="Select role" options={ROLE_OPTIONS} />
             </Form.Item>
+            <Form.Item
+              label="Notes"
+              name={["profile", "notes"]}
+              rules={[{ required: false, message: "Please enter notes" }]}
+            >
+              <Input.TextArea placeholder="Enter notes" rows={4} />
+            </Form.Item>
           </div>
         )}
-        <Form.Item
-          label="Notes"
-          name={["profile", "notes"]}
-          rules={[{ required: false, message: "Please enter notes" }]}
-        >
-          <Input.TextArea placeholder="Enter notes" rows={4} />
-        </Form.Item>
     </Form>
   );
 };

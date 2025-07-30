@@ -297,7 +297,7 @@ export const EventDetails = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      background: "#f5f5f5",
+                      background: "#ffffff",
                       borderRadius: 4,
                       width: "100%",
                       height: "200px",
@@ -311,8 +311,8 @@ export const EventDetails = () => {
                           alt="Event Seat Plan Image"
                           style={{
                             width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
+                            height: "200px",
+                            objectFit: "fill",
                           }}
                         />
                       ) : (

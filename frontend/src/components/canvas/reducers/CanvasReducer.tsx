@@ -177,9 +177,9 @@ export function reducer(state: AppState, action: Action) {
             updated[key] = idMap[value];
           }
 
-          // Case 2: Array of string references
+          // Case 2: Array of string references ( important for attachedChairs)
           if (Array.isArray(value)) {
-            updated[key] = value.map(item => (idMap[item] ? idMap[item] : item));
+            updated[key] = value.map(item => (idMap[item] ? idMap[item] : null)).filter(item => item !== null);
           }
         }
 

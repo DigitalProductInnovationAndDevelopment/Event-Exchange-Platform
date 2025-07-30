@@ -20,6 +20,7 @@ import type { Table } from "components/canvas/elements/Table.tsx";
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { Wall } from "components/canvas/elements/Wall.tsx";
 import type { SelectionRectangleType } from "components/canvas/elements/SelectionRectangle.tsx";
+import { findStageCenterCoordinates, validateCanvasElementDeletion } from "components/canvas/utils/functions.tsx";
 
 
 export const handleKeyUp = (e: KeyboardEvent,
@@ -39,7 +40,8 @@ export const handleKeyDown = (
   dispatch: (action: Action) => void,
   setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
   setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
-  selectedIds: UUID[], setQuickWallCoordinates: any) => {
+  selectedIds: UUID[], setQuickWallCoordinates: any,
+  state: AppState) => {
   // we have to skip key handling if user is typing in an input or textarea
   const tag = (e.target as HTMLElement).tagName.toLowerCase();
   if (tag === "input" || tag === "textarea") return;
@@ -75,6 +77,9 @@ export const handleKeyDown = (
   }
 
   if (e.key === "Backspace" || e.key === "Delete") {
+    if (!validateCanvasElementDeletion(state, selectedIds)) {
+      return;
+    }
     dispatch(removeElements(selectedIds));
     setSelectedIds([]);
     dispatch(setChairIdForManualAssignment(null));
@@ -254,7 +259,8 @@ export const handleMouseDown = (
       const y2 = (pointer.y - stage.y()) / scale;
       const { x1, y1 } = quickWallCoordinates;
 
-      let element = shapeFactory("wall") as Wall;
+      const stageCenter = findStageCenterCoordinates(stageRef);
+      let element = shapeFactory("wall", stageCenter) as Wall;
       element = { ...element, x1, y1, x2, y2 } as Wall;
 
       dispatch(addElement(element));
