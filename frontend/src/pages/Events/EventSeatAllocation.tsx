@@ -14,7 +14,7 @@ import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours } from "components/canvas/utils/functions.tsx";
 import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
-import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
+import { ExportOutlined, ImportOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import Konva from "konva";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import toast from "react-hot-toast";
@@ -44,6 +44,8 @@ const SeatAllocationContent = ({
   const [unallocatedSearch, setUnallocatedSearch] = useState("");
   const [allocatedSearch, setAllocatedSearch] = useState("");
   const { getSeatAllocations, updateSeatAllocation, generateSeatAllocations } = useApiService();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [emptyChairCount, setEmptyChairCount] = useState(0);
   const [constraintInputValues, setConstraintInputValues] = useState({
     "last neighborhood": 0,
     "Standort": 0,
@@ -70,7 +72,8 @@ const SeatAllocationContent = ({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      updateChairLabels(participants);
+      const emptyChairsCount = updateChairLabels(participants);
+      setEmptyChairCount(emptyChairsCount);
       setLoading(false);
     })();
 
@@ -133,6 +136,7 @@ const SeatAllocationContent = ({
       }
     }
 
+    let emptyChairCount = 0;
     state.elements
       ?.forEach((e: ElementProperties) => {
         if (e.type === "chair" && chairProfileMap.has(e.id)) {
@@ -141,11 +145,13 @@ const SeatAllocationContent = ({
         } else if (e.type === "chair") {
           (e as Chair).assigneeProfileId = undefined;
           (e as Chair).assigneeName = undefined;
+          emptyChairCount++;
         }
       });
 
     setAllocated(assigned);
     setUnallocated(unassigned);
+    return emptyChairCount;
   };
 
   // Generate initial seat allocation: assign unallocated employees to empty chairs
@@ -161,11 +167,6 @@ const SeatAllocationContent = ({
     } finally {
       setLoading(false);
     }
-
-  };
-
-  // Save the current seat allocation to the backend
-  const handleSave = async () => {
 
   };
 
@@ -195,24 +196,27 @@ const SeatAllocationContent = ({
         </div>
 
         <Space>
-          {/* Generate button on the left */}
           <Button type="primary" onClick={handleGenerate} disabled={loading}>
             Generate
           </Button>
-          {/* Save button in the middle */}
-          <Button type="primary" onClick={handleSave} loading={loading}>
-            Save
-          </Button>
-          {/* Back to Event button on the right */}
           <Button onClick={() => navigate(`/events/${eventId}`)}>Back to Event</Button>
+          {/* this button is to collapse manual seat allocation module*/}
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{ transition: "all 0.2s ease" }}
+            title={isCollapsed ? "Expand" : "Collapse"}
+          >
+            {isCollapsed ? <LeftOutlined style={{ fontSize: "12px" }} /> :
+              <RightOutlined style={{ fontSize: "12px" }} />}
+          </Button>
         </Space>
       </div>
       {/* Main content: seat map and unallocated employees list */}
       <Row gutter={16}>
-        <Col span={18}>
+        <Col span={isCollapsed ? 24 : 18}>
           <Card className="mb-6">
             <div style={{ height: "600px", overflow: "hidden" }}>
-              <KonvaCanvas schematicsUUID={schematicsId} stageReference={stageRefs} />
+              <KonvaCanvas schematicsUUID={schematicsId} stageReference={stageRefs} isFullWidth={isCollapsed} />
             </div>
           </Card>
           <Card className="mb-6" title="Seat Allocation Settings">
@@ -270,102 +274,112 @@ const SeatAllocationContent = ({
             </div>
           </Card>
         </Col>
-        <Col span={6}>
-          <Card title="Unallocated Employees" className="mb-6">
-            <Input.Search
-              placeholder="Search"
-              value={unallocatedSearch}
-              onChange={e => setUnallocatedSearch(e.target.value)}
-              className="mb-2"
-            />
-            {/* List of employees who are not yet assigned to any seat */}
-            <List
-              dataSource={useMemo(() =>
-                unallocated.filter(item =>
-                  (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
-                  (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase())
-                ), [unallocated, unallocatedSearch])}
-              pagination={{ pageSize: 5 }}
-              renderItem={item => (
-                <List.Item
-                  actions={[
-                    state.chairIdForManualAssignment && (
-                      <Button
-                        key="assign"
-                        icon={<ImportOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
-                        onClick={() => {
-                          updateSeatAllocation(eventId, {
-                            participationId: item.participationId,
-                            chairId: state.chairIdForManualAssignment,
-                          }).then(
-                            (assignmentResponse) => {
-                              if (assignmentResponse) {
-                                participants.find(p => p.participationId === item.participationId)!.chairId = state.chairIdForManualAssignment;
-                                setParticipants([...participants]);
-                                dispatch(setChairIdForManualAssignment(null));
-                              }
-                            },
-                          );
-                        }}
-                      >
-                      </Button>
-                    ),
-                  ].filter(Boolean)}
-                >
-                  <List.Item.Meta
-                    avatar={<Avatar>{getFullName(item.profile)?.[0]}</Avatar>}
-                    title={getFullName(item.profile)}
-                    description={item.profile.email}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-
-          <Card title="Allocated Employees" className="mb-6">
-            <Input.Search
-              placeholder="Search"
-              value={allocatedSearch}
-              onChange={e => setAllocatedSearch(e.target.value)}
-              className="mb-2"
-            />
-            {/* List of employees who are assigned to any seat */}
-            <List
-              pagination={{ pageSize: 5 }}
-              dataSource={useMemo(() =>
-                allocated.filter(item =>
-                  (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
-                  (item.profile.email?.toLowerCase() || "").includes(allocatedSearch.toLowerCase())
-                ), [allocated, allocatedSearch])}
-              renderItem={item => (
-                <List.Item
-                  actions={[
-                    <Button icon={<ExportOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
-                            onClick={() => {
-                              updateSeatAllocation(eventId, {
-                                participationId: item.participationId,
-                                chairId: null,
-                              }).then(
-                                (assignmentResponse) => {
-                                  if (assignmentResponse) {
-                                    participants.find(p => p.participationId === item.participationId)!.chairId = null;
-                                    setParticipants([...participants]);
-                                  }
-                                },
-                              );
-                            }}>
-                    </Button>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={getFullName(item.profile)}
-                    description={item.profile.email}
-                  />
-                </List.Item>
-
-              )}>
-            </List>
-          </Card>
+        <Col span={isCollapsed ? 0 : 6}>
+          <div style={{
+            transition: "all 0.3s ease",
+            overflow: "hidden",
+            width: "100%",
+            opacity: isCollapsed ? 0.3 : 1,
+          }}>
+            <Card className="mb-6" style={{ display: isCollapsed ? "none" : "block" }}>
+              <b>{`Empty Seat Count: ${emptyChairCount}`}</b>
+            </Card>
+            <Card title="Unallocated Employees" className="mb-6"
+                  style={{ display: isCollapsed || unallocated.length === 0 ? "none" : "block" }}>
+              <Input.Search
+                placeholder="Search"
+                value={unallocatedSearch}
+                onChange={e => setUnallocatedSearch(e.target.value)}
+                className="mb-2"
+              />
+              {/* List of employees who are not yet assigned to any seat */}
+              <List
+                dataSource={useMemo(() =>
+                  unallocated.filter(item =>
+                    (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
+                    (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()),
+                  ), [unallocated, unallocatedSearch])}
+                pagination={{ pageSize: 5 }}
+                renderItem={item => (
+                  <List.Item
+                    actions={[
+                      state.chairIdForManualAssignment && (
+                        <Button
+                          key="assign"
+                          icon={<ImportOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
+                          onClick={() => {
+                            updateSeatAllocation(eventId, {
+                              participationId: item.participationId,
+                              chairId: state.chairIdForManualAssignment,
+                            }).then(
+                              (assignmentResponse) => {
+                                if (assignmentResponse) {
+                                  participants.find(p => p.participationId === item.participationId)!.chairId = state.chairIdForManualAssignment;
+                                  setParticipants([...participants]);
+                                  dispatch(setChairIdForManualAssignment(null));
+                                }
+                              },
+                            );
+                          }}
+                        >
+                        </Button>
+                      ),
+                    ].filter(Boolean)}
+                  >
+                    <List.Item.Meta
+                      avatar={<Avatar>{getFullName(item.profile)?.[0]}</Avatar>}
+                      title={getFullName(item.profile)}
+                      description={item.profile.email}
+                    />
+                  </List.Item>
+                )}
+              />
+            </Card>
+            <Card title="Allocated Employees" className="mb-6"
+                  style={{ display: isCollapsed || allocated.length === 0 ? "none" : "block" }}>
+              <Input.Search
+                placeholder="Search"
+                value={allocatedSearch}
+                onChange={e => setAllocatedSearch(e.target.value)}
+                className="mb-2"
+              />
+              {/* List of employees who are assigned to any seat */}
+              <List
+                pagination={{ pageSize: 5 }}
+                dataSource={useMemo(() =>
+                  allocated.filter(item =>
+                    (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
+                    (item.profile.email?.toLowerCase() || "").includes(allocatedSearch.toLowerCase()),
+                  ), [allocated, allocatedSearch])}
+                renderItem={item => (
+                  <List.Item
+                    actions={[
+                      <Button icon={<ExportOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
+                              onClick={() => {
+                                updateSeatAllocation(eventId, {
+                                  participationId: item.participationId,
+                                  chairId: null,
+                                }).then(
+                                  (assignmentResponse) => {
+                                    if (assignmentResponse) {
+                                      participants.find(p => p.participationId === item.participationId)!.chairId = null;
+                                      setParticipants([...participants]);
+                                    }
+                                  },
+                                );
+                              }}>
+                      </Button>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      title={getFullName(item.profile)}
+                      description={item.profile.email}
+                    />
+                  </List.Item>
+                )}
+              />
+            </Card>
+          </div>
         </Col>
       </Row>
     </div>

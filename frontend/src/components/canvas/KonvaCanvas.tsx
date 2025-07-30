@@ -33,9 +33,10 @@ export interface KonvaCanvasProps {
   stageReference?: React.RefObject<Konva.Stage | null>,
   schematicsUUID?: UUID,
   eventName?: string,
+  isFullWidth?: boolean,
 }
 
-function KonvaCanvas({ stageReference, schematicsUUID }: KonvaCanvasProps) {
+function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanvasProps) {
   const { state, dispatch } = useCanvas();
   let stageRef = useRef<Konva.Stage | null>(null);
   let { schematicsId } = useParams();
@@ -108,7 +109,7 @@ function KonvaCanvas({ stageReference, schematicsUUID }: KonvaCanvasProps) {
     updateContainerSize();
     window.addEventListener("resize", updateContainerSize);
     return () => window.removeEventListener("resize", updateContainerSize);
-  }, []);
+  }, [isFullWidth]);
 
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -126,7 +127,7 @@ function KonvaCanvas({ stageReference, schematicsUUID }: KonvaCanvasProps) {
 
   useEffect(() => {
     const handleKeyDownWrapper = (e: KeyboardEvent) => {
-      handleKeyDown(e, dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates);
+      handleKeyDown(e, dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, state);
     };
 
     const handleKeyUpWrapper = (e: KeyboardEvent) => {
