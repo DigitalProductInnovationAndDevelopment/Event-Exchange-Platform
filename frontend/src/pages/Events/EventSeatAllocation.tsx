@@ -14,7 +14,7 @@ import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours } from "components/canvas/utils/functions.tsx";
 import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
-import { ExportOutlined, ImportOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoginOutlined, LogoutOutlined, RightOutlined } from "@ant-design/icons";
 import Konva from "konva";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import toast from "react-hot-toast";
@@ -196,7 +196,7 @@ const SeatAllocationContent = ({
         </div>
 
         <Space>
-          <Button type="primary" onClick={handleGenerate} disabled={loading}>
+          <Button type="primary" onClick={handleGenerate} disabled={loading} loading={loading}>
             Generate
           </Button>
           <Button onClick={() => navigate(`/events/${eventId}`)}>Back to Event</Button>
@@ -306,7 +306,7 @@ const SeatAllocationContent = ({
                       state.chairIdForManualAssignment && (
                         <Button
                           key="assign"
-                          icon={<ImportOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
+                          icon={<LoginOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
                           onClick={() => {
                             updateSeatAllocation(eventId, {
                               participationId: item.participationId,
@@ -354,7 +354,7 @@ const SeatAllocationContent = ({
                 renderItem={item => (
                   <List.Item
                     actions={[
-                      <Button icon={<ExportOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
+                      <Button icon={<LogoutOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
                               onClick={() => {
                                 updateSeatAllocation(eventId, {
                                   participationId: item.participationId,

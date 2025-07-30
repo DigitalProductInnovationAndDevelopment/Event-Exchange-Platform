@@ -6,6 +6,8 @@ import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functio
 export class Wall implements ElementProperties {
   id: UUID;
   type: ShapeType;
+  x: number;
+  y: number;
   x1: number;
   y1: number;
   x2: number;
@@ -16,11 +18,13 @@ export class Wall implements ElementProperties {
   constructor(stageCenter?: { x: number, y: number }) {
     this.id = uuidv4();
     this.type = "wall";
+    this.x = stageCenter?.x ?? 200;
+    this.y = stageCenter?.y ?? 100;
     this.x1 = stageCenter?.x ?? 200;
     this.y1 = stageCenter?.y ?? 100;
     this.x2 = (stageCenter?.x ?? 200) + 150;
     this.y2 = stageCenter?.y ?? 100;
-    this.color = "#444";
+    this.color = "#444444";
     this.draggable = true;
   }
 }

@@ -487,6 +487,8 @@ export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (a
           }
           : {
             id,
+            x: node.x(),
+            y: node.y(),
             x1: el.x1! * scaleX,
             y1: el.y1! * scaleY,
             x2: el.x2! * scaleX,

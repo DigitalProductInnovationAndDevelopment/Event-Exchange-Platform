@@ -206,8 +206,8 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
                   <Group
                     key={el.id}
                     id={el.id}
-                    x={el.x}
-                    y={el.y}
+                    x={Number.isNaN(el.x) ? 0 : el.x}
+                    y={Number.isNaN(el.y) ? 0 : el.y}
                     draggable={el.draggable}
                     rotation={el.rotation}
                     onDblClick={(e) => handleDoubleClickOnElement(e, el, setSelectedIds)}
@@ -270,8 +270,8 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
                       <Group
                         key={el.id}
                         id={el.id}
-                        x={el.x}
-                        y={el.y}
+                        x={Number.isNaN(el.x) ? 0 : el.x}
+                        y={Number.isNaN(el.y) ? 0 : el.y}
                         draggable={false} // we disable individual dragging since parent handles it
                         rotation={el.rotation}
                         ref={node => {
