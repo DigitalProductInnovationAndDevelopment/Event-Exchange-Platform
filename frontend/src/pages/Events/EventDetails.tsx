@@ -52,21 +52,31 @@ export const EventDetails = () => {
   const isAdmin = user?.isAdmin();
 
   // here, we try to render the schematics preview. we repeat until the render is ready.
-  const stageWidth = stageRef.current?.size()?.width;
   useEffect(() => {
-    const interval = setInterval(async () => {
-      let url = null;
+    const setupListener = () => {
       const stage = stageRef.current?.getStage();
-      if (stage && stage.getLayers().length > 1) {
-        url = await handleExport(stageRef);
-        if (url) {
-          clearInterval(interval);
-          setImageUrl(url);
-        }
+      if (!stage) {
+        // we have to set up listener quickly before we miss the event
+        setTimeout(setupListener, 50);
+        return;
       }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [stageWidth, stageRef.current?.getLayers()]);
+      const handleContentReady = async () => {
+        if (stage.getLayers().length > 1 && imageUrl === null) {
+          const url = await handleExport(stageRef);
+          if (url) {
+            console.log("Schematics is rendered!");
+            setImageUrl(url);
+          }
+        }
+      };
+      stage.on("contentReady", handleContentReady);
+      return () => {
+        stage.off("contentReady", handleContentReady);
+      };
+    };
+
+    return setupListener();
+  }, [imageUrl]);
 
   useEffect(() => {
     (async () => {

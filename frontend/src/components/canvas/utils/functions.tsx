@@ -110,7 +110,6 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
       })
     )
       .then(jpegUri => {
-        console.log("Converted image URI:", jpegUri);
         return jpegUri;
       })
       .catch(err => {
