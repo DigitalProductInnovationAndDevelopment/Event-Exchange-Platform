@@ -236,6 +236,7 @@ export const EmployeesList = () => {
     return employees.filter(item => {
       const matchesSearch =
         searchText === "" ||
+        item.profile.email.toLowerCase().includes(searchText.toLowerCase()) ||
         (getFullName(item.profile)).toLowerCase().includes(searchText.toLowerCase());
       // If locationFilter is undefined, show all locations
       const matchesLocation = locationFilter === undefined || item.location === locationFilter;
@@ -355,7 +356,7 @@ export const EmployeesList = () => {
         <Row gutter={16}>
           <Col span={12}>
             <Input
-              placeholder="Search Employee Name or ID"
+              placeholder="Search Employee Name or Email"
               prefix={<SearchOutlined />}
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
