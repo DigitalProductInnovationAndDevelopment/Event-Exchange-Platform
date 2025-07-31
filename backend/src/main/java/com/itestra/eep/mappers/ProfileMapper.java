@@ -14,6 +14,7 @@ public interface ProfileMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateProfileFromDto(ProfileUpdateDTO ownProfileUpdateD, @MappingTarget Profile profile);
 
+    @Mapping(target = "isVisitor", expression = "java(profile.getAuthorities().contains(Role.VISITOR))")
     ProfileMinimalDetailsDTO toProfileMinimalDetailsDto(Profile profile);
 
     List<ProfileMinimalDetailsDTO> toProfileMinimalDetailsDto(List<Profile> profile);

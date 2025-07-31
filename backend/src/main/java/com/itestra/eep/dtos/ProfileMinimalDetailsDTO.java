@@ -1,5 +1,6 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.itestra.eep.enums.DietaryPreference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,5 +27,8 @@ public class ProfileMinimalDetailsDTO implements Serializable {
     String email;
 
     DietaryPreference[] dietTypes;
+
+    @JsonProperty("isVisitor")
+    boolean isVisitor;
 
 }

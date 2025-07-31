@@ -78,6 +78,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     List<SeatAllocationDetailsDTO> findCurrentSeatAllocationsByEventId(@Param("eventId") UUID eventId);
 
 
+    @EntityGraph(attributePaths = {"employeeParticipations.employee.profile.authorities",
+            "visitorParticipations.profile.authorities"})
     @Query("""
             SELECT p.employee.profile
             FROM Event e
