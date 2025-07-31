@@ -322,7 +322,7 @@ const SeatAllocationContent = ({
                           onClick={() => {
                             const chairId = state.chairIdForManualAssignment!;
                             if (state.unsavedChairs?.has(chairId)) {
-                              toast.error("This seat is created new and not saved, please save the schematics before assigning a participants!", { duration: 6000 });
+                              toast.error("This seat is created new and not saved, please save the schematics before assigning a participant!", { duration: 6000 });
                               return;
                             }
                             const neighbourProfileIds = extractedNeighboringEmployeeProfileIds(chairId, state, generateChairNeighborMap, "table");

@@ -231,6 +231,11 @@ export const EventsList = () => {
         </Title>
         {isTableView ? (
           <Table
+            onRow={(record: Event) => {
+              return {
+                onClick: () => navigate(`/events/${record.id}`),
+              };
+            }}
             rowKey="id"
             columns={columns}
             dataSource={upcomingEvents}
@@ -320,6 +325,11 @@ export const EventsList = () => {
         </Title>
         {isTableView ? (
           <Table
+            onRow={(record: Event) => {
+              return {
+                onClick: () => navigate(`/events/${record.id}`),
+              };
+            }}
             rowKey="id"
             columns={columns}
             dataSource={pastEvents}

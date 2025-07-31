@@ -387,6 +387,11 @@ export const EmployeesList = () => {
       <Table
         columns={columns(handleNavigate, handleDeleteClick)}
         dataSource={filteredData}
+        onRow={(record: Employee) => {
+          return {
+            onClick: () => handleNavigate(record.profile.id),
+          };
+        }}
         bordered={false}
         rowKey={record => record.profile.id}
         loading={loading}
