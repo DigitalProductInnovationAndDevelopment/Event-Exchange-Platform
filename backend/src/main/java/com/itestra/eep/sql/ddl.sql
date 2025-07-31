@@ -63,7 +63,7 @@ CREATE TABLE organization.previous_matches
 (
     first_employee_id  UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
     second_employee_id UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
-    event_id           UUID REFERENCES organization.event (id),
+    event_id UUID REFERENCES organization.event (id) ON DELETE CASCADE,
     PRIMARY KEY (first_employee_id, second_employee_id, event_id)
 );
 

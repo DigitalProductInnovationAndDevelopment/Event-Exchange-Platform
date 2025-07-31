@@ -49,7 +49,9 @@ public class Employee {
     @Column(name = "second_employee_id")
     private Set<UUID> previousMatches = new LinkedHashSet<>();
 
+    // TODO this is fetched EAGERLY for some reason during Employee Batch Upsert
     @Formula("(select count(*) from organization.employee_participation ep where ep.profile_id = profile_id)")
+    @Basic(fetch = FetchType.LAZY)
     private int participationCount;
 
 }

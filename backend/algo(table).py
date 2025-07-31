@@ -166,9 +166,10 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
         sys.exit(-1)
 
 # --- Main Execution Block ---
-if len(sys.argv) != 5:
-    print("Usage: python algo.py <input_json_path> <table_json_path> <config_json_path> <output_json_path>")
-    sys.exit(1)
+if __name__ == "__main__":
+    if len(sys.argv) != 5:
+        print("Usage: python algo.py <input_json_path> <table_json_path> <config_json_path> <output_json_path>")
+        sys.exit(1)
 
     # --- Configuration ---
     # EMPLOYEES_JSON_PATH = 'input.json'
@@ -179,6 +180,7 @@ if len(sys.argv) != 5:
     TABLES_JSON_PATH = sys.argv[2]
     CONSTRAINTS_JSON_PATH = sys.argv[3]
     OUTPUT_JSON_PATH = sys.argv[4]
+
     # Set a time limit for the solver
     SOLVER_TIME_LIMIT = 300.0
 
@@ -186,13 +188,13 @@ if len(sys.argv) != 5:
     try:
         with open(EMPLOYEES_JSON_PATH, 'r', encoding='utf-8') as f:
             employee_list = json.load(f)
-        
+
         with open(TABLES_JSON_PATH, 'r', encoding='utf-8') as f:
             table_list = json.load(f)
 
         with open(CONSTRAINTS_JSON_PATH, 'r', encoding='utf-8') as f:
             constraints_config = json.load(f)
-        
+
         assigned_employees = assign_tables(
             employees_data=employee_list,
             tables_data=table_list,
@@ -202,7 +204,7 @@ if len(sys.argv) != 5:
 
         if assigned_employees and all('TableNr' in r for r in assigned_employees):
             print(f"\nAssignment complete. Saving results to '{OUTPUT_JSON_PATH}'")
-            
+
             # Clean up data for JSON serialization
             for employee in assigned_employees:
                 if 'Anzahl' in employee and pd.notna(employee['Anzahl']):
@@ -213,14 +215,14 @@ if len(sys.argv) != 5:
 
             print("\n--- File-based Assignment Summary ---")
             df_results = pd.DataFrame(assigned_employees)
-            
+
             if not df_results['TableNr'].empty:
                 df_results['CurrentAssignment'] = df_results['TableNr'].apply(lambda x: x[0] if isinstance(x, list) and x else None)
 
                 print("Seats used per table (Current Event):")
                 print(df_results.groupby('CurrentAssignment')['Anzahl'].sum())
                 print("\n--- Detailed Results (Current Event) ---")
-                
+
                 # Dynamically build the list of columns to display in the summary
                 display_columns = ['Vorname', 'Nachname', 'Anzahl']
                 # Add the diversity attributes that are actual columns in the dataframe
@@ -228,7 +230,7 @@ if len(sys.argv) != 5:
                     if key in df_results.columns:
                         display_columns.append(key)
                 display_columns.append('CurrentAssignment')
-                
+
                 # Ensure no duplicates and all columns exist before printing
                 final_display_columns = []
                 for col in display_columns:

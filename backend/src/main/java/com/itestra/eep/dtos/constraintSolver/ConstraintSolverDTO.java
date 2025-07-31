@@ -22,7 +22,7 @@ public class ConstraintSolverDTO implements Serializable {
     @JsonIgnore
     int guestCount;
 
-    @JsonProperty("ProfileId")
+    @JsonProperty("ProfileID")
     UUID profileId;
 
     @JsonProperty("Anzahl")
