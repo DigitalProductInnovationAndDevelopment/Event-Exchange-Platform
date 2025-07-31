@@ -1,7 +1,7 @@
 import { useCanvas } from "./contexts/CanvasContext.tsx";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Group, Layer, Stage, Transformer } from "react-konva";
-import { type ElementProperties, renderElement, type UUID } from "./utils/constants";
+import { type ElementProperties, renderElement, type ShapeType, type UUID } from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
 import Konva from "konva";
 import type { Table } from "./elements/Table.tsx";
@@ -28,6 +28,17 @@ import {
   handleWheel,
 } from "components/canvas/EventListeners.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
+
+
+const TYPE_ORDER: { [key in ShapeType]: number } = {
+  rectTable: 1,
+  circleTable: 2,
+  chair: 6,
+  wall: 3,
+  quickWall: 3,
+  arrow: 4,
+  text: 5,
+} as const;
 
 export interface KonvaCanvasProps {
   stageReference?: React.RefObject<Konva.Stage | null>,
@@ -143,6 +154,23 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
       window.removeEventListener("keyup", handleKeyUpWrapper);
     };
   }, [dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, stageRef]);
+
+// unnecessary re-sorts when only positions/properties change
+  const elementTypesHash = useMemo(() =>
+      state.elements?.map(el => el.type).join(","),
+    [state.elements],
+  );
+
+  useEffect(() => {
+    if (state.elements?.length > 1) {
+      state.elements.sort((a, b) => {
+        const priorityA = TYPE_ORDER[a.type] ?? 999;
+        const priorityB = TYPE_ORDER[b.type] ?? 999;
+        return priorityA - priorityB;
+      });
+      console.log("sorted");
+    }
+  }, [elementTypesHash]);
 
   function getConnectedChairIdsOfTable(tableId: UUID): UUID[] {
     const table: ElementProperties | undefined = state.elements?.find(el => (el.type === "rectTable" || el.type === "circleTable") && el.id === tableId);

@@ -25,6 +25,7 @@ export interface Profile {
   email: string;
   dietTypes: (keyof typeof DietaryPreference)[];
   authorities?: Role[];
+  isVisitor?: boolean;
 }
 
 export interface Project {

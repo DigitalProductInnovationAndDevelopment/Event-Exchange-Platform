@@ -78,7 +78,10 @@ const columns = (
           >
             View
           </Button>
-          <Button danger type="default" onClick={() => onDeleteClick(record.profile.id, getFullName(record.profile))}>
+          <Button danger type="default" onClick={(e) => {
+            e.stopPropagation();
+            onDeleteClick(record.profile.id, getFullName(record.profile));
+          }}>
             Delete
           </Button>
         </Space>

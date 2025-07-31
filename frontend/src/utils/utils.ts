@@ -1,4 +1,11 @@
-import type { Employee, ParticipationDetails } from "types/employee";
+import type { Employee, ParticipationDetails, Profile } from "types/employee";
+
+
+interface DietaryCombinationsResult {
+  dietaryCombinationsEmployees: Record<string, number>;
+  dietaryCombinationsGuests: Record<string, number>;
+}
+
 
 // Utility function to export participation data as CSV
 export const exportParticipationToCSV = (data: ParticipationDetails[], eventName: string) => {
@@ -92,3 +99,45 @@ export const exportDietaryPreferencesToCSV = (dietaryStats: Record<string, numbe
   link.click();
   document.body.removeChild(link);
 };
+
+
+export function prettifyDiet(diets: string[]) {
+  return diets.length === 0
+    ? "Regular"
+    : diets.map(diet =>
+      diet
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/(^|\s)\S/g, l => l.toUpperCase()),
+    ).join(", ");
+}
+
+export function aggregateDietaryCombinations(
+  participantProfiles: Profile[],
+): DietaryCombinationsResult {
+  const comboCountsEmployees: Record<string, number> = {};
+  const comboCountsGuests: Record<string, number> = {};
+
+  for (const p of participantProfiles) {
+    if (p.dietTypes && p.dietTypes.length > 0) {
+      // Sort to ensure consistent key for same combinations
+      const comboKey = prettifyDiet(p.dietTypes.slice().sort());
+      if (p.isVisitor) {
+        comboCountsGuests[comboKey] = (comboCountsGuests[comboKey] || 0) + 1;
+      } else {
+        comboCountsEmployees[comboKey] = (comboCountsEmployees[comboKey] || 0) + 1;
+      }
+    } else {
+      if (p.isVisitor) {
+        comboCountsGuests["None"] = (comboCountsGuests["None"] || 0) + 1;
+      } else {
+        comboCountsEmployees["None"] = (comboCountsEmployees["None"] || 0) + 1;
+      }
+    }
+  }
+
+  return {
+    dietaryCombinationsEmployees: comboCountsEmployees,
+    dietaryCombinationsGuests: comboCountsGuests,
+  };
+}

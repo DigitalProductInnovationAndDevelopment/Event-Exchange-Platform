@@ -19,8 +19,8 @@ import FileListDisplay from "./components/FileListComponent.tsx";
 import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
-import { DietaryPreference, type Profile } from "types/employee.ts";
-import { exportDietaryPreferencesToCSV, exportParticipationToCSV } from "utils/utils.ts";
+import { type Profile } from "types/employee.ts";
+import { aggregateDietaryCombinations, exportDietaryPreferencesToCSV, exportParticipationToCSV } from "utils/utils.ts";
 import { useEffect, useRef, useState } from "react";
 import Konva from "konva";
 import { handleExport } from "components/canvas/utils/functions.tsx";
@@ -44,7 +44,8 @@ export const EventDetails = () => {
     getEventParticipants,
   } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [dietaryStats, setDietaryStats] = useState<Record<string, number>>({});
+  const [dietaryStatsEmployee, setDietaryStatsEmployee] = useState<Record<string, number>>({});
+  const [dietaryStatsGuest, setDietaryStatsGuest] = useState<Record<string, number>>({});
   const [, setEventParticipantProfiles] = useState<Profile[]>([]);
   const stageRef = useRef<Konva.Stage | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -52,31 +53,21 @@ export const EventDetails = () => {
   const isAdmin = user?.isAdmin();
 
   // here, we try to render the schematics preview. we repeat until the render is ready.
+  const stageWidth = stageRef.current?.size()?.width;
   useEffect(() => {
-    const setupListener = () => {
+    const interval = setInterval(async () => {
+      let url = null;
       const stage = stageRef.current?.getStage();
-      if (!stage) {
-        // we have to set up listener quickly before we miss the event
-        setTimeout(setupListener, 50);
-        return;
-      }
-      const handleContentReady = async () => {
-        if (stage.getLayers().length > 1 && imageUrl === null) {
-          const url = await handleExport(stageRef);
-          if (url) {
-            console.log("Schematics is rendered!");
-            setImageUrl(url);
-          }
+      if (stage && stage.getLayers().length > 1) {
+        url = await handleExport(stageRef);
+        if (url) {
+          clearInterval(interval);
+          setImageUrl(url);
         }
-      };
-      stage.on("contentReady", handleContentReady);
-      return () => {
-        stage.off("contentReady", handleContentReady);
-      };
-    };
-
-    return setupListener();
-  }, [imageUrl]);
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [stageWidth, stageRef.current?.getLayers()]);
 
   useEffect(() => {
     (async () => {
@@ -86,25 +77,12 @@ export const EventDetails = () => {
         setEvent(eventDetailsData);
         setEventParticipantProfiles(eventDetailsData?.participantDetails ?? []);
         if (eventDetailsData?.participantDetails) {
-          const dietCount: Record<string, number> = {};
-          eventDetailsData?.participantDetails.forEach(emp => {
-            if (emp.dietTypes && emp.dietTypes.length > 0) {
-              const mappedDietTypes = emp.dietTypes.map(dt => DietaryPreference[dt] ?? dt);
-              const sortedCombo = mappedDietTypes.slice().sort().join(", ");
-              if (sortedCombo in dietCount) {
-                dietCount[sortedCombo] += 1;
-              } else {
-                dietCount[sortedCombo] = 1;
-              }
-            } else {
-              if ("No Preference" in dietCount) {
-                dietCount["No Preference"] += 1;
-              } else {
-                dietCount["No Preference"] = 1;
-              }
-            }
-          });
-          setDietaryStats(dietCount);
+          const {
+            dietaryCombinationsEmployees,
+            dietaryCombinationsGuests,
+          } = aggregateDietaryCombinations(eventDetailsData!.participantDetails);
+          setDietaryStatsEmployee(dietaryCombinationsEmployees);
+          setDietaryStatsGuest(dietaryCombinationsGuests);
         }
         setLoading(false);
       } catch (err) {
@@ -260,7 +238,8 @@ export const EventDetails = () => {
             width={400}
           >
             <p>Are you sure you want to delete this event?</p>
-            <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone.</p>
+            <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone, and it will delete "Employee
+              Matchings" belonging to this event, as well.</p>
           </Modal>
         </Space>
       </div>
@@ -381,14 +360,14 @@ export const EventDetails = () => {
           </Card>
 
           {/* Dietary Preferences Section */}
-          {Object.entries(dietaryStats).length > 0 && (
-            <Card title="Dietary Preferences" className="mb-6">
+          {Object.entries(dietaryStatsEmployee).length > 0 && (
+            <Card title="Employee Dietary Preferences" className="mb-6">
               <div className="flex flex-col">
                 <div
                   className="grid gap-4 w-full"
                   style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
                 >
-                  {Object.entries(dietaryStats)
+                  {Object.entries(dietaryStatsEmployee)
                     .sort(([a], [b]) => a.localeCompare(b))
                     .map(([dietCombo, count]) => (
                     <div key={dietCombo} className="flex flex-col items-center justify-center">
@@ -403,6 +382,31 @@ export const EventDetails = () => {
               </div>
             </Card>
           )}
+
+          {/* Guest Dietary Preferences Section */}
+          {Object.entries(dietaryStatsGuest).length > 0 && (
+            <Card title="Guest Dietary Preferences" className="mb-6">
+              <div className="flex flex-col">
+                <div
+                  className="grid gap-4 w-full"
+                  style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
+                >
+                  {Object.entries(dietaryStatsGuest)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([dietCombo, count]) => (
+                      <div key={dietCombo} className="flex flex-col items-center justify-center">
+                        <Statistic
+                          title={<span className="text-center w-full block">{dietCombo}</span>}
+                          value={count}
+                          valueStyle={{ display: "block", textAlign: "center", width: "100%" }}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </Card>
+          )}
+
         </Col>
 
         <Col span={8}>
@@ -412,7 +416,13 @@ export const EventDetails = () => {
           <Button
             block
             icon={<FileTextOutlined />}
-            onClick={() => exportDietaryPreferencesToCSV(dietaryStats, event?.name || "Event")}
+            onClick={() => {
+              const combinedStats = { ...dietaryStatsEmployee };
+              Object.entries(dietaryStatsGuest).forEach(([combo, count]) => {
+                combinedStats[combo] = (combinedStats[combo] || 0) + count;
+              });
+              exportDietaryPreferencesToCSV(combinedStats, event?.name || "Event");
+            }}
           >
             Export Dietary Preferences
           </Button>

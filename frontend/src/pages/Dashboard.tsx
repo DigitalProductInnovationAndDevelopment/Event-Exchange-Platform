@@ -10,28 +10,13 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Event } from "../types/event";
-import { type Profile } from "../types/employee";
 import useApiService from "../services/apiService.ts";
 import dayjs from "dayjs";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { useAuth } from "../contexts/AuthContext.tsx";
+import { aggregateDietaryCombinations, prettifyDiet } from "utils/utils.ts";
 
 const { Title, Text } = Typography;
-
-// Helper to aggregate dietary combinations
-function aggregateDietaryCombinations(participantProfiles: Profile[]): Record<string, number> {
-  const comboCounts: Record<string, number> = {};
-  for (const p of participantProfiles) {
-    if (p.dietTypes && p.dietTypes.length > 0) {
-      // Sort to ensure consistent key for same combinations
-      const comboKey = p.dietTypes.slice().sort().join(", ");
-      comboCounts[comboKey] = (comboCounts[comboKey] || 0) + 1;
-    } else {
-      comboCounts["None"] = (comboCounts["None"] || 0) + 1;
-    }
-  }
-  return comboCounts;
-}
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -117,7 +102,11 @@ export const Dashboard = () => {
             const participants = event.participantDetails || [];
             const employeeCount = event.employeeParticipantCount;
             const guestCount = event.visitorParticipantCount;
-            const dietaryCombinations = aggregateDietaryCombinations(participants);
+            const {
+              dietaryCombinationsEmployees,
+              dietaryCombinationsGuests,
+            } = aggregateDietaryCombinations(participants);
+
             return (
               <List.Item
                 actions={[
@@ -162,26 +151,43 @@ export const Dashboard = () => {
                             </Space>
                           </Space>
                           <Space direction="vertical" size="small">
-                            <b>Dietary Preference Combinations </b>
-                            <Space wrap>
-                              {Object.keys(dietaryCombinations).length === 0 && <span style={{ color: '#aaa' }}>No data</span>}
-                              {Object.entries(dietaryCombinations).map(([combo, count]) => {
-                                const diets = combo === "None" ? [] : combo.split(", ");
-                                const prettyCombo = diets.length === 0
-                                  ? 'Regular'
-                                  : diets.map(diet =>
-                                    diet
-                                      .replace(/_/g, ' ')
-                                      .toLowerCase()
-                                      .replace(/(^|\s)\S/g, l => l.toUpperCase())
-                                  ).join(', ');
-                                return (
-                                  <span key={combo} style={{ marginLeft: 4 }}>
-                                    {prettyCombo} x {count}
-                                  </span>
-                                );
-                              })}
-                            </Space>
+                            <b>Dietary Preference Combinations</b>
+
+                            {/* Employees */}
+                            <div>
+                              <Text strong style={{ fontSize: "14px" }}>Employees:</Text>
+                              <Space wrap style={{ marginTop: 4 }}>
+                                {Object.keys(dietaryCombinationsEmployees).length === 0 &&
+                                  <span style={{ color: "#aaa" }}>No data</span>}
+                                {Object.entries(dietaryCombinationsEmployees).map(([combo, count]) => {
+                                  const diets = combo === "None" ? [] : combo.split(", ");
+                                  const prettyCombo = prettifyDiet(diets);
+                                  return (
+                                    <span key={`emp-${combo}`} style={{ marginLeft: 4 }}>
+                                      {prettyCombo} x {count}
+                                    </span>
+                                  );
+                                })}
+                              </Space>
+                            </div>
+
+                            {/* Guests */}
+                            <div>
+                              <Text strong style={{ fontSize: "14px" }}>Guests:</Text>
+                              <Space wrap style={{ marginTop: 4 }}>
+                                {Object.keys(dietaryCombinationsGuests).length === 0 &&
+                                  <span style={{ color: "#aaa" }}>No data</span>}
+                                {Object.entries(dietaryCombinationsGuests).map(([combo, count]) => {
+                                  const diets = combo === "None" ? [] : combo.split(", ");
+                                  const prettyCombo = prettifyDiet(diets);
+                                  return (
+                                    <span key={`guest-${combo}`} style={{ marginLeft: 4 }}>
+                                      {prettyCombo} x {count}
+                                    </span>
+                                  );
+                                })}
+                              </Space>
+                            </div>
                           </Space>
                         </Space>
                       )}
