@@ -42,7 +42,7 @@ public class SeatAllocationController {
     @PutMapping("/{eventId}/allocations")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> setSeatAllocations(@RequestBody SeatAllocationUpsertDTO dto, @PathVariable UUID eventId) {
-        seatAllocationService.updateSeatAllocation(dto.getParticipationId(), dto.getChairId(), eventId, null);
+        seatAllocationService.assignParticipantToChairAndPersistNewNeighbors(dto.getParticipationId(), dto.getChairId(), eventId, null, dto.getNeighbourProfileIds());
         return ResponseEntity.ok(true);
     }
 

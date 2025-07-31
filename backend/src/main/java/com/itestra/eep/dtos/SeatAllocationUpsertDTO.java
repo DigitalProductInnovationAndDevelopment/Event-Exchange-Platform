@@ -16,4 +16,6 @@ public final class SeatAllocationUpsertDTO {
 
     private final UUID chairId;
 
+    private final UUID[] neighbourProfileIds;
+
 }

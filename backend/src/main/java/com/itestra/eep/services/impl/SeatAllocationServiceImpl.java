@@ -13,6 +13,7 @@ import com.itestra.eep.exceptions.NotEnoughSeatForSeatAllocationException;
 import com.itestra.eep.mappers.EmployeeParticipationMapper;
 import com.itestra.eep.models.*;
 import com.itestra.eep.repositories.ChairRepository;
+import com.itestra.eep.repositories.EmployeeParticipationRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.repositories.PreviousMatchesRepository;
 import com.itestra.eep.services.SeatAllocationService;
@@ -51,6 +52,7 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
     private final ObjectMapper objectMapper;
     private final PreviousMatchesRepository previousMatchesRepository;
     private final EmployeeParticipationMapper employeeParticipationMapper;
+    private final EmployeeParticipationRepository employeeParticipationRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -61,16 +63,43 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
 
     /**
-     * @param chairId set UUID null for seat un-allocation
+     * @param chairId             set UUID null for seat un-allocation
      */
     @Override
-    public <T extends Participation> void updateSeatAllocation(UUID participationId, UUID chairId, UUID eventId, Class<T> participationClass) {
+    public <T extends Participation> void assignParticipantToChair(UUID participationId, UUID chairId, UUID eventId, Class<T> participationClass) {
+
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+
+        // create chair if it doesn't exist
         if (chairId != null && !chairRepository.existsById(chairId)) {
             chairRepository.saveAndFlush(new Chair(chairId, event));
         }
 
+        // update chair assignment based on participation type
+        updateChairAssignmentByType(participationId, chairId, participationClass);
+    }
+
+    @Override
+    public <T extends Participation> void assignParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
+                                                                                         Class<T> participationClass, UUID[] neighborProfileIds) {
+        // first assign the chair
+        seatAllocationServiceProxy.assignParticipantToChair(participationId, chairId, eventId, participationClass);
+
+        if (chairId == null) {
+            // if unassigning from chair, clean up previous matches
+            employeeParticipationRepository.findById(participationId)
+                    .ifPresent(participation ->
+                            previousMatchesRepository.deleteByEventIdAndEmployeeId(eventId, participation.getEmployee().getId())
+                    );
+        } else if (neighborProfileIds != null && neighborProfileIds.length > 0) {
+            // if assigning to chair with neighbors, record previous matches
+            recordEmployeePreviousMatches(participationId, eventId, neighborProfileIds);
+        }
+    }
+
+    private void updateChairAssignmentByType(UUID participationId, UUID chairId, Class<?> participationClass) {
         if (participationClass == null) {
+            // Update both types if class is not specified
             eventRepository.updateEmployeeParticipationChairId(participationId, chairId);
             eventRepository.updateVisitorParticipationChairId(participationId, chairId);
         } else if (EmployeeParticipation.class.isAssignableFrom(participationClass)) {
@@ -80,7 +109,34 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         } else {
             throw new IllegalArgumentException("Unsupported participation class: " + participationClass.getSimpleName());
         }
+    }
 
+    private void recordEmployeePreviousMatches(UUID participationId, UUID eventId, UUID[] neighborProfileIds) {
+        Optional<EmployeeParticipation> employeeParticipation = employeeParticipationRepository.findById(participationId);
+
+        if (employeeParticipation.isEmpty()) {
+            // not an employee participation then no need to record matches
+            return;
+        }
+
+        UUID employeeId = employeeParticipation.get().getEmployee().getId();
+        List<PreviousMatch> previousMatches = createBidirectionalMatches(employeeId, neighborProfileIds, eventId);
+
+        if (!previousMatches.isEmpty()) {
+            previousMatchesRepository.saveAllAndFlush(previousMatches);
+        }
+    }
+
+    private List<PreviousMatch> createBidirectionalMatches(UUID employeeId, UUID[] neighborIds, UUID eventId) {
+        List<PreviousMatch> matches = new ArrayList<>(neighborIds.length * 2);
+
+        for (UUID neighborId : neighborIds) {
+            // we create bidirectional matches here
+            matches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId, neighborId, eventId)));
+            matches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(neighborId, employeeId, eventId)));
+        }
+
+        return matches;
     }
 
     // TODO refactor and think of optimization
@@ -159,12 +215,12 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
                             UUID tableKey = UUID.fromString(Arrays.copyOf(solvedConstraint.getTableIds(), solvedConstraint.getTableIds().length, String[].class)[0]);
                             // first the employee is seated
                             if (j == 0) {
-                                seatAllocationServiceProxy.updateSeatAllocation(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, EmployeeParticipation.class);
+                                seatAllocationServiceProxy.assignParticipantToChair(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, EmployeeParticipation.class);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
                                 // we also track employee's table assignment so that we can reference them back whn we clculate new entites for PreviousMatches table
                                 employeeToTableMap.put(employeeParticipation.getEmployee().getId(), tableKey);
                             } else {
-                                seatAllocationServiceProxy.updateSeatAllocation(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, VisitorParticipation.class);
+                                seatAllocationServiceProxy.assignParticipantToChair(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, VisitorParticipation.class);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
                             }
                         }

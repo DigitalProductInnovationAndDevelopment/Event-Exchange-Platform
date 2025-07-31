@@ -15,4 +15,8 @@ public interface PreviousMatchesRepository extends JpaRepository<PreviousMatch, 
     @Query("delete from PreviousMatch p where p.id.eventId = ?1")
     void deleteAllByEventId(UUID eventId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("delete from PreviousMatch p where p.id.eventId = ?1 and (p.id.firstEmployeeId = ?2 or p.id.secondEmployeeId = ?2)")
+    void deleteByEventIdAndEmployeeId(UUID eventId, UUID employeeId);
+
 }
