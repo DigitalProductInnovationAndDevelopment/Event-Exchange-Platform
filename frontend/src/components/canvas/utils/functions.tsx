@@ -194,6 +194,9 @@ export function extractedNeighboringEmployeeProfileIds(
   let neighbourProfileIds: UUID[] = [];
   if (chairId) {
     const chair = state.elements.find(el => el.type === "chair" && el.id === chairId);
+    if (!chair!.attachedTo) {
+      toast.error("Chair is not attached to a table!");
+    }
     const neighborChairIds = new Set(generateChairNeighborMap(algorithmType)[chair!.attachedTo!][chairId]);
 
     neighbourProfileIds = state.elements.reduce<string[]>((acc, el) => {

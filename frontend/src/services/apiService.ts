@@ -274,7 +274,6 @@ export default function useApiService() {
               buildMode: 0,
               chairIdForManualAssignment: null,
               elements: [],
-              groups: [],
               canvasPosition: { x: 0, y: 0 },
               scale: 1,
             } as AppState),
@@ -297,13 +296,16 @@ export default function useApiService() {
 
         const canvasStateToPersist = {
           ...canvasState,
+          elements: structuredClone(canvasState.elements),
           history: undefined,
           activeToolboxTooltip: undefined,
           chairIdForManualAssignment: null,
+          unsavedChairs: undefined,
         };
 
         delete canvasStateToPersist.history;
         delete canvasStateToPersist.activeToolboxTooltip;
+        delete canvasStateToPersist.unsavedChairs;
         canvasStateToPersist.chairIdForManualAssignment = null;
 
         // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/VisitorParticipation Tables

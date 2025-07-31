@@ -23,6 +23,7 @@ export const SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT = "SET_CHAIR_ID_FOR_MANUAL_ASSIG
 export const UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO = "UPDATE_MULTIPLE_ELEMENTS_WITHOUT_UNDO_REDO";
 export const DUPLICATE_MULTIPLE_ELEMENTS = "DUPLICATE_MULTIPLE_ELEMENTS";
 export const CHANGE_BUILD_MODE = "CHANGE_BUILD_MODE";
+export const CLEAR_UNSAVED_CHAIRS_STATE = "CLEAR_UNSAVED_CHAIRS_STATE";
 export const UNDO = "UNDO";
 export const REDO = "REDO";
 export const COMMIT_UNDO_REDO_HISTORY = "COMMIT_UNDO_REDO_HISTORY";
@@ -106,6 +107,11 @@ export const duplicateMultipleElements = (
 export const changeBuildMode = (payload: number): Action => ({
   type: CHANGE_BUILD_MODE,
   payload,
+});
+
+export const clearUnsavedChairsState = (): Action => ({
+  type: CLEAR_UNSAVED_CHAIRS_STATE,
+  payload: null,
 });
 
 export const undo = (bypassRedo: boolean = false): Action => ({

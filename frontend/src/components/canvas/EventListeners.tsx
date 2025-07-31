@@ -441,7 +441,8 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
           );
         });
       }
-      updates.push({ id: el.id, x, y, attachedTo: null, offset: null });
+      updates.push({ id: el.id, x, y, attachedTo: undefined, offset: null });
+      el.attachedTo = undefined;
       dispatch(
         updateMultipleWithoutUndoRedo(updates),
       );

@@ -163,8 +163,12 @@ const SeatAllocationContent = ({
   const handleGenerate = async () => {
     //console.log(generateChairNeighborMap());
     try {
+      if ((state.unsavedChairs?.size ?? 0) > 0) {
+        toast.error("You have created new chairs that are not saved. Please save the schematics before generating seat allocations.", { duration: 6000 });
+        return;
+      }
       setLoading(true);
-      const results: SeatAllocationResult[] | null = await generateSeatAllocations(eventId!, generateChairNeighborMap(true), constraintInputValues);
+      const results: SeatAllocationResult[] | null = await generateSeatAllocations(eventId!, generateChairNeighborMap("table"), constraintInputValues);
       if (results) {
         toast.success("Seats are allocated successfully!");
         setParticipants(results);
@@ -316,7 +320,11 @@ const SeatAllocationContent = ({
                           key="assign"
                           icon={<LoginOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
                           onClick={() => {
-                            const chairId = state.chairIdForManualAssignment;
+                            const chairId = state.chairIdForManualAssignment!;
+                            if (state.unsavedChairs?.has(chairId)) {
+                              toast.error("This seat is created new and not saved, please save the schematics before assigning a participants!", { duration: 6000 });
+                              return;
+                            }
                             const neighbourProfileIds = extractedNeighboringEmployeeProfileIds(chairId, state, generateChairNeighborMap, "table");
 
                             updateSeatAllocation(eventId, {

@@ -160,7 +160,7 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
 
       const selectedChair = chairs.find((chair) => chair.id === selectedIds[0]);
       if (selectedChair) {
-        if (!selectedChair.assigneeProfileId && (state.chairIdForManualAssignment === null || (state.chairIdForManualAssignment !== selectedChair.id))) {
+        if (!selectedChair.assigneeProfileId && selectedChair.attachedTo && (state.chairIdForManualAssignment === null || (state.chairIdForManualAssignment !== selectedChair.id))) {
           dispatch(setChairIdForManualAssignment(selectedChair.id));
         } else if (selectedChair.assigneeProfileId && state.chairIdForManualAssignment !== null && state.chairIdForManualAssignment === selectedChair.id) {
           dispatch(setChairIdForManualAssignment(null));
@@ -257,7 +257,11 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
                 <Group
                   draggable={true}
                   onDragEnd={(e) => {
-                    // Handle group drag end
+                    if (selectedIds.length === 1) {
+                      const el = state.elements?.find(el => extendedSelectedIds.includes(el.id));
+                      handleDragEnd(e, el!, dispatch, state, rectRefs, stageRef);
+                    }
+                    // in addition, handle group drag end
                     const deltaX = e.target.x();
                     const deltaY = e.target.y();
                     handleGroupDragEnd(deltaX, deltaY, dispatch, state, extendedSelectedIds);

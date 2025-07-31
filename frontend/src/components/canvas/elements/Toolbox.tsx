@@ -5,7 +5,7 @@ import Konva from "konva";
 import React, { useRef } from "react";
 import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
-import { type Action, addElement, changeBuildMode } from "../actions/actions.tsx";
+import { type Action, addElement, changeBuildMode, clearUnsavedChairsState } from "../actions/actions.tsx";
 import { ElementInspector } from "components/canvas/elements/ElementInspector.tsx";
 import { findStageCenterCoordinates } from "components/canvas/utils/functions.tsx";
 
@@ -95,8 +95,10 @@ function Toolbox({
                     ...state,
                     canvasPosition: stageRef!.current!.getPosition(),
                     scale: stageRef!.current!.scaleX(),
-                  }
-                )
+                  },
+                ).then((response) => {
+                  if (response) dispatch(clearUnsavedChairsState());
+                })
               }
             >
               <Rect
