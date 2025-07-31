@@ -167,8 +167,8 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
 
 # --- Main Execution Block ---
 if len(sys.argv) != 5:
-        print("Usage: python algo.py <input_json_path> <table_json_path> <config_json_path> <output_json_path>")
-        sys.exit(1)
+    print("Usage: python algo.py <input_json_path> <table_json_path> <config_json_path> <output_json_path>")
+    sys.exit(1)
 
     # --- Configuration ---
     # EMPLOYEES_JSON_PATH = 'input.json'
