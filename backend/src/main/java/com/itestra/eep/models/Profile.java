@@ -37,8 +37,12 @@ public class Profile {
     @Column(name = "gitlab_username")
     private String gitlabUsername;
 
-    @Column(name = "email", unique = true, length = 255)
+    @Column(name = "email", unique = true)
     private String email;
+
+    public void setEmail(String email) {
+        this.email = email.toLowerCase();
+    }
 
     @Column(name = "notes")
     private String notes;
