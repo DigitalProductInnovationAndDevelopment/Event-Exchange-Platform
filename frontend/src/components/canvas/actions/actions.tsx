@@ -108,9 +108,9 @@ export const changeBuildMode = (payload: number): Action => ({
   payload,
 });
 
-export const undo = (): Action => ({
+export const undo = (bypassRedo: boolean = false): Action => ({
   type: UNDO,
-  payload: null,
+  payload: bypassRedo,
 });
 
 export const redo = (): Action => ({

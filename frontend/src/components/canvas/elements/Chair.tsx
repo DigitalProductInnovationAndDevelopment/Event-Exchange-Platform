@@ -15,6 +15,7 @@ export class Chair implements ElementProperties {
   offset: { dx: number; dy: number };
   assigneeProfileId?: string;
   assigneeName?: string;
+  belongsToVisitor?: boolean;
 
   constructor(stageCenter: { x: number, y: number }) {
     this.id = uuidv4();
@@ -28,6 +29,7 @@ export class Chair implements ElementProperties {
     this.offset = { dx: 0, dy: 0 };
     this.assigneeProfileId = undefined;
     this.assigneeName = undefined;
+    this.belongsToVisitor = false;
   }
 }
 

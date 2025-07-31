@@ -1,7 +1,7 @@
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import React from "react";
 import Konva from "konva";
-import type { UUID } from "components/canvas/utils/constants.tsx";
+import type { AlgorithmType, UUID } from "components/canvas/utils/constants.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import toast from "react-hot-toast";
 import type { Table } from "components/canvas/elements/Table.tsx";
@@ -135,6 +135,7 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
   const chairsToBeDeleted: Chair[] = [];
   const tablesToBeDeleted: Table[] = [];
   const allChairMap = new Map<UUID, Chair>();
+  const allTablesMap = new Map<UUID, Table>();
 
   for (const el of state.elements) {
 
@@ -143,8 +144,11 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
         chairsToBeDeleted.push(el as Chair);
       }
       allChairMap.set(el.id, el as Chair);
-    } else if ((el.type === "rectTable" || el.type === "circleTable") && selectedIdSet.has(el.id)) {
-      tablesToBeDeleted.push(el as Table);
+    } else if ((el.type === "rectTable" || el.type === "circleTable")) {
+      if (selectedIdSet.has(el.id)) {
+        tablesToBeDeleted.push(el as Table);
+      }
+      allTablesMap.set(el.id, el as Table);
     }
   }
 
@@ -173,8 +177,37 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
     }
   }
 
+  chairsToBeDeleted.forEach((chair) => {
+    if (chair.attachedTo) {
+      const table = allTablesMap.get(chair.attachedTo);
+      if (table?.attachedChairs) {
+        table.attachedChairs = table.attachedChairs.filter(c => c !== chair.id);
+      }
+    }
+  });
   return true;
 };
+
+export function extractedNeighboringEmployeeProfileIds(
+  chairId: string | null, state: AppState, generateChairNeighborMap: (algorithmType: AlgorithmType) => Record<string, Record<string, string[]>>, algorithmType: AlgorithmType) {
+
+  let neighbourProfileIds: UUID[] = [];
+  if (chairId) {
+    const chair = state.elements.find(el => el.type === "chair" && el.id === chairId);
+    const neighborChairIds = new Set(generateChairNeighborMap(algorithmType)[chair!.attachedTo!][chairId]);
+
+    neighbourProfileIds = state.elements.reduce<string[]>((acc, el) => {
+      if (el.type === "chair" &&
+        neighborChairIds.has(el.id) &&
+        (el as Chair).assigneeProfileId &&
+        !(el as Chair).belongsToVisitor) {
+        acc.push((el as Chair).assigneeProfileId!);
+      }
+      return acc;
+    }, []);
+  }
+  return neighbourProfileIds;
+}
 
 export const handleMouseOver = (e: Konva.KonvaEventObject<PointerEvent>) => {
   e.target.getStage()!.container().style.cursor = "default";

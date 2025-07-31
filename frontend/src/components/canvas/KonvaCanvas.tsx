@@ -240,6 +240,7 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
               {selectedIds.length === 1 &&
                 state.elements.find((el) => el.type === "chair") && (
                   <NeighbourArrows
+                    algorithmType={"table"}
                     state={state}
                     table={(state.elements.find(
                       (a) =>

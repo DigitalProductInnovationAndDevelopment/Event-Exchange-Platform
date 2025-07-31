@@ -21,6 +21,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import type { Wall } from "components/canvas/elements/Wall.tsx";
 import type { SelectionRectangleType } from "components/canvas/elements/SelectionRectangle.tsx";
 import { findStageCenterCoordinates, validateCanvasElementDeletion } from "components/canvas/utils/functions.tsx";
+import toast from "react-hot-toast";
 
 
 export const handleKeyUp = (e: KeyboardEvent,
@@ -444,6 +445,11 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
       dispatch(
         updateMultipleWithoutUndoRedo(updates),
       );
+
+      if ((el as Chair).assigneeProfileId) {
+        toast.error("Cannot remove occupied chairs. Unassign participants before removing chairs from the table.");
+        setTimeout(() => dispatch(undo(true)), 100);
+      }
       return;
     }
   }

@@ -6,12 +6,12 @@ import useApiService from "services/apiService";
 import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
 import KonvaCanvas, { type KonvaCanvasProps } from "components/canvas/KonvaCanvas";
 import { getFullName, type Profile } from "types/employee";
-import { type ElementProperties } from "components/canvas/utils/constants.tsx";
+import { type AlgorithmType, type ElementProperties } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { Table } from "components/canvas/elements/Table.tsx";
 
 import { CanvasTooltip } from "components/CanvasTooltip.tsx";
-import { areNeighbours } from "components/canvas/utils/functions.tsx";
+import { areNeighbours, extractedNeighboringEmployeeProfileIds } from "components/canvas/utils/functions.tsx";
 import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
 import { LeftOutlined, LoginOutlined, LogoutOutlined, RightOutlined } from "@ant-design/icons";
@@ -79,7 +79,7 @@ const SeatAllocationContent = ({
 
   }, [participants, state.elements.length]);
 
-  const generateChairNeighborMap = (isTableBased: boolean) => {
+  const generateChairNeighborMap = (algorithmType: AlgorithmType) => {
     const tables: Table[] = (state.elements.filter((el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable") as Table[]);
     const chairs: Chair[] = (state.elements.filter((el: ElementProperties) => el.type === "chair") as Chair[]);
 
@@ -106,9 +106,9 @@ const SeatAllocationContent = ({
 
           const chairB = chairMap.get(attachedChairIds[j]);
           if (!chairB) continue;
-          if (!isTableBased && areNeighbours(chairA, chairB)) {
+          if (algorithmType === "distance" && areNeighbours(chairA, chairB)) {
             neighbors[chairA.id].push(chairB.id);
-          } else if (isTableBased && chairA.attachedTo === chairB.attachedTo) {
+          } else if (algorithmType === "table" && chairA.attachedTo === chairB.attachedTo) {
             neighbors[chairA.id].push(chairB.id);
           }
         }
@@ -125,12 +125,15 @@ const SeatAllocationContent = ({
   const updateChairLabels = (participants: SeatAllocationResult[]) => {
     const assigned: SeatAllocationResult[] = [];
     const unassigned: SeatAllocationResult[] = [];
-    const chairProfileMap: Map<string, Profile> = new Map();
+    const chairProfileMap: Map<string, Profile & { isVisitor: boolean }> = new Map();
 
     for (let i = 0; i < participants.length; i++) {
       if (participants[i].chairId) {
         assigned.push(participants[i]);
-        chairProfileMap.set(participants[i].chairId!, participants[i].profile);
+        chairProfileMap.set(participants[i].chairId!, {
+          ...participants[i].profile,
+          isVisitor: !!participants[i].invitorId,
+        });
       } else {
         unassigned.push(participants[i]);
       }
@@ -142,9 +145,11 @@ const SeatAllocationContent = ({
         if (e.type === "chair" && chairProfileMap.has(e.id)) {
           (e as Chair).assigneeProfileId = chairProfileMap.get(e.id)!.id;
           (e as Chair).assigneeName = getFullName(chairProfileMap.get(e.id)!);
+          (e as Chair).belongsToVisitor = chairProfileMap.get(e.id)!.isVisitor;
         } else if (e.type === "chair") {
           (e as Chair).assigneeProfileId = undefined;
           (e as Chair).assigneeName = undefined;
+          (e as Chair).belongsToVisitor = undefined;
           emptyChairCount++;
         }
       });
@@ -285,7 +290,9 @@ const SeatAllocationContent = ({
             <Card className="mb-6" style={{ display: isCollapsed ? "none" : "block" }}>
               <b>{`Empty Seat Count: ${emptyChairCount}`}</b>
             </Card>
-            <Card title="Unallocated Employees" className="mb-6"
+            <Card
+              title={`Unallocated Participants ( ${unallocated.length} / ${allocated.length + unallocated.length} )`}
+              className="mb-6"
                   style={{ display: isCollapsed || unallocated.length === 0 ? "none" : "block" }}>
               <Input.Search
                 placeholder="Search"
@@ -309,9 +316,13 @@ const SeatAllocationContent = ({
                           key="assign"
                           icon={<LoginOutlined style={{ fontSize: 16, color: "darkgreen" }} />}
                           onClick={() => {
+                            const chairId = state.chairIdForManualAssignment;
+                            const neighbourProfileIds = extractedNeighboringEmployeeProfileIds(chairId, state, generateChairNeighborMap, "table");
+
                             updateSeatAllocation(eventId, {
                               participationId: item.participationId,
                               chairId: state.chairIdForManualAssignment,
+                              neighbourProfileIds: neighbourProfileIds,
                             }).then(
                               (assignmentResponse) => {
                                 if (assignmentResponse) {
@@ -336,7 +347,8 @@ const SeatAllocationContent = ({
                 )}
               />
             </Card>
-            <Card title="Allocated Employees" className="mb-6"
+            <Card title={`Allocated Participants ( ${allocated.length} / ${allocated.length + unallocated.length} )`}
+                  className="mb-6"
                   style={{ display: isCollapsed || allocated.length === 0 ? "none" : "block" }}>
               <Input.Search
                 placeholder="Search"
@@ -360,6 +372,7 @@ const SeatAllocationContent = ({
                                 updateSeatAllocation(eventId, {
                                   participationId: item.participationId,
                                   chairId: null,
+                                  neighbourProfileIds: null,
                                 }).then(
                                   (assignmentResponse) => {
                                     if (assignmentResponse) {

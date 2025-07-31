@@ -3,17 +3,20 @@ import type { Chair } from "components/canvas/elements/Chair.tsx";
 import { Arrow, Group } from "react-konva";
 import { areNeighbours } from "components/canvas/utils/functions.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
+import type { AlgorithmType } from "components/canvas/utils/constants.tsx";
 
 interface NeighbourArrowsProps {
   state: AppState;
   table: Table;
   selectedChairId: string;
+  algorithmType: AlgorithmType;
 }
 
 function NeighbourArrows({
                            state,
                            table,
                            selectedChairId,
+                           algorithmType,
                          }: NeighbourArrowsProps) {
   if (!table || !selectedChairId) return null;
 
@@ -28,7 +31,13 @@ function NeighbourArrows({
   const arrows = chairs
     .filter((chair) => chair.id !== selectedChair.id)
     .filter((chair) => {
-      return areNeighbours(selectedChair, chair);
+      if (algorithmType === "table") {
+        return selectedChair.attachedTo === chair.attachedTo;
+      } else if (algorithmType === "distance") {
+        return areNeighbours(selectedChair, chair);
+      } else {
+        return false;
+      }
     });
 
   return (

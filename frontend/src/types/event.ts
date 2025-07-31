@@ -38,6 +38,7 @@ export interface SeatAllocationResult {
 export interface SeatAllocationUpsert {
   participationId: UUID,
   chairId: UUID | null,
+  neighbourProfileIds: UUID[] | null,
 }
 
 export interface EventMinimal {

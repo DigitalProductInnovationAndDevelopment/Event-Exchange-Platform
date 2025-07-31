@@ -6,6 +6,7 @@ import { Text, TextRender } from "components/canvas/elements/Text.tsx";
 
 export type UUID = string;
 export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickWall" | "arrow" | "text";
+export type AlgorithmType = "table" | "distance";
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGETARIAN: "green",

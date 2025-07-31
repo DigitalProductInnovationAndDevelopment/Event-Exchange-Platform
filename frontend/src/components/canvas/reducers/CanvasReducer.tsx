@@ -201,6 +201,7 @@ export function reducer(state: AppState, action: Action) {
     case UNDO: {
       const { past, future } = state.history ?? { past: [], future: [] };
       if (past.length === 0) return state;
+      const bypassRedo = action.payload;
 
       const newPast = past.slice(0, -1);
       const previous = past[past.length - 1];
@@ -209,7 +210,7 @@ export function reducer(state: AppState, action: Action) {
         ...previous,
         history: {
           past: [...newPast],
-          future: [...future, { ...state }],
+          future: bypassRedo ? [...future] : [...future, { ...state }],
         },
       };
     }
@@ -232,7 +233,10 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         history: {
-          past: [...(state.history?.past ?? []), state],
+          past: [...(state.history?.past ?? []), {
+            ...state,
+            elements: structuredClone(state.elements),
+          }],
           future: [],
         },
       };
