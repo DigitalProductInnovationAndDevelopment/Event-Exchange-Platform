@@ -11,6 +11,7 @@ import {
   DUPLICATE_MULTIPLE_ELEMENTS,
   REDO,
   REMOVE_ELEMENTS,
+  SET_CANVAS_POSITION,
   SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT,
   SET_STATE,
   UNDO,
@@ -80,6 +81,13 @@ export function reducer(state: AppState, action: Action) {
         ...state,
         elements: [...state.elements, action.payload],
         history: { past: [...(state.history?.past ?? []), state], future: [] },
+      };
+    }
+    case SET_CANVAS_POSITION: {
+      return {
+        ...state,
+        canvasPosition: action.payload.canvasPosition,
+        scale: action.payload.scale,
       };
     }
     case REMOVE_ELEMENTS: {

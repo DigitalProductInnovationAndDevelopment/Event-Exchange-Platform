@@ -96,6 +96,12 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
         if (container) {
           container.style.cursor = "grab";
         }
+      } else {
+        if (state.scale) setScale(state!.scale);
+        if (state.canvasPosition) stageRef.current?.setPosition(state!.canvasPosition ? state!.canvasPosition : {
+          x: 0,
+          y: 0,
+        });
       }
     };
     fetchData();

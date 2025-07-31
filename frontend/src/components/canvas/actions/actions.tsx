@@ -14,6 +14,7 @@ export interface Action {
 }
 
 export const SET_STATE = "SET_STATE";
+export const SET_CANVAS_POSITION = "SET_CANVAS_POSITION";
 export const ADD_ELEMENT = "ADD_ELEMENT";
 export const REMOVE_ELEMENTS = "REMOVE_ELEMENTS";
 export const UPDATE_ELEMENT = "UPDATE_ELEMENT";
@@ -30,6 +31,11 @@ export const COMMIT_UNDO_REDO_HISTORY = "COMMIT_UNDO_REDO_HISTORY";
 
 export const setState = (payload: AppState): Action => ({
   type: SET_STATE,
+  payload,
+});
+
+export const setCanvasPosition = (payload: { canvasPosition: { x: number; y: number }, scale: number }): Action => ({
+  type: SET_CANVAS_POSITION,
   payload,
 });
 

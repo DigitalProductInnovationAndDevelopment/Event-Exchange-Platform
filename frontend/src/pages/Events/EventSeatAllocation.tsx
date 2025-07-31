@@ -12,9 +12,9 @@ import type { Table } from "components/canvas/elements/Table.tsx";
 
 import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours, extractedNeighboringEmployeeProfileIds } from "components/canvas/utils/functions.tsx";
-import { setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
+import { setCanvasPosition, setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
-import { LeftOutlined, LoginOutlined, LogoutOutlined, RightOutlined } from "@ant-design/icons";
+import { FullscreenExitOutlined, LeftOutlined, LoginOutlined, LogoutOutlined, RightOutlined } from "@ant-design/icons";
 import Konva from "konva";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import toast from "react-hot-toast";
@@ -200,9 +200,34 @@ const SeatAllocationContent = ({
       />
       {/* Page title and action buttons */}
       <div className="flex justify-between items-center">
-        <div className="flex flex-row">
+        <div className="flex flex-row items-center">
           <Title level={2}>Seat Allocation</Title>
           <CanvasTooltip />
+          <Button
+            className="ms-3 mt-2"
+            type="primary"
+            onClick={() => {
+              const foundElement =
+                state.elements.find(element => element.type === "chair") ??
+                state.elements.length > 0 ? state.elements[0] :
+                  undefined;
+
+              if (foundElement) {
+                // Center the canvas on the chair element
+                dispatch(setCanvasPosition({
+                  canvasPosition: { x: -foundElement.x!, y: -foundElement.y! },
+                  scale: 1,
+                }));
+              } else {
+                dispatch(setCanvasPosition({
+                  canvasPosition: { x: 0, y: 0 },
+                  scale: 1,
+                }));
+              }
+            }}
+            title="Find and go to the first chair element on the canvas">
+            <FullscreenExitOutlined />
+          </Button>
         </div>
 
         <Space>
@@ -311,7 +336,7 @@ const SeatAllocationContent = ({
                     (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
                     (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()),
                   ), [unallocated, unallocatedSearch])}
-                pagination={{ pageSize: 5 }}
+                pagination={{ pageSize: 5, showLessItems: true }}
                 renderItem={item => (
                   <List.Item
                     actions={[
@@ -366,7 +391,7 @@ const SeatAllocationContent = ({
               />
               {/* List of employees who are assigned to any seat */}
               <List
-                pagination={{ pageSize: 5 }}
+                pagination={{ pageSize: 5, showLessItems: true }}
                 dataSource={useMemo(() =>
                   allocated.filter(item =>
                     (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
