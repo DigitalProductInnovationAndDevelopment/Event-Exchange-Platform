@@ -12,8 +12,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -42,6 +42,7 @@ public class EventMinimalDetailsDTO implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime date;
 
-    List<FileDetailsDTO> fileEntities = new ArrayList<>();
+    // Important because we display Images as Carousel in "All Events" page
+    Set<FileDetailsDTO> fileEntities = new HashSet<>();
 
 }

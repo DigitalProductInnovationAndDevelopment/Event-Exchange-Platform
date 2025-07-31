@@ -32,14 +32,14 @@ public class EventParticipationController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EmployeeParticipationDetailsDTO>> getEventEmployeeParticipants(@PathVariable UUID eventId) {
         Event event = eventService.findById(eventId);
-        return new ResponseEntity<>(employeeParticipationMapper.map(event.getEmployeeParticipations().stream().toList()), HttpStatus.OK);
+        return new ResponseEntity<>(employeeParticipationMapper.toEmployeeParticipationDetailsDTO(event.getEmployeeParticipations().stream().toList()), HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}/participants")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeParticipationDetailsDTO> addEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid EmployeeParticipationUpsertDTO dto) {
         EmployeeParticipation employeeParticipation = eventService.addParticipant(eventId, dto);
-        return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipation), HttpStatus.OK);
+        return new ResponseEntity<>(employeeParticipationMapper.toEmployeeParticipationDetailsDTO(employeeParticipation), HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}/participants/batch")
@@ -53,7 +53,7 @@ public class EventParticipationController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EmployeeParticipationDetailsDTO> updateEventParticipant(@PathVariable UUID eventId, @RequestBody @Valid EmployeeParticipationUpsertDTO dto) {
         EmployeeParticipation employeeParticipation = eventService.updateParticipant(eventId, dto);
-        return new ResponseEntity<>(employeeParticipationMapper.map(employeeParticipation), HttpStatus.OK);
+        return new ResponseEntity<>(employeeParticipationMapper.toEmployeeParticipationDetailsDTO(employeeParticipation), HttpStatus.OK);
     }
 
     @DeleteMapping("/participants/{participationId}")

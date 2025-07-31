@@ -3,16 +3,12 @@ package com.itestra.eep.mappers;
 import com.itestra.eep.dtos.EmployeeParticipationDetailsDTO;
 import com.itestra.eep.dtos.constraintSolver.ConstraintSolverDTO;
 import com.itestra.eep.models.EmployeeParticipation;
-import com.itestra.eep.models.Event;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.UUID;
-
-import static com.itestra.eep.enums.Role.ADMIN;
 
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
@@ -35,42 +31,20 @@ public interface EmployeeParticipationMapper {
         return employeeParticipation.getEmployee().getPreviousMatches().toArray(UUID[]::new);
     }
 
-    default EmployeeParticipationDetailsDTO map(EmployeeParticipation employeeParticipation) {
-        return this.map(List.of(employeeParticipation)).get(0);
-    }
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "employee.id", target = "employeeId")
+    @Mapping(source = "event.id", target = "eventId")
+    @Mapping(source = "event.name", target = "eventName")
+    @Mapping(source = "event.date", target = "eventDate")
+    @Mapping(source = "event.eventType", target = "eventType")
+    @Mapping(source = "employee.profile.name", target = "name")
+    @Mapping(source = "employee.profile.lastName", target = "lastName")
+    @Mapping(source = "employee.profile.email", target = "email")
+    @Mapping(source = "employee.profile.gitlabUsername", target = "gitlabUsername")
+    @Mapping(source = "employee.profile.dietTypes", target = "dietTypes")
+    @Mapping(source = "employee.location", target = "eventAddress")
+    EmployeeParticipationDetailsDTO toEmployeeParticipationDetailsDTO(EmployeeParticipation employeeParticipation);
 
-    default List<EmployeeParticipationDetailsDTO> map(List<EmployeeParticipation> employeeParticipations) {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-
-        // We make employee participations visible only to admins
-        boolean isAdmin = auth != null && auth.getAuthorities().stream()
-                .anyMatch(a -> ADMIN.name().equals(a.getAuthority()));
-
-        if (!isAdmin || employeeParticipations == null || employeeParticipations.isEmpty()) {
-            return List.of();
-        }
-
-        return employeeParticipations.stream()
-                .map(p -> {
-                    Event e = p.getEvent();
-                    return EmployeeParticipationDetailsDTO.builder()
-                            .id(p.getId())
-                            .employeeId(p.getEmployee().getId())
-                            .eventId(e.getId())
-                            .guestCount(p.getGuestCount())
-                            .confirmed(p.getConfirmed())
-                            .eventName(e.getName())
-                            .eventType(e.getEventType())
-                            .eventDate(e.getDate())
-                            .eventAddress(e.getAddress())
-                            .name(p.getEmployee().getProfile().getName())
-                            .lastName(p.getEmployee().getProfile().getLastName())
-                            .gitlabUsername(p.getEmployee().getProfile().getGitlabUsername())
-                            .email(p.getEmployee().getProfile().getEmail())
-                            .dietTypes(p.getEmployee().getProfile().getDietTypes())
-                            .build();
-                })
-                .toList();
-    }
+    List<EmployeeParticipationDetailsDTO> toEmployeeParticipationDetailsDTO(List<EmployeeParticipation> employeeParticipations);
 
 }

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,9 +44,9 @@ public class ProfileController {
 
     @GetMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<EmployeeDetailsDTO> getEmployee(@PathVariable UUID id) {
         Employee employee = employeeService.findById(id);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee, authentication), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @GetMapping("/employees")
@@ -59,9 +58,9 @@ public class ProfileController {
 
     @PostMapping("/employee")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeDetailsDTO> createEmployee(@RequestBody @Valid EmployeeCreateDTO dto, Authentication authentication) {
+    public ResponseEntity<EmployeeDetailsDTO> createEmployee(@RequestBody @Valid EmployeeCreateDTO dto) {
         Employee employee = employeeService.create(dto);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee, authentication), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @PostMapping("/employees/batch")
@@ -73,9 +72,9 @@ public class ProfileController {
 
     @PutMapping("/employee/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto, Authentication authentication) {
+    public ResponseEntity<EmployeeDetailsDTO> updateEmployee(@PathVariable UUID id, @RequestBody @Valid EmployeeUpdateDTO dto) {
         Employee employee = employeeService.update(id, dto);
-        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee, authentication), HttpStatus.OK);
+        return new ResponseEntity<>(employeeMapper.toDetailsDto(employee), HttpStatus.OK);
     }
 
     @DeleteMapping("/employee/{id}")

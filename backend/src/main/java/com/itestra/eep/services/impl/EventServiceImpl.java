@@ -222,8 +222,8 @@ public class EventServiceImpl implements EventService {
                 employeeParticipationRepository.saveAllAndFlush(participationsToUpdate);
 
         // Map entities to DTOs
-        List<EmployeeParticipationDetailsDTO> createdDTOs = employeeParticipationMapper.map(createdParticipations);
-        List<EmployeeParticipationDetailsDTO> updatedDTOs = employeeParticipationMapper.map(updatedParticipations);
+        List<EmployeeParticipationDetailsDTO> createdDTOs = employeeParticipationMapper.toEmployeeParticipationDetailsDTO(createdParticipations);
+        List<EmployeeParticipationDetailsDTO> updatedDTOs = employeeParticipationMapper.toEmployeeParticipationDetailsDTO(updatedParticipations);
 
         return new ParticipationBatchResultDTO(createdDTOs, updatedDTOs);
     }

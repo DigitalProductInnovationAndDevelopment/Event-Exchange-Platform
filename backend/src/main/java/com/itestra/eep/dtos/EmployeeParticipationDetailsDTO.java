@@ -7,7 +7,6 @@ import com.itestra.eep.enums.EventType;
 import com.itestra.eep.serializers.LocalDateTimeDeserializer;
 import com.itestra.eep.serializers.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Value;
 
 import java.io.Serializable;
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Value
-@Builder
 @AllArgsConstructor
 public class EmployeeParticipationDetailsDTO implements Serializable {
 

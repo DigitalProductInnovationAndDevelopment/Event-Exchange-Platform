@@ -27,15 +27,15 @@ public class FileSecurity {
 
         Profile user = (Profile) authentication.getPrincipal();
 
-        // admins can always download
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(auth -> Role.ADMIN.name().equals(auth.getAuthority()));
+        // admins and employees, partners can always download
+        boolean isVisitor = authentication.getAuthorities().stream()
+                .anyMatch(auth -> Role.VISITOR.name().equals(auth.getAuthority()));
 
-        if (isAdmin) {
+        if (!isVisitor) {
             return true;
         }
 
-        // allow visitors or employees to download if they are participants of the event
+        // allow visitors to download if they are participants of the event
         Optional<FileEntity> fileOpt = fileService.getFile(fileId);
         return fileOpt.isPresent() &&
                 eventService.isParticipant(fileOpt.get().getEventId(), ((Profile) authentication.getPrincipal()).getId());

@@ -33,7 +33,7 @@ public class SeatAllocationController {
     }
 
     @GetMapping("/{eventId}/allocations")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'PARTNER')")
     public ResponseEntity<List<SeatAllocationDetailsDTO>> getSeatAllocations(@PathVariable UUID eventId) {
         List<SeatAllocationDetailsDTO> seatAllocations = seatAllocationService.getSeatAllocations(eventId);
         return new ResponseEntity<>(seatAllocations, HttpStatus.OK);

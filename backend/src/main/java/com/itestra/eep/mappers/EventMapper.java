@@ -36,12 +36,10 @@ public abstract class EventMapper {
     public abstract List<EventDetailsDTO> toDetailsDto(List<Event> events, @Context Authentication authentication);
 
     @Mapping(source = "date", target = "status", qualifiedByName = "status")
-    @Mapping(target = "notes", expression = "java(filterNotes(event, authentication))")
     @Mapping(target = "participantDetails", expression = "java(filterParticipantDetails(event, authentication))")
     public abstract EventDetailsDTO toDetailsDto(Event event, @Context Authentication authentication);
 
     @Mapping(source = "date", target = "status", qualifiedByName = "status")
-    @Mapping(source = "fileEntities", target = "fileEntities")
     public abstract EventMinimalDetailsDTO toMinimalDetailsDto(Event event);
 
     public abstract List<EventMinimalDetailsDTO> toMinimalDetailsDto(List<Event> events);
@@ -49,11 +47,6 @@ public abstract class EventMapper {
     @Named("status")
     public String status(LocalDateTime eventDate) {
         return eventDate.isAfter(LocalDateTime.now()) ? "upcoming" : "completed";
-    }
-
-    public String filterNotes(Event event, Authentication authentication) {
-        boolean isAdmin = authentication.getAuthorities().contains(Role.ADMIN);
-        return isAdmin ? event.getNotes() : null;
     }
 
     public List<ProfileMinimalDetailsDTO> filterParticipantDetails(Event event, Authentication authentication) {

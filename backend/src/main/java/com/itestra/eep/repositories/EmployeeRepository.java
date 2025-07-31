@@ -22,6 +22,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     @EntityGraph("Employee.profile_participations")
     List<Employee> findAllByOrderByProfileNameAsc();
 
+    @EntityGraph(attributePaths = {"profile"})
     List<Employee> findByProfileEmailIn(Set<String> profile_email);
 
 }
