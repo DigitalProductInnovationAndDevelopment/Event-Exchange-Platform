@@ -329,7 +329,7 @@ export const EventDetails = () => {
                 )}
               </Col>
               {isAdmin && (
-                <Col span={8} style={{ height: "100%"}}>
+                <Col span={8} style={{ height: "100%" }}>
                   <Space direction="vertical" className="w-full">
                     <Button block icon={<UserAddOutlined />}
                       onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
@@ -357,8 +357,8 @@ export const EventDetails = () => {
               <div className="flex md:flex-row justify-around items-stretch gap-4 w-full">
                 <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
                 <Statistic title="Total Participants"
-                           value={event.employeeParticipantCount + event.visitorParticipantCount}
-                           prefix={<TeamOutlined />} />
+                  value={event.employeeParticipantCount + event.visitorParticipantCount}
+                  prefix={<TeamOutlined />} />
                 <Statistic title="Employees" value={event.employeeParticipantCount} prefix={<TeamOutlined />} />
                 <Statistic title="Guests" value={event.visitorParticipantCount} prefix={<TeamOutlined />} />
               </div>
@@ -376,14 +376,14 @@ export const EventDetails = () => {
                   {Object.entries(dietaryStatsEmployee)
                     .sort(([a], [b]) => a.localeCompare(b))
                     .map(([dietCombo, count]) => (
-                    <div key={dietCombo} className="flex flex-col items-center justify-center">
-                      <Statistic
-                        title={<span className="text-center w-full block">{dietCombo}</span>}
-                        value={count}
-                        valueStyle={{ display: "block", textAlign: "center", width: "100%" }}
-                      />
-                    </div>
-                  ))}
+                      <div key={dietCombo} className="flex flex-col items-center justify-center">
+                        <Statistic
+                          title={<span className="text-center w-full block">{dietCombo}</span>}
+                          value={count}
+                          valueStyle={{ display: "block", textAlign: "center", width: "100%" }}
+                        />
+                      </div>
+                    ))}
                 </div>
               </div>
             </Card>
@@ -417,53 +417,53 @@ export const EventDetails = () => {
 
         <Col span={8}>
           {/* Participants Tile */}
-      <Card title="Export Information" className="mb-6">
-        <Space direction="vertical" className="w-full">
-          {isAdmin && (
-            <Button
-              block
-              icon={<FileTextOutlined />}
-              onClick={() => {
-              const combinedStats = { ...dietaryStatsEmployee };
-              Object.entries(dietaryStatsGuest).forEach(([combo, count]) => {
-                combinedStats[combo] = (combinedStats[combo] || 0) + count;
-              });
-              exportDietaryPreferencesToCSV(combinedStats, event?.name || "Event");
-            }}
-            >
-              Export Dietary Preferences
-            </Button>
-          )}
-          {isAdmin && (
-            <Button
-              block
-              icon={<FileTextOutlined />}
-              onClick={async () => {
-                const participants = await getEventParticipants(eventId!);
-                if (participants) exportParticipationToCSV(participants, event?.name || "Event");
-              }}
-            >
-              Export Participant List
-            </Button>
-          )}
-          <Button
-            block
-            icon={<FileTextOutlined />}
-            disabled={!imageUrl}
-            onClick={() => {
-              if (imageUrl) {
-                const link = document.createElement("a");
-                link.href = imageUrl;
-                link.download = `${event?.name?.replace(/\s+/g, "_")}_Seat_Layout.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }
-            }}
-          >
-            Export Seat Layout
-          </Button>
-        </Space>
+          <Card title="Export Information" className="mb-6">
+            <Space direction="vertical" className="w-full">
+              {isAdmin && (
+                <Button
+                  block
+                  icon={<FileTextOutlined />}
+                  onClick={() => {
+                    const combinedStats = { ...dietaryStatsEmployee };
+                    Object.entries(dietaryStatsGuest).forEach(([combo, count]) => {
+                      combinedStats[combo] = (combinedStats[combo] || 0) + count;
+                    });
+                    exportDietaryPreferencesToCSV(combinedStats, event?.name || "Event");
+                  }}
+                >
+                  Export Dietary Preferences
+                </Button>
+              )}
+              {isAdmin && (
+                <Button
+                  block
+                  icon={<FileTextOutlined />}
+                  onClick={async () => {
+                    const participants = await getEventParticipants(eventId!);
+                    if (participants) exportParticipationToCSV(participants, event?.name || "Event");
+                  }}
+                >
+                  Export Participant List
+                </Button>
+              )}
+              <Button
+                block
+                icon={<FileTextOutlined />}
+                disabled={!imageUrl}
+                onClick={() => {
+                  if (imageUrl) {
+                    const link = document.createElement("a");
+                    link.href = imageUrl;
+                    link.download = `${event?.name?.replace(/\s+/g, "_")}_Seat_Layout.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }
+                }}
+              >
+                Export Seat Layout
+              </Button>
+            </Space>
           </Card>
 
           {imageFiles?.length > 0 && (
@@ -552,23 +552,22 @@ export const EventDetails = () => {
           )}
 
           {/* Existing Management Actions Tile */}
-          {isAdmin && (
-            <Card title="File Management">
-              <Space direction="vertical" className="w-full">
-                <div className="space-y-4">
-                  <FileListDisplay
-                    files={event.fileEntities}
-                    onDelete={handleFileDelete}
-                    onDownload={handleDownload}
-                  />
+          <Card title="File Management">
+            <Space direction="vertical" className="w-full">
+              <div className="space-y-4">
+                <FileListDisplay
+                  files={event.fileEntities}
+                  onDelete={handleFileDelete}
+                  onDownload={handleDownload}
+                />
+                {isAdmin && (
                   <FileUploadButton eventId={eventId!} onUpload={handleFileUpload} />
-                </div>
-              </Space>
-            </Card>
-          )}
-
+                )}
+              </div>
+            </Space>
+          </Card>
         </Col>
       </Row>
-    </div>
+    </div >
   );
 };

@@ -2,10 +2,14 @@ import React from "react";
 import { Button, List, Popconfirm, Space, Typography } from "utils/antd.tsx";
 import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import type { FileEntity } from "types/event.ts";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const { Text } = Typography;
 
 const FileListDisplay: React.FC<FileListDisplayProps> = ({ files, onDelete, onDownload }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin();
+
   return (
     <div className="mb-4">
       <List
@@ -23,6 +27,7 @@ const FileListDisplay: React.FC<FileListDisplayProps> = ({ files, onDelete, onDo
             actions={[
               <Space>
                 <Button icon={<DownloadOutlined />} onClick={() => onDownload(file)} />
+
                 <Popconfirm
                   placement="right"
                   title="Are you sure you want to delete this file?"
@@ -30,7 +35,9 @@ const FileListDisplay: React.FC<FileListDisplayProps> = ({ files, onDelete, onDo
                   cancelText="No"
                   onConfirm={() => onDelete(file.fileId)}
                 >
-                  <Button danger icon={<DeleteOutlined />} />
+                  {isAdmin && (
+                    <Button danger icon={<DeleteOutlined />} />
+                  )}
                 </Popconfirm>
               </Space>,
             ]}
