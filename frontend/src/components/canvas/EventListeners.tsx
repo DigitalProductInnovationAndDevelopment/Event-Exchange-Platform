@@ -352,7 +352,7 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
           angle: angle,
         };
       } else {
-        if (Math.abs(table.rotation) < 0.01) {
+        if (Math.abs(table.rotation) < 1) {
           const { radius: padding } = el;
           const { width, height, x: tableX, y: tableY } = table;
 

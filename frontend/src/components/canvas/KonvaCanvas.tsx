@@ -31,13 +31,13 @@ import type { Chair } from "components/canvas/elements/Chair.tsx";
 
 
 const TYPE_ORDER: { [key in ShapeType]: number } = {
-  rectTable: 1,
-  circleTable: 2,
-  chair: 6,
-  wall: 3,
-  quickWall: 3,
-  arrow: 4,
-  text: 5,
+  rectTable: 2,
+  circleTable: 3,
+  chair: 4,
+  wall: 1,
+  quickWall: 1,
+  arrow: 5,
+  text: 6,
 } as const;
 
 export interface KonvaCanvasProps {

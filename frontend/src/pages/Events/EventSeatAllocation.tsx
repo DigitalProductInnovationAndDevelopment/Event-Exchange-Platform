@@ -215,7 +215,7 @@ const SeatAllocationContent = ({
               if (foundElement) {
                 // Center the canvas on the chair element
                 dispatch(setCanvasPosition({
-                  canvasPosition: { x: -foundElement.x!, y: -foundElement.y! },
+                  canvasPosition: { x: -foundElement.x! / 2, y: -foundElement.y! / 2 },
                   scale: 1,
                 }));
               } else {

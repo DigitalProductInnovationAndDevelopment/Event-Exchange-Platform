@@ -123,8 +123,15 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
 
 export function findStageCenterCoordinates(stageRef: React.RefObject<Konva.Stage | null>) {
   const stage = stageRef.current?.getStage();
-  const centerX = (stage?.width() ?? 0) / 2 - (stageRef.current?.x() ?? 0);
-  const centerY = (stage?.height() ?? 0) / 2 - (stageRef.current?.y() ?? 0);
+
+  const scaleX = stage?.scale()?.x ?? 1;
+  const scaleY = stage?.scale()?.y ?? 1;
+  const width = (stage?.width() ?? 0) / scaleX;
+  const height = (stage?.height() ?? 0) / scaleY;
+  const stageX = (stageRef.current?.x() ?? 0) / scaleX;
+  const stageY = (stageRef.current?.y() ?? 0) / scaleY;
+  const centerX = (width * 0.5 - stageX);
+  const centerY = (height * 0.5 - stageY);
   return { x: centerX, y: centerY };
 }
 
