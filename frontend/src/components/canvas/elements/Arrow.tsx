@@ -51,7 +51,7 @@ export const ArrowRender = (arrow: Arrow) => {
       {/* Visible arrow line */}
       <KonvaArrow
         points={[arrow.x1, arrow.y1, arrow.x2, arrow.y2]}
-        stroke={arrow.color ?? "red"}
+        stroke={arrow.color ?? "#ffa1a1"}
         strokeWidth={3}
         lineJoin="round"
         perfectDrawEnabled={false}

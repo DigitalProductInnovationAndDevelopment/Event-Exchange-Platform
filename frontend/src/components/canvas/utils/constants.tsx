@@ -58,7 +58,7 @@ export const TABLE_TYPES = {
     rotation: 0,
     type: "rectTable" as ShapeType,
     label: "Rect Table",
-    color: "#294d69",
+    color: "#90b4d0ff",
     width: 140,
     height: 80,
   },
@@ -74,7 +74,7 @@ export const TABLE_TYPES = {
     rotation: 0,
     type: "circleTable" as ShapeType,
     label: "Circle Table",
-    color: "#294d69",
+    color: "#90b4d0ff",
     radius: 60,
   },
 };

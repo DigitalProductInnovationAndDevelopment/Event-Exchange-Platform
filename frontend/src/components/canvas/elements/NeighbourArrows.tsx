@@ -46,8 +46,8 @@ function NeighbourArrows({
         <Arrow
           key={neighbor.id}
           points={[selectedChair.x, selectedChair.y, neighbor.x, neighbor.y]}
-          stroke="red"
-          fill="red"
+          stroke="#ffa1a1"
+          fill="#ffa1a1"
           strokeWidth={2}
           pointerLength={10}
           pointerWidth={8}
