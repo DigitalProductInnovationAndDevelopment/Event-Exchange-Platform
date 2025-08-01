@@ -21,7 +21,7 @@ export default function useApiService() {
   const navigate = useNavigate();
 
   const request = useCallback(
-    async <T = never>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+    async <T = never>(endpoint: string, options: RequestInit = {}, duration: number = 20000): Promise<T> => {
       const url = `${BASE_URL}${endpoint}`;
 
       const isFormData = options.body instanceof FormData;
@@ -32,7 +32,7 @@ export default function useApiService() {
           ...(options.headers || {}),
         },
         credentials: "include",
-        signal: AbortSignal.timeout(20000), // abort request after 20 seconds. we can actually reduce this even further
+        signal: AbortSignal.timeout(duration), // abort request after 20 seconds. we can actually reduce this even further
         ...options,
       };
 
@@ -540,7 +540,7 @@ export default function useApiService() {
             seatMap: seatMap,
             constraints: constraintInputValues,
           }),
-        },
+        }, 310_000,
       );
     } catch (err) {
       toast.error("Seat allocation failed!");
