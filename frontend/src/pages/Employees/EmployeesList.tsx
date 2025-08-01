@@ -277,6 +277,25 @@ export const EmployeesList = () => {
           header: true,
           skipEmptyLines: true,
           complete: results => {
+            // Validate headers
+            const expectedHeaders = ['Name', 'Last Name', 'Location', 'Employment Start Date', 'Email', 'Gender', 'Gitlab Username'];
+            const actualHeaders = results.meta.fields || [];
+            const hasValidHeaders = expectedHeaders.every(header => 
+              actualHeaders.includes(header)
+            );
+            const hasOnlyExpectedHeaders = actualHeaders.every(header => 
+              expectedHeaders.includes(header)
+            );
+
+            if (!hasValidHeaders || !hasOnlyExpectedHeaders) {
+              toast.error(
+                `Invalid CSV format. Expected columns: ${expectedHeaders.join(', ')}. Found: ${actualHeaders.join(', ')}`,
+                { duration: 5000 }
+              );
+              setImportedRows([]);
+              return;
+            }
+
             // Expecting columns: name, last name, location, employment start date, email, gender, gitlab username
             const rows = (results.data as any[])
               .map(row => ({

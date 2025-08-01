@@ -209,17 +209,21 @@ export const EventDetails = () => {
           </div>
         </div>
         <Space>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`/events/${eventId}/edit`)}
-          >
-            Edit Event
-          </Button>
+          {isAdmin && (
+            <>
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={() => navigate(`/events/${eventId}/edit`)}
+              >
+                Edit Event
+              </Button>
 
-          <Button danger icon={<DeleteOutlined />} onClick={showDeleteModal}>
-            Delete Event
-          </Button>
+              <Button danger icon={<DeleteOutlined />} onClick={showDeleteModal}>
+                Delete Event
+              </Button>
+            </>
+          )}
 
           <Modal
             title={
@@ -324,24 +328,26 @@ export const EventDetails = () => {
                   </div>
                 )}
               </Col>
-              <Col span={8} style={{ height: "100%"}}>
-                <Space direction="vertical" className="w-full">
-                  <Button block icon={<UserAddOutlined />}
-                    onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
-                    Manage Participants
-                  </Button>
-                  <Button block icon={<EditOutlined />}
-                    onClick={() => {
-                      if (event?.schematics) {
-                        navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`);
-                      } else {
-                        handleCreate(`/events/${eventId}/seat-allocation`);
-                      }
-                    }}>
-                    Manage Seat Allocation
-                  </Button>
-                </Space>
-              </Col>
+              {isAdmin && (
+                <Col span={8} style={{ height: "100%"}}>
+                  <Space direction="vertical" className="w-full">
+                    <Button block icon={<UserAddOutlined />}
+                      onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
+                      Manage Participants
+                    </Button>
+                    <Button block icon={<EditOutlined />}
+                      onClick={() => {
+                        if (event?.schematics) {
+                          navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`);
+                        } else {
+                          handleCreate(`/events/${eventId}/seat-allocation`);
+                        }
+                      }}>
+                      Manage Seat Allocation
+                    </Button>
+                  </Space>
+                </Col>
+              )}
             </Row>
           </Card>
 
@@ -413,29 +419,33 @@ export const EventDetails = () => {
           {/* Participants Tile */}
       <Card title="Export Information" className="mb-6">
         <Space direction="vertical" className="w-full">
-          <Button
-            block
-            icon={<FileTextOutlined />}
-            onClick={() => {
+          {isAdmin && (
+            <Button
+              block
+              icon={<FileTextOutlined />}
+              onClick={() => {
               const combinedStats = { ...dietaryStatsEmployee };
               Object.entries(dietaryStatsGuest).forEach(([combo, count]) => {
                 combinedStats[combo] = (combinedStats[combo] || 0) + count;
               });
               exportDietaryPreferencesToCSV(combinedStats, event?.name || "Event");
             }}
-          >
-            Export Dietary Preferences
-          </Button>
-          <Button
-            block
-            icon={<FileTextOutlined />}
-            onClick={async () => {
-              const participants = await getEventParticipants(eventId!);
-              if (participants) exportParticipationToCSV(participants, event?.name || "Event");
-            }}
-          >
-            Export Participant List
-          </Button>
+            >
+              Export Dietary Preferences
+            </Button>
+          )}
+          {isAdmin && (
+            <Button
+              block
+              icon={<FileTextOutlined />}
+              onClick={async () => {
+                const participants = await getEventParticipants(eventId!);
+                if (participants) exportParticipationToCSV(participants, event?.name || "Event");
+              }}
+            >
+              Export Participant List
+            </Button>
+          )}
           <Button
             block
             icon={<FileTextOutlined />}
@@ -542,18 +552,20 @@ export const EventDetails = () => {
           )}
 
           {/* Existing Management Actions Tile */}
-          <Card title="File Management">
-            <Space direction="vertical" className="w-full">
-              <div className="space-y-4">
-                <FileListDisplay
-                  files={event.fileEntities}
-                  onDelete={handleFileDelete}
-                  onDownload={handleDownload}
-                />
-                <FileUploadButton eventId={eventId!} onUpload={handleFileUpload} />
-              </div>
-            </Space>
-          </Card>
+          {isAdmin && (
+            <Card title="File Management">
+              <Space direction="vertical" className="w-full">
+                <div className="space-y-4">
+                  <FileListDisplay
+                    files={event.fileEntities}
+                    onDelete={handleFileDelete}
+                    onDownload={handleDownload}
+                  />
+                  <FileUploadButton eventId={eventId!} onUpload={handleFileUpload} />
+                </div>
+              </Space>
+            </Card>
+          )}
 
         </Col>
       </Row>

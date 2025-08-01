@@ -26,6 +26,7 @@ import useApiService, { BASE_URL } from "services/apiService.ts";
 import "./carousel_arrows.css";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
+import { useAuth } from "../../contexts/AuthContext.tsx";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -39,6 +40,8 @@ export const EventsList = () => {
   const [fetchedEvents, setEvents] = useState<EventMinimal[]>([]);
   const [loading, setLoading] = useState(true);
   const { getEvents } = useApiService();
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin();
 
   useEffect(() => {
     (async () => {
@@ -181,9 +184,11 @@ export const EventsList = () => {
             />
             <AppstoreOutlined className={!isTableView ? "text-blue-500" : "text-gray-400"} />
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/events/create")}>
-            Create Event
-          </Button>
+          {isAdmin && (
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/events/create")}>
+              Create Event
+            </Button>
+          )}
         </div>
       </div>
 

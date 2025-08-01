@@ -259,6 +259,25 @@ export const EventParticipants = () => {
           header: true,
           skipEmptyLines: true,
           complete: (results: Papa.ParseResult<any>) => {
+            // Validate headers
+            const expectedHeaders = ['email', 'guestCount'];
+            const actualHeaders = results.meta.fields || [];
+            const hasValidHeaders = expectedHeaders.every(header => 
+              actualHeaders.includes(header)
+            );
+            const hasOnlyExpectedHeaders = actualHeaders.every(header => 
+              expectedHeaders.includes(header)
+            );
+
+            if (!hasValidHeaders || !hasOnlyExpectedHeaders) {
+              toast.error(
+                `Invalid CSV format. Expected columns: ${expectedHeaders.join(', ')}. Found: ${actualHeaders.join(', ')}`,
+                { duration: 5000 }
+              );
+              setImportedRows([]);
+              return;
+            }
+
             // Expecting columns: email, guestCount
             const rows = (results.data as any[])
               .map(row => ({
