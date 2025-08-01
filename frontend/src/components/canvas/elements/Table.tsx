@@ -29,7 +29,7 @@ export class Table implements ElementProperties {
     this.height = tableType.height || undefined;
     this.radius = tableType.radius || undefined;
 
-    this.color = tableType.color || "#294d69";
+    this.color = tableType.color || "#90b4d0ff";
     this.stroke = "#333";
     this.draggable = true;
     this.attachedChairs = [];
@@ -48,7 +48,7 @@ function handleTableTitle(table: Table) {
 export function TableRender(table: Table, areTextsEnabled: boolean) {
   return table.type === "circleTable" ? (
     <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-      <Circle radius={table.radius} fill={table.color || "#294d69"} />
+      <Circle radius={table.radius} fill={table.color || "#90b4d0ff"} />
       {areTextsEnabled && (
         <Text
           text={`${handleTableTitle(table)}`}
@@ -67,7 +67,7 @@ export function TableRender(table: Table, areTextsEnabled: boolean) {
       <Rect
         width={table.width}
         height={table.height}
-        fill={table.color || "#294d69"}
+        fill={table.color || "#90b4d0ff"}
         perfectDrawEnabled={false}
       />
       {areTextsEnabled && (
