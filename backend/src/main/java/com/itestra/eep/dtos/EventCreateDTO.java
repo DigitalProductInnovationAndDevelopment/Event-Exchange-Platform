@@ -37,6 +37,9 @@ public class EventCreateDTO implements Serializable {
     @NotBlank(message = "Event description cannot be empty.")
     String description;
 
+    @Size(message = "Notes cannot be more than 10000 characters", max = 10000)
+    String notes;
+
     @NotNull(message = "Event capacity cannot be empty.")
     Integer capacity;
 

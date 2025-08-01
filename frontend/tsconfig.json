@@ -21,6 +21,12 @@
       ],
       "canvas/*": [
         "./components/canvas/*"
+      ],
+      "pages/*": [
+        "./pages/*"
+      ],
+      "utils/*": [
+        "./utils/*"
       ]
     }
   }

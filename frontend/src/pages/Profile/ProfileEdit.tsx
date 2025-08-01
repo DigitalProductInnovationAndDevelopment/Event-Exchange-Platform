@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeForm from "../Employees/EmployeeForm.tsx";
-import { Button, Card, Form, message, Spin, Typography } from "antd";
+import { Button, Card, Form, Spin, Typography } from "utils/antd.tsx";
 import useApiService from "services/apiService.ts";
 import { type Employee, getFullName, type Profile } from "types/employee.ts";
 import { useAuth } from "../../contexts/AuthContext.tsx";
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
@@ -25,7 +26,7 @@ export const ProfileEdit = () => {
         const data = (await getOwnProfile()) ?? null;
         setProfile(data);
       } catch (err) {
-        message.error("Failed to fetch profile");
+        toast.error("Failed to fetch profile");
         console.error("Failed to fetch profile:", err);
       } finally {
         setLoading(false);
@@ -46,7 +47,7 @@ export const ProfileEdit = () => {
       await login(values);
 
     } catch (error) {
-      message.error("Failed to update profile");
+      toast.error("Failed to update profile");
       console.error("Error updating profile:", error);
     } finally {
       setSaving(false);

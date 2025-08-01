@@ -8,7 +8,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 25",
+    "Startdatum": "Feb 25",
     "last neighborhood": [
       "Mariana Klotz",
       "Silvio Steinberg",
@@ -26,7 +26,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8E9UMCTK",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
       "Waldtraut Kensy",
       "Nelly Herrmann",
@@ -40,11 +40,11 @@
     "Vorname": "Ingrid",
     "Standort": "Trier",
     "Zugehörigkeit": 3,
-    "Anzahl": 4,
+    "Anzahl": 2,
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0, TPKGL3AR, JSRO1OTE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 23",
+    "Startdatum": "Mai 23",
     "last neighborhood": [
       "Kenneth Drewes",
       "Rabea Schottin",
@@ -62,7 +62,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 24",
+    "Startdatum": "Jul 24",
     "last neighborhood": [
       "Wolf-Rüdiger Margraf",
       "Burkhard Lübs",
@@ -76,11 +76,11 @@
     "Vorname": "Silvio",
     "Standort": "München",
     "Zugehörigkeit": 2,
-    "Anzahl": 3,
+    "Anzahl": 1,
     "Anstellung": "Festanstellung",
     "Projekt": "ZHBTB9VE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
       "Lieselotte Süßebier",
       "Nikolaj Weihmann",
@@ -98,7 +98,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 24",
+    "Startdatum": "Aug 24",
     "last neighborhood": [
       "Ursula Hauffer",
       "Nikolaj Weihmann",
@@ -116,7 +116,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 23",
+    "Startdatum": "Sep 23",
     "last neighborhood": [
       "Slavko Kraushaar",
       "Burkhard Lübs",
@@ -134,7 +134,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 17",
+    "Startdatum": "Feb 17",
     "last neighborhood": [
       "Rahel Oestrovsky",
       "Gunnar Kallert",
@@ -152,7 +152,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 23",
+    "Startdatum": "Dez 23",
     "last neighborhood": [
       "Stefania Hamann",
       "Sami Birnbaum",
@@ -170,7 +170,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 24",
+    "Startdatum": "Mai 24",
     "last neighborhood": [
       "Christos Putz",
       "Käthe Mude",
@@ -188,7 +188,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, WAN7FKP1, ZEDJC742, ZA5KV7BP, JSVDS3OQ, IZI7L47M, Q9OF7WJR, F1EBQTT3",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 20",
+    "Startdatum": "Jun 20",
     "last neighborhood": [
       "Wladimir Dörr",
       "Reinhold Söding",
@@ -206,7 +206,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Steve Benthin",
       "Natascha Finke",
@@ -224,7 +224,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jun 18",
+    "Startdatum": "Jun 18",
     "last neighborhood": [
       "Reinhold Söding",
       "Ricardo Bachmann",
@@ -242,7 +242,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 21",
+    "Startdatum": "Okt 21",
     "last neighborhood": [
       "Ryszard Ackermann",
       "Käte Mohaupt",
@@ -260,7 +260,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 15",
+    "Startdatum": "Jun 15",
     "last neighborhood": [
       "Burkhard Lübs",
       "Annette Tintzmann",
@@ -278,7 +278,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 20",
+    "Startdatum": "Mrz 20",
     "last neighborhood": [
       "Nikolaj Weihmann",
       "Ingrid Mühle",
@@ -296,7 +296,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 20",
+    "Startdatum": "Sep 20",
     "last neighborhood": [
       "Georg Kraus",
       "Adele Reising",
@@ -314,7 +314,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YW9AXKSE, DJ49X54P, O5H1H8CQ, KVZU2FJS, I3091GBF, XRKY19J9, 7ZSN24QU",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 22",
+    "Startdatum": "Feb 22",
     "last neighborhood": [
       "Slawomir Hentschel",
       "Waldtraut Kensy",
@@ -332,7 +332,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOBMXUXN, VY2PGB5U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
       "Ercan Ackermann",
       "Slavko Kraushaar",
@@ -350,7 +350,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V, 4JJVM224",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
       "Zeljko Wulf",
       "Wencke Wirth",
@@ -364,11 +364,11 @@
     "Vorname": "Bernd-Dieter",
     "Standort": "Köln",
     "Zugehörigkeit": 4,
-    "Anzahl": 3,
+    "Anzahl": 2,
     "Anstellung": "Festanstellung",
     "Projekt": "UJRDB9RR, GXRK8RIX, UYU6OJLB, JSRO1OTE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 22",
+    "Startdatum": "Sep 22",
     "last neighborhood": [
       "Carmela Paffrath",
       "Saskia Kruschwitz",
@@ -386,7 +386,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "EKVG3DD5, 8JES1B5O, DJ49X54P, O5H1H8CQ, KVZU2FJS, 6OZL8TVB, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 22",
+    "Startdatum": "Jul 22",
     "last neighborhood": [
       "Uschi Roskoth",
       "Annette Tintzmann",
@@ -404,7 +404,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, ZOBMXUXN, 8JES1B5O, O5H1H8CQ, YD6AQI8U, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 18",
+    "Startdatum": "Okt 18",
     "last neighborhood": [
       "Robby Bien",
       "Rupert Krein",
@@ -422,7 +422,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Willi Bohlander",
       "Marie Hofmann",
@@ -440,7 +440,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Apr 23",
+    "Startdatum": "Apr 23",
     "last neighborhood": [
       "Eduard Bohlander",
       "Adolf Mälzer",
@@ -458,7 +458,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 18",
+    "Startdatum": "Aug 18",
     "last neighborhood": [
       "Sami Birnbaum",
       "Leo Hande",
@@ -476,7 +476,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8E9UMCTK, O5H1H8CQ, KVZU2FJS, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
       "Ignatz Faust",
       "Nurettin Käster",
@@ -494,7 +494,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 13",
+    "Startdatum": "Okt 13",
     "last neighborhood": [
       "Eduard Bohlander",
       "Britta Jüttner",
@@ -512,7 +512,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 17",
+    "Startdatum": "Nov 17",
     "last neighborhood": [
       "Emine Pieper",
       "Nurettin Käster",
@@ -530,7 +530,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Betty Davids",
       "Rudolph Schleich",
@@ -548,7 +548,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "HGBSA1M2, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 19",
+    "Startdatum": "Jul 19",
     "last neighborhood": [
       "Maximilian Pieper",
       "Willi Koch",
@@ -566,7 +566,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YW9AXKSE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Saskia Kruschwitz",
       "Gitte Kranz",
@@ -584,7 +584,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, ZOBMXUXN, 8JES1B5O, O5H1H8CQ, YD6AQI8U, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 18",
+    "Startdatum": "Okt 18",
     "last neighborhood": [
       "Waldtraut Kensy",
       "Hedi Wohlgemut",
@@ -602,7 +602,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, JSRO1OTE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
       "Saskia Kruschwitz",
       "Bettina Ziegert",
@@ -620,7 +620,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "KVZU2FJS",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Rahel Oestrovsky",
       "Georg Kraus",
@@ -638,7 +638,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 24",
+    "Startdatum": "Apr 24",
     "last neighborhood": [
       "Alexandre Striebitz",
       "Ignatz Faust",
@@ -656,7 +656,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VY2PGB5U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 24",
+    "Startdatum": "Apr 24",
     "last neighborhood": [
       "Marie Hofmann",
       "Heinz-Jürgen Krebs",
@@ -674,7 +674,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, ZOBMXUXN, 8JES1B5O, O5H1H8CQ, YD6AQI8U, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 18",
+    "Startdatum": "Okt 18",
     "last neighborhood": [
       "Claire Textor",
       "Sedat Wilms",
@@ -692,7 +692,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "KWBA436T, DUZ35CZF, FSMRO2R0, D3WXDBL0, NOLBZN1O",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 21",
+    "Startdatum": "Nov 21",
     "last neighborhood": [
       "Käte Mohaupt",
       "Hans Jörg Hofmann",
@@ -710,7 +710,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VY2PGB5U, Q90O1TEO",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 23",
+    "Startdatum": "Mrz 23",
     "last neighborhood": [
       "Hanspeter Tintzmann",
       "Zehra Jacobi Jäckel",
@@ -728,7 +728,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 08",
+    "Startdatum": "Jul 08",
     "last neighborhood": [
       "Eitel Kruschwitz",
       "Korinna Binner",
@@ -746,7 +746,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "CRHJ50YD",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 21",
+    "Startdatum": "Jun 21",
     "last neighborhood": [
       "Liliana Börner",
       "Wolf-Rüdiger Margraf",
@@ -764,7 +764,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Ryszard Ackermann",
       "Trudel Wilms",
@@ -782,7 +782,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 17",
+    "Startdatum": "Nov 17",
     "last neighborhood": [
       "Pierre Trüb",
       "Klemens Plath",
@@ -800,7 +800,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 23",
+    "Startdatum": "Mrz 23",
     "last neighborhood": [
       "Waldtraut Kensy",
       "Eitel Kruschwitz",
@@ -818,7 +818,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Clarissa Heinz",
       "Dorota Lorch",
@@ -836,7 +836,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "O18Q9XVK, YW9AXKSE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Alexandre Striebitz",
       "Ayse Zorbach",
@@ -854,7 +854,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "17FKJ6M8, ITKT2QOR, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 20",
+    "Startdatum": "Mai 20",
     "last neighborhood": [
       "Hans-Dietrich Biggen",
       "Adam Holzapfel",
@@ -872,7 +872,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Mai 23",
+    "Startdatum": "Mai 23",
     "last neighborhood": [
       "Rahel Oestrovsky",
       "Slawomir Hentschel",
@@ -890,7 +890,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 17",
+    "Startdatum": "Sep 17",
     "last neighborhood": [
       "Hans-Dietrich Biggen",
       "Stefania Hamann",
@@ -908,7 +908,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Feb 18",
+    "Startdatum": "Feb 18",
     "last neighborhood": [
       "Miroslaw Förster",
       "Christa-Maria Schmiedecke",
@@ -926,7 +926,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
       "Käthe Mude",
       "Frithjof Mühle",
@@ -944,7 +944,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Apr 23",
+    "Startdatum": "Apr 23",
     "last neighborhood": [
       "Annette Tintzmann",
       "Detlev Keudel",
@@ -962,7 +962,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, 80NCDTU5, B25YINCK",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 20",
+    "Startdatum": "Mai 20",
     "last neighborhood": [
       "Hedi Wohlgemut",
       "Burkhard Lübs",
@@ -980,7 +980,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, EUA77DH8",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 05",
+    "Startdatum": "Feb 05",
     "last neighborhood": [
       "Pierre Trüb",
       "Maximilian Pieper",
@@ -998,7 +998,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 23",
+    "Startdatum": "Mai 23",
     "last neighborhood": [
       "Jeanette Kramer",
       "Nelly Herrmann",
@@ -1016,7 +1016,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 23",
+    "Startdatum": "Dez 23",
     "last neighborhood": [
       "Wladimir Dörr",
       "Christa-Maria Schmiedecke",
@@ -1034,7 +1034,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 17",
+    "Startdatum": "Sep 17",
     "last neighborhood": [
       "Nurettin Käster",
       "Horst-Günter Bachmann",
@@ -1052,7 +1052,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 20",
+    "Startdatum": "Nov 20",
     "last neighborhood": [
       "Hedi Wohlgemut",
       "Vito Scheel",
@@ -1070,7 +1070,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOBMXUXN, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
       "Slavko Kraushaar",
       "Marit Rogner",
@@ -1088,7 +1088,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "NRARF52V, 8WAVP694, ZHBTB9VE, E5UNVVO7",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 21",
+    "Startdatum": "Jul 21",
     "last neighborhood": [
       "Waldtraut Klapp",
       "Jörg-Peter Stiffel",
@@ -1106,7 +1106,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOKFXJK1, B5PUJ42V, SO5PRR97",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 18",
+    "Startdatum": "Apr 18",
     "last neighborhood": [
       "Claire Textor",
       "Rabea Schottin",
@@ -1124,7 +1124,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, O5H1H8CQ, 4JJVM224, X2ZT4FX1, KVZU2FJS, 4UE7193P, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 15",
+    "Startdatum": "Mai 15",
     "last neighborhood": [
       "Steve Benthin",
       "Nikolaj Weihmann",
@@ -1142,7 +1142,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Kenneth Drewes",
       "Rudolph Schleich",
@@ -1160,7 +1160,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Wanda Hande",
       "Hans-Willi Zirme",
@@ -1178,7 +1178,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 18",
+    "Startdatum": "Jun 18",
     "last neighborhood": [
       "Brit Röhricht",
       "Ilias Ackermann",
@@ -1196,7 +1196,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
       "Hans Jörg Hofmann",
       "Waldtraut Klapp",
@@ -1214,7 +1214,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Mai 20",
+    "Startdatum": "Mai 20",
     "last neighborhood": [
       "Jaroslav Heidrich",
       "Detlev Keudel",
@@ -1232,7 +1232,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 22",
+    "Startdatum": "Mrz 22",
     "last neighborhood": [
       "Gunnar Kallert",
       "Nurettin Käster",
@@ -1250,7 +1250,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, A5MW2QI0, JSRO1OTE, X2ZT4FX1",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 20",
+    "Startdatum": "Apr 20",
     "last neighborhood": [
       "Eitel Kruschwitz",
       "Andrea Steckel",
@@ -1268,7 +1268,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "QJ77J3YA, DUZ35CZF, EKVG3DD5, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 20",
+    "Startdatum": "Jan 20",
     "last neighborhood": [
       "Nelly Herrmann",
       "Zlatko Herrmann",
@@ -1286,7 +1286,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Ryszard Ackermann",
       "Marius Koch",
@@ -1304,7 +1304,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "HDQS98B3, NOLBZN1O, B25YINCK, 54RBX9SF, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 18",
+    "Startdatum": "Mrz 18",
     "last neighborhood": [
       "Enver Dussen van",
       "Ilias Ackermann",
@@ -1322,7 +1322,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
       "Gitte Metz",
       "Käte Mohaupt",
@@ -1340,7 +1340,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 24",
+    "Startdatum": "Aug 24",
     "last neighborhood": [
       "Frithjof Mühle",
       "Muzaffer Schuchhardt",
@@ -1358,7 +1358,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD, DUZ35CZF, FSMRO2R0, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
       "Ingrid Mühle",
       "Maximilian Pieper",
@@ -1376,7 +1376,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 16",
+    "Startdatum": "Okt 16",
     "last neighborhood": [
       "Margaret Lorch",
       "Alexandros Jacob",
@@ -1394,7 +1394,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 19",
+    "Startdatum": "Sep 19",
     "last neighborhood": [
       "Yvonne Kusch",
       "Reinhold Söding",
@@ -1412,7 +1412,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, TKZZVBWG, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 22",
+    "Startdatum": "Nov 22",
     "last neighborhood": [
       "Ricardo Bachmann",
       "Irmingard Wiek",
@@ -1430,7 +1430,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
       "Hans-Willi Zirme",
       "Zeljko Wulf",
@@ -1448,7 +1448,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GQWR16KV, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 24",
+    "Startdatum": "Jul 24",
     "last neighborhood": [
       "Nikolaj Weihmann",
       "Silvester Kusch",
@@ -1466,7 +1466,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, TKZZVBWG, RHTSZMRU, OEVI9328",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
       "Emine Pieper",
       "Metin Kensy",
@@ -1484,7 +1484,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "DUZ35CZF, TPKGL3AR, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 14",
+    "Startdatum": "Aug 14",
     "last neighborhood": [
       "Georg Kraus",
       "Wolf-Rüdiger Margraf",
@@ -1502,7 +1502,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, T8LM68B9, 0RKMAFC0, A5MW2QI0, B5PUJ42V, UYU6OJLB, 21G8IFZ2, O18Q9XVK, SO5PRR97, YW9AXKSE, ZOBMXUXN, JSRO1OTE, DJ49X54P, 32HFE3WB, Q9OF7WJR, X2ZT4FX1, B25YINCK, 6OZL8TVB, Q90O1TEO, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 12",
+    "Startdatum": "Jan 12",
     "last neighborhood": [
       "Irmingard Wiek",
       "Emine Pieper",
@@ -1520,7 +1520,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "H8J2SVLQ, SBI3FKG9, Q9OF7WJR, ITKT2QOR, Z00R0R5X",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 16",
+    "Startdatum": "Okt 16",
     "last neighborhood": [
       "Inna Jacobi Jäckel",
       "Detlev Keudel",
@@ -1538,7 +1538,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V, 4JJVM224",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 20",
+    "Startdatum": "Jun 20",
     "last neighborhood": [
       "Britta Jüttner",
       "Reinhold Söding",
@@ -1556,7 +1556,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8WAVP694",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Marian Rose",
       "Willi Bohlander",
@@ -1574,7 +1574,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "DUZ35CZF, NRARF52V, ZHBTB9VE, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 13",
+    "Startdatum": "Nov 13",
     "last neighborhood": [
       "Willi Bohlander",
       "Metin Kensy",
@@ -1592,7 +1592,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0, SO5PRR97",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 23",
+    "Startdatum": "Apr 23",
     "last neighborhood": [
       "Reinhold Söding",
       "Irmingard Wiek",
@@ -1610,7 +1610,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jul 17",
+    "Startdatum": "Jul 17",
     "last neighborhood": [
       "Helen Otto",
       "Jörg-Peter Freudenberger",
@@ -1628,7 +1628,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD, TPKGL3AR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 19",
+    "Startdatum": "Mrz 19",
     "last neighborhood": [
       "Horst-Dieter Neureuther",
       "Hans-Willi Zirme",
@@ -1646,7 +1646,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0, ZOBMXUXN",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 22",
+    "Startdatum": "Dez 22",
     "last neighborhood": [
       "Willi Bohlander",
       "Gerald Jacobi Jäckel",
@@ -1664,7 +1664,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 22",
+    "Startdatum": "Sep 22",
     "last neighborhood": [
       "Wanda Zimmer",
       "Yvonne Kusch",
@@ -1682,7 +1682,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, A5MW2QI0, O18Q9XVK, YW9AXKSE, U4FOJQCV",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 16",
+    "Startdatum": "Nov 16",
     "last neighborhood": [
       "Korinna Binner",
       "Ryszard Ackermann",
@@ -1700,7 +1700,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 21",
+    "Startdatum": "Sep 21",
     "last neighborhood": [
       "Gitte Metz",
       "Clarissa Heinz",
@@ -1718,7 +1718,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Wencke Wirth",
       "Gunnar Kallert",
@@ -1736,7 +1736,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "CRHJ50YD",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 23",
+    "Startdatum": "Feb 23",
     "last neighborhood": [
       "Frithjof Mühle",
       "Wolf-Rüdiger Margraf",
@@ -1754,7 +1754,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, UYU6OJLB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
       "Irmtraud Karz",
       "Clarissa Heinz",
@@ -1772,7 +1772,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "P68VOT1A, SAHM419B",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Aug 23",
+    "Startdatum": "Aug 23",
     "last neighborhood": [
       "Marius Koch",
       "Gerald Jacobi Jäckel",
@@ -1790,7 +1790,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, ZEDJC742",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 22",
+    "Startdatum": "Aug 22",
     "last neighborhood": [
       "Georg Kraus",
       "Korinna Binner",
@@ -1808,7 +1808,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG, 01TY4T4V",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
       "Käthe Mude",
       "Horst-Günter Bachmann",
@@ -1826,7 +1826,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WAN7FKP1, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
       "Muzaffer Schuchhardt",
       "Klaus-Dieter Baum",
@@ -1844,7 +1844,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jan 20",
+    "Startdatum": "Jan 20",
     "last neighborhood": [
       "Sedat Wilms",
       "Margaret Lorch",
@@ -1862,7 +1862,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "H42GHEZI, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
       "Horst-Günter Bachmann",
       "Jörg-Peter Stiffel",
@@ -1880,7 +1880,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "0H77LHVL, TKZZVBWG, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 17",
+    "Startdatum": "Apr 17",
     "last neighborhood": [
       "Ingrid Mühle",
       "Silvio Steinberg",
@@ -1898,7 +1898,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, X2ZT4FX1",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 21",
+    "Startdatum": "Jan 21",
     "last neighborhood": [
       "Willi Bohlander",
       "Saskia Kruschwitz",
@@ -1916,7 +1916,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SO5PRR97, YW9AXKSE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 19",
+    "Startdatum": "Aug 19",
     "last neighborhood": [
       "Kenneth Drewes",
       "Heinz-Wilhelm Hendriks",
@@ -1934,7 +1934,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 24",
+    "Startdatum": "Dez 24",
     "last neighborhood": [
       "Adolf Mälzer",
       "Zehra Jacobi Jäckel",
@@ -1952,7 +1952,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Inna Jacobi Jäckel",
       "Auguste Wernecke",
@@ -1970,7 +1970,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 24",
+    "Startdatum": "Sep 24",
     "last neighborhood": [
       "Andrej Kramer",
       "Adele Reising",
@@ -1988,7 +1988,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "P68VOT1A, SAHM419B",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 16",
+    "Startdatum": "Okt 16",
     "last neighborhood": [
       "Evangelos Beyer",
       "Adolf Mälzer",
@@ -2006,7 +2006,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Marian Rose",
       "Horst-Dieter Neureuther",
@@ -2024,7 +2024,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
       "Ernest Hettner",
       "Ilias Ackermann",
@@ -2042,7 +2042,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, 4UE7193P",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Nov 21",
+    "Startdatum": "Nov 21",
     "last neighborhood": [
       "Margitta Meyer",
       "Marian Rose",
@@ -2060,7 +2060,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, Q9OF7WJR, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 22",
+    "Startdatum": "Okt 22",
     "last neighborhood": [
       "Zehra Jacobi Jäckel",
       "Rotraut Fechner",
@@ -2078,7 +2078,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Hanna Hübel",
       "Wanda Zimmer",
@@ -2096,7 +2096,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Georg Kraus",
       "Trudel Wilms",
@@ -2114,7 +2114,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 09",
+    "Startdatum": "Mai 09",
     "last neighborhood": [
       "Annette Tintzmann",
       "Bianka Koch",
@@ -2132,7 +2132,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "1BLRXJ6O, EKVG3DD5, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 06",
+    "Startdatum": "Sep 06",
     "last neighborhood": [
       "Natascha Finke",
       "Alexandre Striebitz",
@@ -2150,7 +2150,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 23",
+    "Startdatum": "Jun 23",
     "last neighborhood": [
       "Zeljko Wulf",
       "Nurettin Käster",
@@ -2168,7 +2168,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TPKGL3AR, CRHJ50YD, VY2PGB5U, NOLBZN1O, Z00R0R5X",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 06",
+    "Startdatum": "Aug 06",
     "last neighborhood": [
       "Irmingard Wiek",
       "Hanna Hübel",
@@ -2186,7 +2186,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD, TKZZVBWG, RXGZAF76, 8WAVP694, OEVI9328, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 07",
+    "Startdatum": "Apr 07",
     "last neighborhood": [
       "Yvonne Kusch",
       "Marzena Wende",
@@ -2204,7 +2204,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "1BLRXJ6O, RXGZAF76",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 19",
+    "Startdatum": "Okt 19",
     "last neighborhood": [
       "Christa-Maria Schmiedecke",
       "Luzia Patberg",
@@ -2222,7 +2222,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TPKGL3AR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jun 23",
+    "Startdatum": "Jun 23",
     "last neighborhood": [
       "Sami Barth",
       "Hans-Dietrich Biggen",
@@ -2240,7 +2240,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZEDJC742, F1EBQTT3, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 22",
+    "Startdatum": "Dez 22",
     "last neighborhood": [
       "Rupert Krein",
       "Michaela Karge",
@@ -2258,7 +2258,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 15",
+    "Startdatum": "Okt 15",
     "last neighborhood": [
       "Arne Patberg",
       "Luzia Patberg",
@@ -2276,7 +2276,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Zlatko Herrmann",
       "Georg Kraus",
@@ -2294,7 +2294,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 24",
+    "Startdatum": "Mrz 24",
     "last neighborhood": [
       "Adele Reising",
       "Marie Hofmann",
@@ -2312,7 +2312,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 24",
+    "Startdatum": "Feb 24",
     "last neighborhood": [
       "Ryszard Ackermann",
       "Nelly Herrmann",
@@ -2330,7 +2330,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8WAVP694",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Rudolph Schleich",
       "Wanda Hande",
@@ -2348,7 +2348,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOKFXJK1, A5MW2QI0, E6QXCDWG, RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
       "Britta Jüttner",
       "Auguste Wernecke",
@@ -2366,7 +2366,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
       "Gerald Jacobi Jäckel",
       "Adolf Mälzer",
@@ -2384,7 +2384,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
       "Gerald Jacobi Jäckel",
       "Emine Pieper",
@@ -2402,7 +2402,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 21",
+    "Startdatum": "Mrz 21",
     "last neighborhood": [
       "Athanasios Butte",
       "Eduard Bohlander",
@@ -2420,7 +2420,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 24",
+    "Startdatum": "Jun 24",
     "last neighborhood": [
       "Louise Gnatz",
       "Lieselotte Süßebier",
@@ -2438,7 +2438,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jun 23",
+    "Startdatum": "Jun 23",
     "last neighborhood": [
       "Ernest Hettner",
       "Gerald Jacobi Jäckel",
@@ -2456,7 +2456,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "CRHJ50YD, Z00R0R5X",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
       "Metin Kensy",
       "Flora Ditschlerin",
@@ -2474,7 +2474,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8WAVP694, E5UNVVO7",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 21",
+    "Startdatum": "Dez 21",
     "last neighborhood": [
       "Klemens Plath",
       "Rahel Oestrovsky",
@@ -2492,7 +2492,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 21",
+    "Startdatum": "Okt 21",
     "last neighborhood": [
       "Marie Hofmann",
       "Wladimir Dörr",
@@ -2510,7 +2510,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jul 10",
+    "Startdatum": "Jul 10",
     "last neighborhood": [
       "Peter-Michael Wulff",
       "Jörg-Peter Freudenberger",
@@ -2528,7 +2528,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
       "Nikolaj Weihmann",
       "Heinz-Jürgen Krebs",
@@ -2546,7 +2546,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 03",
+    "Startdatum": "Aug 03",
     "last neighborhood": [
       "Käte Mohaupt",
       "Auguste Wernecke",
@@ -2564,7 +2564,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A4JUPC44, 30VSAV7G, RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 03",
+    "Startdatum": "Aug 03",
     "last neighborhood": [
       "Gitte Metz",
       "Hanna Hübel",
@@ -2582,7 +2582,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": null,
     "Geschlecht": "m",
-    "Zugehörigkeit ": null,
+    "Startdatum": null,
     "last neighborhood": [
       "Betty Davids",
       "Gunnar Kallert",
@@ -2600,7 +2600,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 25",
+    "Startdatum": "Feb 25",
     "last neighborhood": [
       "Yvonne Kusch",
       "Burkhard Lübs",
@@ -2618,7 +2618,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 15",
+    "Startdatum": "Mrz 15",
     "last neighborhood": [
       "Marian Rose",
       "Hanna Hübel",
@@ -2636,7 +2636,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, 8JES1B5O",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 09",
+    "Startdatum": "Jul 09",
     "last neighborhood": [
       "Marzena Wende",
       "Jeanette Kramer",
@@ -2654,7 +2654,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 23",
+    "Startdatum": "Sep 23",
     "last neighborhood": [
       "Georg Kraus",
       "Emine Pieper",
@@ -2672,7 +2672,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "RXGZAF76, TPKGL3AR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 21",
+    "Startdatum": "Jul 21",
     "last neighborhood": [
       "Andrej Kramer",
       "Pierre Trüb",
@@ -2690,7 +2690,7 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YW9AXKSE, 6OZL8TVB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 17",
+    "Startdatum": "Mai 17",
     "last neighborhood": [
       "Gunnar Kallert",
       "Clarissa Heinz",

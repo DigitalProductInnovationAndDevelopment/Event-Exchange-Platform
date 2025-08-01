@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "utils/antd.tsx";
 import { DietaryPreference, Role } from "types/employee";
 import { DietTypeTag } from "components/DietTypeTag.tsx";
 import dayjs from "dayjs";
@@ -25,12 +25,21 @@ const ROLE_OPTIONS = Object.entries(Role).map(([, value]) => ({
   value: value,
 }));
 
+
 const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: EmployeeFormProps) => {
   const handleFinish = (values: any) => {
 
     if (!isOwnProfileEdit) {
       values.employmentStartDate = values.employmentStartDate.format("YYYY-MM-DD");
     }
+
+    if (!values.gitlabUsername) {
+      values.gitlabUsername = null;
+    }
+    if (!values.notes) {
+      values.notes = "";
+    }
+
     onSave(values);
   };
 
@@ -46,7 +55,7 @@ const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: Employe
       <Form.Item
         label="GitLab Username"
         name={["profile", "gitlabUsername"]}
-        rules={[{ required: true, message: "Please enter GitLab Username" }]}
+        rules={[{ required: false, message: "Please enter GitLab Username" }]}
       >
         <Input placeholder="Enter GitLab Username" maxLength={500} />
       </Form.Item>
@@ -117,6 +126,13 @@ const EmployeeForm = ({ initialValues, onSave, form, isOwnProfileEdit }: Employe
               normalize={value => (Array.isArray(value) ? value : value ? [value] : [])}
             >
               <Select placeholder="Select role" options={ROLE_OPTIONS} />
+            </Form.Item>
+            <Form.Item
+              label="Notes"
+              name={["profile", "notes"]}
+              rules={[{ required: false, message: "Please enter notes" }]}
+            >
+              <Input.TextArea placeholder="Enter notes" rows={4} />
             </Form.Item>
           </div>
         )}

@@ -6,16 +6,14 @@ import { Text, TextRender } from "components/canvas/elements/Text.tsx";
 
 export type UUID = string;
 export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickWall" | "arrow" | "text";
+export type AlgorithmType = "table" | "distance";
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGETARIAN: "green",
-  PESCATARIAN: "blue",
-  HALAL: "orange",
-  KOSHER: "purple",
-  VEGAN: "magenta",
-  LACTOSE_FREE: "cyan",
-  GLUTEN_FREE: "lime",
-  KETO: "gold",
+  VEGAN: "lime",
+  LACTOSE_FREE: "blue",
+  GLUTEN_FREE: "magenta",
+  FRUCTOSE_FREE: "orange"
 };
 
 export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
@@ -118,79 +116,53 @@ export const getEditableParameters = (
   switch (el.type) {
     case "chair":
       return {
-        x: "number",
-        y: "number",
-        radius: "number",
-        color: "string",
-        employeeId: "string",
-        employeeName: "string",
+        color: "color",
       };
     case "rectTable":
       return {
         name: "string",
-        type: ["rectTable", "circleTable"],
-        x: "number",
-        y: "number",
-        width: "number",
-        height: "number",
-        rotation: "number",
-        color: "string",
+        color: "color",
       };
     case "circleTable":
       return {
         name: "string",
-        type: ["rectTable", "circleTable"],
-        x: "number",
-        y: "number",
-        radius: "number",
-        rotation: "number",
-        color: "string",
+        color: "color",
       };
     case "wall":
       return {
-        x1: "number",
-        y1: "number",
-        x2: "number",
-        y2: "number",
-        color: "string",
+        color: "color",
       };
     case "arrow":
       return {
         name: "string",
-        x1: "number",
-        y1: "number",
-        x2: "number",
-        y2: "number",
-        color: "string",
+        color: "color",
       };
     case "text":
       return {
         name: "string",
-        x: "number",
-        y: "number",
         size: "number",
         rotation: "number",
-        color: "string",
+        color: "color",
       };
     default:
       return {};
   }
 };
 
-export const shapeFactory = (type: ShapeType) => {
+export const shapeFactory = (type: ShapeType, stageCenter: { x: number, y: number }) => {
   switch (type) {
     case "chair":
-      return new Chair();
+      return new Chair(stageCenter);
     case "rectTable":
-      return new Table(TABLE_TYPES.RECT);
+      return new Table(TABLE_TYPES.RECT, stageCenter);
     case "circleTable":
-      return new Table(TABLE_TYPES.CIRCLE);
+      return new Table(TABLE_TYPES.CIRCLE, stageCenter);
     case "wall":
-      return new Wall();
+      return new Wall(stageCenter);
     case "arrow":
-      return new Arrow();
+      return new Arrow(stageCenter);
     case "text":
-      return new Text();
+      return new Text(stageCenter);
     default:
       throw new Error("Unsupported shape type! Check code for this error");
   }

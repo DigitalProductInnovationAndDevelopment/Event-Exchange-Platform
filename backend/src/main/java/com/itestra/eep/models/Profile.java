@@ -37,10 +37,17 @@ public class Profile {
     @Column(name = "gitlab_username")
     private String gitlabUsername;
 
-    @Column(name = "email", unique = true, length = 255)
+    @Column(name = "email", unique = true)
     private String email;
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    public void setEmail(String email) {
+        this.email = email.toLowerCase();
+    }
+
+    @Column(name = "notes")
+    private String notes;
+
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
     @CollectionTable(
             schema = "organization",
             name = "user_roles",

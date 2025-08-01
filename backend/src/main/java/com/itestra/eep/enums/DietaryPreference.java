@@ -2,12 +2,9 @@ package com.itestra.eep.enums;
 
 public enum DietaryPreference {
     VEGETARIAN,
-    PESCATARIAN,
-    HALAL,
-    KOSHER,
+    FRUCTOSE_FREE,
     VEGAN,
     LACTOSE_FREE,
     GLUTEN_FREE,
-    KETO
 }
 

@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,6 +71,7 @@ class EventServiceTest {
 
         Event event = randomEntityGenerator.generate(Event.class);
         event.setCapacity(10);
+        event.setDate(LocalDateTime.now().plusDays(25));
         event = eventRepository.save(event);
         int guestCount = 1;
 
@@ -90,6 +92,7 @@ class EventServiceTest {
 
         Event event = randomEntityGenerator.generate(Event.class);
         event.setCapacity(10);
+        event.setDate(LocalDateTime.now().plusDays(25));
         event = eventRepository.save(event);
         int guestCount = 10;
         final UUID eventId = event.getId();

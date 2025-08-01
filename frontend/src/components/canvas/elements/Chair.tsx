@@ -15,19 +15,21 @@ export class Chair implements ElementProperties {
   offset: { dx: number; dy: number };
   assigneeProfileId?: string;
   assigneeName?: string;
+  belongsToVisitor?: boolean;
 
-  constructor() {
+  constructor(stageCenter: { x: number, y: number }) {
     this.id = uuidv4();
     this.type = "chair";
-    this.x = 200;
-    this.y = 100;
-    this.color = "#999";
+    this.x = stageCenter.x;
+    this.y = stageCenter.y;
+    this.color = "#aaaaaa";
     this.radius = 16;
     this.attachedTo = undefined;
     this.draggable = true;
     this.offset = { dx: 0, dy: 0 };
     this.assigneeProfileId = undefined;
     this.assigneeName = undefined;
+    this.belongsToVisitor = false;
   }
 }
 
@@ -38,7 +40,7 @@ export function ChairRender(chair: Chair) {
       onMouseOut={handleMouseOut}>
       <Circle
         radius={chair.radius || 10}
-        fill={chair.color || "#999"}
+        fill={chair.color || "#aaaaaa"}
         perfectDrawEnabled={false}
       />
       {chair.assigneeName && (

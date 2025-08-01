@@ -12,7 +12,7 @@ import {
   Space,
   Spin,
   Typography,
-} from "antd";
+} from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useEffect, useState } from "react";
@@ -166,6 +166,13 @@ export const EventEdit = () => {
                     <TextArea rows={4} />
                   </Form.Item>
                 </Descriptions.Item>
+
+                <Descriptions.Item label="Notes" span={3}>
+                  <Form.Item name="notes" noStyle>
+                    <TextArea rows={2} placeholder="Write your notes here. Only visible to admins." />
+                  </Form.Item>
+                </Descriptions.Item>
+
               </Descriptions>
             </Form>
           </Card>

@@ -9,7 +9,4 @@ import java.util.UUID;
 @Repository
 public interface ChairRepository extends JpaRepository<Chair, UUID> {
 
-    @Override
-    void deleteAllInBatch(Iterable<Chair> entities);
-
 }

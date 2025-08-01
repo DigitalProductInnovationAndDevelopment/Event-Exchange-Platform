@@ -11,7 +11,7 @@ import {
   Select,
   Space,
   Typography,
-} from "antd";
+} from "utils/antd.tsx";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import { useState } from "react";
@@ -151,6 +151,12 @@ export const EventCreate = () => {
                     <TextArea rows={4} />
                   </Form.Item>
                 </Descriptions.Item>
+                
+                <Descriptions.Item label="Notes" span={3}>
+                  <Form.Item name="notes" noStyle>
+                    <TextArea rows={2} placeholder="Write your notes here. Only visible to admins." />
+                  </Form.Item>
+                </Descriptions.Item> 
               </Descriptions>
             </Form>
           </Card>

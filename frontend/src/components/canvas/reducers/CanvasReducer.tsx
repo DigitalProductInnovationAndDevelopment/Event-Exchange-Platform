@@ -6,10 +6,12 @@ import {
   type Action,
   ADD_ELEMENT,
   CHANGE_BUILD_MODE,
+  CLEAR_UNSAVED_CHAIRS_STATE,
   COMMIT_UNDO_REDO_HISTORY,
   DUPLICATE_MULTIPLE_ELEMENTS,
   REDO,
   REMOVE_ELEMENTS,
+  SET_CANVAS_POSITION,
   SET_CHAIR_ID_FOR_MANUAL_ASSIGNMENT,
   SET_STATE,
   UNDO,
@@ -22,11 +24,12 @@ import {
 export interface AppState {
   buildMode: number;
   chairIdForManualAssignment: UUID | null;
+  activeToolboxTooltip?: UUID | null;
   elements: ElementProperties[];
-  groups: { id: string }[];
   canvasPosition: { x: number; y: number };
   scale: number;
   history?: HistoryState;
+  unsavedChairs?: Set<UUID>;
 }
 
 interface HistoryState {
@@ -37,23 +40,25 @@ interface HistoryState {
 export class initialState implements AppState {
   buildMode: number;
   chairIdForManualAssignment: UUID | null;
+  activeToolboxTooltip?: UUID | null;
   elements: ElementProperties[];
-  groups: { id: string }[];
   canvasPosition: { x: number; y: number };
   scale: number;
   history: HistoryState;
+  unsavedChairs: Set<UUID>;
 
   constructor() {
     this.buildMode = 0;
     this.elements = [];
-    this.groups = [];
     this.canvasPosition = { x: 0, y: 0 };
     this.scale = 1;
     this.chairIdForManualAssignment = null;
+    this.activeToolboxTooltip = null;
     this.history = {
       past: [],
       future: [],
     };
+    this.unsavedChairs = new Set<UUID>();
   }
 }
 
@@ -63,23 +68,36 @@ export function reducer(state: AppState, action: Action) {
       if (action.payload) {
         // If payload is a string, parse it; if it's already an object, use it directly
         if (typeof action.payload === "string") {
-          return { ...JSON.parse(action.payload), history: { past: [], future: [] } };
+          return { ...JSON.parse(action.payload), history: { past: [], future: [] }, unsavedChairs: new Set<UUID>() };
         } else {
-          return { ...action.payload, history: { past: [], future: [] } };
+          return { ...action.payload, history: { past: [], future: [] }, unsavedChairs: new Set<UUID>() };
         }
-      } else return { ...state, history: { past: [], future: [] } };
-    case ADD_ELEMENT:
+      } else return { ...state, history: { past: [], future: [] }, unsavedChairs: new Set<UUID>() };
+    case ADD_ELEMENT: {
+      if (action.payload.type === "chair") {
+        state.unsavedChairs?.add(action.payload.id);
+      }
       return {
         ...state,
         elements: [...state.elements, action.payload],
         history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
-    case REMOVE_ELEMENTS:
+    }
+    case SET_CANVAS_POSITION: {
+      return {
+        ...state,
+        canvasPosition: action.payload.canvasPosition,
+        scale: action.payload.scale,
+      };
+    }
+    case REMOVE_ELEMENTS: {
+      action.payload?.forEach((uuid: UUID) => state.unsavedChairs?.delete(uuid));
       return {
         ...state,
         elements: state.elements.filter(el => !action.payload.includes(el.id)),
         history: { past: [...(state.history?.past ?? []), state], future: [] },
       };
+    }
     case UPDATE_ELEMENT:
       return {
         ...state,
@@ -118,6 +136,7 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         chairIdForManualAssignment: action.payload,
+        history: { ...state.history },
       };
     case DUPLICATE_MULTIPLE_ELEMENTS: {
       const idMap: { [key: string]: string } = {};
@@ -141,7 +160,6 @@ export function reducer(state: AppState, action: Action) {
             delete (newChair as Chair).assigneeProfileId;
             newElements.push(newChair);
           } else if (
-            original.type === "room" ||
             original.type === "rectTable" ||
             original.type === "circleTable"
           ) {
@@ -176,9 +194,9 @@ export function reducer(state: AppState, action: Action) {
             updated[key] = idMap[value];
           }
 
-          // Case 2: Array of string references
+          // Case 2: Array of string references ( important for attachedChairs)
           if (Array.isArray(value)) {
-            updated[key] = value.map(item => (idMap[item] ? idMap[item] : item));
+            updated[key] = value.map(item => (idMap[item] ? idMap[item] : null)).filter(item => item !== null);
           }
         }
 
@@ -197,9 +215,12 @@ export function reducer(state: AppState, action: Action) {
     }
     case CHANGE_BUILD_MODE:
       return { ...state, buildMode: action.payload };
+    case CLEAR_UNSAVED_CHAIRS_STATE:
+      return { ...state, unsavedChairs: new Set<UUID>() };
     case UNDO: {
       const { past, future } = state.history ?? { past: [], future: [] };
       if (past.length === 0) return state;
+      const bypassRedo = action.payload;
 
       const newPast = past.slice(0, -1);
       const previous = past[past.length - 1];
@@ -208,7 +229,7 @@ export function reducer(state: AppState, action: Action) {
         ...previous,
         history: {
           past: [...newPast],
-          future: [...future, { ...state }],
+          future: bypassRedo ? [...future] : [...future, { ...state }],
         },
       };
     }
@@ -231,7 +252,10 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         history: {
-          past: [...(state.history?.past ?? []), state],
+          past: [...(state.history?.past ?? []), {
+            ...state,
+            elements: structuredClone(state.elements),
+          }],
           future: [],
         },
       };

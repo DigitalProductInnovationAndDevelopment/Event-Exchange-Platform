@@ -21,19 +21,24 @@ public class Schematics {
     @Column(name = "state", nullable = false, length = Integer.MAX_VALUE)
     private String state;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    // We can use this field instead of event.getId() which might cause unnecessary fetch of event
+    @Column(name = "event_id", nullable = false)
+    private UUID eventId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id", nullable = false)
-    private FileEntity overview;
+    @JoinColumn(name = "event_id", nullable = false, insertable = false, updatable = false)
+    private Event event;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void setEvent(Event event) {
+        this.eventId = event.getId();
+        this.event = event;
+    }
 
     @PrePersist
     protected void onCreate() {

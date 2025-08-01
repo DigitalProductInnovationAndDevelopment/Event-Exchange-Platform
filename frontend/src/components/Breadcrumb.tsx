@@ -1,4 +1,4 @@
-import { Breadcrumb as AntBreadcrumb } from "antd";
+import { Breadcrumb as AntBreadcrumb } from "utils/antd.tsx";
 import { Link } from "react-router-dom";
 
 export interface BreadcrumbItem {

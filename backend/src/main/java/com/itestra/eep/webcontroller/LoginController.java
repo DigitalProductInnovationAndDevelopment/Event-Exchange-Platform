@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -29,9 +28,6 @@ public class LoginController {
 
     @Value("${application.security.jwt.expiration}")
     private long expiration;
-
-    @Value("${client.instance.address}")
-    private String clientAddress;
 
     @GetMapping("/login/oauth2/code/gitlab")
     public ResponseEntity<Object> loginRequest() {

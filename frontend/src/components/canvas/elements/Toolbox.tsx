@@ -5,13 +5,16 @@ import Konva from "konva";
 import React, { useRef } from "react";
 import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
-import { type Action, addElement, changeBuildMode } from "../actions/actions.tsx";
-import { downloadURI, handleExport } from "components/canvas/utils/functions.tsx";
+import { type Action, addElement, changeBuildMode, clearUnsavedChairsState } from "../actions/actions.tsx";
 import { ElementInspector } from "components/canvas/elements/ElementInspector.tsx";
+import { findStageCenterCoordinates } from "components/canvas/utils/functions.tsx";
 
 
 const handleToolboxClick =
-  (type: ShapeType, dispatch: (action: Action) => void, currentBuildMode: number) => {
+  (type: ShapeType, dispatch: (action: Action) => void, currentBuildMode: number, stageCenter: {
+    x: number,
+    y: number
+  }) => {
     const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
     if (!toolItem) return;
 
@@ -20,17 +23,17 @@ const handleToolboxClick =
       const newBuildMode = currentBuildMode === 1 ? 0 : 1;
       dispatch(changeBuildMode(newBuildMode));
     } else {
-      dispatch(addElement(shapeFactory(type)));
+      dispatch(addElement(shapeFactory(type, stageCenter)));
     }
 
   };
 
 function Toolbox({
-                   dispatch,
-                   stageRef,
-                   state,
-                   selectedIds,
-                 }: {
+  dispatch,
+  stageRef,
+  state,
+  selectedIds,
+}: {
   dispatch: (action: Action) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   state: AppState;
@@ -72,7 +75,10 @@ function Toolbox({
                 key={item.type}
                 x={10}
                 y={i * 60 + 40}
-                onClick={() => handleToolboxClick(item.type, dispatch, state.buildMode)}
+                onClick={() => {
+                  const stageCenter = findStageCenterCoordinates(stageRef);
+                  handleToolboxClick(item.type, dispatch, state.buildMode, stageCenter);
+                }}
                 cursor="pointer"
               >
                 <Rect width={80} height={40} fill="#ddd" stroke="#999" cornerRadius={6} />
@@ -80,24 +86,8 @@ function Toolbox({
               </Group>
             ))}
 
-            <Group y={toolboxHeight + 10} onClick={async () => {
-              const uri = await handleExport(stageRef);
-              downloadURI(uri!, "stage.jpeg");
-            }}>
-              <Rect
-                width={80}
-                height={50}
-                fill="#f66"
-                cornerRadius={8}
-                x={10}
-                stroke="#900"
-                strokeWidth={1}
-              />
-              <Text text="Export" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
-            </Group>
-
             <Group
-              y={toolboxHeight + 70}
+              y={toolboxHeight + 10}
               onClick={() =>
                 updateSchematics(
                   schematicsId!,
@@ -106,8 +96,9 @@ function Toolbox({
                     canvasPosition: stageRef!.current!.getPosition(),
                     scale: stageRef!.current!.scaleX(),
                   },
-                  stageRef,
-                )
+                ).then((response) => {
+                  if (response) dispatch(clearUnsavedChairsState());
+                })
               }
             >
               <Rect
@@ -122,7 +113,7 @@ function Toolbox({
               <Text text="Save" x={25} y={15} fill="white" fontSize={10} fontStyle="bold" />
             </Group>
 
-            {/*<Group
+            {/* <Group
               y={510}>
               <Text text={"#undo: " + state.history?.past?.length + "\n#redo: " + state.history?.future?.length} x={25}
                     y={15} fill="black" fontSize={10} fontStyle="bold" />

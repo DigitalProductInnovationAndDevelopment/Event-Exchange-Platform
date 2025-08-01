@@ -3,9 +3,13 @@ package com.itestra.eep.models;
 import com.itestra.eep.enums.EventType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyGroup;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -14,9 +18,8 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedEntityGraph(name = "Event.participations_files",
-        attributeNodes = {@NamedAttributeNode("employeeParticipations"),
-                @NamedAttributeNode("schematics")}
+@NamedEntityGraph(name = "Event.files_schematics",
+        attributeNodes = {@NamedAttributeNode("fileEntities"), @NamedAttributeNode("schematics")}
 )
 public class Event {
 
@@ -37,6 +40,9 @@ public class Event {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "notes")
+    private String notes;
+
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
@@ -44,33 +50,31 @@ public class Event {
     private String address;
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<FileEntity> fileEntities = new ArrayList<>();
+    private Set<FileEntity> fileEntities = new HashSet<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id ASC")
-    private List<EmployeeParticipation> employeeParticipations = new ArrayList<>();
+    private Set<EmployeeParticipation> employeeParticipations = new HashSet<>();
 
     @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id ASC")
-    private List<VisitorParticipation> visitorParticipations = new ArrayList<>();
-
-    @OneToMany(mappedBy = "event", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Chair> chairs = new LinkedHashSet<>();
+    private Set<VisitorParticipation> visitorParticipations = new HashSet<>();
 
     @OneToOne(mappedBy = "event", orphanRemoval = true)
     private Schematics schematics;
 
-    @Transient
-    public int getParticipantCount() {
-        return getParticipantCount(null);
-    }
+    @Formula("(select count(*) from organization.employee_participation ep where ep.event_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    @LazyGroup("participantCounts")
+    private int employeeParticipantCount;
 
-    @Transient
-    public int getParticipantCount(EmployeeParticipation excludeCertainEmployeeParticipation) {
-        return employeeParticipations.stream()
-                .filter(p -> excludeCertainEmployeeParticipation == null || !p.getId().equals(excludeCertainEmployeeParticipation.getId()))
-                .mapToInt(p -> p.getGuestCount() + 1)
-                .sum();
+    @Formula("(select count(*) from organization.visitor_participation vp where vp.event_id = id)")
+    @Basic(fetch = FetchType.LAZY)
+    @LazyGroup("participantCounts")
+    private int visitorParticipantCount;
+
+    public int getParticipantCount() {
+        return employeeParticipantCount + visitorParticipantCount;
     }
 
 }

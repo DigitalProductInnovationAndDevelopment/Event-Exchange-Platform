@@ -27,7 +27,7 @@ public class EmployeeParticipation extends Participation {
     private Set<VisitorParticipation> visitorParticipations = new LinkedHashSet<>();
 
     public EmployeeParticipation(UUID id, int guestCount, Boolean confirmed, Employee employee, Event event, Chair chair) {
-        super(id, event, chair, confirmed, null, null);
+        super(id, event, chair, confirmed);
         this.guestCount = guestCount;
         this.employee = employee;
     }

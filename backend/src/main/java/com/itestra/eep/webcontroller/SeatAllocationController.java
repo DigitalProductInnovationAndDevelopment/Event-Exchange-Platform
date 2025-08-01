@@ -2,10 +2,9 @@ package com.itestra.eep.webcontroller;
 
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.dtos.SeatAllocationUpsertDTO;
-import com.itestra.eep.dtos.StageMapDTO;
+import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
 import com.itestra.eep.services.SeatAllocationService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +16,9 @@ import java.util.List;
 import java.util.UUID;
 
 
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @Validated
-@Slf4j
 @RequestMapping("/seat-allocation")
 public class SeatAllocationController {
 
@@ -36,7 +33,7 @@ public class SeatAllocationController {
     }
 
     @GetMapping("/{eventId}/allocations")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'PARTNER')")
     public ResponseEntity<List<SeatAllocationDetailsDTO>> getSeatAllocations(@PathVariable UUID eventId) {
         List<SeatAllocationDetailsDTO> seatAllocations = seatAllocationService.getSeatAllocations(eventId);
         return new ResponseEntity<>(seatAllocations, HttpStatus.OK);
@@ -45,7 +42,7 @@ public class SeatAllocationController {
     @PutMapping("/{eventId}/allocations")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Boolean> setSeatAllocations(@RequestBody SeatAllocationUpsertDTO dto, @PathVariable UUID eventId) {
-        seatAllocationService.updateSeatAllocation(dto.getParticipationId(), dto.getChairId(), eventId);
+        seatAllocationService.assignParticipantToChairAndPersistNewNeighbors(dto.getParticipationId(), dto.getChairId(), eventId, null, dto.getNeighbourProfileIds());
         return ResponseEntity.ok(true);
     }
 

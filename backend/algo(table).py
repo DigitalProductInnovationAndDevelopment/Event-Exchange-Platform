@@ -26,7 +26,6 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
     # --- 1. Prepare Data using Pandas ---
     df_employees = pd.DataFrame(employees_data)
     df_employees['Anzahl'] = pd.to_numeric(df_employees['Anzahl'], errors='coerce').fillna(1).astype(int)
-    df_employees['FullName'] = df_employees['Vorname'] + ' ' + df_employees['Nachname']
     num_groups = len(df_employees)
 
     df_tables = pd.DataFrame(tables_data)
@@ -36,8 +35,7 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
     total_seats_required = df_employees['Anzahl'].sum()
     total_capacity = df_tables['Capacity'].sum()
 
-    print(
-        f"Assigning {num_groups} groups ({total_seats_required} people) to {num_tables} tables with a total capacity of {total_capacity}.")
+    print(f"Assigning {num_groups} groups ({total_seats_required} people) to {num_tables} tables with a total capacity of {total_capacity}.")
 
     if total_seats_required > total_capacity:
         print(f"Error: Not enough capacity ({total_capacity}) for all people ({total_seats_required}).")
@@ -57,44 +55,50 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
 
     for t_idx in range(num_tables):
         table_capacity = df_tables.loc[t_idx, 'Capacity']
-        groups_at_table = [df_employees.loc[g_idx, 'Anzahl'] * assignment[(g_idx, t_idx)] for g_idx in
-                           range(num_groups)]
+        groups_at_table = [df_employees.loc[g_idx, 'Anzahl'] * assignment[(g_idx, t_idx)] for g_idx in range(num_groups)]
         model.Add(cp_model.LinearExpr.Sum(groups_at_table) <= table_capacity)
 
     # --- 4. Define Objective from Constraints Config ---
     objective_terms = []
 
-    # --- 4a. Add a penalty for each table used to encourage filling tables ---
-    # This is a low-priority goal.
+    # Add a penalty for each table used to encourage filling tables
     for t_idx in range(num_tables):
         is_table_used = model.NewBoolVar(f'table_used_{t_idx}')
-        # Link is_table_used to assignments for this table. If any person is assigned, it's used.
         assignments_to_table = [assignment[(g_idx, t_idx)] for g_idx in range(num_groups)]
         model.AddMaxEquality(is_table_used, assignments_to_table)
-        # Add a small penalty for using the table.
         objective_terms.append(-1 * is_table_used)
+
+        # Add a penalty for each empty seat to encourage fuller tables
+        groups_at_table = [df_employees.loc[g_idx, 'Anzahl'] * assignment[(g_idx, t_idx)] for g_idx in range(num_groups)]
+        total_seated_at_table = cp_model.LinearExpr.Sum(groups_at_table)
+        wasted_space = model.NewIntVar(0, int(table_capacity), f'wasted_space_t{t_idx}')
+        model.Add(wasted_space == table_capacity - total_seated_at_table)
+        
+        objective_terms.append(-0.1 * wasted_space)
+
 
     for attr, weight in constraints_config.items():
         if weight == 0:
-            continue  # Skip attributes with a weight of 0
+            continue 
 
-        # --- 4b. Handle the special "last neighborhood" penalty ---
         if attr == 'last neighborhood':
-            if 'last neighborhood' not in df_employees.columns:
-                print("Warning: 'last neighborhood' requested, but column not found.")
+            if 'last neighborhood' not in df_employees.columns or 'ProfileID' not in df_employees.columns:
+                print("Warning: 'last neighborhood' or 'ProfileID' column not found. Skipping this constraint.")
                 continue
-
-            print(f"Applying '{attr}' soft constraint with weight: {weight}")
-            name_to_idx_map = {name: i for i, name in enumerate(df_employees['FullName'])}
+                
+            print(f"Applying '{attr}' soft constraint with weight: {weight} using ProfileID.")
+            # --- CHANGE: Use ProfileID for mapping instead of FullName ---
+            profile_id_to_idx_map = {pid: i for i, pid in enumerate(df_employees['ProfileID'])}
             processed_pairs = set()
 
             for g_idx, row in df_employees.iterrows():
-                last_neighbors_names = row.get('last neighborhood')
-                if not isinstance(last_neighbors_names, list):
+                last_neighbor_ids = row.get('last neighborhood')
+                if not isinstance(last_neighbor_ids, list):
                     continue
 
-                neighbor_indices = [name_to_idx_map[name] for name in last_neighbors_names if name in name_to_idx_map]
-
+                # --- CHANGE: Map neighbor ProfileIDs to their group indices ---
+                neighbor_indices = [profile_id_to_idx_map[pid] for pid in last_neighbor_ids if pid in profile_id_to_idx_map]
+                
                 for neighbor_g_idx in neighbor_indices:
                     pair = tuple(sorted((g_idx, neighbor_g_idx)))
                     if pair in processed_pairs:
@@ -105,17 +109,14 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
                         seated_together = model.NewBoolVar(f'seated_together_g{g_idx}_n{neighbor_g_idx}_t{t_idx}')
                         model.Add(seated_together <= assignment[(g_idx, t_idx)])
                         model.Add(seated_together <= assignment[(neighbor_g_idx, t_idx)])
-                        model.Add(
-                            seated_together >= assignment[(g_idx, t_idx)] + assignment[(neighbor_g_idx, t_idx)] - 1)
-                        # Add to objective as a penalty (negative term)
+                        model.Add(seated_together >= assignment[(g_idx, t_idx)] + assignment[(neighbor_g_idx, t_idx)] - 1)
                         objective_terms.append(-weight * seated_together)
-
-        # --- 4c. Handle standard diversity attributes ---
+        
         else:
             if attr not in df_employees.columns:
                 print(f"Warning: Diversity attribute '{attr}' not found. Skipping.")
                 continue
-
+            
             print(f"Applying '{attr}' diversity constraint with weight: {weight}")
             for t_idx in range(num_tables):
                 table_id = df_tables.loc[t_idx, 'TableNr']
@@ -123,13 +124,12 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
                     is_value_present_at_table = model.NewBoolVar(f'attr_{attr}_val_{str(value)}_table_{table_id}')
                     groups_with_value_indices = df_employees[df_employees[attr] == value].index.tolist()
                     assignments_for_value_at_table = [assignment[(g_idx, t_idx)] for g_idx in groups_with_value_indices]
-
+                    
                     if assignments_for_value_at_table:
                         model.AddMaxEquality(is_value_present_at_table, assignments_for_value_at_table)
                     else:
                         model.Add(is_value_present_at_table == 0)
-
-                    # Add to objective as a reward (positive term)
+                    
                     objective_terms.append(weight * is_value_present_at_table)
 
     # --- 5. Set the Combined Objective ---
@@ -155,35 +155,34 @@ def assign_tables(employees_data, tables_data, constraints_config, time_limit_se
                 if solver.Value(assignment[(g_idx, t_idx)]) == 1:
                     assigned_table_id = df_tables.loc[t_idx, 'TableNr']
                     group_size = df_employees.loc[g_idx, 'Anzahl']
-                    current_event_assignment = [assigned_table_id] * group_size
-
-                    if not isinstance(employees_data[g_idx].get('TableNr'), list):
-                        employees_data[g_idx]['TableNr'] = []
-
-                    employees_data[g_idx]['TableNr'].append(current_event_assignment)
+                    
+                    current_event_assignment = [str(assigned_table_id)] * group_size
+                    employees_data[g_idx]['TableNr'] = current_event_assignment
                     break
         return employees_data
     else:
         status_name = solver.StatusName(status)
         print(f"\nNo solution found. Solver status: {status_name}")
-        return employees_data
-
+        sys.exit(-1)
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-
     if len(sys.argv) != 5:
         print("Usage: python algo.py <input_json_path> <table_json_path> <config_json_path> <output_json_path>")
         sys.exit(1)
 
     # --- Configuration ---
+    # EMPLOYEES_JSON_PATH = 'input.json'
+    # TABLES_JSON_PATH = 'table.json'
+    # CONSTRAINTS_JSON_PATH = 'constraints.json'
+    # OUTPUT_JSON_PATH = 'output.json'
     EMPLOYEES_JSON_PATH = sys.argv[1]
     TABLES_JSON_PATH = sys.argv[2]
     CONSTRAINTS_JSON_PATH = sys.argv[3]
     OUTPUT_JSON_PATH = sys.argv[4]
 
     # Set a time limit for the solver
-    SOLVER_TIME_LIMIT = 60.0
+    SOLVER_TIME_LIMIT = 300.0
 
     print("--- Starting Table Assignment from File ---")
     try:
@@ -210,9 +209,6 @@ if __name__ == "__main__":
             for employee in assigned_employees:
                 if 'Anzahl' in employee and pd.notna(employee['Anzahl']):
                     employee['Anzahl'] = int(employee['Anzahl'])
-                if 'TableNr' in employee and isinstance(employee['TableNr'], list):
-                    employee['TableNr'] = [[int(t) for t in event] for event in employee['TableNr']]
-                employee.pop('FullName', None)
 
             with open(OUTPUT_JSON_PATH, 'w', encoding='utf-8') as f:
                 json.dump(assigned_employees, f, ensure_ascii=False, indent=2)
@@ -221,21 +217,32 @@ if __name__ == "__main__":
             df_results = pd.DataFrame(assigned_employees)
 
             if not df_results['TableNr'].empty:
-                df_results['CurrentAssignmentList'] = df_results['TableNr'].apply(lambda x: x[-1] if x else [])
-                df_results['CurrentAssignment'] = df_results['CurrentAssignmentList'].apply(
-                    lambda x: x[0] if x else None)
+                df_results['CurrentAssignment'] = df_results['TableNr'].apply(lambda x: x[0] if isinstance(x, list) and x else None)
 
                 print("Seats used per table (Current Event):")
                 print(df_results.groupby('CurrentAssignment')['Anzahl'].sum())
                 print("\n--- Detailed Results (Current Event) ---")
-                print(df_results[
-                          ['Vorname', 'Nachname', 'Anzahl', 'Standort', 'Projekt', 'CurrentAssignment']].to_string())
+
+                # Dynamically build the list of columns to display in the summary
+                display_columns = ['Vorname', 'Nachname', 'Anzahl']
+                # Add the diversity attributes that are actual columns in the dataframe
+                for key in constraints_config.keys():
+                    if key in df_results.columns:
+                        display_columns.append(key)
+                display_columns.append('CurrentAssignment')
+
+                # Ensure no duplicates and all columns exist before printing
+                final_display_columns = []
+                for col in display_columns:
+                    if col not in final_display_columns and col in df_results.columns:
+                        final_display_columns.append(col)
+
+                print(df_results[final_display_columns].to_string())
             else:
                 print("Could not assign tables. Please check logs for errors.")
 
     except FileNotFoundError as e:
-        print(
-            f"Error: An input file was not found. Please ensure '{EMPLOYEES_JSON_PATH}', '{TABLES_JSON_PATH}', and '{CONSTRAINTS_JSON_PATH}' exist.")
+        print(f"Error: An input file was not found. Please ensure '{EMPLOYEES_JSON_PATH}', '{TABLES_JSON_PATH}', and '{CONSTRAINTS_JSON_PATH}' exist.")
         print(f"Details: {e}")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

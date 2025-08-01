@@ -1,9 +1,10 @@
 import { type SetStateAction, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Input, message } from "antd";
+import { Button, Card, Input } from "utils/antd.tsx";
 import logo from "../assets/itestra_logo.png";
 import useApiService, { BASE_URL } from "../services/apiService.ts";
 import { DownOutlined, UpOutlined, UserOutlined } from "@ant-design/icons";
+import toast from "react-hot-toast";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export const Login = () => {
       }
     } catch (error) {
       setError("Invalid access code. Please try again.");
-      message.error("Invalid access code. Please try again.");
+      toast.error("Invalid access code. Please try again.");
     } finally {
       setLoading(false);
     }

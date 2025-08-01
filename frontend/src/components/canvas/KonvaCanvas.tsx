@@ -1,12 +1,12 @@
 import { useCanvas } from "./contexts/CanvasContext.tsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Group, Layer, Stage, Transformer } from "react-konva";
-import { type ElementProperties, renderElement, type UUID } from "./utils/constants";
+import { type ElementProperties, renderElement, type ShapeType, type UUID } from "./utils/constants";
 import Toolbox from "./elements/Toolbox";
 import Konva from "konva";
 import type { Table } from "./elements/Table.tsx";
 
-import { setState } from "./actions/actions.tsx";
+import { setChairIdForManualAssignment, setState } from "./actions/actions.tsx";
 import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import StagePreview from "components/canvas/elements/StagePreview.tsx";
@@ -27,10 +27,38 @@ import {
   handleTransformEnd,
   handleWheel,
 } from "components/canvas/EventListeners.tsx";
+import type { Chair } from "components/canvas/elements/Chair.tsx";
 
-function KonvaCanvas() {
+
+const TYPE_ORDER: { [key in ShapeType]: number } = {
+  rectTable: 2,
+  circleTable: 3,
+  chair: 4,
+  wall: 1,
+  quickWall: 1,
+  arrow: 5,
+  text: 6,
+} as const;
+
+export interface KonvaCanvasProps {
+  stageReference?: React.RefObject<Konva.Stage | null>,
+  schematicsUUID?: UUID,
+  eventName?: string,
+  isFullWidth?: boolean,
+}
+
+function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanvasProps) {
   const { state, dispatch } = useCanvas();
-  const stageRef = useRef<Konva.Stage | null>(null);
+  let stageRef = useRef<Konva.Stage | null>(null);
+  let { schematicsId } = useParams();
+
+  if (stageReference) {
+    stageRef = stageReference;
+  }
+  if (schematicsUUID) {
+    schematicsId = schematicsUUID;
+  }
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
@@ -41,7 +69,6 @@ function KonvaCanvas() {
   const { getSchematics } = useApiService();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [initiated, setInitiated] = useState(false);
-  const { schematicsId } = useParams();
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const dragLayer = useRef<Konva.Layer | null>(null);
   const mainLayer = useRef<Konva.Layer | null>(null);
@@ -56,21 +83,28 @@ function KonvaCanvas() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!initiated && schematicsId) {
+      if (schematicsId && !initiated) {
         const fetchedAppState = await getSchematics(schematicsId);
-        if (fetchedAppState && !initiated) {
-          dispatch(setState({ ...fetchedAppState, buildMode: 0 }));
+        setInitiated(true);
+        dispatch(setState({ ...fetchedAppState!, buildMode: 0 }));
+        setScale(fetchedAppState!.scale);
+        stageRef.current?.setPosition(fetchedAppState!.canvasPosition ? fetchedAppState!.canvasPosition : {
+          x: 0,
+          y: 0,
+        });
+        const container = stageRef!.current?.container();
+        if (container) {
+          container.style.cursor = "grab";
         }
+      } else {
+        if (state.scale) setScale(state!.scale);
+        if (state.canvasPosition) stageRef.current?.setPosition(state!.canvasPosition ? state!.canvasPosition : {
+          x: 0,
+          y: 0,
+        });
       }
     };
-    fetchData().then(() => {
-      stageRef.current?.setPosition(state.canvasPosition ? state.canvasPosition : { x: 0, y: 0 });
-      const container = stageRef!.current!.container();
-      container.style.cursor = "grab";
-
-      setScale(state.scale);
-      setInitiated(true);
-    });
+    fetchData();
   }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
 
   useEffect(() => {
@@ -81,7 +115,7 @@ function KonvaCanvas() {
   useEffect(() => {
     const updateContainerSize = () => {
       if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
+        const rect = containerRef?.current.getBoundingClientRect();
         setContainerSize({
           width: rect.width,
           height: rect.height,
@@ -92,7 +126,7 @@ function KonvaCanvas() {
     updateContainerSize();
     window.addEventListener("resize", updateContainerSize);
     return () => window.removeEventListener("resize", updateContainerSize);
-  }, []);
+  }, [isFullWidth]);
 
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -109,11 +143,11 @@ function KonvaCanvas() {
   }, [selectedIds]);
 
   useEffect(() => {
-    const handleKeyDownWrapper = (e) => {
-      handleKeyDown(e, dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates);
+    const handleKeyDownWrapper = (e: KeyboardEvent) => {
+      handleKeyDown(e, dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, state);
     };
 
-    const handleKeyUpWrapper = (e) => {
+    const handleKeyUpWrapper = (e: KeyboardEvent) => {
       handleKeyUp(e, setIsShiftPressed, stageRef);
     };
 
@@ -127,7 +161,24 @@ function KonvaCanvas() {
     };
   }, [dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, stageRef]);
 
-  function getTableConnectedChairIds(tableId: UUID): UUID[] {
+// unnecessary re-sorts when only positions/properties change
+  const elementTypesHash = useMemo(() =>
+      state.elements?.map(el => el.type).join(","),
+    [state.elements],
+  );
+
+  useEffect(() => {
+    if (state.elements?.length > 1) {
+      state.elements.sort((a, b) => {
+        const priorityA = TYPE_ORDER[a.type] ?? 999;
+        const priorityB = TYPE_ORDER[b.type] ?? 999;
+        return priorityA - priorityB;
+      });
+      console.log("sorted");
+    }
+  }, [elementTypesHash]);
+
+  function getConnectedChairIdsOfTable(tableId: UUID): UUID[] {
     const table: ElementProperties | undefined = state.elements?.find(el => (el.type === "rectTable" || el.type === "circleTable") && el.id === tableId);
     if (table) {
       const chairIds: UUID[] = (table as unknown as Table).attachedChairs ?? [];
@@ -137,12 +188,30 @@ function KonvaCanvas() {
     }
   }
 
-  const selectedIdsProxy = [...selectedIds, ...(selectedIds.length === 1 ? getTableConnectedChairIds(selectedIds[0]) : [])];
+  function handleManualInsertionLogicForSeatAllocation() {
+    if (selectedIds.length === 1) {
+      const chairs = state.elements.filter((el) => el.type === "chair") as Chair[];
+
+      const selectedChair = chairs.find((chair) => chair.id === selectedIds[0]);
+      if (selectedChair) {
+        if (!selectedChair.assigneeProfileId && selectedChair.attachedTo && (state.chairIdForManualAssignment === null || (state.chairIdForManualAssignment !== selectedChair.id))) {
+          dispatch(setChairIdForManualAssignment(selectedChair.id));
+        } else if (selectedChair.assigneeProfileId && state.chairIdForManualAssignment !== null && state.chairIdForManualAssignment === selectedChair.id) {
+          dispatch(setChairIdForManualAssignment(null));
+        }
+      }
+    }
+  }
+
+  handleManualInsertionLogicForSeatAllocation();
+
+
+  const extendedSelectedIds = [...selectedIds, ...(selectedIds.length === 1 ? getConnectedChairIdsOfTable(selectedIds[0]) : [])];
 
   return (
     <div className="space-y-6">
       <div className="App overflow-hidden bg-white"
-           style={{ display: "flex", border: "1px solid #e0e0e0", flexDirection: "row" }}>
+           style={{ display: "flex", height: 600, border: "1px solid #e0e0e0", flexDirection: "row" }}>
 
         <Toolbox dispatch={dispatch} stageRef={stageRef} state={state} selectedIds={selectedIds} />
 
@@ -166,13 +235,13 @@ function KonvaCanvas() {
 
             <Layer ref={mainLayer}>
               {/* this is where we display elements */}
-              {state.elements?.filter(el => !selectedIdsProxy.includes(el.id)).map((el) => {
+              {state.elements?.filter(el => !extendedSelectedIds.includes(el.id)).map((el) => {
                 return (
                   <Group
                     key={el.id}
                     id={el.id}
-                    x={el.x}
-                    y={el.y}
+                    x={Number.isNaN(el.x) ? 0 : el.x}
+                    y={Number.isNaN(el.y) ? 0 : el.y}
                     draggable={el.draggable}
                     rotation={el.rotation}
                     onDblClick={(e) => handleDoubleClickOnElement(e, el, setSelectedIds)}
@@ -205,8 +274,8 @@ function KonvaCanvas() {
               {selectedIds.length === 1 &&
                 state.elements.find((el) => el.type === "chair") && (
                   <NeighbourArrows
+                    algorithmType={"table"}
                     state={state}
-                    dispatch={dispatch}
                     table={(state.elements.find(
                       (a) =>
                         a.id ===
@@ -222,22 +291,26 @@ function KonvaCanvas() {
                 <Group
                   draggable={true}
                   onDragEnd={(e) => {
-                    // Handle group drag end
+                    if (selectedIds.length === 1) {
+                      const el = state.elements?.find(el => extendedSelectedIds.includes(el.id));
+                      handleDragEnd(e, el!, dispatch, state, rectRefs, stageRef);
+                    }
+                    // in addition, handle group drag end
                     const deltaX = e.target.x();
                     const deltaY = e.target.y();
-                    handleGroupDragEnd(deltaX, deltaY, dispatch, state, selectedIdsProxy);
+                    handleGroupDragEnd(deltaX, deltaY, dispatch, state, extendedSelectedIds);
                     // Reset group position to remove glitch
                     e.target.position({ x: 0, y: 0 });
                   }}
                   onDragStart={() => handleGroupDragStart(dispatch)}
                 >
-                  {state.elements?.filter(el => selectedIdsProxy.includes(el.id)).map((el) => {
+                  {state.elements?.filter(el => extendedSelectedIds.includes(el.id)).map((el) => {
                     return (
                       <Group
                         key={el.id}
                         id={el.id}
-                        x={el.x}
-                        y={el.y}
+                        x={Number.isNaN(el.x) ? 0 : el.x}
+                        y={Number.isNaN(el.y) ? 0 : el.y}
                         draggable={false} // we disable individual dragging since parent handles it
                         rotation={el.rotation}
                         ref={node => {

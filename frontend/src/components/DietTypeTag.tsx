@@ -1,4 +1,4 @@
-import { Tag } from "antd";
+import { Tag } from "utils/antd.tsx";
 import { DIET_TYPE_COLORS } from "components/canvas/utils/constants.tsx";
 
 export const DietTypeTag = ({ type }: { type: string }) => {

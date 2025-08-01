@@ -1,6 +1,6 @@
-import { Group, Rect, Text } from "react-konva";
+import { Group, Rect } from "react-konva";
 
-export type SelectionRectangleProps = {
+export type SelectionRectangleType = {
   visible: boolean;
   x1: number;
   y1: number;
@@ -11,7 +11,7 @@ export type SelectionRectangleProps = {
 function SelectionRectangle({
   selectionRectangle,
 }: {
-  selectionRectangle: SelectionRectangleProps;
+  selectionRectangle: SelectionRectangleType;
 }) {
   return (
     <Group>
@@ -22,7 +22,7 @@ function SelectionRectangle({
         height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
         fill="rgba(0,0,255,0.5)"
       />
-      <Text
+      {/*<Text
         text={`start: ${selectionRectangle.x1.toFixed(2)}:${selectionRectangle.y1.toFixed(2)}\nend: ${selectionRectangle.x2.toFixed(2)}:${selectionRectangle.y2.toFixed(2)}`}
         x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
         y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
@@ -32,7 +32,7 @@ function SelectionRectangle({
         fontSize={12}
         align="center"
         verticalAlign="middle"
-      />
+      />*/}
     </Group>
   );
 }

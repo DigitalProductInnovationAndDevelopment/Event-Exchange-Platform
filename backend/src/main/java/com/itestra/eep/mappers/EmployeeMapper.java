@@ -2,15 +2,14 @@ package com.itestra.eep.mappers;
 
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.dtos.EmployeeDetailsDTO;
+import com.itestra.eep.dtos.EmployeeMinimalDetailsDTO;
 import com.itestra.eep.dtos.EmployeeUpdateDTO;
-import com.itestra.eep.dtos.ProfileDetailsDTO;
 import com.itestra.eep.models.Employee;
-import com.itestra.eep.models.Profile;
 import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = EmployeeParticipationMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {EmployeeParticipationMapper.class, ProfileMapper.class})
 public interface EmployeeMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -21,7 +20,6 @@ public interface EmployeeMapper {
 
     EmployeeDetailsDTO toDetailsDto(Employee employee);
 
-    List<EmployeeDetailsDTO> toDetailsDto(List<Employee> employees);
+    List<EmployeeMinimalDetailsDTO> toMinimalDetailsDto(List<Employee> employees);
 
-    ProfileDetailsDTO toProfileDetailsDto(Profile profile);
 }

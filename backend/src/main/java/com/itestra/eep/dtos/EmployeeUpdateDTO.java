@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -28,54 +27,46 @@ import java.util.Set;
 @Setter
 public class EmployeeUpdateDTO implements Serializable {
 
-    @Nullable
     @Valid
     ProfileUpdateDTO profile;
 
-    @Nullable
     @PastOrPresent(message = "Employment start date cannot be in the future.")
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate employmentStartDate;
 
-    @Nullable
     String location;
 
     @Getter
     @Setter
     public static class ProfileUpdateDTO implements Serializable {
 
-        @Nullable
         @Size(max = 255)
         @NotBlank(message = "Name cannot be empty.")
         String name;
 
-        @Nullable
         @Size(max = 255)
         @NotBlank(message = "Last name cannot be empty.")
         String lastName;
 
-        @Nullable
         @Size(max = 255)
         @NotBlank(message = "Gender cannot be empty.")
         String gender;
 
-        @Nullable
-        @Size(max = 255)
-        @NotBlank(message = "GitLab username cannot be empty.")
+        @Size(max = 255, message = "GitLab username should be shorter than 255 characters")
         String gitlabUsername;
 
-        @Nullable
+        @Size(max = 10_000, message = "Notes cannot be more than 10000 characters")
+        String notes;
+
         @NotBlank(message = "Email cannot be empty.")
         @Email(message = "Email should be valid.")
         String email;
 
-        @Nullable
         @JdbcTypeCode(SqlTypes.ARRAY)
         @Enumerated(EnumType.STRING)
         DietaryPreference[] dietTypes;
 
-        @Nullable
         @Enumerated(EnumType.STRING)
         private Set<Role> authorities;
     }
