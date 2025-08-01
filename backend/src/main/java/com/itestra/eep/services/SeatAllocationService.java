@@ -12,10 +12,8 @@ public interface SeatAllocationService {
 
     List<SeatAllocationDetailsDTO> getSeatAllocations(UUID eventId);
 
-    <T extends Participation> void assignParticipantToChair(UUID participationId, UUID chairId, UUID eventId, Class<T> participationClass);
-
-    <T extends Participation> void assignParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
-                                                                                  Class<T> participationClass, UUID[] neighborProfileIds);
+    <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
+                                                                                     Class<T> participationClass, UUID[] neighborProfileIds);
 
     void performTableBasedSeatAllocation(UUID eventId, StageMapDTO stageMap) throws IOException, InterruptedException;
 }

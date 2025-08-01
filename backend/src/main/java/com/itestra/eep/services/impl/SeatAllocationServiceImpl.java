@@ -20,8 +20,6 @@ import com.itestra.eep.services.SeatAllocationService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,10 +41,6 @@ import java.util.stream.Collectors;
 @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public class SeatAllocationServiceImpl implements SeatAllocationService {
 
-    @Autowired
-    @Lazy
-    private SeatAllocationService seatAllocationServiceProxy;
-
     private final EventRepository eventRepository;
     private final ChairRepository chairRepository;
     private final ObjectMapper objectMapper;
@@ -61,29 +55,18 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         return eventRepository.findCurrentSeatAllocationsByEventId(eventId);
     }
 
-
-    /**
-     * @param chairId             set UUID null for seat un-allocation
-     */
     @Override
-    public <T extends Participation> void assignParticipantToChair(UUID participationId, UUID chairId, UUID eventId, Class<T> participationClass) {
-
+    public <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
+                                                                                            Class<T> participationClass, UUID[] neighborProfileIds) {
+        // first assign the chair
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
 
-        // create chair if it doesn't exist
-        if (chairId != null && !chairRepository.existsById(chairId)) {
-            chairRepository.saveAndFlush(new Chair(chairId, event));
-        }
+        if (chairId != null) chairRepository.batchInsertChair(List.of(new Chair(chairId, event)));
 
         // update chair assignment based on participation type
-        updateChairAssignmentByType(participationId, chairId, participationClass);
-    }
+        Optional<EmployeeParticipation> employeeParticipation = employeeParticipationRepository.findById(participationId);
 
-    @Override
-    public <T extends Participation> void assignParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
-                                                                                         Class<T> participationClass, UUID[] neighborProfileIds) {
-        // first assign the chair
-        seatAllocationServiceProxy.assignParticipantToChair(participationId, chairId, eventId, participationClass);
+        updateChairAssignmentByType(participationId, chairId, employeeParticipation.isPresent());
 
         if (chairId == null) {
             // if unassigning from chair, clean up previous matches
@@ -93,41 +76,34 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
                     );
         } else if (neighborProfileIds != null && neighborProfileIds.length > 0) {
             // if assigning to chair with neighbors, record previous matches
-            recordEmployeePreviousMatches(participationId, eventId, neighborProfileIds);
+            persistNewEmployeePreviousMatches(eventId, neighborProfileIds, employeeParticipation);
         }
     }
 
-    private void updateChairAssignmentByType(UUID participationId, UUID chairId, Class<?> participationClass) {
-        if (participationClass == null) {
-            // Update both types if class is not specified
-            eventRepository.updateEmployeeParticipationChairId(participationId, chairId);
-            eventRepository.updateVisitorParticipationChairId(participationId, chairId);
-        } else if (EmployeeParticipation.class.isAssignableFrom(participationClass)) {
-            eventRepository.updateEmployeeParticipationChairId(participationId, chairId);
-        } else if (VisitorParticipation.class.isAssignableFrom(participationClass)) {
-            eventRepository.updateVisitorParticipationChairId(participationId, chairId);
+    private void updateChairAssignmentByType(UUID participationId, UUID chairId, boolean isEmployeeParticipation) {
+        if (isEmployeeParticipation) {
+            chairRepository.updateEmployeeParticipationChairId(participationId, chairId);
         } else {
-            throw new IllegalArgumentException("Unsupported participation class: " + participationClass.getSimpleName());
+            chairRepository.updateVisitorParticipationChairId(participationId, chairId);
         }
     }
 
-    private void recordEmployeePreviousMatches(UUID participationId, UUID eventId, UUID[] neighborProfileIds) {
-        Optional<EmployeeParticipation> employeeParticipation = employeeParticipationRepository.findById(participationId);
+    private void persistNewEmployeePreviousMatches(UUID eventId, UUID[] neighborProfileIds, Optional<EmployeeParticipation> employeeParticipation) {
 
+        // if not an employee participation then no need to record matches
         if (employeeParticipation.isEmpty()) {
-            // not an employee participation then no need to record matches
             return;
         }
 
         UUID employeeId = employeeParticipation.get().getEmployee().getId();
-        List<PreviousMatch> previousMatches = createBidirectionalMatches(employeeId, neighborProfileIds, eventId);
+        List<PreviousMatch> newPreviousMatches = calculateBidirectionalMatches(employeeId, neighborProfileIds, eventId);
 
-        if (!previousMatches.isEmpty()) {
-            previousMatchesRepository.saveAllAndFlush(previousMatches);
+        if (!newPreviousMatches.isEmpty()) {
+            previousMatchesRepository.batchInsertPreviousMatches(newPreviousMatches);
         }
     }
 
-    private List<PreviousMatch> createBidirectionalMatches(UUID employeeId, UUID[] neighborIds, UUID eventId) {
+    private List<PreviousMatch> calculateBidirectionalMatches(UUID employeeId, UUID[] neighborIds, UUID eventId) {
         List<PreviousMatch> matches = new ArrayList<>(neighborIds.length * 2);
 
         for (UUID neighborId : neighborIds) {
@@ -139,7 +115,7 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         return matches;
     }
 
-    // TODO refactor and think of optimization
+
     @Override
     public void performTableBasedSeatAllocation(UUID eventId, StageMapDTO stageMap) throws IOException, InterruptedException {
         Event event = eventRepository.findByIdJoinedWithPreviousMatches(eventId).orElseThrow(EventNotFoundException::new);
@@ -160,101 +136,115 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         try (TempFileManager tempFiles = new TempFileManager()) {
             writeInputFiles(tempFiles, formattedData, stageMap);
 
-            ProcessBuilder pb;
-
-            if (Files.notExists(Path.of("../venv/bin/python"))) {
-                pb = new ProcessBuilder(
-                        "python3",
-                        "/algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString()
-                );
-            } else {
-                pb = new ProcessBuilder(
-                        "../venv/bin/python",
-                        "algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString()
-                );
-            }
-
-            // we set the working directory to where algo.py is located
-            pb.directory(new File("."));
-            pb.redirectErrorStream(true);
-
-            Process process = pb.start();
-
-            // Read script output
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                log.info(line);
-            }
-
-            int exitCode = process.waitFor();
-            log.info("Exited with code: {}", exitCode);
-            if (exitCode == 255) throw new InfeasibleSeatAllocationException();
+            runPythonScript(tempFiles);
 
             BufferedReader fileReader = Files.newBufferedReader(tempFiles.outputFile);
             List<ConstraintSolverDTO> solved = objectMapper.readValue(fileReader, new TypeReference<>() {
             });
 
-
-            // Map to track which table each employee is seated at
-            Map<UUID, UUID> employeeToTableMap = new HashMap<>();
             Map<UUID, EmployeeParticipation> existingEmployeeParticipationsMap = event.getEmployeeParticipations()
                     .stream()
                     .collect(Collectors.toMap(ep -> ep.getEmployee().getId(), Function.identity()));
 
 
-            // Set eventId to null for all chairs so that all of them unassigned
-            eventRepository.unsetAllEmployeeParticipationChairsByEventId(eventId);
-            eventRepository.unsetAllVisitorParticipationChairsByEventId(eventId);
-            eventRepository.flush();
+            Map<UUID, List<UUID>> tableToEmployeesMap = new HashMap<>();
+            List<Chair> chairsToPersist = new ArrayList<>();
+            Map<UUID, UUID> employeeParticipationToChairMap = new HashMap<>();
+            Map<UUID, UUID> visitorParticipationToChairMap = new HashMap<>();
 
             solved.forEach(solvedConstraint -> {
                         EmployeeParticipation employeeParticipation = existingEmployeeParticipationsMap.get(solvedConstraint.getProfileId());
                         VisitorParticipation[] visitorParticipations = employeeParticipation.getVisitorParticipations().toArray(new VisitorParticipation[0]);
                         for (int j = 0; j < (solvedConstraint.getTableIds()).length; j++) {
                             UUID tableKey = UUID.fromString(Arrays.copyOf(solvedConstraint.getTableIds(), solvedConstraint.getTableIds().length, String[].class)[0]);
+
+                            UUID selectedChairId = tablesAndTheirSeats.get(tableKey).get(0);
+                            chairsToPersist.add(new Chair(selectedChairId, event));
+
                             // first the employee is seated
                             if (j == 0) {
-                                seatAllocationServiceProxy.assignParticipantToChair(employeeParticipation.getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, EmployeeParticipation.class);
+                                employeeParticipationToChairMap.put(employeeParticipation.getId(), selectedChairId);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
-                                // we also track employee's table assignment so that we can reference them back whn we clculate new entites for PreviousMatches table
-                                employeeToTableMap.put(employeeParticipation.getEmployee().getId(), tableKey);
+                                // we also track employee's table assignment so that we can reference them back whn we calculate new entities for PreviousMatches table
+                                tableToEmployeesMap.computeIfAbsent(tableKey, k -> new ArrayList<>()).add(employeeParticipation.getEmployee().getId());
                             } else {
-                                seatAllocationServiceProxy.assignParticipantToChair(visitorParticipations[j - 1].getId(), tablesAndTheirSeats.get(tableKey).get(0), eventId, VisitorParticipation.class);
+                                visitorParticipationToChairMap.put(visitorParticipations[j - 1].getId(), selectedChairId);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
                             }
                         }
                     }
             );
 
-            // Delete all previous matches for this event
-            previousMatchesRepository.deleteAllByEventId(eventId);
+            persistNewChairAssignments(eventId, chairsToPersist, employeeParticipationToChairMap, visitorParticipationToChairMap);
 
-            // Create new previous matches for employees seated at the same table
-            List<PreviousMatch> newPreviousMatches = new ArrayList<>();
+            persistPreviousMatchesDueToNewMatchings(eventId, tableToEmployeesMap);
+        }
+    }
 
-            // Group employees by table
-            Map<UUID, List<UUID>> tableToEmployeesMap = new HashMap<>();
-            employeeToTableMap.forEach((employeeId, tableId) -> {
-                tableToEmployeesMap.computeIfAbsent(tableId, k -> new ArrayList<>()).add(employeeId);
-            });
+    private static void runPythonScript(TempFileManager tempFiles) throws IOException, InterruptedException {
+        ProcessBuilder pb;
 
-            // Create pairs for each table
-            tableToEmployeesMap.values().forEach(employeesAtTable -> {
-                for (int i = 0; i < employeesAtTable.size(); i++) {
-                    for (int j = i + 1; j < employeesAtTable.size(); j++) {
-                        UUID employeeId1 = employeesAtTable.get(i);
-                        UUID employeeId2 = employeesAtTable.get(j);
-                        newPreviousMatches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId1, employeeId2, eventId)));
-                        newPreviousMatches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId2, employeeId1, eventId)));
-                    }
+        if (Files.notExists(Path.of("../venv/bin/python"))) {
+            pb = new ProcessBuilder(
+                    "python3",
+                    "/algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString()
+            );
+        } else {
+            pb = new ProcessBuilder(
+                    "../venv/bin/python",
+                    "algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString()
+            );
+        }
+
+        // we set the working directory to where algo.py is located
+        pb.directory(new File("."));
+        pb.redirectErrorStream(true);
+
+        Process process = pb.start();
+
+        // Read script output
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            log.info(line);
+        }
+
+        int exitCode = process.waitFor();
+        log.info("Exited with code: {}", exitCode);
+        if (exitCode == 255) throw new InfeasibleSeatAllocationException();
+    }
+
+    private void persistNewChairAssignments(UUID eventId, List<Chair> chairsToPersist, Map<UUID, UUID> employeeParticipationToChairMap, Map<UUID, UUID> visitorParticipationToChairMap) {
+        chairRepository.unsetAllEmployeeParticipationChairsByEventId(eventId);
+        chairRepository.unsetAllVisitorParticipationChairsByEventId(eventId);
+        chairRepository.flush();
+        chairRepository.batchInsertChair(chairsToPersist);
+        chairRepository.batchUpdateEmployeeParticipationsChairAssignments(employeeParticipationToChairMap);
+        chairRepository.batchUpdateVisitorParticipationsChairAssignments(visitorParticipationToChairMap);
+    }
+
+    private void persistPreviousMatchesDueToNewMatchings(UUID eventId, Map<UUID, List<UUID>> tableToEmployeesMap) {
+        // Delete all previous matches for this event
+        previousMatchesRepository.deleteAllByEventId(eventId);
+
+        // Create new previous matches for employees seated at the same table
+        List<PreviousMatch> newPreviousMatches = new ArrayList<>();
+
+        // Create pairs for each table
+        tableToEmployeesMap.values().forEach(employeesAtTable -> {
+            for (int i = 0; i < employeesAtTable.size(); i++) {
+                for (int j = i + 1; j < employeesAtTable.size(); j++) {
+                    UUID employeeId1 = employeesAtTable.get(i);
+                    UUID employeeId2 = employeesAtTable.get(j);
+                    newPreviousMatches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId1, employeeId2, eventId)));
+                    newPreviousMatches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId2, employeeId1, eventId)));
                 }
-            });
-
-            // Batch insert new previous matches
-            if (!newPreviousMatches.isEmpty()) {
-                previousMatchesRepository.saveAll(newPreviousMatches);
             }
+        });
+
+        // Batch insert new previous matches
+        if (!newPreviousMatches.isEmpty()) {
+            previousMatchesRepository.batchInsertPreviousMatches(newPreviousMatches);
         }
     }
 
