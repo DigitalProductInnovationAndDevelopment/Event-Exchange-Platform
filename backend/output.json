@@ -8,20 +8,19 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 25",
+    "Startdatum": "Feb 25",
     "last neighborhood": [
-      "Mariana Klotz",
-      "Silvio Steinberg",
-      "Hanne-Lore Höfig"
+      "133",
+      "183",
+      "162"
     ],
     "TableNr": [
-      [
-        30,
-        30,
-        30
-      ]
+      "26",
+      "26",
+      "26"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "177"
   },
   {
     "Nachname": "Hermann",
@@ -32,44 +31,40 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8E9UMCTK",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
-      "Waldtraut Kensy",
-      "Nelly Herrmann",
-      "Inna Jacobi Jäckel"
+      "191",
+      "105",
+      "149"
     ],
     "TableNr": [
-      [
-        2,
-        2
-      ]
+      "29",
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "240"
   },
   {
     "Nachname": "Mühle",
     "Vorname": "Ingrid",
     "Standort": "Trier",
     "Zugehörigkeit": 3,
-    "Anzahl": 4,
+    "Anzahl": 2,
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0, TPKGL3AR, JSRO1OTE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 23",
+    "Startdatum": "Mai 23",
     "last neighborhood": [
-      "Kenneth Drewes",
-      "Rabea Schottin",
-      "Frithjof Mühle"
+      "223",
+      "195",
+      "101"
     ],
     "TableNr": [
-      [
-        12,
-        12,
-        12,
-        12
-      ]
+      "7",
+      "7"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "134"
   },
   {
     "Nachname": "Barth",
@@ -80,42 +75,38 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 24",
+    "Startdatum": "Jul 24",
     "last neighborhood": [
-      "Wolf-Rüdiger Margraf",
-      "Burkhard Lübs",
-      "Marit Rogner"
+      "127",
+      "144",
+      "234"
     ],
     "TableNr": [
-      [
-        7
-      ]
+      "25"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "217"
   },
   {
     "Nachname": "Steinberg",
     "Vorname": "Silvio",
     "Standort": "München",
     "Zugehörigkeit": 2,
-    "Anzahl": 3,
+    "Anzahl": 1,
     "Anstellung": "Festanstellung",
     "Projekt": "ZHBTB9VE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
-      "Lieselotte Süßebier",
-      "Nikolaj Weihmann",
-      "Britta Jüttner"
+      "151",
+      "175",
+      "212"
     ],
     "TableNr": [
-      [
-        17,
-        17,
-        17
-      ]
+      "22"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "183"
   },
   {
     "Nachname": "Süßebier",
@@ -126,18 +117,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 24",
+    "Startdatum": "Aug 24",
     "last neighborhood": [
-      "Ursula Hauffer",
-      "Nikolaj Weihmann",
-      "Eduard Bohlander"
+      "124",
+      "175",
+      "120"
     ],
     "TableNr": [
-      [
-        12
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "151"
   },
   {
     "Nachname": "Mohaupt",
@@ -148,18 +138,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 23",
+    "Startdatum": "Sep 23",
     "last neighborhood": [
-      "Slavko Kraushaar",
-      "Burkhard Lübs",
-      "Alwina Trapp"
+      "110",
+      "144",
+      "179"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "27"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "159"
   },
   {
     "Nachname": "Rogner",
@@ -170,18 +159,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 17",
+    "Startdatum": "Feb 17",
     "last neighborhood": [
-      "Rahel Oestrovsky",
-      "Gunnar Kallert",
-      "Silvio Steinberg"
+      "229",
+      "174",
+      "183"
     ],
     "TableNr": [
-      [
-        18
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "234"
   },
   {
     "Nachname": "Wirth",
@@ -192,18 +180,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 23",
+    "Startdatum": "Dez 23",
     "last neighborhood": [
-      "Stefania Hamann",
-      "Sami Birnbaum",
-      "Margaret Lorch"
+      "152",
+      "182",
+      "244"
     ],
     "TableNr": [
-      [
-        20
-      ]
+      "23"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "157"
   },
   {
     "Nachname": "Kensy",
@@ -214,20 +201,19 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 24",
+    "Startdatum": "Mai 24",
     "last neighborhood": [
-      "Christos Putz",
-      "Käthe Mude",
-      "Rahel Oestrovsky"
+      "237",
+      "238",
+      "229"
     ],
     "TableNr": [
-      [
-        3,
-        3,
-        3
-      ]
+      "14",
+      "14",
+      "14"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "191"
   },
   {
     "Nachname": "Birnbaum",
@@ -238,18 +224,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, WAN7FKP1, ZEDJC742, ZA5KV7BP, JSVDS3OQ, IZI7L47M, Q9OF7WJR, F1EBQTT3",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 20",
+    "Startdatum": "Jun 20",
     "last neighborhood": [
-      "Wladimir Dörr",
-      "Reinhold Söding",
-      "Christa-Maria Schmiedecke"
+      "194",
+      "116",
+      "205"
     ],
     "TableNr": [
-      [
-        5
-      ]
+      "25"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "182"
   },
   {
     "Nachname": "Koch",
@@ -260,18 +245,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Steve Benthin",
-      "Natascha Finke",
-      "Yvonne Kusch"
+      "226",
+      "210",
+      "214"
     ],
     "TableNr": [
-      [
-        18
-      ]
+      "20"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "140"
   },
   {
     "Nachname": "Gröttner",
@@ -282,18 +266,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jun 18",
+    "Startdatum": "Jun 18",
     "last neighborhood": [
-      "Reinhold Söding",
-      "Ricardo Bachmann",
-      "Mariana Klotz"
+      "116",
+      "181",
+      "133"
     ],
     "TableNr": [
-      [
-        25
-      ]
+      "1"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "227"
   },
   {
     "Nachname": "Lorch",
@@ -304,18 +287,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 21",
+    "Startdatum": "Okt 21",
     "last neighborhood": [
-      "Ryszard Ackermann",
-      "Käte Mohaupt",
-      "Detlev Keudel"
+      "131",
+      "159",
+      "132"
     ],
     "TableNr": [
-      [
-        23
-      ]
+      "1"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "164"
   },
   {
     "Nachname": "Klemm",
@@ -326,21 +308,20 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 15",
+    "Startdatum": "Jun 15",
     "last neighborhood": [
-      "Burkhard Lübs",
-      "Annette Tintzmann",
-      "Ursula Hauffer"
+      "144",
+      "126",
+      "124"
     ],
     "TableNr": [
-      [
-        15,
-        15,
-        15,
-        15
-      ]
+      "17",
+      "17",
+      "17",
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "106"
   },
   {
     "Nachname": "Patberg",
@@ -351,18 +332,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 20",
+    "Startdatum": "Mrz 20",
     "last neighborhood": [
-      "Nikolaj Weihmann",
-      "Ingrid Mühle",
-      "Ercan Ackermann"
+      "175",
+      "134",
+      "188"
     ],
     "TableNr": [
-      [
-        21
-      ]
+      "2"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "123"
   },
   {
     "Nachname": "Herrmann",
@@ -373,18 +353,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 20",
+    "Startdatum": "Sep 20",
     "last neighborhood": [
-      "Georg Kraus",
-      "Adele Reising",
-      "Slawomir Hentschel"
+      "202",
+      "104",
+      "242"
     ],
     "TableNr": [
-      [
-        3
-      ]
+      "5"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "105"
   },
   {
     "Nachname": "Patberg",
@@ -395,18 +374,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YW9AXKSE, DJ49X54P, O5H1H8CQ, KVZU2FJS, I3091GBF, XRKY19J9, 7ZSN24QU",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 22",
+    "Startdatum": "Feb 22",
     "last neighborhood": [
-      "Slawomir Hentschel",
-      "Waldtraut Kensy",
-      "Kenneth Drewes"
+      "242",
+      "191",
+      "223"
     ],
     "TableNr": [
-      [
-        1
-      ]
+      "6"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "169"
   },
   {
     "Nachname": "Trapp",
@@ -417,18 +395,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOBMXUXN, VY2PGB5U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
-      "Ercan Ackermann",
-      "Slavko Kraushaar",
-      "Leo Hande"
+      "188",
+      "110",
+      "171"
     ],
     "TableNr": [
-      [
-        11
-      ]
+      "28"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "179"
   },
   {
     "Nachname": "Bohlander",
@@ -439,42 +416,39 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V, 4JJVM224",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
-      "Zeljko Wulf",
-      "Wencke Wirth",
-      "Dorota Lorch"
+      "190",
+      "157",
+      "164"
     ],
     "TableNr": [
-      [
-        17
-      ]
+      "28"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "115"
   },
   {
     "Nachname": "Häring",
     "Vorname": "Bernd-Dieter",
     "Standort": "Köln",
     "Zugehörigkeit": 4,
-    "Anzahl": 3,
+    "Anzahl": 2,
     "Anstellung": "Festanstellung",
     "Projekt": "UJRDB9RR, GXRK8RIX, UYU6OJLB, JSRO1OTE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 22",
+    "Startdatum": "Sep 22",
     "last neighborhood": [
-      "Carmela Paffrath",
-      "Saskia Kruschwitz",
-      "Margitta Meyer"
+      "198",
+      "153",
+      "167"
     ],
     "TableNr": [
-      [
-        17,
-        17,
-        17
-      ]
+      "16",
+      "16"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "189"
   },
   {
     "Nachname": "Schottin",
@@ -485,18 +459,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "EKVG3DD5, 8JES1B5O, DJ49X54P, O5H1H8CQ, KVZU2FJS, 6OZL8TVB, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 22",
+    "Startdatum": "Jul 22",
     "last neighborhood": [
-      "Uschi Roskoth",
-      "Annette Tintzmann",
-      "Leo Hande"
+      "147",
+      "126",
+      "171"
     ],
     "TableNr": [
-      [
-        22
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "195"
   },
   {
     "Nachname": "Textor",
@@ -507,18 +480,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, ZOBMXUXN, 8JES1B5O, O5H1H8CQ, YD6AQI8U, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 18",
+    "Startdatum": "Okt 18",
     "last neighborhood": [
-      "Robby Bien",
-      "Rupert Krein",
-      "Jörg-Peter Stiffel"
+      "172",
+      "138",
+      "239"
     ],
     "TableNr": [
-      [
-        25
-      ]
+      "9"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "186"
   },
   {
     "Nachname": "Anders",
@@ -529,18 +501,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Willi Bohlander",
-      "Marie Hofmann",
-      "Frithjof Mühle"
+      "115",
+      "102",
+      "101"
     ],
     "TableNr": [
-      [
-        27
-      ]
+      "22"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "112"
   },
   {
     "Nachname": "Bachmann",
@@ -551,18 +522,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Apr 23",
+    "Startdatum": "Apr 23",
     "last neighborhood": [
-      "Eduard Bohlander",
-      "Adolf Mälzer",
-      "Marian Rose"
+      "120",
+      "208",
+      "200"
     ],
     "TableNr": [
-      [
-        4
-      ]
+      "6"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "135"
   },
   {
     "Nachname": "Kusch",
@@ -573,18 +543,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 18",
+    "Startdatum": "Aug 18",
     "last neighborhood": [
-      "Sami Birnbaum",
-      "Leo Hande",
-      "Gitte Metz"
+      "182",
+      "171",
+      "146"
     ],
     "TableNr": [
-      [
-        6
-      ]
+      "11"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "214"
   },
   {
     "Nachname": "Freudenberger",
@@ -595,18 +564,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8E9UMCTK, O5H1H8CQ, KVZU2FJS, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
-      "Ignatz Faust",
-      "Nurettin Käster",
-      "Evangelos Beyer"
+      "129",
+      "117",
+      "170"
     ],
     "TableNr": [
-      [
-        10
-      ]
+      "24"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "142"
   },
   {
     "Nachname": "Kranz",
@@ -617,20 +585,19 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 13",
+    "Startdatum": "Okt 13",
     "last neighborhood": [
-      "Eduard Bohlander",
-      "Britta Jüttner",
-      "Adam Holzapfel"
+      "120",
+      "212",
+      "187"
     ],
     "TableNr": [
-      [
-        14,
-        14,
-        14
-      ]
+      "9",
+      "9",
+      "9"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "245"
   },
   {
     "Nachname": "Kruschwitz",
@@ -641,18 +608,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 17",
+    "Startdatum": "Nov 17",
     "last neighborhood": [
-      "Emine Pieper",
-      "Nurettin Käster",
-      "Ayse Zorbach"
+      "119",
+      "117",
+      "209"
     ],
     "TableNr": [
-      [
-        1
-      ]
+      "28"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "150"
   },
   {
     "Nachname": "Pieper",
@@ -663,18 +629,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Betty Davids",
-      "Rudolph Schleich",
-      "Britta Jüttner"
+      "246",
+      "236",
+      "212"
     ],
     "TableNr": [
-      [
-        17
-      ]
+      "1"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "119"
   },
   {
     "Nachname": "Scheel",
@@ -685,18 +650,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "HGBSA1M2, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 19",
+    "Startdatum": "Jul 19",
     "last neighborhood": [
-      "Maximilian Pieper",
-      "Willi Koch",
-      "Ilias Ackermann"
+      "166",
+      "211",
+      "165"
     ],
     "TableNr": [
-      [
-        10
-      ]
+      "28"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "111"
   },
   {
     "Nachname": "Paffrath",
@@ -707,18 +671,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YW9AXKSE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Saskia Kruschwitz",
-      "Gitte Kranz",
-      "Hans-Willi Zirme"
+      "153",
+      "245",
+      "232"
     ],
     "TableNr": [
-      [
-        8
-      ]
+      "19"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "219"
   },
   {
     "Nachname": "Binner",
@@ -729,18 +692,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, ZOBMXUXN, 8JES1B5O, O5H1H8CQ, YD6AQI8U, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 18",
+    "Startdatum": "Okt 18",
     "last neighborhood": [
-      "Waldtraut Kensy",
-      "Hedi Wohlgemut",
-      "Muzaffer Schuchhardt"
+      "191",
+      "156",
+      "136"
     ],
     "TableNr": [
-      [
-        18
-      ]
+      "21"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "248"
   },
   {
     "Nachname": "Klotz",
@@ -751,19 +713,18 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, JSRO1OTE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
-      "Saskia Kruschwitz",
-      "Bettina Ziegert",
-      "Marius Koch"
+      "153",
+      "216",
+      "140"
     ],
     "TableNr": [
-      [
-        3,
-        3
-      ]
+      "2",
+      "2"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "133"
   },
   {
     "Nachname": "Kramer",
@@ -774,18 +735,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "KVZU2FJS",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Rahel Oestrovsky",
-      "Georg Kraus",
-      "Sami Birnbaum"
+      "229",
+      "202",
+      "182"
     ],
     "TableNr": [
-      [
-        19
-      ]
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "231"
   },
   {
     "Nachname": "Hentschel",
@@ -796,18 +756,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 24",
+    "Startdatum": "Apr 24",
     "last neighborhood": [
-      "Alexandre Striebitz",
-      "Ignatz Faust",
-      "Nikolaj Weihmann"
+      "128",
+      "129",
+      "175"
     ],
     "TableNr": [
-      [
-        15
-      ]
+      "8"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "242"
   },
   {
     "Nachname": "Putz",
@@ -818,18 +777,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VY2PGB5U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 24",
+    "Startdatum": "Apr 24",
     "last neighborhood": [
-      "Marie Hofmann",
-      "Heinz-Jürgen Krebs",
-      "Vito Scheel"
+      "102",
+      "215",
+      "111"
     ],
     "TableNr": [
-      [
-        27
-      ]
+      "2"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "237"
   },
   {
     "Nachname": "Butte",
@@ -840,18 +798,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, ZOBMXUXN, 8JES1B5O, O5H1H8CQ, YD6AQI8U, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 18",
+    "Startdatum": "Okt 18",
     "last neighborhood": [
-      "Claire Textor",
-      "Sedat Wilms",
-      "Christos Putz"
+      "186",
+      "107",
+      "237"
     ],
     "TableNr": [
-      [
-        29
-      ]
+      "8"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "196"
   },
   {
     "Nachname": "Pieper",
@@ -862,19 +819,18 @@
     "Anstellung": "Festanstellung",
     "Projekt": "KWBA436T, DUZ35CZF, FSMRO2R0, D3WXDBL0, NOLBZN1O",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 21",
+    "Startdatum": "Nov 21",
     "last neighborhood": [
-      "Käte Mohaupt",
-      "Hans Jörg Hofmann",
-      "Zlatko Herrmann"
+      "159",
+      "222",
+      "243"
     ],
     "TableNr": [
-      [
-        17,
-        17
-      ]
+      "9",
+      "9"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "166"
   },
   {
     "Nachname": "Henk",
@@ -885,18 +841,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VY2PGB5U, Q90O1TEO",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 23",
+    "Startdatum": "Mrz 23",
     "last neighborhood": [
-      "Hanspeter Tintzmann",
-      "Zehra Jacobi Jäckel",
-      "Ricardo Bachmann"
+      "168",
+      "184",
+      "181"
     ],
     "TableNr": [
-      [
-        7
-      ]
+      "5"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "158"
   },
   {
     "Nachname": "Drewes",
@@ -907,18 +862,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 08",
+    "Startdatum": "Jul 08",
     "last neighborhood": [
-      "Eitel Kruschwitz",
-      "Korinna Binner",
-      "Isolde Ring"
+      "150",
+      "248",
+      "199"
     ],
     "TableNr": [
-      [
-        30
-      ]
+      "16"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "223"
   },
   {
     "Nachname": "Mälzer",
@@ -929,18 +883,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "CRHJ50YD",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 21",
+    "Startdatum": "Jun 21",
     "last neighborhood": [
-      "Liliana Börner",
-      "Wolf-Rüdiger Margraf",
-      "Petros Stey"
+      "100",
+      "127",
+      "163"
     ],
     "TableNr": [
-      [
-        1
-      ]
+      "4"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "208"
   },
   {
     "Nachname": "Herrmann",
@@ -951,18 +904,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Ryszard Ackermann",
-      "Trudel Wilms",
-      "Marius Koch"
+      "131",
+      "225",
+      "140"
     ],
     "TableNr": [
-      [
-        30
-      ]
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "243"
   },
   {
     "Nachname": "Heinz",
@@ -973,18 +925,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 17",
+    "Startdatum": "Nov 17",
     "last neighborhood": [
-      "Pierre Trüb",
-      "Klemens Plath",
-      "Claire Textor"
+      "155",
+      "221",
+      "186"
     ],
     "TableNr": [
-      [
-        6
-      ]
+      "11"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "137"
   },
   {
     "Nachname": "Wohlgemut",
@@ -995,20 +946,19 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 23",
+    "Startdatum": "Mrz 23",
     "last neighborhood": [
-      "Waldtraut Kensy",
-      "Eitel Kruschwitz",
-      "Sami Barth"
+      "191",
+      "150",
+      "217"
     ],
     "TableNr": [
-      [
-        9,
-        9,
-        9
-      ]
+      "2",
+      "2",
+      "2"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "233"
   },
   {
     "Nachname": "Baum",
@@ -1019,18 +969,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Clarissa Heinz",
-      "Dorota Lorch",
-      "Kenneth Drewes"
+      "137",
+      "164",
+      "223"
     ],
     "TableNr": [
-      [
-        1
-      ]
+      "13"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "109"
   },
   {
     "Nachname": "Trüb",
@@ -1041,18 +990,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "O18Q9XVK, YW9AXKSE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Alexandre Striebitz",
-      "Ayse Zorbach",
-      "Jörg-Peter Freudenberger"
+      "128",
+      "209",
+      "142"
     ],
     "TableNr": [
-      [
-        4
-      ]
+      "15"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "155"
   },
   {
     "Nachname": "Plath",
@@ -1063,18 +1011,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "17FKJ6M8, ITKT2QOR, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 20",
+    "Startdatum": "Mai 20",
     "last neighborhood": [
-      "Hans-Dietrich Biggen",
-      "Adam Holzapfel",
-      "Cindy Stroh"
+      "118",
+      "187",
+      "176"
     ],
     "TableNr": [
-      [
-        20
-      ]
+      "5"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "221"
   },
   {
     "Nachname": "Schleich",
@@ -1085,18 +1032,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Mai 23",
+    "Startdatum": "Mai 23",
     "last neighborhood": [
-      "Rahel Oestrovsky",
-      "Slawomir Hentschel",
-      "Christa-Maria Schmiedecke"
+      "229",
+      "242",
+      "205"
     ],
     "TableNr": [
-      [
-        23
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "236"
   },
   {
     "Nachname": "Weihmann",
@@ -1107,18 +1053,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 17",
+    "Startdatum": "Sep 17",
     "last neighborhood": [
-      "Hans-Dietrich Biggen",
-      "Stefania Hamann",
-      "Bettina Ziegert"
+      "118",
+      "152",
+      "216"
     ],
     "TableNr": [
-      [
-        17
-      ]
+      "21"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "103"
   },
   {
     "Nachname": "Hendriks",
@@ -1129,18 +1074,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Feb 18",
+    "Startdatum": "Feb 18",
     "last neighborhood": [
-      "Miroslaw Förster",
-      "Christa-Maria Schmiedecke",
-      "Lieselotte Süßebier"
+      "114",
+      "205",
+      "151"
     ],
     "TableNr": [
-      [
-        11
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "220"
   },
   {
     "Nachname": "Krebs",
@@ -1151,18 +1095,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
-      "Käthe Mude",
-      "Frithjof Mühle",
-      "Nelly Herrmann"
+      "238",
+      "101",
+      "105"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "25"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "215"
   },
   {
     "Nachname": "Heydrich",
@@ -1173,18 +1116,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Apr 23",
+    "Startdatum": "Apr 23",
     "last neighborhood": [
-      "Annette Tintzmann",
-      "Detlev Keudel",
-      "Rudolph Schleich"
+      "126",
+      "132",
+      "236"
     ],
     "TableNr": [
-      [
-        22
-      ]
+      "1"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "206"
   },
   {
     "Nachname": "Heidrich",
@@ -1195,18 +1137,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB, 80NCDTU5, B25YINCK",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 20",
+    "Startdatum": "Mai 20",
     "last neighborhood": [
-      "Hedi Wohlgemut",
-      "Burkhard Lübs",
-      "Bernward Scholl"
+      "156",
+      "144",
+      "241"
     ],
     "TableNr": [
-      [
-        27
-      ]
+      "21"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "121"
   },
   {
     "Nachname": "Ackermann",
@@ -1217,18 +1158,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, EUA77DH8",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 05",
+    "Startdatum": "Feb 05",
     "last neighborhood": [
-      "Pierre Trüb",
-      "Maximilian Pieper",
-      "Marian Rose"
+      "155",
+      "166",
+      "200"
     ],
     "TableNr": [
-      [
-        29
-      ]
+      "13"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "131"
   },
   {
     "Nachname": "Bohlander",
@@ -1239,18 +1179,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 23",
+    "Startdatum": "Mai 23",
     "last neighborhood": [
-      "Jeanette Kramer",
-      "Nelly Herrmann",
-      "Peter-Michael Wulff"
+      "139",
+      "105",
+      "108"
     ],
     "TableNr": [
-      [
-        11
-      ]
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "120"
   },
   {
     "Nachname": "Kramer",
@@ -1261,18 +1200,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 23",
+    "Startdatum": "Dez 23",
     "last neighborhood": [
-      "Wladimir Dörr",
-      "Christa-Maria Schmiedecke",
-      "Slavko Kraushaar"
+      "194",
+      "205",
+      "110"
     ],
     "TableNr": [
-      [
-        4
-      ]
+      "18"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "139"
   },
   {
     "Nachname": "Eigenwillig",
@@ -1283,18 +1221,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 17",
+    "Startdatum": "Sep 17",
     "last neighborhood": [
-      "Nurettin Käster",
-      "Horst-Günter Bachmann",
-      "George Dowerg"
+      "117",
+      "135",
+      "224"
     ],
     "TableNr": [
-      [
-        20
-      ]
+      "4"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "185"
   },
   {
     "Nachname": "Davids",
@@ -1305,18 +1242,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 20",
+    "Startdatum": "Nov 20",
     "last neighborhood": [
-      "Hedi Wohlgemut",
-      "Vito Scheel",
-      "Helen Otto"
+      "156",
+      "111",
+      "201"
     ],
     "TableNr": [
-      [
-        16
-      ]
+      "22"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "246"
   },
   {
     "Nachname": "Ring",
@@ -1327,18 +1263,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOBMXUXN, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
-      "Slavko Kraushaar",
-      "Marit Rogner",
-      "Corinne Trüb"
+      "110",
+      "234",
+      "143"
     ],
     "TableNr": [
-      [
-        5
-      ]
+      "19"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "199"
   },
   {
     "Nachname": "Biggen",
@@ -1349,18 +1284,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "NRARF52V, 8WAVP694, ZHBTB9VE, E5UNVVO7",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 21",
+    "Startdatum": "Jul 21",
     "last neighborhood": [
-      "Waldtraut Klapp",
-      "Jörg-Peter Stiffel",
-      "Ilias Ackermann"
+      "148",
+      "239",
+      "165"
     ],
     "TableNr": [
-      [
-        26
-      ]
+      "23"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "118"
   },
   {
     "Nachname": "Kensy",
@@ -1371,18 +1305,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOKFXJK1, B5PUJ42V, SO5PRR97",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 18",
+    "Startdatum": "Apr 18",
     "last neighborhood": [
-      "Claire Textor",
-      "Rabea Schottin",
-      "Steve Benthin"
+      "186",
+      "195",
+      "226"
     ],
     "TableNr": [
-      [
-        26
-      ]
+      "5"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "207"
   },
   {
     "Nachname": "Neureuther",
@@ -1393,18 +1326,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, O5H1H8CQ, 4JJVM224, X2ZT4FX1, KVZU2FJS, 4UE7193P, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 15",
+    "Startdatum": "Mai 15",
     "last neighborhood": [
-      "Steve Benthin",
-      "Nikolaj Weihmann",
-      "Horst-Günter Bachmann"
+      "226",
+      "175",
+      "135"
     ],
     "TableNr": [
-      [
-        22
-      ]
+      "5"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "113"
   },
   {
     "Nachname": "Fechner",
@@ -1415,18 +1347,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Kenneth Drewes",
-      "Rudolph Schleich",
-      "Isolde Ring"
+      "223",
+      "236",
+      "199"
     ],
     "TableNr": [
-      [
-        29
-      ]
+      "10"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "230"
   },
   {
     "Nachname": "Stiffel",
@@ -1437,18 +1368,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Wanda Hande",
-      "Hans-Willi Zirme",
-      "Bernd-Dieter Häring"
+      "192",
+      "232",
+      "189"
     ],
     "TableNr": [
-      [
-        24
-      ]
+      "24"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "239"
   },
   {
     "Nachname": "Wulf",
@@ -1459,18 +1389,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 18",
+    "Startdatum": "Jun 18",
     "last neighborhood": [
-      "Brit Röhricht",
-      "Ilias Ackermann",
-      "Cindy Stroh"
+      "197",
+      "165",
+      "176"
     ],
     "TableNr": [
-      [
-        3
-      ]
+      "19"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "190"
   },
   {
     "Nachname": "Karge",
@@ -1481,18 +1410,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
-      "Hans Jörg Hofmann",
-      "Waldtraut Klapp",
-      "Petros Ruppert"
+      "222",
+      "148",
+      "160"
     ],
     "TableNr": [
-      [
-        13
-      ]
+      "15"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "178"
   },
   {
     "Nachname": "Weihmann",
@@ -1503,18 +1431,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Mai 20",
+    "Startdatum": "Mai 20",
     "last neighborhood": [
-      "Jaroslav Heidrich",
-      "Detlev Keudel",
-      "Stefania Hamann"
+      "121",
+      "132",
+      "152"
     ],
     "TableNr": [
-      [
-        14
-      ]
+      "15"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "175"
   },
   {
     "Nachname": "Mühle",
@@ -1525,18 +1452,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 22",
+    "Startdatum": "Mrz 22",
     "last neighborhood": [
-      "Gunnar Kallert",
-      "Nurettin Käster",
-      "Willi Bohlander"
+      "174",
+      "117",
+      "115"
     ],
     "TableNr": [
-      [
-        11
-      ]
+      "12"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "101"
   },
   {
     "Nachname": "Wernecke",
@@ -1547,18 +1473,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, A5MW2QI0, JSRO1OTE, X2ZT4FX1",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 20",
+    "Startdatum": "Apr 20",
     "last neighborhood": [
-      "Eitel Kruschwitz",
-      "Andrea Steckel",
-      "Marius Koch"
+      "150",
+      "154",
+      "140"
     ],
     "TableNr": [
-      [
-        29
-      ]
+      "8"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "173"
   },
   {
     "Nachname": "Wilms",
@@ -1569,18 +1494,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "QJ77J3YA, DUZ35CZF, EKVG3DD5, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 20",
+    "Startdatum": "Jan 20",
     "last neighborhood": [
-      "Nelly Herrmann",
-      "Zlatko Herrmann",
-      "Isolde Ring"
+      "105",
+      "243",
+      "199"
     ],
     "TableNr": [
-      [
-        28
-      ]
+      "10"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "225"
   },
   {
     "Nachname": "Ruppert",
@@ -1591,18 +1515,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Ryszard Ackermann",
-      "Marius Koch",
-      "Leo Hande"
+      "131",
+      "140",
+      "171"
     ],
     "TableNr": [
-      [
-        10
-      ]
+      "6"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "160"
   },
   {
     "Nachname": "Lorch",
@@ -1613,18 +1536,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "HDQS98B3, NOLBZN1O, B25YINCK, 54RBX9SF, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 18",
+    "Startdatum": "Mrz 18",
     "last neighborhood": [
-      "Enver Dussen van",
-      "Ilias Ackermann",
-      "Rupert Krein"
+      "193",
+      "165",
+      "138"
     ],
     "TableNr": [
-      [
-        6
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "244"
   },
   {
     "Nachname": "Flantz",
@@ -1635,18 +1557,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
-      "Gitte Metz",
-      "Käte Mohaupt",
-      "Hanne-Lore Höfig"
+      "146",
+      "159",
+      "162"
     ],
     "TableNr": [
-      [
-        24
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "145"
   },
   {
     "Nachname": "Kallert",
@@ -1657,18 +1578,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 24",
+    "Startdatum": "Aug 24",
     "last neighborhood": [
-      "Frithjof Mühle",
-      "Muzaffer Schuchhardt",
-      "Sami Barth"
+      "101",
+      "136",
+      "217"
     ],
     "TableNr": [
-      [
-        30
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "174"
   },
   {
     "Nachname": "Trüb",
@@ -1679,18 +1599,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD, DUZ35CZF, FSMRO2R0, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
-      "Ingrid Mühle",
-      "Maximilian Pieper",
-      "Hugo Flantz"
+      "134",
+      "166",
+      "145"
     ],
     "TableNr": [
-      [
-        30
-      ]
+      "15"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "143"
   },
   {
     "Nachname": "Hauffer",
@@ -1701,18 +1620,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 16",
+    "Startdatum": "Okt 16",
     "last neighborhood": [
-      "Margaret Lorch",
-      "Alexandros Jacob",
-      "Betty Davids"
+      "244",
+      "141",
+      "246"
     ],
     "TableNr": [
-      [
-        19
-      ]
+      "16"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "124"
   },
   {
     "Nachname": "Otto",
@@ -1723,18 +1641,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 19",
+    "Startdatum": "Sep 19",
     "last neighborhood": [
-      "Yvonne Kusch",
-      "Reinhold Söding",
-      "Ercan Ackermann"
+      "214",
+      "116",
+      "188"
     ],
     "TableNr": [
-      [
-        5
-      ]
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "201"
   },
   {
     "Nachname": "Oestrovsky",
@@ -1745,18 +1662,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SBI3FKG9, TKZZVBWG, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 22",
+    "Startdatum": "Nov 22",
     "last neighborhood": [
-      "Ricardo Bachmann",
-      "Irmingard Wiek",
-      "Eitel Kruschwitz"
+      "181",
+      "235",
+      "150"
     ],
     "TableNr": [
-      [
-        5
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "229"
   },
   {
     "Nachname": "Jacob",
@@ -1767,18 +1683,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
-      "Hans-Willi Zirme",
-      "Zeljko Wulf",
-      "Claire Textor"
+      "232",
+      "190",
+      "186"
     ],
     "TableNr": [
-      [
-        8
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "141"
   },
   {
     "Nachname": "Koch",
@@ -1789,18 +1704,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GQWR16KV, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 24",
+    "Startdatum": "Jul 24",
     "last neighborhood": [
-      "Nikolaj Weihmann",
-      "Silvester Kusch",
-      "Lili Anders"
+      "175",
+      "125",
+      "112"
     ],
     "TableNr": [
-      [
-        25
-      ]
+      "13"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "130"
   },
   {
     "Nachname": "Bien",
@@ -1811,18 +1725,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, TKZZVBWG, RHTSZMRU, OEVI9328",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
-      "Emine Pieper",
-      "Metin Kensy",
-      "Burkhard Lübs"
+      "119",
+      "207",
+      "144"
     ],
     "TableNr": [
-      [
-        6
-      ]
+      "12"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "172"
   },
   {
     "Nachname": "Keudel",
@@ -1833,18 +1746,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "DUZ35CZF, TPKGL3AR, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 14",
+    "Startdatum": "Aug 14",
     "last neighborhood": [
-      "Georg Kraus",
-      "Wolf-Rüdiger Margraf",
-      "Arne Patberg"
+      "202",
+      "127",
+      "123"
     ],
     "TableNr": [
-      [
-        24
-      ]
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "132"
   },
   {
     "Nachname": "Kraus",
@@ -1855,18 +1767,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, T8LM68B9, 0RKMAFC0, A5MW2QI0, B5PUJ42V, UYU6OJLB, 21G8IFZ2, O18Q9XVK, SO5PRR97, YW9AXKSE, ZOBMXUXN, JSRO1OTE, DJ49X54P, 32HFE3WB, Q9OF7WJR, X2ZT4FX1, B25YINCK, 6OZL8TVB, Q90O1TEO, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 12",
+    "Startdatum": "Jan 12",
     "last neighborhood": [
-      "Irmingard Wiek",
-      "Emine Pieper",
-      "Helen Otto"
+      "235",
+      "119",
+      "201"
     ],
     "TableNr": [
-      [
-        16
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "202"
   },
   {
     "Nachname": "Wilms",
@@ -1877,18 +1788,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "H8J2SVLQ, SBI3FKG9, Q9OF7WJR, ITKT2QOR, Z00R0R5X",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 16",
+    "Startdatum": "Okt 16",
     "last neighborhood": [
-      "Inna Jacobi Jäckel",
-      "Detlev Keudel",
-      "Andrea Steckel"
+      "149",
+      "132",
+      "154"
     ],
     "TableNr": [
-      [
-        13
-      ]
+      "20"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "107"
   },
   {
     "Nachname": "Wiek",
@@ -1899,18 +1809,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V, 4JJVM224",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 20",
+    "Startdatum": "Jun 20",
     "last neighborhood": [
-      "Britta Jüttner",
-      "Reinhold Söding",
-      "Käte Mohaupt"
+      "212",
+      "116",
+      "159"
     ],
     "TableNr": [
-      [
-        11
-      ]
+      "12"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "235"
   },
   {
     "Nachname": "Metz",
@@ -1921,18 +1830,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8WAVP694",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Marian Rose",
-      "Willi Bohlander",
-      "Adam Holzapfel"
+      "200",
+      "115",
+      "187"
     ],
     "TableNr": [
-      [
-        12
-      ]
+      "8"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "146"
   },
   {
     "Nachname": "Rose",
@@ -1943,18 +1851,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "DUZ35CZF, NRARF52V, ZHBTB9VE, 8E12S1PZ",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 13",
+    "Startdatum": "Nov 13",
     "last neighborhood": [
-      "Willi Bohlander",
-      "Metin Kensy",
-      "Hugo Flantz"
+      "115",
+      "207",
+      "145"
     ],
     "TableNr": [
-      [
-        16
-      ]
+      "15"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "200"
   },
   {
     "Nachname": "Roskoth",
@@ -1965,18 +1872,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0, SO5PRR97",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 23",
+    "Startdatum": "Apr 23",
     "last neighborhood": [
-      "Reinhold Söding",
-      "Irmingard Wiek",
-      "Isolde Ring"
+      "116",
+      "235",
+      "199"
     ],
     "TableNr": [
-      [
-        30
-      ]
+      "14"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "147"
   },
   {
     "Nachname": "Kusch",
@@ -1987,18 +1893,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jul 17",
+    "Startdatum": "Jul 17",
     "last neighborhood": [
-      "Helen Otto",
-      "Jörg-Peter Freudenberger",
-      "Ingrid Mühle"
+      "201",
+      "142",
+      "134"
     ],
     "TableNr": [
-      [
-        3
-      ]
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "125"
   },
   {
     "Nachname": "Hübel",
@@ -2009,18 +1914,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD, TPKGL3AR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 19",
+    "Startdatum": "Mrz 19",
     "last neighborhood": [
-      "Horst-Dieter Neureuther",
-      "Hans-Willi Zirme",
-      "Stefania Hamann"
+      "113",
+      "232",
+      "152"
     ],
     "TableNr": [
-      [
-        21
-      ]
+      "18"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "122"
   },
   {
     "Nachname": "Striebitz",
@@ -2031,18 +1935,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A5MW2QI0, ZOBMXUXN",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 22",
+    "Startdatum": "Dez 22",
     "last neighborhood": [
-      "Willi Bohlander",
-      "Gerald Jacobi Jäckel",
-      "Hans-Willi Zirme"
+      "115",
+      "218",
+      "232"
     ],
     "TableNr": [
-      [
-        29
-      ]
+      "23"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "128"
   },
   {
     "Nachname": "Jüttner",
@@ -2053,18 +1956,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 22",
+    "Startdatum": "Sep 22",
     "last neighborhood": [
-      "Wanda Zimmer",
-      "Yvonne Kusch",
-      "Nurettin Käster"
+      "204",
+      "214",
+      "117"
     ],
     "TableNr": [
-      [
-        15
-      ]
+      "27"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "212"
   },
   {
     "Nachname": "Bachmann",
@@ -2075,18 +1977,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, A5MW2QI0, O18Q9XVK, YW9AXKSE, U4FOJQCV",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 16",
+    "Startdatum": "Nov 16",
     "last neighborhood": [
-      "Korinna Binner",
-      "Ryszard Ackermann",
-      "Michaela Karge"
+      "248",
+      "131",
+      "178"
     ],
     "TableNr": [
-      [
-        4
-      ]
+      "2"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "181"
   },
   {
     "Nachname": "Scholl",
@@ -2097,18 +1998,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, A5MW2QI0",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 21",
+    "Startdatum": "Sep 21",
     "last neighborhood": [
-      "Gitte Metz",
-      "Clarissa Heinz",
-      "Ignatz Faust"
+      "146",
+      "137",
+      "129"
     ],
     "TableNr": [
-      [
-        8
-      ]
+      "22"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "241"
   },
   {
     "Nachname": "Dörr",
@@ -2119,18 +2019,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Wencke Wirth",
-      "Gunnar Kallert",
-      "Jörg-Peter Freudenberger"
+      "157",
+      "174",
+      "142"
     ],
     "TableNr": [
-      [
-        7
-      ]
+      "7"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "194"
   },
   {
     "Nachname": "Kensy",
@@ -2141,18 +2040,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "CRHJ50YD",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 23",
+    "Startdatum": "Feb 23",
     "last neighborhood": [
-      "Frithjof Mühle",
-      "Wolf-Rüdiger Margraf",
-      "Evangelos Beyer"
+      "101",
+      "127",
+      "170"
     ],
     "TableNr": [
-      [
-        10
-      ]
+      "24"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "249"
   },
   {
     "Nachname": "Margraf",
@@ -2163,18 +2061,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, UYU6OJLB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 23",
+    "Startdatum": "Okt 23",
     "last neighborhood": [
-      "Irmtraud Karz",
-      "Clarissa Heinz",
-      "Sami Barth"
+      "161",
+      "137",
+      "217"
     ],
     "TableNr": [
-      [
-        20
-      ]
+      "20"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "127"
   },
   {
     "Nachname": "Bolnbach",
@@ -2185,18 +2082,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "P68VOT1A, SAHM419B",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Aug 23",
+    "Startdatum": "Aug 23",
     "last neighborhood": [
-      "Marius Koch",
-      "Gerald Jacobi Jäckel",
-      "Marie Hofmann"
+      "140",
+      "218",
+      "102"
     ],
     "TableNr": [
-      [
-        29
-      ]
+      "11"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "228"
   },
   {
     "Nachname": "Förster",
@@ -2207,18 +2103,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, ZEDJC742",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 22",
+    "Startdatum": "Aug 22",
     "last neighborhood": [
-      "Georg Kraus",
-      "Korinna Binner",
-      "Marie Hofmann"
+      "202",
+      "248",
+      "102"
     ],
     "TableNr": [
-      [
-        19
-      ]
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "114"
   },
   {
     "Nachname": "Steckel",
@@ -2229,18 +2124,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG, 01TY4T4V",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
-      "Käthe Mude",
-      "Horst-Günter Bachmann",
-      "Bernd-Dieter Häring"
+      "238",
+      "135",
+      "189"
     ],
     "TableNr": [
-      [
-        3
-      ]
+      "14"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "154"
   },
   {
     "Nachname": "Hettner",
@@ -2251,18 +2145,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WAN7FKP1, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 23",
+    "Startdatum": "Nov 23",
     "last neighborhood": [
-      "Muzaffer Schuchhardt",
-      "Klaus-Dieter Baum",
-      "Remo Klotz"
+      "136",
+      "109",
+      "247"
     ],
     "TableNr": [
-      [
-        27
-      ]
+      "6"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "180"
   },
   {
     "Nachname": "Schmiedecke",
@@ -2273,18 +2166,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jan 20",
+    "Startdatum": "Jan 20",
     "last neighborhood": [
-      "Sedat Wilms",
-      "Margaret Lorch",
-      "Auguste Wernecke"
+      "107",
+      "244",
+      "173"
     ],
     "TableNr": [
-      [
-        18
-      ]
+      "1"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "205"
   },
   {
     "Nachname": "Jacobi Jäckel",
@@ -2295,18 +2187,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "H42GHEZI, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
-      "Horst-Günter Bachmann",
-      "Jörg-Peter Stiffel",
-      "Pierre Trüb"
+      "135",
+      "239",
+      "155"
     ],
     "TableNr": [
-      [
-        28
-      ]
+      "18"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "184"
   },
   {
     "Nachname": "Tintzmann",
@@ -2317,18 +2208,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "0H77LHVL, TKZZVBWG, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 17",
+    "Startdatum": "Apr 17",
     "last neighborhood": [
-      "Ingrid Mühle",
-      "Silvio Steinberg",
-      "Britta Jüttner"
+      "134",
+      "183",
+      "212"
     ],
     "TableNr": [
-      [
-        26
-      ]
+      "12"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "168"
   },
   {
     "Nachname": "Ziegert",
@@ -2339,18 +2229,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, X2ZT4FX1",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 21",
+    "Startdatum": "Jan 21",
     "last neighborhood": [
-      "Willi Bohlander",
-      "Saskia Kruschwitz",
-      "Claire Textor"
+      "115",
+      "153",
+      "186"
     ],
     "TableNr": [
-      [
-        28
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "216"
   },
   {
     "Nachname": "Mude",
@@ -2361,18 +2250,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "SO5PRR97, YW9AXKSE",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 19",
+    "Startdatum": "Aug 19",
     "last neighborhood": [
-      "Kenneth Drewes",
-      "Heinz-Wilhelm Hendriks",
-      "Metin Kensy"
+      "223",
+      "220",
+      "207"
     ],
     "TableNr": [
-      [
-        1
-      ]
+      "7"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "238"
   },
   {
     "Nachname": "Ditschlerin",
@@ -2383,18 +2271,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "UYU6OJLB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 24",
+    "Startdatum": "Dez 24",
     "last neighborhood": [
-      "Adolf Mälzer",
-      "Zehra Jacobi Jäckel",
-      "Slawomir Hentschel"
+      "208",
+      "184",
+      "242"
     ],
     "TableNr": [
-      [
-        13
-      ]
+      "23"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "213"
   },
   {
     "Nachname": "Kraushaar",
@@ -2405,18 +2292,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Inna Jacobi Jäckel",
-      "Auguste Wernecke",
-      "Athanasios Butte"
+      "149",
+      "173",
+      "196"
     ],
     "TableNr": [
-      [
-        8
-      ]
+      "16"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "110"
   },
   {
     "Nachname": "Tintzmann",
@@ -2427,18 +2313,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, XRKY19J9",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 24",
+    "Startdatum": "Sep 24",
     "last neighborhood": [
-      "Andrej Kramer",
-      "Adele Reising",
-      "Margitta Meyer"
+      "231",
+      "104",
+      "167"
     ],
     "TableNr": [
-      [
-        1
-      ]
+      "4"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "126"
   },
   {
     "Nachname": "Stey",
@@ -2449,18 +2334,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "P68VOT1A, SAHM419B",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 16",
+    "Startdatum": "Okt 16",
     "last neighborhood": [
-      "Evangelos Beyer",
-      "Adolf Mälzer",
-      "Silvester Kusch"
+      "170",
+      "208",
+      "125"
     ],
     "TableNr": [
-      [
-        11
-      ]
+      "1"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "163"
   },
   {
     "Nachname": "Benthin",
@@ -2471,18 +2355,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Marian Rose",
-      "Horst-Dieter Neureuther",
-      "Emine Pieper"
+      "200",
+      "113",
+      "119"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "226"
   },
   {
     "Nachname": "Ackermann",
@@ -2493,18 +2376,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 23",
+    "Startdatum": "Jul 23",
     "last neighborhood": [
-      "Ernest Hettner",
-      "Ilias Ackermann",
-      "Isolde Ring"
+      "180",
+      "165",
+      "199"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "27"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "188"
   },
   {
     "Nachname": "Hande",
@@ -2515,18 +2397,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "B5PUJ42V, 4UE7193P",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Nov 21",
+    "Startdatum": "Nov 21",
     "last neighborhood": [
-      "Margitta Meyer",
-      "Marian Rose",
-      "George Gröttner"
+      "167",
+      "200",
+      "227"
     ],
     "TableNr": [
-      [
-        14
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "192"
   },
   {
     "Nachname": "Finke",
@@ -2537,18 +2418,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, Q9OF7WJR, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 22",
+    "Startdatum": "Okt 22",
     "last neighborhood": [
-      "Zehra Jacobi Jäckel",
-      "Rotraut Fechner",
-      "Reinhold Söding"
+      "184",
+      "230",
+      "116"
     ],
     "TableNr": [
-      [
-        6
-      ]
+      "11"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "210"
   },
   {
     "Nachname": "Käster",
@@ -2559,18 +2439,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Hanna Hübel",
-      "Wanda Zimmer",
-      "Ingrid Mühle"
+      "122",
+      "204",
+      "134"
     ],
     "TableNr": [
-      [
-        16
-      ]
+      "5"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "117"
   },
   {
     "Nachname": "Holzapfel",
@@ -2581,18 +2460,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Georg Kraus",
-      "Trudel Wilms",
-      "Athanasios Butte"
+      "202",
+      "225",
+      "196"
     ],
     "TableNr": [
-      [
-        19
-      ]
+      "18"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "187"
   },
   {
     "Nachname": "Koch",
@@ -2603,18 +2481,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 09",
+    "Startdatum": "Mai 09",
     "last neighborhood": [
-      "Annette Tintzmann",
-      "Bianka Koch",
-      "Betty Davids"
+      "126",
+      "130",
+      "246"
     ],
     "TableNr": [
-      [
-        22
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "211"
   },
   {
     "Nachname": "Hofmann",
@@ -2625,18 +2502,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "1BLRXJ6O, EKVG3DD5, YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 06",
+    "Startdatum": "Sep 06",
     "last neighborhood": [
-      "Natascha Finke",
-      "Alexandre Striebitz",
-      "Georg Kraus"
+      "210",
+      "128",
+      "202"
     ],
     "TableNr": [
-      [
-        7
-      ]
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "222"
   },
   {
     "Nachname": "Ackermann",
@@ -2647,18 +2523,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 23",
+    "Startdatum": "Jun 23",
     "last neighborhood": [
-      "Zeljko Wulf",
-      "Nurettin Käster",
-      "Waldtraut Klapp"
+      "190",
+      "117",
+      "148"
     ],
     "TableNr": [
-      [
-        28
-      ]
+      "24"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "165"
   },
   {
     "Nachname": "Hande",
@@ -2669,18 +2544,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TPKGL3AR, CRHJ50YD, VY2PGB5U, NOLBZN1O, Z00R0R5X",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 06",
+    "Startdatum": "Aug 06",
     "last neighborhood": [
-      "Irmingard Wiek",
-      "Hanna Hübel",
-      "Wencke Wirth"
+      "235",
+      "122",
+      "157"
     ],
     "TableNr": [
-      [
-        4
-      ]
+      "30"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "171"
   },
   {
     "Nachname": "Kruschwitz",
@@ -2691,18 +2565,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "VV8OG0SD, TKZZVBWG, RXGZAF76, 8WAVP694, OEVI9328, GKBMEMCG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Apr 07",
+    "Startdatum": "Apr 07",
     "last neighborhood": [
-      "Yvonne Kusch",
-      "Marzena Wende",
-      "Annette Tintzmann"
+      "214",
+      "177",
+      "126"
     ],
     "TableNr": [
-      [
-        13
-      ]
+      "17"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "153"
   },
   {
     "Nachname": "Hamann",
@@ -2713,18 +2586,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "1BLRXJ6O, RXGZAF76",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 19",
+    "Startdatum": "Okt 19",
     "last neighborhood": [
-      "Christa-Maria Schmiedecke",
-      "Luzia Patberg",
-      "Hans Jörg Hofmann"
+      "205",
+      "169",
+      "222"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "12"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "152"
   },
   {
     "Nachname": "Zorbach",
@@ -2735,18 +2607,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TPKGL3AR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jun 23",
+    "Startdatum": "Jun 23",
     "last neighborhood": [
-      "Sami Barth",
-      "Hans-Dietrich Biggen",
-      "Cilly Eigenwillig"
+      "217",
+      "118",
+      "185"
     ],
     "TableNr": [
-      [
-        6
-      ]
+      "26"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "209"
   },
   {
     "Nachname": "Hofmann",
@@ -2757,18 +2628,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZEDJC742, F1EBQTT3, YD6AQI8U",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 22",
+    "Startdatum": "Dez 22",
     "last neighborhood": [
-      "Rupert Krein",
-      "Michaela Karge",
-      "Margaret Lorch"
+      "138",
+      "178",
+      "244"
     ],
     "TableNr": [
-      [
-        8
-      ]
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "102"
   },
   {
     "Nachname": "Faust",
@@ -2779,18 +2649,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "AFPX65Y4, WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 15",
+    "Startdatum": "Okt 15",
     "last neighborhood": [
-      "Arne Patberg",
-      "Luzia Patberg",
-      "Rabea Schottin"
+      "123",
+      "169",
+      "195"
     ],
     "TableNr": [
-      [
-        23
-      ]
+      "4"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "129"
   },
   {
     "Nachname": "Jacobi Jäckel",
@@ -2801,18 +2670,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Zlatko Herrmann",
-      "Georg Kraus",
-      "Hans-Willi Zirme"
+      "243",
+      "202",
+      "232"
     ],
     "TableNr": [
-      [
-        17
-      ]
+      "27"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "149"
   },
   {
     "Nachname": "Schuchhardt",
@@ -2823,18 +2691,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 24",
+    "Startdatum": "Mrz 24",
     "last neighborhood": [
-      "Adele Reising",
-      "Marie Hofmann",
-      "Cindy Stroh"
+      "104",
+      "102",
+      "176"
     ],
     "TableNr": [
-      [
-        9
-      ]
+      "4"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "136"
   },
   {
     "Nachname": "Beyer",
@@ -2845,18 +2712,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 24",
+    "Startdatum": "Feb 24",
     "last neighborhood": [
-      "Ryszard Ackermann",
-      "Nelly Herrmann",
-      "Cindy Stroh"
+      "131",
+      "105",
+      "176"
     ],
     "TableNr": [
-      [
-        21
-      ]
+      "7"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "170"
   },
   {
     "Nachname": "Dussen van",
@@ -2867,18 +2733,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8WAVP694",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Rudolph Schleich",
-      "Wanda Hande",
-      "Slavko Kraushaar"
+      "236",
+      "192",
+      "110"
     ],
     "TableNr": [
-      [
-        9
-      ]
+      "11"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "193"
   },
   {
     "Nachname": "Paffrath",
@@ -2889,18 +2754,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "ZOKFXJK1, A5MW2QI0, E6QXCDWG, RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 25",
+    "Startdatum": "Jan 25",
     "last neighborhood": [
-      "Britta Jüttner",
-      "Auguste Wernecke",
-      "Hagen Hermann"
+      "212",
+      "173",
+      "240"
     ],
     "TableNr": [
-      [
-        21
-      ]
+      "2"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "198"
   },
   {
     "Nachname": "Wohlgemut",
@@ -2911,18 +2775,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "WH544698",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
-      "Gerald Jacobi Jäckel",
-      "Adolf Mälzer",
-      "Wolf-Rüdiger Margraf"
+      "218",
+      "208",
+      "127"
     ],
     "TableNr": [
-      [
-        10
-      ]
+      "11"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "156"
   },
   {
     "Nachname": "Höfig",
@@ -2933,18 +2796,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Nov 24",
+    "Startdatum": "Nov 24",
     "last neighborhood": [
-      "Gerald Jacobi Jäckel",
-      "Emine Pieper",
-      "Hans-Willi Zirme"
+      "218",
+      "119",
+      "232"
     ],
     "TableNr": [
-      [
-        16
-      ]
+      "12"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "162"
   },
   {
     "Nachname": "Krein",
@@ -2955,18 +2817,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 21",
+    "Startdatum": "Mrz 21",
     "last neighborhood": [
-      "Athanasios Butte",
-      "Eduard Bohlander",
-      "Hans-Dietrich Biggen"
+      "196",
+      "120",
+      "118"
     ],
     "TableNr": [
-      [
-        30
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "138"
   },
   {
     "Nachname": "Wulff",
@@ -2977,18 +2838,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jun 24",
+    "Startdatum": "Jun 24",
     "last neighborhood": [
-      "Louise Gnatz",
-      "Lieselotte Süßebier",
-      "Hagen Hermann"
+      "203",
+      "151",
+      "240"
     ],
     "TableNr": [
-      [
-        26
-      ]
+      "21"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "108"
   },
   {
     "Nachname": "Klapp",
@@ -2999,18 +2859,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jun 23",
+    "Startdatum": "Jun 23",
     "last neighborhood": [
-      "Ernest Hettner",
-      "Gerald Jacobi Jäckel",
-      "Wolf-Rüdiger Margraf"
+      "180",
+      "218",
+      "127"
     ],
     "TableNr": [
-      [
-        9
-      ]
+      "13"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "148"
   },
   {
     "Nachname": "Gnatz",
@@ -3021,18 +2880,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "CRHJ50YD, Z00R0R5X",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 24",
+    "Startdatum": "Okt 24",
     "last neighborhood": [
-      "Metin Kensy",
-      "Flora Ditschlerin",
-      "Saskia Kruschwitz"
+      "207",
+      "213",
+      "153"
     ],
     "TableNr": [
-      [
-        10
-      ]
+      "14"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "203"
   },
   {
     "Nachname": "Lübs",
@@ -3043,18 +2901,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "8WAVP694, E5UNVVO7",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Dez 21",
+    "Startdatum": "Dez 21",
     "last neighborhood": [
-      "Klemens Plath",
-      "Rahel Oestrovsky",
-      "Corinne Trüb"
+      "221",
+      "229",
+      "143"
     ],
     "TableNr": [
-      [
-        23
-      ]
+      "19"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "144"
   },
   {
     "Nachname": "Meyer",
@@ -3065,18 +2922,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YPFK12UR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Okt 21",
+    "Startdatum": "Okt 21",
     "last neighborhood": [
-      "Marie Hofmann",
-      "Wladimir Dörr",
-      "Georg Kraus"
+      "102",
+      "194",
+      "202"
     ],
     "TableNr": [
-      [
-        25
-      ]
+      "20"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "167"
   },
   {
     "Nachname": "Jacobi Jäckel",
@@ -3087,18 +2943,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jul 10",
+    "Startdatum": "Jul 10",
     "last neighborhood": [
-      "Peter-Michael Wulff",
-      "Jörg-Peter Freudenberger",
-      "Ayse Zorbach"
+      "108",
+      "142",
+      "209"
     ],
     "TableNr": [
-      [
-        24
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "218"
   },
   {
     "Nachname": "Karz",
@@ -3109,18 +2964,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "w",
-    "Zugehörigkeit ": "Jan 24",
+    "Startdatum": "Jan 24",
     "last neighborhood": [
-      "Nikolaj Weihmann",
-      "Heinz-Jürgen Krebs",
-      "Silvio Steinberg"
+      "175",
+      "215",
+      "183"
     ],
     "TableNr": [
-      [
-        7
-      ]
+      "13"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "161"
   },
   {
     "Nachname": "Zirme",
@@ -3131,18 +2985,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 03",
+    "Startdatum": "Aug 03",
     "last neighborhood": [
-      "Käte Mohaupt",
-      "Auguste Wernecke",
-      "Rahel Oestrovsky"
+      "159",
+      "173",
+      "229"
     ],
     "TableNr": [
-      [
-        13
-      ]
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "232"
   },
   {
     "Nachname": "Zimmer",
@@ -3153,18 +3006,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "A4JUPC44, 30VSAV7G, RJ2H3KYX",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Aug 03",
+    "Startdatum": "Aug 03",
     "last neighborhood": [
-      "Gitte Metz",
-      "Hanna Hübel",
-      "Rupert Krein"
+      "146",
+      "122",
+      "138"
     ],
     "TableNr": [
-      [
-        3
-      ]
+      "7"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "204"
   },
   {
     "Nachname": "Klotz",
@@ -3175,18 +3027,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": null,
     "Geschlecht": "m",
-    "Zugehörigkeit ": null,
+    "Startdatum": null,
     "last neighborhood": [
-      "Betty Davids",
-      "Gunnar Kallert",
-      "Irmingard Wiek"
+      "246",
+      "174",
+      "235"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "16"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "247"
   },
   {
     "Nachname": "Dowerg",
@@ -3197,18 +3048,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "N0YEH8DM",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Feb 25",
+    "Startdatum": "Feb 25",
     "last neighborhood": [
-      "Yvonne Kusch",
-      "Burkhard Lübs",
-      "Michaela Karge"
+      "214",
+      "144",
+      "178"
     ],
     "TableNr": [
-      [
-        16
-      ]
+      "3"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "224"
   },
   {
     "Nachname": "Söding",
@@ -3219,18 +3069,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "01TY4T4V",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mrz 15",
+    "Startdatum": "Mrz 15",
     "last neighborhood": [
-      "Marian Rose",
-      "Hanna Hübel",
-      "Käte Mohaupt"
+      "200",
+      "122",
+      "159"
     ],
     "TableNr": [
-      [
-        14
-      ]
+      "4"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "116"
   },
   {
     "Nachname": "Röhricht",
@@ -3241,18 +3090,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "GXRK8RIX, 8JES1B5O",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 09",
+    "Startdatum": "Jul 09",
     "last neighborhood": [
-      "Marzena Wende",
-      "Jeanette Kramer",
-      "Claire Textor"
+      "177",
+      "139",
+      "186"
     ],
     "TableNr": [
-      [
-        8
-      ]
+      "29"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "197"
   },
   {
     "Nachname": "Stroh",
@@ -3263,18 +3111,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "TKZZVBWG",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Sep 23",
+    "Startdatum": "Sep 23",
     "last neighborhood": [
-      "Georg Kraus",
-      "Emine Pieper",
-      "Marit Rogner"
+      "202",
+      "119",
+      "234"
     ],
     "TableNr": [
-      [
-        4
-      ]
+      "10"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "176"
   },
   {
     "Nachname": "Börner",
@@ -3285,18 +3132,17 @@
     "Anstellung": "Festanstellung",
     "Projekt": "RXGZAF76, TPKGL3AR",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Jul 21",
+    "Startdatum": "Jul 21",
     "last neighborhood": [
-      "Andrej Kramer",
-      "Pierre Trüb",
-      "Carmela Paffrath"
+      "231",
+      "155",
+      "198"
     ],
     "TableNr": [
-      [
-        2
-      ]
+      "25"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "100"
   },
   {
     "Nachname": "Reising",
@@ -3307,17 +3153,16 @@
     "Anstellung": "Festanstellung",
     "Projekt": "YW9AXKSE, 6OZL8TVB",
     "Geschlecht": "m",
-    "Zugehörigkeit ": "Mai 17",
+    "Startdatum": "Mai 17",
     "last neighborhood": [
-      "Gunnar Kallert",
-      "Clarissa Heinz",
-      "Heinz-Wilhelm Hendriks"
+      "174",
+      "137",
+      "220"
     ],
     "TableNr": [
-      [
-        7
-      ]
+      "6"
     ],
-    "SeatNr": []
+    "SeatNr": [],
+    "ProfileID": "104"
   }
 ]
