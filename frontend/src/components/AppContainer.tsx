@@ -31,7 +31,7 @@ export const AppContainer = () => {
       key: "/employees",
       icon: <TeamOutlined />,
       label: "Employees",
-    }] : [])
+    }] : []),
   ].filter(Boolean);
 
   const handleMenuClick = (key: string) => {
@@ -88,22 +88,23 @@ export const AppContainer = () => {
             bodyBg: darkMode ? "#0a0a0a" : bgLight,
           },
 
-            Menu: {
-              itemBg: "transparent",
-              itemColor: darkMode ? "#e0e0e0" : "#2d2d2d",
-              itemHoverColor: "#00aeff",
-              itemSelectedColor: "#ffffff",
-              itemSelectedBg: "#00aeff",
-              itemActiveBg: "#00aeff",
-              popupBg: darkMode ? "#0e1a26" : "#ffffff",
-              horizontalItemHoverColor: "#00aeff",
-              itemMarginInline: 16,
-              itemBorderRadius: 16
-            },
-            Button: {
-              colorPrimary: primaryColor,
-              colorText: darkMode ? "#fff" : "#000",
-            },
+          Menu: {
+            itemBg: "transparent",
+            itemColor: darkMode ? "#e0e0e0" : "#2d2d2d",
+            itemHoverColor: "#00aeff",
+            itemSelectedColor: "#ffffff",
+            itemSelectedBg: "#00aeff",
+            itemActiveBg: "#00aeff",
+            popupBg: darkMode ? "#0e1a26" : "#ffffff",
+            horizontalItemHoverColor: "#00aeff",
+            activeBarBorderWidth: 0, // this removes weird border on the side edges of menu items
+            itemMarginInline: 16,
+            itemBorderRadius: 16,
+          },
+          Button: {
+            colorPrimary: primaryColor,
+            colorText: darkMode ? "#fff" : "#000",
+          },
 
           Input: {
             colorBgContainer: darkMode ? "#333" : "#fff",
@@ -184,14 +185,14 @@ export const AppContainer = () => {
                   onClick: ({ key }) => handleMenuClick(key),
                 }}
                 placement="topLeft"
-            >
-              <div style={{backgroundColor: "#00aeff", borderRadius: "50%"}}
-                   className="w-28 h-28 shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
-                <Avatar icon={<UserOutlined/>} className="bg-blue-200" size="large"/>
-                <span
+              >
+                <div style={{ backgroundColor: "#00aeff", borderRadius: "50%" }}
+                     className="w-28 h-28 shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all">
+                  <Avatar icon={<UserOutlined />} className="bg-blue-200" size="large" />
+                  <span
                     className="mt-1 text-white text-sm font-medium text-center"> {user?.name || user?.email || "User"} </span>
-              </div>
-            </Dropdown>
+                </div>
+              </Dropdown>
             </div>
           </div>
         </Sider>
@@ -207,7 +208,7 @@ export const AppContainer = () => {
               <Outlet />
             </div>
           </Content>
-          <Footer className="text-center border-t border-white-200" style={{background: "transparent"}}>
+          <Footer className="text-center border-t border-white-200" style={{ background: "transparent" }}>
             Event Exchange Platform ©{new Date().getFullYear()}
           </Footer>
         </Layout>

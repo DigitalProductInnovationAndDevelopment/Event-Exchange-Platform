@@ -209,13 +209,12 @@ const SeatAllocationContent = ({
             onClick={() => {
               const foundElement =
                 state.elements.find(element => element.type === "chair") ??
-                state.elements.length > 0 ? state.elements[0] :
-                  undefined;
+                state.elements[0];
 
               if (foundElement) {
                 // Center the canvas on the chair element
                 dispatch(setCanvasPosition({
-                  canvasPosition: { x: -foundElement.x! / 2, y: -foundElement.y! / 2 },
+                  canvasPosition: { x: -foundElement.x!, y: -foundElement.y! },
                   scale: 1,
                 }));
               } else {

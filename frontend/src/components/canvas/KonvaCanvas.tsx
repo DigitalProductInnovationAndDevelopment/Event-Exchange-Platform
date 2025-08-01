@@ -213,7 +213,8 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
       <div className="App overflow-hidden bg-white"
            style={{ display: "flex", height: 600, border: "1px solid #e0e0e0", flexDirection: "row" }}>
 
-        <Toolbox dispatch={dispatch} stageRef={stageRef} state={state} selectedIds={selectedIds} />
+        <Toolbox dispatch={dispatch} stageRef={stageRef} state={state} selectedIds={selectedIds}
+                 setSelectedIds={setSelectedIds} />
 
         {/* main Canvas */}
         <div ref={containerRef} style={{ flex: 1, position: "relative" }}>

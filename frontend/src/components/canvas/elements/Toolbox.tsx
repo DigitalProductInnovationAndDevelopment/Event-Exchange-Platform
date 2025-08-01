@@ -11,7 +11,7 @@ import { findStageCenterCoordinates } from "components/canvas/utils/functions.ts
 
 
 const handleToolboxClick =
-  (type: ShapeType, dispatch: (action: Action) => void, currentBuildMode: number, stageCenter: {
+  (type: ShapeType, dispatch: (action: Action) => void, currentBuildMode: number, setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>, stageCenter: {
     x: number,
     y: number
   }) => {
@@ -23,7 +23,9 @@ const handleToolboxClick =
       const newBuildMode = currentBuildMode === 1 ? 0 : 1;
       dispatch(changeBuildMode(newBuildMode));
     } else {
-      dispatch(addElement(shapeFactory(type, stageCenter)));
+      const newShape = shapeFactory(type, stageCenter);
+      setSelectedIds([newShape.id]);
+      dispatch(addElement(newShape));
     }
 
   };
@@ -33,11 +35,13 @@ function Toolbox({
   stageRef,
   state,
   selectedIds,
+                   setSelectedIds,
 }: {
   dispatch: (action: Action) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   state: AppState;
   selectedIds: UUID[];
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>
 }) {
   const { updateSchematics } = useApiService();
   const { schematicsId } = useParams();
@@ -77,7 +81,7 @@ function Toolbox({
                 y={i * 60 + 40}
                 onClick={() => {
                   const stageCenter = findStageCenterCoordinates(stageRef);
-                  handleToolboxClick(item.type, dispatch, state.buildMode, stageCenter);
+                  handleToolboxClick(item.type, dispatch, state.buildMode, setSelectedIds, stageCenter);
                 }}
                 cursor="pointer"
               >
