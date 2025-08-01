@@ -96,20 +96,20 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         }
 
         UUID employeeId = employeeParticipation.get().getEmployee().getId();
-        List<PreviousMatch> newPreviousMatches = calculateBidirectionalMatches(employeeId, neighborProfileIds, eventId);
+        List<PreviousMatch.PreviousMatchId> newPreviousMatches = calculateBidirectionalMatches(employeeId, neighborProfileIds, eventId);
 
         if (!newPreviousMatches.isEmpty()) {
             previousMatchesRepository.batchInsertPreviousMatches(newPreviousMatches);
         }
     }
 
-    private List<PreviousMatch> calculateBidirectionalMatches(UUID employeeId, UUID[] neighborIds, UUID eventId) {
-        List<PreviousMatch> matches = new ArrayList<>(neighborIds.length * 2);
+    private List<PreviousMatch.PreviousMatchId> calculateBidirectionalMatches(UUID employeeId, UUID[] neighborIds, UUID eventId) {
+        List<PreviousMatch.PreviousMatchId> matches = new ArrayList<>(neighborIds.length * 2);
 
         for (UUID neighborId : neighborIds) {
             // we create bidirectional matches here
-            matches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId, neighborId, eventId)));
-            matches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(neighborId, employeeId, eventId)));
+            matches.add(new PreviousMatch.PreviousMatchId(employeeId, neighborId, eventId));
+            matches.add(new PreviousMatch.PreviousMatchId(neighborId, employeeId, eventId));
         }
 
         return matches;
@@ -118,6 +118,12 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
     @Override
     public void performTableBasedSeatAllocation(UUID eventId, StageMapDTO stageMap) throws IOException, InterruptedException {
+
+        // Delete all previous matches for this event before we start calculating for a clean state
+        // in case of any exception, they will be rolled back of course.
+        previousMatchesRepository.deleteAllByEventId(eventId);
+        previousMatchesRepository.flush();
+
         Event event = eventRepository.findByIdJoinedWithPreviousMatches(eventId).orElseThrow(EventNotFoundException::new);
 
         List<EmployeeParticipation> employeeParticipations = event.getEmployeeParticipations().stream().toList();
@@ -224,11 +230,9 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
     }
 
     private void persistPreviousMatchesDueToNewMatchings(UUID eventId, Map<UUID, List<UUID>> tableToEmployeesMap) {
-        // Delete all previous matches for this event
-        previousMatchesRepository.deleteAllByEventId(eventId);
 
         // Create new previous matches for employees seated at the same table
-        List<PreviousMatch> newPreviousMatches = new ArrayList<>();
+        List<PreviousMatch.PreviousMatchId> newPreviousMatches = new ArrayList<>();
 
         // Create pairs for each table
         tableToEmployeesMap.values().forEach(employeesAtTable -> {
@@ -236,8 +240,8 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
                 for (int j = i + 1; j < employeesAtTable.size(); j++) {
                     UUID employeeId1 = employeesAtTable.get(i);
                     UUID employeeId2 = employeesAtTable.get(j);
-                    newPreviousMatches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId1, employeeId2, eventId)));
-                    newPreviousMatches.add(new PreviousMatch(new PreviousMatch.PreviousMatchId(employeeId2, employeeId1, eventId)));
+                    newPreviousMatches.add(new PreviousMatch.PreviousMatchId(employeeId1, employeeId2, eventId));
+                    newPreviousMatches.add(new PreviousMatch.PreviousMatchId(employeeId2, employeeId1, eventId));
                 }
             }
         });

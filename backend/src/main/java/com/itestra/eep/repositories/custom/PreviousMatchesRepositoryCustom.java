@@ -8,6 +8,6 @@ import java.util.List;
 @Repository
 public interface PreviousMatchesRepositoryCustom {
 
-    void batchInsertPreviousMatches(List<PreviousMatch> matches);
+    void batchInsertPreviousMatches(List<PreviousMatch.PreviousMatchId> matches);
 
 }

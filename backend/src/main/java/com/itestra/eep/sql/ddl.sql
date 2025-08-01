@@ -152,6 +152,11 @@ CREATE INDEX idx_visitor_participation_event_profile ON organization.visitor_par
 CREATE INDEX idx_visitor_participation_invitor ON organization.visitor_participation (invitor_participation_id) WHERE invitor_participation_id IS NOT NULL;
 CREATE INDEX idx_visitor_participation_access_link ON organization.visitor_participation (access_link);
 --
+CREATE INDEX idx_previous_matches_first_employee ON organization.previous_matches (first_employee_id);
+CREATE INDEX idx_previous_matches_second_employee ON organization.previous_matches (second_employee_id);
+CREATE INDEX idx_previous_matches_event ON organization.previous_matches (event_id);
+CREATE INDEX idx_previous_matches_event_employees ON organization.previous_matches (first_employee_id, second_employee_id, event_id);
+--
 CREATE INDEX idx_files_event_id ON organization.files (event_id);
 CREATE INDEX idx_files_name ON organization.files (name);
 --

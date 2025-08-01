@@ -16,7 +16,7 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void batchInsertPreviousMatches(List<PreviousMatch> matches) {
+    public void batchInsertPreviousMatches(List<PreviousMatch.PreviousMatchId> matches) {
         if (matches.isEmpty()) {
             return;
         }
@@ -29,10 +29,10 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
                 """;
 
         jdbcTemplate.batchUpdate(sql, matches, matches.size(),
-                (PreparedStatement ps, PreviousMatch match) -> {
-                    ps.setObject(1, match.getId().getFirstEmployeeId());
-                    ps.setObject(2, match.getId().getSecondEmployeeId());
-                    ps.setObject(3, match.getId().getEventId());
+                (PreparedStatement ps, PreviousMatch.PreviousMatchId match) -> {
+                    ps.setObject(1, match.getFirstEmployeeId());
+                    ps.setObject(2, match.getSecondEmployeeId());
+                    ps.setObject(3, match.getEventId());
                 });
     }
 

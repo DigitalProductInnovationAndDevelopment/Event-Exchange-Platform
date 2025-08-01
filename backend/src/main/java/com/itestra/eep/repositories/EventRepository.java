@@ -37,9 +37,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT e FROM Event e WHERE e.id = :id")
     Optional<Event> findByIdWithUpdateLock(@Param("id") UUID id);
 
+    // since we are using SeatAllocationDetailsDTO's constructor,
+    // we cannot explicitly use @EntityGraph; therefore, we have to join profile.authorities.
     @Query("""
             SELECT new com.itestra.eep.dtos.SeatAllocationDetailsDTO(
-                p.employee.profile,
+                prof,
                 p.id,
                 CAST(null AS java.util.UUID),
                 p.chair.id,
@@ -47,12 +49,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             )
             FROM Event e
             JOIN e.employeeParticipations p
+            JOIN p.employee emp
+            JOIN emp.profile prof
+            LEFT JOIN FETCH prof.authorities
             WHERE e.id = :eventId
             
             UNION
             
             SELECT new com.itestra.eep.dtos.SeatAllocationDetailsDTO(
-                v.profile,
+                prof,
                 v.id,
                 v.invitor.id,
                 v.chair.id,
@@ -60,12 +65,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             )
             FROM Event e
             JOIN e.visitorParticipations v
+            JOIN v.profile prof
+            LEFT JOIN FETCH prof.authorities
             WHERE e.id = :eventId
             """)
     List<SeatAllocationDetailsDTO> findCurrentSeatAllocationsByEventId(@Param("eventId") UUID eventId);
 
 
-    @EntityGraph(attributePaths = {"employeeParticipations.employee.profile.authorities",
+    @EntityGraph(attributePaths = {
+            "employeeParticipations.employee.profile.authorities",
             "visitorParticipations.profile.authorities"})
     @Query("""
             SELECT p.employee.profile
