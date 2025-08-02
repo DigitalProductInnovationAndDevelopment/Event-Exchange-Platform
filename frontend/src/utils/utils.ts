@@ -43,21 +43,13 @@ export const exportParticipationToCSV = (data: ParticipationDetails[], eventName
 
 // Utility function to export a list of Employee objects as CSV
 export const exportEmployeesToCSV = (employees: Employee[]) => {
-  const headers = [
-    "First Name",
-    "Last Name",
-    "Email",
-    "Location",
-    "Date Joined",
-    "Gender",
-    "Gitlab Username"
-  ];
+  const headers = ["Name", "Last Name", "Location", "Employment Start Date", "Email", "Gender", "Gitlab Username"];
   const rows = employees.map(emp => [
     emp.profile.name,
     emp.profile.lastName,
-    emp.profile.email,
     emp.location,
     emp.employmentStartDate,
+    emp.profile.email,
     emp.profile.gender,
     emp.profile.gitlabUsername
   ]);
