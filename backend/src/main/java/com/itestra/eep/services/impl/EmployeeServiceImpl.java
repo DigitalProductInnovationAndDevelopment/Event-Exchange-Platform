@@ -96,6 +96,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                 if (dto.getProfile() != null) {
                     EmployeeUpdateDTO.EmployeeProfileUpdateDTO profileUpdateDTO = new EmployeeUpdateDTO.EmployeeProfileUpdateDTO();
                     BeanUtils.copyProperties(dto.getProfile(), profileUpdateDTO);
+                    // these fields are not set by the CSV file therefore we prevent them from changing the existing employee profile.
+                    profileUpdateDTO.setAuthorities(null);
+                    profileUpdateDTO.setDietTypes(null);
+                    profileUpdateDTO.setNotes(null);
                     employeeUpdateDTO.setProfile(profileUpdateDTO);
                 }
 
