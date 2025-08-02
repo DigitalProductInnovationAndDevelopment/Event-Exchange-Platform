@@ -1,14 +1,14 @@
 package com.itestra.eep.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.itestra.eep.enums.DietaryPreference;
+import com.itestra.eep.enums.Gender;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.serializers.GenderDeserializer;
-import com.itestra.eep.validators.ValidGender;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
@@ -30,6 +30,7 @@ import java.util.Set;
 public class EmployeeCreateDTO implements Serializable {
 
     @Valid
+    @NotNull
     ProfileCreateDTO profile;
 
     @NotNull(message = "Employment start date cannot be empty.")
@@ -54,12 +55,9 @@ public class EmployeeCreateDTO implements Serializable {
         @NotBlank(message = "Last name cannot be empty.")
         String lastName;
 
-        @Size(max = 255)
-        @NotBlank(message = "Gender cannot be empty.")
-        @ValidGender
-        @JsonProperty("gender")
+        @NotNull(message = "Gender cannot be empty.")
         @JsonDeserialize(using = GenderDeserializer.class)
-        String gender;
+        Gender gender;
 
         @Size(max = 255, message = "GitLab username should be shorter than 255 characters")
         String gitlabUsername;

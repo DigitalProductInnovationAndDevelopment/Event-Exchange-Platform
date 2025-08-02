@@ -5,16 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.itestra.eep.enums.DietaryPreference;
+import com.itestra.eep.enums.Gender;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.serializers.GenderDeserializer;
-import com.itestra.eep.validators.ValidGender;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +25,7 @@ import java.util.Set;
 public class EmployeeUpdateDTO implements Serializable {
 
     @Valid
-    ProfileUpdateDTO profile;
+    EmployeeUpdateDTO.EmployeeProfileUpdateDTO profile;
 
     @PastOrPresent(message = "Employment start date cannot be in the future.")
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -39,7 +36,7 @@ public class EmployeeUpdateDTO implements Serializable {
 
     @Getter
     @Setter
-    public static class ProfileUpdateDTO implements Serializable {
+    public static class EmployeeProfileUpdateDTO implements Serializable {
 
         @Size(max = 255)
         @NotBlank(message = "Name cannot be empty.")
@@ -49,11 +46,9 @@ public class EmployeeUpdateDTO implements Serializable {
         @NotBlank(message = "Last name cannot be empty.")
         String lastName;
 
-        @Size(max = 255)
-        @NotBlank(message = "Gender cannot be empty.")
-        @ValidGender
+        @NotNull(message = "Gender cannot be empty.")
         @JsonDeserialize(using = GenderDeserializer.class)
-        String gender;
+        Gender gender;
 
         @Size(max = 255, message = "GitLab username should be shorter than 255 characters")
         String gitlabUsername;

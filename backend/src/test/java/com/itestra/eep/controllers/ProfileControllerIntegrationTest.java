@@ -3,6 +3,7 @@ package com.itestra.eep.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itestra.eep.dtos.EmployeeCreateDTO;
 import com.itestra.eep.enums.DietaryPreference;
+import com.itestra.eep.enums.Gender;
 import com.itestra.eep.enums.Role;
 import com.itestra.eep.models.Employee;
 import com.itestra.eep.models.Profile;
@@ -60,7 +61,7 @@ public class ProfileControllerIntegrationTest {
                 new EmployeeCreateDTO.ProfileCreateDTO(
                         profile.getName(),
                         profile.getLastName(),
-                        profile.getGender(),
+                        Gender.fromStringOrNull(profile.getGender()),
                         profile.getGitlabUsername(),
                         profile.getNotes(),
                         profile.getEmail(),

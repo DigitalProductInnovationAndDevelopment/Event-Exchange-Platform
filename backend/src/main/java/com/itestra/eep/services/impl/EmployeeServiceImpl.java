@@ -92,6 +92,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 // handle existing employee
                 EmployeeUpdateDTO employeeUpdateDTO = new EmployeeUpdateDTO();
                 BeanUtils.copyProperties(dto, employeeUpdateDTO);
+                // manually copy is needed nested objects
+                if (dto.getProfile() != null) {
+                    EmployeeUpdateDTO.EmployeeProfileUpdateDTO profileUpdateDTO = new EmployeeUpdateDTO.EmployeeProfileUpdateDTO();
+                    BeanUtils.copyProperties(dto.getProfile(), profileUpdateDTO);
+                    employeeUpdateDTO.setProfile(profileUpdateDTO);
+                }
+
                 validator.validate(employeeUpdateDTO);
                 employeeMapper.updateEmployeeFromDto(employeeUpdateDTO, employee);
                 employeesToUpdate.add(employee);
