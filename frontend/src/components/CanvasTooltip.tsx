@@ -22,6 +22,10 @@ const tooltipSteps = [
     text: "Undo/Redo: Press \"<b>CTRL + Z</b>\" / \"<b>CTRL + SHIFT + Z</b>\".",
     icon: "↩️",
   },
+  {
+    text: "Chair Snapping: Chairs automatically snap to tables if the tables are rotated <b>0°, 90°, 180°, or 270°</b>. Otherwise, deactivated",
+    icon: "🪑",
+  },
 ];
 
 export const CanvasTooltip = () => {

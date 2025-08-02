@@ -50,8 +50,8 @@ function StagePreview({ state, mainStage }: { state: AppState; mainStage: Konva.
         <Stage
           width={(window.innerWidth - 150) / 4}
           height={window.innerHeight / 4}
-          scaleX={mainStage === null ? 0.25 : mainStage.scaleX() * 0.0625}
-          scaleY={mainStage === null ? 0.25 : mainStage.scaleY() * 0.0625}
+          scaleX={mainStage === null ? 0.25 : mainStage.scaleX() * 0.125}
+          scaleY={mainStage === null ? 0.25 : mainStage.scaleY() * 0.125}
           x={mainStage === null ? 0 : (window.innerWidth - 250) / 8 + mainStage.x() * 0.0625}
           y={mainStage === null ? 0 : window.innerHeight / 8 + mainStage.y() * 0.0625}
         >

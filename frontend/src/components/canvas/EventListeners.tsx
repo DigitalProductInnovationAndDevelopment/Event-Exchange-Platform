@@ -20,7 +20,7 @@ import type { Table } from "components/canvas/elements/Table.tsx";
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { Wall } from "components/canvas/elements/Wall.tsx";
 import type { SelectionRectangleType } from "components/canvas/elements/SelectionRectangle.tsx";
-import { findStageCenterCoordinates, validateCanvasElementDeletion } from "components/canvas/utils/functions.tsx";
+import { validateCanvasElementDeletion } from "components/canvas/utils/functions.tsx";
 import toast from "react-hot-toast";
 
 
@@ -260,7 +260,7 @@ export const handleMouseDown = (
       const y2 = (pointer.y - stage.y()) / scale;
       const { x1, y1 } = quickWallCoordinates;
 
-      const stageCenter = findStageCenterCoordinates(stageRef);
+      const stageCenter = { x: 0, y: 0 };
       let element = shapeFactory("wall", stageCenter) as Wall;
       element = { ...element, x1, y1, x2, y2 } as Wall;
 
@@ -352,14 +352,48 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
           angle: angle,
         };
       } else {
-        if (Math.abs(table.rotation) < 1) {
+        let normalizedRotation = table.rotation % 360;
+        if (normalizedRotation < 0) normalizedRotation += 360;
+
+        if (normalizedRotation < 1 ||
+          (89 < normalizedRotation && normalizedRotation < 91) ||
+          (179 < normalizedRotation && normalizedRotation < 181) ||
+          (269 < normalizedRotation && normalizedRotation < 271) ||
+          normalizedRotation > 359) {
+
           const { radius: padding } = el;
-          const { width, height, x: tableX, y: tableY } = table;
+          const tableX = table.x;
+          const tableY = table.y;
+          let { width, height } = table;
 
-          const centerX = tableX + width! / 2;
-          const centerY = tableY + height! / 2;
+          let centerX = 0;
+          let centerY = 0;
 
-          // Coordinates relative to table center
+          if (normalizedRotation < 1 || normalizedRotation > 359) {
+            // 0 degrees - normal case
+            centerX = tableX + width! / 2;
+            centerY = tableY + height! / 2;
+          } else if (89 < normalizedRotation && normalizedRotation < 91) {
+            // 90 degrees - width becomes height, height becomes width
+            const tempWidth = width;
+            width = height;
+            height = tempWidth;
+            centerX = tableX - width! / 2;
+            centerY = tableY + height! / 2;
+          } else if (179 < normalizedRotation && normalizedRotation < 181) {
+            // 180 degrees - table is flipped
+            centerX = tableX - width! / 2;
+            centerY = tableY - height! / 2;
+          } else if (269 < normalizedRotation && normalizedRotation < 271) {
+            // 270 degrees - width becomes height, height becomes width
+            const tempWidth = width;
+            width = height;
+            height = tempWidth;
+            centerX = tableX + width! / 2;
+            centerY = tableY - height! / 2;
+          }
+
+          // Coordinates relative to table center (using chair position, not table position)
           const dx = x - centerX;
           const dy = y - centerY;
 
