@@ -27,10 +27,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = {"employeeParticipations.employee.previousMatches"})
     Optional<Event> findByIdJoinedWithPreviousMatches(UUID id);
 
-    @EntityGraph("Event.files_schematics")
+
+    @EntityGraph(attributePaths = {"schematics", "fileEntities"})
     List<Event> findAllByDateAfter(LocalDateTime dateAfter);
 
-    @EntityGraph("Event.files_schematics")
+    @EntityGraph(attributePaths = {"schematics", "fileEntities"})
     List<Event> findByDateAfterAndVisitorParticipations_Profile_Id(LocalDateTime from, UUID participantId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -72,13 +73,13 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     List<SeatAllocationDetailsDTO> findCurrentSeatAllocationsByEventId(@Param("eventId") UUID eventId);
 
 
-    @EntityGraph(attributePaths = {
-            "employeeParticipations.employee.profile.authorities",
-            "visitorParticipations.profile.authorities"})
     @Query("""
             SELECT p.employee.profile
             FROM Event e
             JOIN e.employeeParticipations p
+            JOIN p.employee emp
+            JOIN emp.profile prof
+            LEFT JOIN FETCH prof.authorities
             WHERE e.id = :eventId
             
             UNION
@@ -86,6 +87,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             SELECT v.profile
             FROM Event e
             JOIN e.visitorParticipations v
+            JOIN v.profile prof
+            LEFT JOIN FETCH prof.authorities
             WHERE e.id = :eventId
             """)
     List<Profile> findAllParticipantProfilesByEventId(@Param("eventId") UUID eventId);

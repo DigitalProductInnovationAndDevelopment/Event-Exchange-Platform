@@ -19,7 +19,6 @@ public interface EmployeeParticipationMapper {
     @Mapping(source = "employee.profile.name", target = "employeeProfileName")
     @Mapping(source = "employee.profile.lastName", target = "employeeProfileLastName")
     @Mapping(source = "employee.profile.gender", target = "employeeProfileGender")
-    @Mapping(source = "employee.profile.dietTypes", target = "employeeProfileDietTypes")
     @Mapping(source = "employee.employmentStartDate", target = "employeeEmploymentStartDate")
     @Mapping(source = "employee.location", target = "employeeLocation")
     @Mapping(target = "lastNeighbourhood", expression = "java(findPreviouslyMatchedEmployeeIds(employeeParticipation))")

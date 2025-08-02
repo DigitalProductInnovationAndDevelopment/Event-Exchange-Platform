@@ -102,8 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeesToSave.add(employee);
             }
         }
-
-        employeeRepository.saveAllAndFlush(employeesToSave);
+        employeesToSave = employeeRepository.saveAllAndFlush(employeesToSave);
         return new EmployeeBatchUpsertResultDTO(employeeMapper.toMinimalDetailsDto(employeesToSave), employeeMapper.toMinimalDetailsDto(employeesToUpdate));
     }
 

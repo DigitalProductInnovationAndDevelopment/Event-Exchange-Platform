@@ -18,9 +18,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedEntityGraph(name = "Event.files_schematics",
-        attributeNodes = {@NamedAttributeNode("fileEntities"), @NamedAttributeNode("schematics")}
-)
 public class Event {
 
     @Id

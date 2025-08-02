@@ -15,14 +15,14 @@ import java.util.UUID;
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
     @Override
-    @EntityGraph("Employee.profile_participations")
     @NonNull
+    @EntityGraph(attributePaths = {"profile", "participations", "participationCount"})
     Optional<Employee> findById(@NonNull UUID id);
 
-    @EntityGraph("Employee.profile_participations")
+    @EntityGraph(attributePaths = {"profile.authorities", "participations", "participationCount"})
     List<Employee> findAllByOrderByProfileNameAsc();
 
-    @EntityGraph(attributePaths = {"profile"})
+    @EntityGraph(attributePaths = {"profile.authorities", "participations", "participationCount"})
     List<Employee> findByProfileEmailIn(Set<String> profile_email);
 
 }

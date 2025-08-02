@@ -17,9 +17,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "employee", schema = "organization")
 @AllArgsConstructor
-@NamedEntityGraph(name = "Employee.profile_participations",
-        attributeNodes = {@NamedAttributeNode("profile"), @NamedAttributeNode("participations")}
-)
 public class Employee {
 
     @Id

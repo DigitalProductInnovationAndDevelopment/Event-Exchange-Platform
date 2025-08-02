@@ -1,14 +1,15 @@
 package com.itestra.eep.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.itestra.eep.enums.DietaryPreference;
+import com.itestra.eep.serializers.GenderDeserializer;
+import com.itestra.eep.validators.ValidGender;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
@@ -26,6 +27,8 @@ public class ProfileUpdateDTO implements Serializable {
 
     @Size(max = 255)
     @NotBlank(message = "Gender cannot be empty.")
+    @ValidGender
+    @JsonDeserialize(using = GenderDeserializer.class)
     String gender;
 
     @Size(max = 255, message = "GitLab username should be shorter than 255 characters")
@@ -35,7 +38,6 @@ public class ProfileUpdateDTO implements Serializable {
     @Email(message = "Email should be valid.")
     String email;
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
     DietaryPreference[] dietTypes;
 }

@@ -2,16 +2,12 @@ package com.itestra.eep.dtos.constraintSolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.itestra.eep.enums.DietaryPreference;
-import com.itestra.eep.serializers.DateDeserializer;
-import com.itestra.eep.serializers.DateSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 
@@ -22,13 +18,11 @@ public class ConstraintSolverDTO implements Serializable {
     @JsonIgnore
     int guestCount;
 
+    @JsonIgnore
+    LocalDate employeeEmploymentStartDate;
+
     @JsonProperty("ProfileID")
     UUID profileId;
-
-    @JsonProperty("Anzahl")
-    public int getGuestCount() {
-        return guestCount + 1;
-    }
 
     @JsonProperty("Vorname")
     String employeeProfileName;
@@ -36,25 +30,28 @@ public class ConstraintSolverDTO implements Serializable {
     @JsonProperty("Nachname")
     String employeeProfileLastName;
 
-    @JsonProperty("Projekt")
-    String project = "";
-
     @JsonProperty("Geschlecht")
     String employeeProfileGender;
 
     @JsonProperty("last neighborhood")
     UUID[] lastNeighbourhood;
 
-    DietaryPreference[] employeeProfileDietTypes;
-
-    @JsonSerialize(using = DateSerializer.class)
-    @JsonDeserialize(using = DateDeserializer.class)
-    @JsonProperty("Zugehörigkeit")
-    LocalDate employeeEmploymentStartDate;
-
     @JsonProperty("Standort")
     String employeeLocation = null;
 
     @JsonProperty("TableNr")
     Object[] tableIds;
+
+    @JsonProperty("Anzahl")
+    public int getGuestCount() {
+        return guestCount + 1;
+    }
+
+    @JsonProperty("Zugehörigkeit")
+    public Integer getEmploymentDuration() {
+        if (employeeEmploymentStartDate == null) {
+            return null;
+        }
+        return (int) ChronoUnit.MONTHS.between(employeeEmploymentStartDate, LocalDate.now());
+    }
 }
