@@ -227,6 +227,7 @@ export function reducer(state: AppState, action: Action) {
 
       return {
         ...previous,
+        buildMode: 0,
         history: {
           past: [...newPast],
           future: bypassRedo ? [...future] : [...future, { ...state }],

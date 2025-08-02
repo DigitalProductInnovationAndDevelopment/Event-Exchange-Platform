@@ -514,14 +514,14 @@ export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (a
           id,
           radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
           rotation: node.rotation(),
-          x: el.x!,
-          y: el.y!,
+          x: node.x()!,
+          y: node.y()!,
         }
         : el.type !== "wall" && el.type !== "arrow"
           ? {
             id,
-            x: node.x()! / scaleX,
-            y: node.y()! / scaleY,
+            x: node.x()!,
+            y: node.y()!,
             width: el.width ? Math.max(10, el.width * scaleX) : undefined,
             height: el.height ? Math.max(10, el.height * scaleY) : undefined,
             rotation: node.rotation(),

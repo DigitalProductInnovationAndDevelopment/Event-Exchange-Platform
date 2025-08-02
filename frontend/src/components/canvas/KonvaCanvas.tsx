@@ -143,6 +143,10 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
   }, [selectedIds]);
 
   useEffect(() => {
+    if (state.buildMode === 0) setQuickWallCoordinates({ x1: undefined, y1: undefined });
+  }, [state.buildMode]);
+
+  useEffect(() => {
     const handleKeyDownWrapper = (e: KeyboardEvent) => {
       handleKeyDown(e, dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, state);
     };
