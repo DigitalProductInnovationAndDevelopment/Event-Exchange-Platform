@@ -180,6 +180,13 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
       if (hasAssignedAttachedChairs) {
         toast.error("Cannot delete table(s) that have chairs with assigned guests. Please unassign first.");
         return false;
+      } else {
+        table.attachedChairs.forEach((chairId) => {
+          const chair = allChairMap.get(chairId);
+          if (chair) {
+            chair.attachedTo = undefined;
+          }
+        });
       }
     }
   }
@@ -201,10 +208,14 @@ export function extractedNeighboringEmployeeProfileIds(
   let neighbourProfileIds: UUID[] = [];
   if (chairId) {
     const chair = state.elements.find(el => el.type === "chair" && el.id === chairId);
-    if (!chair!.attachedTo) {
+
+    let neighborChairIds;
+    try {
+      neighborChairIds = new Set(generateChairNeighborMap(algorithmType)[chair!.attachedTo!][chairId]);
+    } catch (e) {
       toast.error("Chair is not attached to a table!");
+      throw e;
     }
-    const neighborChairIds = new Set(generateChairNeighborMap(algorithmType)[chair!.attachedTo!][chairId]);
 
     neighbourProfileIds = state.elements.reduce<string[]>((acc, el) => {
       if (el.type === "chair" &&

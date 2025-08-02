@@ -16,12 +16,12 @@ import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
 import { exportEmployeesToCSV } from "utils/utils.ts";
 import { parse } from "papaparse";
-import moment from "moment/moment";
+import dayjs from "dayjs";
 
 const { Title } = Typography;
 
 function parseDate(dateStr: string) {
-  return moment(dateStr, ["DD.MM.YYYY", "YYYY-MM-DD"]).toDate();
+  return dayjs(dateStr, ["DD.MM.YYYY", "D.MM.YYYY", "DD.M.YYYY", "D.M.YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
 }
 
 // Define table columns with correct types
@@ -302,7 +302,7 @@ export const EmployeesList = () => {
                 name: row["Name"]?.trim() || "",
                 lastName: row["Last Name"]?.trim() || "",
                 location: row["Location"]?.trim() || "",
-                startDate: row["Employment Start Date"]?.trim() || "",
+                startDate: parseDate(row["Employment Start Date"]?.trim() || ""),
                 email: row["Email"]?.trim() || "",
                 gender: row["Gender"]?.trim() || "",
                 gitlabUsername: row["Gitlab Username"]?.trim() || "",
@@ -335,7 +335,7 @@ export const EmployeesList = () => {
         dietTypes: [], // Could be extended to parse from CSV
         authorities: [Role.EMPLOYEE],
       },
-      employmentStartDate: parseDate(row.startDate),
+      employmentStartDate: row.startDate,
       location: row.location,
     }));
     try {
