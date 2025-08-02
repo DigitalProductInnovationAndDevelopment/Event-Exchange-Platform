@@ -131,6 +131,7 @@ export const getEditableParameters = (
     case "wall":
       return {
         color: "color",
+        thickness: "number",
       };
     case "arrow":
       return {

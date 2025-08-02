@@ -6,25 +6,25 @@ import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functio
 export class Wall implements ElementProperties {
   id: UUID;
   type: ShapeType;
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   x1: number;
   y1: number;
   x2: number;
   y2: number;
+  thickness: number;
   color: string;
   draggable: boolean;
 
   constructor(stageCenter?: { x: number, y: number }) {
     this.id = uuidv4();
     this.type = "wall";
-    this.x = stageCenter?.x ?? 200;
-    this.y = stageCenter?.y ?? 100;
     this.x1 = stageCenter?.x ?? 200;
     this.y1 = stageCenter?.y ?? 100;
     this.x2 = (stageCenter?.x ?? 200) + 150;
     this.y2 = stageCenter?.y ?? 100;
     this.color = "#444444";
+    this.thickness = 3;
     this.draggable = true;
   }
 }
@@ -55,8 +55,8 @@ export const WallRender = (wall: Wall) => {
       {/* Visible wall line */}
       <Line
         points={[wall.x1, wall.y1, wall.x2, wall.y2]}
-        stroke="black"
-        strokeWidth={3}
+        stroke={wall.color}
+        strokeWidth={Math.max(wall.thickness ?? 3, 1)}
         lineJoin="round"
         perfectDrawEnabled={false}
       />
