@@ -46,7 +46,6 @@ const SeatAllocationContent = ({
   const { getSeatAllocations, updateSeatAllocation, generateSeatAllocations } = useApiService();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [emptyChairCount, setEmptyChairCount] = useState(0);
-  const [danglingChairCount, setDanglingChairCount] = useState(0);
   const [constraintInputValues, setConstraintInputValues] = useState({
     "last neighborhood": 0,
     "Standort": 0,
@@ -73,9 +72,8 @@ const SeatAllocationContent = ({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { emptyChairsCount, danglingChairsCount } = updateChairLabels(participants);
+      const emptyChairsCount = updateChairLabels(participants);
       setEmptyChairCount(emptyChairsCount);
-      setDanglingChairCount(danglingChairsCount);
       setLoading(false);
     })();
 
@@ -141,8 +139,7 @@ const SeatAllocationContent = ({
       }
     }
 
-    let emptyChairsCount = 0;
-    let danglingChairsCount = 0;
+    let emptyChairCount = 0;
     state.elements
       ?.forEach((e: ElementProperties) => {
         if (e.type === "chair" && chairProfileMap.has(e.id)) {
@@ -151,22 +148,18 @@ const SeatAllocationContent = ({
           (e as Chair).belongsToVisitor = chairProfileMap.get(e.id)!.isVisitor;
           if (!(e as Chair).attachedTo) {
             toast.error("Some participants are assigned to chairs that are not linked to a table. It might cause inconsistencies. Please be aware.");
-            danglingChairsCount++;
           }
         } else if (e.type === "chair") {
           (e as Chair).assigneeProfileId = undefined;
           (e as Chair).assigneeName = undefined;
           (e as Chair).belongsToVisitor = undefined;
-          emptyChairsCount++;
-          if (!(e as Chair).attachedTo) {
-            danglingChairsCount++;
-          }
+          emptyChairCount++;
         }
       });
 
     setAllocated(assigned);
     setUnallocated(unassigned);
-    return { emptyChairsCount, danglingChairsCount };
+    return emptyChairCount;
   };
 
   // Generate initial seat allocation: assign unallocated employees to empty chairs
@@ -326,12 +319,7 @@ const SeatAllocationContent = ({
             opacity: isCollapsed ? 0.3 : 1,
           }}>
             <Card className="mb-6" style={{ display: isCollapsed ? "none" : "block" }}>
-              <div className="flex flex-col">
-                <b>{`Empty Chairs: ${emptyChairCount}`}</b>
-                {danglingChairCount > 0 &&
-                  <b>{"Warning: " + danglingChairCount + " chair(s) don't belong to a table."}</b>
-                }
-              </div>
+              <b>{`Empty Seat Count: ${emptyChairCount}`}</b>
             </Card>
             <Card
               title={`Unallocated Participants ( ${unallocated.length} / ${allocated.length + unallocated.length} )`}
