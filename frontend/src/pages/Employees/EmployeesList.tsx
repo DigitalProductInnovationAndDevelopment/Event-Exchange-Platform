@@ -21,7 +21,10 @@ import dayjs from "dayjs";
 const { Title } = Typography;
 
 function parseDate(dateStr: string) {
-  return dayjs(dateStr, ["DD.MM.YYYY", "D.MM.YYYY", "DD.M.YYYY", "D.M.YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
+  const result = dayjs(dateStr, ["DD.MM.YYYY", "D.MM.YYYY", "DD.M.YYYY", "D.M.YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
+  if (result === "Invalid Date") {
+    return null;
+  } else return result;
 }
 
 // Define table columns with correct types
@@ -325,14 +328,11 @@ export const EmployeesList = () => {
     // Map importedRows to EmployeeCreateDTO-like objects
     const payload = importedRows.map(row => ({
       profile: {
-        id: "", // Required by Employee/Profile type, will be ignored by backend
         name: row.name.trim(),
         lastName: row.lastName.trim(),
         gender: row.gender,
         gitlabUsername: row.gitlabUsername.length > 0 ? row.gitlabUsername : null,
-        notes: null,
         email: row.email,
-        dietTypes: [], // Could be extended to parse from CSV
         authorities: [Role.EMPLOYEE],
       },
       employmentStartDate: row.startDate,
