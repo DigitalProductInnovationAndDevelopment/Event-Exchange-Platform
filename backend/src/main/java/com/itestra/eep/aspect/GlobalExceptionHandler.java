@@ -78,6 +78,7 @@ public class GlobalExceptionHandler {
             PastEventUpdateException.class,
             EventCapacityExceededException.class,
             NotEnoughSeatForSeatAllocationException.class,
+            NoBigEnoughTableException.class,
             InfeasibleSeatAllocationException.class})
     public ResponseEntity<Object> handleCustomRuntimeException(RuntimeException exception) {
         return ResponseEntity

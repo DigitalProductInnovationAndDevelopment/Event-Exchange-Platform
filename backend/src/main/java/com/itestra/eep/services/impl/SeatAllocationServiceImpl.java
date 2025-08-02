@@ -9,6 +9,7 @@ import com.itestra.eep.dtos.constraintSolver.ConstraintSolverTableDTO;
 import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
 import com.itestra.eep.exceptions.EventNotFoundException;
 import com.itestra.eep.exceptions.InfeasibleSeatAllocationException;
+import com.itestra.eep.exceptions.NoBigEnoughTableException;
 import com.itestra.eep.exceptions.NotEnoughSeatForSeatAllocationException;
 import com.itestra.eep.mappers.EmployeeParticipationMapper;
 import com.itestra.eep.models.*;
@@ -20,6 +21,7 @@ import com.itestra.eep.services.SeatAllocationService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,6 +42,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public class SeatAllocationServiceImpl implements SeatAllocationService {
+
+    @Value("${constraint-solver.num-search-workers}")
+    private String NUM_SEARCH_WORKERS;
+
+    @Value("${constraint-solver.solver-time-limit}")
+    private String SOLVER_TIME_LIMIT;
 
     private final EventRepository eventRepository;
     private final ChairRepository chairRepository;
@@ -132,12 +140,6 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         Map<UUID, List<UUID>> tablesAndTheirSeats = stageMap.getSeatMap().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> new ArrayList<>(entry.getValue().keySet())));
 
-        int totalAvailableSeat = tablesAndTheirSeats.values().stream().mapToInt(List::size).sum();
-
-        if (event.getParticipantCount() > totalAvailableSeat) {
-            throw new NotEnoughSeatForSeatAllocationException(event.getParticipantCount(), totalAvailableSeat);
-        }
-
         // we create input and output temp files
         try (TempFileManager tempFiles = new TempFileManager()) {
             writeInputFiles(tempFiles, formattedData, stageMap);
@@ -187,18 +189,20 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         }
     }
 
-    private static void runPythonScript(TempFileManager tempFiles) throws IOException, InterruptedException {
+    private void runPythonScript(TempFileManager tempFiles) throws IOException, InterruptedException {
         ProcessBuilder pb;
 
         if (Files.notExists(Path.of("../venv/bin/python"))) {
             pb = new ProcessBuilder(
                     "python3",
-                    "/algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString()
+                    "/algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString(),
+                    NUM_SEARCH_WORKERS, SOLVER_TIME_LIMIT
             );
         } else {
             pb = new ProcessBuilder(
                     "../venv/bin/python",
-                    "algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(), tempFiles.outputFile.toString()
+                    "algo(table).py", tempFiles.inputFile.toString(), tempFiles.tableFile.toString(), tempFiles.constraintsFile.toString(),
+                    tempFiles.outputFile.toString(), NUM_SEARCH_WORKERS, SOLVER_TIME_LIMIT
             );
         }
 
@@ -218,6 +222,8 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         int exitCode = process.waitFor();
         log.info("Exited with code: {}", exitCode);
         if (exitCode == 255) throw new InfeasibleSeatAllocationException();
+        else if (exitCode == 2) throw new NotEnoughSeatForSeatAllocationException();
+        else if (exitCode == 3) throw new NoBigEnoughTableException();
     }
 
     private void persistNewChairAssignments(UUID eventId, List<Chair> chairsToPersist, Map<UUID, UUID> employeeParticipationToChairMap, Map<UUID, UUID> visitorParticipationToChairMap) {

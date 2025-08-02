@@ -70,7 +70,7 @@ CREATE TABLE organization.previous_matches
 CREATE TABLE organization.chair
 (
     id       UUID PRIMARY KEY,
-    event_id UUID REFERENCES organization.event (id)
+    event_id UUID REFERENCES organization.event (id) ON DELETE CASCADE
 );
 
 CREATE TABLE organization.employee_participation
