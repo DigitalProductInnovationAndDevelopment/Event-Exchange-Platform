@@ -7,10 +7,7 @@ import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.dtos.constraintSolver.ConstraintSolverDTO;
 import com.itestra.eep.dtos.constraintSolver.ConstraintSolverTableDTO;
 import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
-import com.itestra.eep.exceptions.EventNotFoundException;
-import com.itestra.eep.exceptions.InfeasibleSeatAllocationException;
-import com.itestra.eep.exceptions.NoBigEnoughTableException;
-import com.itestra.eep.exceptions.NotEnoughSeatForSeatAllocationException;
+import com.itestra.eep.exceptions.*;
 import com.itestra.eep.mappers.EmployeeParticipationMapper;
 import com.itestra.eep.models.*;
 import com.itestra.eep.repositories.ChairRepository;
@@ -33,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,6 +46,8 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
     @Value("${constraint-solver.solver-time-limit}")
     private String SOLVER_TIME_LIMIT;
+
+    private static final int CUT_OFF_YEAR = 3;
 
     private final EventRepository eventRepository;
     private final ChairRepository chairRepository;
@@ -66,9 +66,14 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
     @Override
     public <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
                                                                                             Class<T> participationClass, UUID[] neighborProfileIds) {
-        // first assign the chair
+
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
 
+        if (event.getDate().isBefore(LocalDateTime.now())) {
+            throw new ParticipantOfPastEventException();
+        }
+
+        // first assign the chair
         if (chairId != null) chairRepository.batchInsertChair(List.of(new Chair(chairId, event)));
 
         // update chair assignment based on participation type
@@ -132,9 +137,15 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         previousMatchesRepository.deleteAllByEventId(eventId);
         previousMatchesRepository.flush();
 
-        Event event = eventRepository.findByIdJoinedWithPreviousMatches(eventId).orElseThrow(EventNotFoundException::new);
+        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
 
-        List<EmployeeParticipation> employeeParticipations = event.getEmployeeParticipations().stream().toList();
+        if (event.getDate().isBefore(LocalDateTime.now())) {
+            throw new ParticipantOfPastEventException();
+        }
+
+        Set<EmployeeParticipation> employeeParticipations =
+                previousMatchesRepository.getEmployeeParticipationsWithFilteredPreviousMatches(eventId, CUT_OFF_YEAR);
+
         List<ConstraintSolverDTO> formattedData = employeeParticipationMapper.toConstraintSolverDTO(employeeParticipations);
 
         Map<UUID, List<UUID>> tablesAndTheirSeats = stageMap.getSeatMap().entrySet().stream()
@@ -150,7 +161,7 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
             List<ConstraintSolverDTO> solved = objectMapper.readValue(fileReader, new TypeReference<>() {
             });
 
-            Map<UUID, EmployeeParticipation> existingEmployeeParticipationsMap = event.getEmployeeParticipations()
+            Map<UUID, EmployeeParticipation> existingEmployeeParticipationsMap = employeeParticipations
                     .stream()
                     .collect(Collectors.toMap(ep -> ep.getEmployee().getId(), Function.identity()));
 

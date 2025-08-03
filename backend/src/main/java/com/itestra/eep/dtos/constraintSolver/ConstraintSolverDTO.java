@@ -49,9 +49,14 @@ public class ConstraintSolverDTO implements Serializable {
 
     @JsonProperty("Zugehörigkeit")
     public Integer getEmploymentDuration() {
-        if (employeeEmploymentStartDate == null) {
-            return null;
-        }
-        return (int) ChronoUnit.MONTHS.between(employeeEmploymentStartDate, LocalDate.now());
+        if (employeeEmploymentStartDate == null) return 0;
+
+        int numberOfMonthsSeniority = (int) ChronoUnit.MONTHS.between(employeeEmploymentStartDate, LocalDate.now());
+
+        if (numberOfMonthsSeniority <= 6) return 1;
+        else if (numberOfMonthsSeniority < 12) return 2;
+        else if (numberOfMonthsSeniority < 24) return 3;
+        else if (numberOfMonthsSeniority < 36) return 4;
+        else return 5;
     }
 }

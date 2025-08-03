@@ -37,14 +37,10 @@ public class Employee {
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EmployeeParticipation> participations = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "previous_matches",
-            schema = "organization",
-            joinColumns = @JoinColumn(name = "first_employee_id")
-    )
-    @Column(name = "second_employee_id")
-    private Set<UUID> previousMatches = new LinkedHashSet<>();
+    // Do not Cascade changes or Orphan Remove. We modify this association
+    // when we perform Previous Matches Filtering. That change shouldn't be cascaded.
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = {}, orphanRemoval = false)
+    private Set<PreviousMatch> previousMatches = new LinkedHashSet<>();
 
     // TODO this is fetched EAGERLY for some reason during Employee Batch Upsert
     @Formula("(select count(*) from organization.employee_participation ep where ep.profile_id = profile_id)")

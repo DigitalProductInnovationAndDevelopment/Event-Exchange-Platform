@@ -108,6 +108,7 @@ def assign_tables(search_workers_count, employees_data, tables_data, constraints
             for g_idx, row in df_employees.iterrows():
                 last_neighbor_ids = row.get('last neighborhood')
                 if not isinstance(last_neighbor_ids, list):
+                    print(f"last_neighbor_ids is not a list. continue without it.")
                     continue
 
                 # --- CHANGE: Map neighbor ProfileIDs to their group indices ---

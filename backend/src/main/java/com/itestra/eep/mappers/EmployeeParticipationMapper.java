@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -24,10 +25,10 @@ public interface EmployeeParticipationMapper {
     @Mapping(target = "lastNeighbourhood", expression = "java(findPreviouslyMatchedEmployeeIds(employeeParticipation))")
     ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipation employeeParticipation);
 
-    List<ConstraintSolverDTO> toConstraintSolverDTO(List<EmployeeParticipation> employeeParticipations);
+    List<ConstraintSolverDTO> toConstraintSolverDTO(Set<EmployeeParticipation> employeeParticipations);
 
     default UUID[] findPreviouslyMatchedEmployeeIds(EmployeeParticipation employeeParticipation) {
-        return employeeParticipation.getEmployee().getPreviousMatches().toArray(UUID[]::new);
+        return employeeParticipation.getEmployee().getPreviousMatches().stream().map(pm -> pm.getId().getSecondEmployeeId()).toArray(UUID[]::new);
     }
 
     @Mapping(source = "id", target = "id")
