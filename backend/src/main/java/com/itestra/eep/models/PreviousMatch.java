@@ -43,14 +43,5 @@ public class PreviousMatch {
             this.secondEmployeeId = secondEmployeeId;
             this.eventId = eventId;
         }
-
-        @ManyToOne(fetch = FetchType.LAZY, optional = false)
-        @JoinColumn(name = "event_id", nullable = false, insertable = false, updatable = false)
-        private Event event;
-
-        public void setEvent(Event event) {
-            this.event = event;
-            this.eventId = event.getId();
-        }
     }
 }

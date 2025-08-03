@@ -2,7 +2,9 @@ package com.itestra.eep.mappers;
 
 import com.itestra.eep.dtos.EmployeeParticipationDetailsDTO;
 import com.itestra.eep.dtos.constraintSolver.ConstraintSolverDTO;
+import com.itestra.eep.dtos.constraintSolver.EmployeeParticipationDTO;
 import com.itestra.eep.models.EmployeeParticipation;
+import com.itestra.eep.models.PreviousMatch;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -16,19 +18,20 @@ import java.util.UUID;
 public interface EmployeeParticipationMapper {
 
 
-    @Mapping(source = "employee.id", target = "profileId")
-    @Mapping(source = "employee.profile.name", target = "employeeProfileName")
-    @Mapping(source = "employee.profile.lastName", target = "employeeProfileLastName")
-    @Mapping(source = "employee.profile.gender", target = "employeeProfileGender")
-    @Mapping(source = "employee.employmentStartDate", target = "employeeEmploymentStartDate")
-    @Mapping(source = "employee.location", target = "employeeLocation")
+    @Mapping(source = "employeeParticipation.employee.id", target = "profileId")
+    @Mapping(source = "employeeParticipation.employee.profile.name", target = "employeeProfileName")
+    @Mapping(source = "employeeParticipation.employee.profile.lastName", target = "employeeProfileLastName")
+    @Mapping(source = "employeeParticipation.employee.profile.gender", target = "employeeProfileGender")
+    @Mapping(source = "employeeParticipation.employee.employmentStartDate", target = "employeeEmploymentStartDate")
+    @Mapping(source = "employeeParticipation.employee.location", target = "employeeLocation")
+    @Mapping(source = "employeeParticipation.guestCount", target = "guestCount")
     @Mapping(target = "lastNeighbourhood", expression = "java(findPreviouslyMatchedEmployeeIds(employeeParticipation))")
-    ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipation employeeParticipation);
+    ConstraintSolverDTO toConstraintSolverDTO(EmployeeParticipationDTO employeeParticipation);
 
-    List<ConstraintSolverDTO> toConstraintSolverDTO(Set<EmployeeParticipation> employeeParticipations);
+    List<ConstraintSolverDTO> toConstraintSolverDTO(Set<EmployeeParticipationDTO> employeeParticipations);
 
-    default UUID[] findPreviouslyMatchedEmployeeIds(EmployeeParticipation employeeParticipation) {
-        return employeeParticipation.getEmployee().getPreviousMatches().stream().map(pm -> pm.getId().getSecondEmployeeId()).toArray(UUID[]::new);
+    default UUID[] findPreviouslyMatchedEmployeeIds(EmployeeParticipationDTO employeeParticipation) {
+        return employeeParticipation.getFilteredPreviousMatches().stream().map(PreviousMatch.PreviousMatchId::getSecondEmployeeId).toArray(UUID[]::new);
     }
 
     @Mapping(source = "id", target = "id")

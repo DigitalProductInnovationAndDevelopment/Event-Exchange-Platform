@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itestra.eep.dtos.SeatAllocationDetailsDTO;
 import com.itestra.eep.dtos.constraintSolver.ConstraintSolverDTO;
 import com.itestra.eep.dtos.constraintSolver.ConstraintSolverTableDTO;
+import com.itestra.eep.dtos.constraintSolver.EmployeeParticipationDTO;
 import com.itestra.eep.dtos.constraintSolver.StageMapDTO;
 import com.itestra.eep.exceptions.*;
 import com.itestra.eep.mappers.EmployeeParticipationMapper;
@@ -149,10 +150,11 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
             throw new ParticipantOfPastEventException();
         }
 
-        Set<EmployeeParticipation> employeeParticipations =
-                previousMatchesRepository.getEmployeeParticipationsWithFilteredPreviousMatches(eventId, CUT_OFF_YEAR);
+        Set<EmployeeParticipationDTO> employeeParticipations =
+                previousMatchesRepository.getEmployeeParticipationsWithFilteredPreviousMatches(eventId, event.getDate(), CUT_OFF_YEAR);
 
-        List<ConstraintSolverDTO> formattedData = employeeParticipationMapper.toConstraintSolverDTO(employeeParticipations);
+        List<ConstraintSolverDTO> formattedData = employeeParticipationMapper
+                .toConstraintSolverDTO(employeeParticipations);
 
         Map<UUID, List<UUID>> tablesAndTheirSeats = stageMap.getSeatMap().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> new ArrayList<>(entry.getValue().keySet())));
@@ -167,9 +169,9 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
             List<ConstraintSolverDTO> solved = objectMapper.readValue(fileReader, new TypeReference<>() {
             });
 
-            Map<UUID, EmployeeParticipation> existingEmployeeParticipationsMap = employeeParticipations
+            Map<UUID, EmployeeParticipationDTO> existingEmployeeParticipationsMap = employeeParticipations
                     .stream()
-                    .collect(Collectors.toMap(ep -> ep.getEmployee().getId(), Function.identity()));
+                    .collect(Collectors.toMap(ep -> ep.getEmployeeParticipation().getEmployee().getId(), Function.identity()));
 
 
             Map<UUID, List<UUID>> tableToEmployeesMap = new HashMap<>();
@@ -178,9 +180,9 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
             Map<UUID, UUID> visitorParticipationToChairMap = new HashMap<>();
 
             solved.forEach(solvedConstraint -> {
-                        EmployeeParticipation employeeParticipation = existingEmployeeParticipationsMap.get(solvedConstraint.getProfileId());
-                        VisitorParticipation[] visitorParticipations = employeeParticipation.getVisitorParticipations().toArray(new VisitorParticipation[0]);
-                        for (int j = 0; j < (solvedConstraint.getTableIds()).length; j++) {
+                EmployeeParticipationDTO epDTO = existingEmployeeParticipationsMap.get(solvedConstraint.getProfileId());
+                VisitorParticipation[] visitorParticipations = epDTO.getEmployeeParticipation().getVisitorParticipations().toArray(new VisitorParticipation[0]);
+                for (int j = 0; j < solvedConstraint.getTableIds().length; j++) {
                             UUID tableKey = UUID.fromString(Arrays.copyOf(solvedConstraint.getTableIds(), solvedConstraint.getTableIds().length, String[].class)[0]);
 
                             UUID selectedChairId = tablesAndTheirSeats.get(tableKey).get(0);
@@ -188,10 +190,10 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
                             // first the employee is seated
                             if (j == 0) {
-                                employeeParticipationToChairMap.put(employeeParticipation.getId(), selectedChairId);
+                                employeeParticipationToChairMap.put(epDTO.getEmployeeParticipation().getId(), selectedChairId);
                                 tablesAndTheirSeats.get(tableKey).remove(0);
                                 // we also track employee's table assignment so that we can reference them back whn we calculate new entities for PreviousMatches table
-                                tableToEmployeesMap.computeIfAbsent(tableKey, k -> new ArrayList<>()).add(employeeParticipation.getEmployee().getId());
+                                tableToEmployeesMap.computeIfAbsent(tableKey, k -> new ArrayList<>()).add(epDTO.getEmployeeParticipation().getEmployee().getId());
                             } else {
                                 visitorParticipationToChairMap.put(visitorParticipations[j - 1].getId(), selectedChairId);
                                 tablesAndTheirSeats.get(tableKey).remove(0);

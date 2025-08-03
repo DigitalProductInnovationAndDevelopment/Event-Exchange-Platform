@@ -1,6 +1,6 @@
 package com.itestra.eep.repositories.custom;
 
-import com.itestra.eep.models.EmployeeParticipation;
+import com.itestra.eep.dtos.constraintSolver.EmployeeParticipationDTO;
 import com.itestra.eep.models.PreviousMatch;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +17,5 @@ public interface PreviousMatchesRepositoryCustom {
 
     void batchInsertPreviousMatches(List<PreviousMatch.PreviousMatchId> matches);
 
-    Set<EmployeeParticipation> getEmployeeParticipationsWithFilteredPreviousMatches(UUID eventId, int cutoffYear);
+    Set<EmployeeParticipationDTO> getEmployeeParticipationsWithFilteredPreviousMatches(UUID event, LocalDateTime eventDate, int cutoffYear);
 }

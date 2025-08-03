@@ -1,25 +1,21 @@
 package com.itestra.eep.repositories.custom.impl;
 
+import com.itestra.eep.dtos.constraintSolver.EmployeeParticipationDTO;
 import com.itestra.eep.exceptions.EventNotFoundException;
 import com.itestra.eep.models.Employee;
-import com.itestra.eep.models.EmployeeParticipation;
 import com.itestra.eep.models.Event;
 import com.itestra.eep.models.PreviousMatch;
+import com.itestra.eep.repositories.EmployeeParticipationRepository;
 import com.itestra.eep.repositories.EventRepository;
 import com.itestra.eep.repositories.custom.PreviousMatchesRepositoryCustom;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -28,7 +24,22 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
 
     private final JdbcTemplate jdbcTemplate;
     private final EventRepository eventRepository;
-    private final EntityManager entityManager;
+    private final EmployeeParticipationRepository employeeParticipationRepository;
+
+
+    @Override
+    public Map<UUID, List<UUID>> findEmployeeIdsSittingWithAcquaintances(UUID eventId, int cutoffYear) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+
+        LocalDateTime cutoffDate = event.getDate().minusYears(cutoffYear);
+        Set<UUID> eventsToConsider = eventRepository.findEventsByDateBetween(cutoffDate, event.getDate().minusMinutes(1));
+
+        List<Object[]> previousMatchesPairs = employeeParticipationRepository
+                .findEmployeePairsOfCurrentEventThatAreAcquaintedFromPreviousEvents(eventsToConsider, eventId);
+
+        return getAcquaintedEmployeesMap(previousMatchesPairs);
+
+    }
 
     @Override
     public void batchInsertPreviousMatches(List<PreviousMatch.PreviousMatchId> matches) {
@@ -53,35 +64,32 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
 
     @Override
     @Transactional(readOnly = true)
-    public Set<EmployeeParticipation> getEmployeeParticipationsWithFilteredPreviousMatches(UUID eventId, int cutoffYear) {
-
-        Session session = entityManager.unwrap(Session.class);
-        session.setDefaultReadOnly(true);
+    public Set<EmployeeParticipationDTO> getEmployeeParticipationsWithFilteredPreviousMatches(UUID eventId, LocalDateTime eventDate, int cutoffYear) {
 
         // we fetch all relevant data with entity graph to reduce DB round trips.
         Event event = eventRepository.findByIdJoinedWithPreviousMatches(eventId).orElseThrow(EventNotFoundException::new);
 
-        LocalDateTime eventDate = event.getDate();
         LocalDateTime cutoffDate = eventDate.minusYears(cutoffYear);
+
+        Set<UUID> eventsToConsider = eventRepository.findEventsByDateBetween(cutoffDate, eventDate);
+
+        Set<EmployeeParticipationDTO> employeeParticipationDTOs = new HashSet<>();
 
         event.getEmployeeParticipations().forEach(ep -> {
             Employee emp = ep.getEmployee();
             UUID empId = emp.getId();
 
-
-            Set<PreviousMatch> filteredMatches = emp.getPreviousMatches().stream()
-                    .filter(pm -> {
-                        LocalDateTime pmDate = pm.getId().getEvent().getDate();
-                        return pmDate.isBefore(eventDate) &&
-                                pmDate.isAfter(cutoffDate) &&
-                                empId.equals(pm.getId().getFirstEmployeeId());
-                    })
+            Set<PreviousMatch.PreviousMatchId> filteredMatches = emp.getPreviousMatches().stream()
+                    .filter(pm ->
+                            eventsToConsider.contains(pm.getId().getEventId()) &&
+                                    empId.equals(pm.getId().getFirstEmployeeId()))
+                    .map(PreviousMatch::getId)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
 
-            emp.getPreviousMatches().retainAll(filteredMatches);
+            employeeParticipationDTOs.add(new EmployeeParticipationDTO(ep, filteredMatches));
         });
 
-        return event.getEmployeeParticipations();
+        return employeeParticipationDTOs;
     }
 
     private Map<UUID, List<UUID>> getAcquaintedEmployeesMap(List<Object[]> pairs) {

@@ -37,9 +37,7 @@ public class Employee {
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EmployeeParticipation> participations = new HashSet<>();
 
-    // Do not Cascade changes or Orphan Remove. We modify this association
-    // when we perform Previous Matches Filtering. That change shouldn't be cascaded.
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = {}, orphanRemoval = false)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private Set<PreviousMatch> previousMatches = new LinkedHashSet<>();
 
     // TODO this is fetched EAGERLY for some reason during Employee Batch Upsert
