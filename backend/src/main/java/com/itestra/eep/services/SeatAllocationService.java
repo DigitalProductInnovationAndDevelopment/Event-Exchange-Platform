@@ -6,11 +6,14 @@ import com.itestra.eep.models.Participation;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface SeatAllocationService {
 
     List<SeatAllocationDetailsDTO> getSeatAllocations(UUID eventId);
+
+    Map<UUID, List<UUID>> findEmployeeIdsSittingWithAcquaintances(UUID eventId);
 
     <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
                                                                                      Class<T> participationClass, UUID[] neighborProfileIds);

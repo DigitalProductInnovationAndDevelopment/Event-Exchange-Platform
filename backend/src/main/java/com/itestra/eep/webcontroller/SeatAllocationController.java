@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -44,6 +45,13 @@ public class SeatAllocationController {
     public ResponseEntity<Boolean> setSeatAllocations(@RequestBody SeatAllocationUpsertDTO dto, @PathVariable UUID eventId) {
         seatAllocationService.assignOneParticipantToChairAndPersistNewNeighbors(dto.getParticipationId(), dto.getChairId(), eventId, null, dto.getNeighbourProfileIds());
         return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/{eventId}/findAcquaintances")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Map<UUID, List<UUID>>> findEmployeesSittingWithAcquaintances(@PathVariable UUID eventId) {
+        Map<UUID, List<UUID>> acquaintancesMap = seatAllocationService.findEmployeeIdsSittingWithAcquaintances(eventId);
+        return new ResponseEntity<>(acquaintancesMap, HttpStatus.OK);
     }
 
 }

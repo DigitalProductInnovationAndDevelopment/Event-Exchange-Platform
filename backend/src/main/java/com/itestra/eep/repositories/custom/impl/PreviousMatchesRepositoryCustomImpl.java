@@ -84,4 +84,15 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
         return event.getEmployeeParticipations();
     }
 
+    private Map<UUID, List<UUID>> getAcquaintedEmployeesMap(List<Object[]> pairs) {
+        Map<UUID, List<UUID>> result = new HashMap<>();
+        for (Object[] pair : pairs) {
+            UUID emp1 = (UUID) pair[0];
+            UUID emp2 = (UUID) pair[1];
+
+            result.computeIfAbsent(emp1, k -> new ArrayList<>()).add(emp2);
+            result.computeIfAbsent(emp2, k -> new ArrayList<>()).add(emp1);
+        }
+        return result;
+    }
 }

@@ -25,7 +25,14 @@ public interface EmployeeParticipationRepository extends JpaRepository<EmployeeP
     @Lock(LockModeType.PESSIMISTIC_READ)
     Optional<EmployeeParticipation> findByIdWithReadLock(UUID participationId);
 
-    @Query("select e.id from EmployeeParticipation e where e.id in ?1")
-    Set<UUID> findExistingEmployeeParticipationIdsIn(List<UUID> ids);
+    @Query("select pm.id.firstEmployeeId, pm.id.secondEmployeeId " +
+            "from PreviousMatch pm " +
+            "where pm.id.eventId = ?2 " +
+            "and exists (select 1 from PreviousMatch pm2 " +
+            "            where pm2.id.eventId in ?1 " +
+            "            and pm.id.secondEmployeeId = pm2.id.firstEmployeeId " +
+            "            and pm.id.firstEmployeeId = pm2.id.secondEmployeeId)")
+    List<Object[]> findEmployeePairsOfCurrentEventThatAreAcquaintedFromPreviousEvents(Set<UUID> previousEventIds, UUID currentEventId);
+
 
 }

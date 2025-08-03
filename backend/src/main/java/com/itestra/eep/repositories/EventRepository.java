@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -27,6 +28,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = {"employeeParticipations.employee.previousMatches"})
     Optional<Event> findByIdJoinedWithPreviousMatches(UUID id);
 
+    @Query("select e.id from Event e where e.date between ?1 and ?2")
+    Set<UUID> findEventsByDateBetween(LocalDateTime dateAfter, LocalDateTime dateBefore);
 
     @EntityGraph(attributePaths = {"schematics", "fileEntities"})
     List<Event> findAllByDateAfter(LocalDateTime dateAfter);

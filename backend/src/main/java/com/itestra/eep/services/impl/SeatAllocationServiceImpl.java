@@ -63,6 +63,12 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
         return eventRepository.findCurrentSeatAllocationsByEventId(eventId);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Map<UUID, List<UUID>> findEmployeeIdsSittingWithAcquaintances(UUID eventId) {
+        return previousMatchesRepository.findEmployeeIdsSittingWithAcquaintances(eventId, CUT_OFF_YEAR);
+    }
+
     @Override
     public <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
                                                                                             Class<T> participationClass, UUID[] neighborProfileIds) {
