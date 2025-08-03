@@ -481,7 +481,7 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
         updateMultipleWithoutUndoRedo(updates),
       );
 
-      if ((el as Chair).assigneeProfileId) {
+      if ((el as Chair).assigneeProfile) {
         toast.error("Cannot remove occupied chairs. Unassign participants before removing chairs from the table.");
         setTimeout(() => dispatch(undo(true)), 100);
       }

@@ -198,9 +198,9 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
 
       const selectedChair = chairs.find((chair) => chair.id === selectedIds[0]);
       if (selectedChair) {
-        if (!selectedChair.assigneeProfileId && selectedChair.attachedTo && (state.chairIdForManualAssignment === null || (state.chairIdForManualAssignment !== selectedChair.id))) {
+        if (!selectedChair.assigneeProfile && selectedChair.attachedTo && (state.chairIdForManualAssignment === null || (state.chairIdForManualAssignment !== selectedChair.id))) {
           dispatch(setChairIdForManualAssignment(selectedChair.id));
-        } else if (selectedChair.assigneeProfileId && state.chairIdForManualAssignment !== null && state.chairIdForManualAssignment === selectedChair.id) {
+        } else if (selectedChair.assigneeProfile && state.chairIdForManualAssignment !== null && state.chairIdForManualAssignment === selectedChair.id) {
           dispatch(setChairIdForManualAssignment(null));
         }
       }

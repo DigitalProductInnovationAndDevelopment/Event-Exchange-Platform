@@ -311,8 +311,8 @@ export default function useApiService() {
         // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/VisitorParticipation Tables
         canvasStateToPersist.elements.forEach((el) => {
           if (el.type === "chair") {
-            delete (el as Chair).assigneeProfileId;
-            delete (el as Chair).assigneeName;
+            delete (el as Chair).assigneeProfile;
+            delete (el as Chair).belongsToVisitor;
           }
         });
         const response = await request(`/schematics/${id}`, {

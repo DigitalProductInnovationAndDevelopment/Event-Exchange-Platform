@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Circle, Group, Text } from "react-konva";
 import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
 import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functions.tsx";
+import { getFullName, type Profile } from "types/employee.ts";
 
 export class Chair implements ElementProperties {
   id: UUID;
@@ -13,8 +14,7 @@ export class Chair implements ElementProperties {
   attachedTo: string | undefined;
   draggable: boolean;
   offset: { dx: number; dy: number };
-  assigneeProfileId?: string;
-  assigneeName?: string;
+  assigneeProfile?: Profile;
   belongsToVisitor?: boolean;
 
   constructor(stageCenter: { x: number, y: number }) {
@@ -27,8 +27,7 @@ export class Chair implements ElementProperties {
     this.attachedTo = undefined;
     this.draggable = true;
     this.offset = { dx: 0, dy: 0 };
-    this.assigneeProfileId = undefined;
-    this.assigneeName = undefined;
+    this.assigneeProfile = undefined;
     this.belongsToVisitor = false;
   }
 }
@@ -43,9 +42,9 @@ export function ChairRender(chair: Chair) {
         fill={chair.color || "#cccccc"}
         perfectDrawEnabled={false}
       />
-      {chair.assigneeName && (
+      {chair.assigneeProfile && (
         <Text
-          text={chair.assigneeName}
+          text={getFullName(chair.assigneeProfile)}
           x={-chair.radius - 5}
           y={-chair.radius - 15}
           fontSize={10}

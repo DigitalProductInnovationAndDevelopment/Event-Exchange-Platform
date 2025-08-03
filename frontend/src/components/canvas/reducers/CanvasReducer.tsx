@@ -156,8 +156,7 @@ export function reducer(state: AppState, action: Action) {
               x: (original as Chair).x + 50,
               y: (original as Chair).y + 50,
             };
-            delete (newChair as Chair).assigneeName;
-            delete (newChair as Chair).assigneeProfileId;
+            delete (newChair as Chair).assigneeProfile;
             newElements.push(newChair);
           } else if (
             original.type === "rectTable" ||

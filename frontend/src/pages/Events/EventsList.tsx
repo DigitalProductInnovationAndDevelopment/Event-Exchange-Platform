@@ -338,7 +338,7 @@ export const EventsList = () => {
             rowKey="id"
             columns={columns}
             dataSource={pastEvents}
-            pagination={{ pageSize: 15 }}
+            pagination={{ defaultPageSize: 15, showSizeChanger: true }}
             loading={loading}
           />
         ) : (

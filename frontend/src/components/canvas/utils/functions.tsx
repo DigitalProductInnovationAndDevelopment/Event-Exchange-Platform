@@ -65,6 +65,7 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
   if (!stageRef.current) return;
 
   const stage = stageRef.current;
+  stage.scale({ x: 1, y: 1 });
   const layers = stage.getLayers();
 
   // Check if there are any layers with content
@@ -160,7 +161,7 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
   }
 
   // Check directly selected assigned chairs
-  const hasAssignedChairs = chairsToBeDeleted.some(chair => chair.assigneeProfileId);
+  const hasAssignedChairs = chairsToBeDeleted.some(chair => chair.assigneeProfile);
   if (hasAssignedChairs) {
     toast.error("Cannot delete chair(s) that have assigned participants. Please unassign first.");
     return false;
@@ -174,7 +175,7 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
 
       const hasAssignedAttachedChairs = table.attachedChairs.some(chairId => {
         const chair = allChairMap.get(chairId);
-        return chair?.assigneeProfileId;
+        return chair?.assigneeProfile;
       });
 
       if (hasAssignedAttachedChairs) {
@@ -220,9 +221,9 @@ export function extractedNeighboringEmployeeProfileIds(
     neighbourProfileIds = state.elements.reduce<string[]>((acc, el) => {
       if (el.type === "chair" &&
         neighborChairIds.has(el.id) &&
-        (el as Chair).assigneeProfileId &&
+        (el as Chair).assigneeProfile &&
         !(el as Chair).belongsToVisitor) {
-        acc.push((el as Chair).assigneeProfileId!);
+        acc.push((el as Chair).assigneeProfile!.id!);
       }
       return acc;
     }, []);

@@ -14,7 +14,13 @@ import { CanvasTooltip } from "components/CanvasTooltip.tsx";
 import { areNeighbours, extractedNeighboringEmployeeProfileIds } from "components/canvas/utils/functions.tsx";
 import { setCanvasPosition, setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
-import { FullscreenExitOutlined, LeftOutlined, LoginOutlined, LogoutOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  FullscreenExitOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
 import Konva from "konva";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import toast from "react-hot-toast";
@@ -143,15 +149,13 @@ const SeatAllocationContent = ({
     state.elements
       ?.forEach((e: ElementProperties) => {
         if (e.type === "chair" && chairProfileMap.has(e.id)) {
-          (e as Chair).assigneeProfileId = chairProfileMap.get(e.id)!.id;
-          (e as Chair).assigneeName = getFullName(chairProfileMap.get(e.id)!);
+          (e as Chair).assigneeProfile = { ...chairProfileMap.get(e.id)! };
           (e as Chair).belongsToVisitor = chairProfileMap.get(e.id)!.isVisitor;
           if (!(e as Chair).attachedTo) {
             toast.error("Some participants are assigned to chairs that are not linked to a table. It might cause inconsistencies. Please be aware.");
           }
         } else if (e.type === "chair") {
-          (e as Chair).assigneeProfileId = undefined;
-          (e as Chair).assigneeName = undefined;
+          (e as Chair).assigneeProfile = undefined;
           (e as Chair).belongsToVisitor = undefined;
           emptyChairCount++;
         }
@@ -243,8 +247,8 @@ const SeatAllocationContent = ({
             style={{ transition: "all 0.2s ease" }}
             title={isCollapsed ? "Expand" : "Collapse"}
           >
-            {isCollapsed ? <LeftOutlined style={{ fontSize: "12px" }} /> :
-              <RightOutlined style={{ fontSize: "12px" }} />}
+            {isCollapsed ? <MenuFoldOutlined style={{ fontSize: "12px" }} /> :
+              <MenuUnfoldOutlined style={{ fontSize: "12px" }} />}
           </Button>
         </Space>
       </div>
@@ -338,7 +342,7 @@ const SeatAllocationContent = ({
                     (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
                     (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()),
                   ), [unallocated, unallocatedSearch])}
-                pagination={{ pageSize: 5, showLessItems: true }}
+                pagination={{ defaultPageSize: 5, showLessItems: true, showSizeChanger: true }}
                 renderItem={item => (
                   <List.Item
                     actions={[
@@ -393,7 +397,7 @@ const SeatAllocationContent = ({
               />
               {/* List of employees who are assigned to any seat */}
               <List
-                pagination={{ pageSize: 5, showLessItems: true }}
+                pagination={{ defaultPageSize: 5, showLessItems: true, showSizeChanger: true }}
                 dataSource={useMemo(() =>
                   allocated.filter(item =>
                     (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
