@@ -5,7 +5,7 @@ import { Arrow, ArrowRender } from "components/canvas/elements/Arrow.tsx";
 import { Text, TextRender } from "components/canvas/elements/Text.tsx";
 
 export type UUID = string;
-export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickWall" | "arrow" | "text";
+export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickWall" | "arrow" | "text" | "room";
 export type AlgorithmType = "table" | "distance";
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
@@ -22,6 +22,21 @@ export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
   WORKING_STUDENT: "orange",
   THESIS: "purple",
 };
+
+export enum DietaryPreference {
+  VEGETARIAN = "Vegetarian",
+  VEGAN = "Vegan",
+  LACTOSE_FREE = "Lactose Free",
+  FRUCTOSE_FREE = "Fructose Free",
+  GLUTEN_FREE = "Gluten Free",
+}
+
+export enum EmploymentType {
+  FULLTIME = "Full Time",
+  PARTTIME = "Part Time",
+  WORKING_STUDENT = "Working Student",
+  THESIS = "Thesis",
+}
 
 export interface ElementProperties {
   id: UUID;

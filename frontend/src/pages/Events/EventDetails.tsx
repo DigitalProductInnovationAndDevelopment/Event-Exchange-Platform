@@ -148,7 +148,7 @@ export const EventDetails = () => {
         });
         navigate(`${basePath}/${event!.schematics.id}`);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to create schematics.");
     }
   };

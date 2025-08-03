@@ -3,6 +3,11 @@ import { v4 as uuidv4 } from "uuid";
 import type { ElementProperties, ShapeType, UUID } from "components/canvas/utils/constants.tsx";
 import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functions.tsx";
 
+export type QuickWallProps = {
+  x1?: number;
+  y1?: number;
+}
+
 export class Wall implements ElementProperties {
   id: UUID;
   type: ShapeType;

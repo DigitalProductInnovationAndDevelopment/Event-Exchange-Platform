@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCanvas } from "./contexts/CanvasContext.tsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Group, Layer, Stage, Transformer } from "react-konva";
@@ -11,7 +12,7 @@ import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
 import StagePreview from "components/canvas/elements/StagePreview.tsx";
 import NeighbourArrows from "components/canvas/elements/NeighbourArrows.tsx";
-import SelectionRectangle from "components/canvas/elements/SelectionRectangle.tsx";
+import SelectionRectangle, { type SelectionRectangleType } from "components/canvas/elements/SelectionRectangle.tsx";
 import {
   handleDoubleClickOnElement,
   handleDragEnd,
@@ -28,12 +29,14 @@ import {
   handleWheel,
 } from "components/canvas/EventListeners.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
+import type { QuickWallProps } from "components/canvas/elements/Wall.tsx";
 
 
 const TYPE_ORDER: { [key in ShapeType]: number } = {
   rectTable: 2,
   circleTable: 3,
   chair: 4,
+  room: 0,
   wall: 1,
   quickWall: 1,
   arrow: 5,
@@ -47,7 +50,7 @@ export interface KonvaCanvasProps {
   isFullWidth?: boolean,
 }
 
-function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanvasProps) {
+export function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanvasProps) {
   const { state, dispatch } = useCanvas();
   let stageRef = useRef<Konva.Stage | null>(null);
   let { schematicsId } = useParams();
@@ -62,18 +65,24 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
-  const [quickWallCoordinates, setQuickWallCoordinates] = useState<{
-    x1?: number;
-    y1?: number;
-  }>({ x1: undefined, y1: undefined });
+  const [quickWallCoordinates, setQuickWallCoordinates] = useState<QuickWallProps>({ x1: undefined, y1: undefined });
   const { getSchematics } = useApiService();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [initiated, setInitiated] = useState(false);
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const dragLayer = useRef<Konva.Layer | null>(null);
   const mainLayer = useRef<Konva.Layer | null>(null);
-
-  const [selectionRectangle, setSelectionRectangle] = useState({
+  const isSelecting = useRef(false);
+  const transformerRef = useRef<Konva.Transformer>(null);
+  const rectRefs = useRef(new Map());
+  // we sort elements according to their types so that they are drawn properly
+  // this sort operation causes overhead initially but negligible afterward
+  // we use this hash function to limit these unnecessary re-sorts to only positions/properties change
+  const elementTypesHash = useMemo(() =>
+      state.elements?.map(el => el.type).join(","),
+    [state.elements],
+  );
+  const [selectionRectangle, setSelectionRectangle] = useState<SelectionRectangleType>({
     visible: false,
     x1: 0,
     y1: 0,
@@ -107,10 +116,6 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
     fetchData();
   }, [dispatch, getSchematics, initiated, schematicsId, state.canvasPosition, state.scale]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0); // we have to scroll to top-left corner of the page, otherwise it looks bad
-  }, []);
-
   // Measure container size
   useEffect(() => {
     const updateContainerSize = () => {
@@ -128,20 +133,17 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
     return () => window.removeEventListener("resize", updateContainerSize);
   }, [isFullWidth]);
 
-  const isSelecting = useRef(false);
-  const transformerRef = useRef<Konva.Transformer>(null);
-  const rectRefs = useRef(new Map());
-
+  // if selectedIds change, then capture them into Transformer so that we can scale or rotate them
   useEffect(() => {
     if (selectedIds.length && transformerRef.current) {
       const nodes = selectedIds.map(id => rectRefs.current.get(id)).filter(node => node);
-
       transformerRef.current.nodes(nodes);
     } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
     }
   }, [selectedIds]);
 
+  // if build mode changes, then reset quickwall
   useEffect(() => {
     if (state.buildMode === 0) setQuickWallCoordinates({ x1: undefined, y1: undefined });
   }, [state.buildMode]);
@@ -164,12 +166,6 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
       window.removeEventListener("keyup", handleKeyUpWrapper);
     };
   }, [dispatch, setSelectedIds, setIsShiftPressed, selectedIds, setQuickWallCoordinates, stageRef]);
-
-// unnecessary re-sorts when only positions/properties change
-  const elementTypesHash = useMemo(() =>
-      state.elements?.map(el => el.type).join(","),
-    [state.elements],
-  );
 
   useEffect(() => {
     if (state.elements?.length > 1) {
@@ -342,5 +338,3 @@ function KonvaCanvas({ stageReference, schematicsUUID, isFullWidth }: KonvaCanva
     </div>
   );
 }
-
-export default KonvaCanvas;

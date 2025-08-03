@@ -9,7 +9,8 @@ import type { Text } from "components/canvas/elements/Text.tsx";
 
 export interface Action {
   type: string;
-  payload: any | number | string | string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload: number | string | string[] | any;
   setSelectedIds?: Dispatch<SetStateAction<string[]>>;
 }
 

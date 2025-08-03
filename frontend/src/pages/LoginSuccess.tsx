@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 export const LoginSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, logout, isAuthenticated } = useAuth();
+  const { login, logout } = useAuth();
   const { getOwnProfile } = useApiService();
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";

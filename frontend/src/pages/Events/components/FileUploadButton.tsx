@@ -41,7 +41,7 @@ const FileUploadButton = ({
       setUploading(true);
       const uploadedFile: FileEntity | undefined = await fileUpload(formData);
       onUpload(uploadedFile);
-    } catch (error) {
+    } catch {
       toast.error("Upload failed");
     } finally {
       setUploading(false);

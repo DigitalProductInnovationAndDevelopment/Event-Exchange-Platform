@@ -18,7 +18,7 @@ import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import React from "react";
 import type { Table } from "components/canvas/elements/Table.tsx";
 import type { KonvaEventObject } from "konva/lib/Node";
-import type { Wall } from "components/canvas/elements/Wall.tsx";
+import type { QuickWallProps, Wall } from "components/canvas/elements/Wall.tsx";
 import type { SelectionRectangleType } from "components/canvas/elements/SelectionRectangle.tsx";
 import { validateCanvasElementDeletion } from "components/canvas/utils/functions.tsx";
 import toast from "react-hot-toast";
@@ -41,7 +41,7 @@ export const handleKeyDown = (
   dispatch: (action: Action) => void,
   setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
   setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
-  selectedIds: UUID[], setQuickWallCoordinates: any,
+  selectedIds: UUID[], setQuickWallCoordinates: React.Dispatch<React.SetStateAction<QuickWallProps>>,
   state: AppState) => {
   // we have to skip key handling if user is typing in an input or textarea
   const tag = (e.target as HTMLElement).tagName.toLowerCase();
@@ -158,7 +158,7 @@ export function handleDoubleClickOnElement(
 export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRectangle: SelectionRectangleType,
                               state: AppState,
                               stageRef: React.RefObject<Konva.Stage | null>,
-                              rectRefs: any,
+                              rectRefs: React.RefObject<Map<UUID, Konva.NodeConfig>>,
                               dispatch: (action: Action) => void,
                               setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>,
                               setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) {
@@ -184,7 +184,7 @@ export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRe
     // we are checking if rectangle intersects with selection box
     return Konva.Util.haveIntersection(
       selBox,
-      rectRefs.current.get(rect.id).getClientRect({ relativeTo: stageRef.current }),
+      rectRefs.current.get(rect.id)!.getClientRect({ relativeTo: stageRef.current }),
     );
   });
   dispatch(setChairIdForManualAssignment(null));
@@ -198,7 +198,7 @@ export const handleMouseMove = (
   stageRef: React.RefObject<Konva.Stage | null>,
   isSelecting: React.RefObject<boolean>,
   selectionRectangle: SelectionRectangleType,
-  setSelectionRectangle) => {
+  setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>) => {
 
   const container = stageRef!.current?.container();
   if (container && (isShiftPressed || state.buildMode === 1)) {
@@ -224,11 +224,11 @@ export const handleMouseDown = (
   isSelecting: React.RefObject<boolean>,
   dispatch: (action: Action) => void,
   setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
-  setSelectionRectangle,
+  setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>,
   scale: number,
   state: AppState,
-  quickWallCoordinates,
-  setQuickWallCoordinates) => {
+  quickWallCoordinates: QuickWallProps,
+  setQuickWallCoordinates: React.Dispatch<React.SetStateAction<QuickWallProps>>) => {
   const stage = e.target.getStage()!;
   const pointer = stageRef.current!.getPointerPosition()!;
   isSelecting.current = e.evt.shiftKey;
@@ -294,7 +294,13 @@ export const handleDragStart = (dispatch: (action: Action) => void) => {
 };
 
 // handle drag end for elements
-export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementProperties, dispatch: (action: Action) => void, state: AppState, rectRefs, stageRef: React.RefObject<Konva.Stage | null>) => {
+export const handleDragEnd = (
+  e: Konva.KonvaEventObject<DragEvent>,
+  el: ElementProperties,
+  dispatch: (action: Action) => void,
+  state: AppState,
+  rectRefs: React.RefObject<Map<UUID, Konva.NodeConfig>>,
+  stageRef: React.RefObject<Konva.Stage | null>) => {
   const shape = e.target;
   const x = shape.x();
   const y = shape.y();
@@ -493,9 +499,13 @@ export const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>, el: ElementP
 
 };
 
-export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (action: Action) => void, setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) => {
-  const nodes = transformerRef.current!.nodes();
+export const handleTransformEnd = (
+  transformerRef: React.RefObject<Konva.Transformer | null>,
+  state: AppState,
+  dispatch: (action: Action) => void,
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) => {
 
+  const nodes = transformerRef.current!.nodes();
   const selectedIds = [];
   const updates = [];
   for (const node of nodes) {
@@ -538,7 +548,7 @@ export const handleTransformEnd = (transformerRef, state: AppState, dispatch: (a
           };
     updates.push(update);
   }
-  // @ts-ignore
+
   dispatch(updateMultipleElements(updates));
   dispatch(setChairIdForManualAssignment(null));
   setSelectedIds(selectedIds);

@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
-import { type Employee, getFullName, Role } from "types/employee.ts";
+import { type Employee, getFullName, type Profile, Role } from "types/employee.ts";
 import useApiService from "services/apiService.ts";
 import toast from "react-hot-toast";
 import { Breadcrumb } from "components/Breadcrumb";
@@ -326,7 +326,9 @@ export const EmployeesList = () => {
   const handleAddAllEmployees = async () => {
     if (!importedRows.length) return;
     // Map importedRows to EmployeeCreateDTO-like objects
-    const payload = importedRows.map(row => ({
+    const payload: (Omit<Employee, "profile"> & {
+      profile: Omit<Profile, "id" | "dietTypes" | "isVisitor">
+    })[] = importedRows.map(row => ({
       profile: {
         name: row.name.trim(),
         lastName: row.lastName.trim(),
@@ -353,7 +355,7 @@ export const EmployeesList = () => {
         employees.push(...result.insertedEmployees.map(e => ({ ...e, key: e.profile.id })));
         setEmployees([...employees]);
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to import employees");
     } finally {
       setLoading(false);

@@ -1,4 +1,4 @@
-import type { UUID } from "components/canvas/utils/constants.tsx";
+import { DietaryPreference, type UUID } from "components/canvas/utils/constants.tsx";
 
 export interface Employee {
   profile: Profile;
@@ -59,22 +59,6 @@ export type ParticipationBatchResult = {
   createdParticipations: ParticipationDetails[];
   updatedParticipations: ParticipationDetails[];
 };
-
-
-export enum DietaryPreference {
-  VEGETARIAN = "Vegetarian",
-  VEGAN = "Vegan",
-  LACTOSE_FREE = "Lactose Free",
-  FRUCTOSE_FREE = "Fructose Free",
-  GLUTEN_FREE = "Gluten Free",
-}
-
-export enum EmploymentType {
-  FULLTIME = "Full Time",
-  PARTTIME = "Part Time",
-  WORKING_STUDENT = "Working Student",
-  THESIS = "Thesis",
-}
 
 export enum Role {
   ADMIN = "ADMIN",

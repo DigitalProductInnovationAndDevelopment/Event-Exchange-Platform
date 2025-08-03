@@ -28,7 +28,7 @@ export const Login = () => {
       if (success) {
         navigate("/login_success", { replace: true });
       }
-    } catch (error) {
+    } catch {
       setError("Invalid access code. Please try again.");
       toast.error("Invalid access code. Please try again.");
     } finally {
@@ -44,35 +44,39 @@ export const Login = () => {
     }
   };
 
-  const handleInputChange = (e: { target: { value: SetStateAction<string>; }; }) => {
+  const handleInputChange = (e: { target: { value: SetStateAction<string> } }) => {
     setAccessCode(e.target.value);
     setError("");
   };
 
-  const handleKeyPress = (e: { key: string; }) => {
+  const handleKeyPress = (e: { key: string }) => {
     if (e.key === "Enter") {
       handleVisitorLogin();
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-1/5 min-h-2/5 shadow-lg">
-        <div className="flex flex-col items-center space-y-6">
-          <img src={logo} alt="Company Logo" className="w-28 h-28 object-contain" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-500/50 px-4">
+      <Card className="w-full max-w-md p-6 shadow-xl rounded-2xl bg-white">
+        <div className="flex flex-col items-center space-y-5">
+          <img src={logo} alt="Company Logo" className="w-48 h-48 object-contain" />
+
+          <h1 className="text-xl font-semibold text-gray-800">Welcome to itestra</h1>
+          <h3 className="font-semibold text-gray-800">Event Exchange Platform</h3>
+          <p className="text-sm text-gray-500">Please choose how you'd like to sign in.</p>
 
           <Button
             type="primary"
-            className="w-full"
+            className="w-full transition duration-200 ease-in-out hover:scale-[1.01]"
             onClick={() => (window.location.href = `${BASE_URL}/oauth2/authorization/gitlab`)}
           >
-            Employee Login
+            Employee Login via GitLab
           </Button>
 
           <div className="w-full space-y-3">
             <Button
               type="default"
-              className="w-full flex items-center justify-center"
+              className="w-full flex items-center justify-center transition duration-200 ease-in-out hover:scale-[1.01]"
               icon={isVisitorExpanded ? <UpOutlined /> : <DownOutlined />}
               onClick={toggleVisitorLogin}
             >
@@ -80,7 +84,7 @@ export const Login = () => {
             </Button>
 
             {isVisitorExpanded && (
-              <div className="bg-gray-50 p-8 rounded-lg border space-y-3 w-66">
+              <div className="bg-white p-4 rounded-lg border space-y-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Access Code

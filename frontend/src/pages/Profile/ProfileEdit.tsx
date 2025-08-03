@@ -6,6 +6,7 @@ import useApiService from "services/apiService.ts";
 import { type Employee, getFullName, type Profile } from "types/employee.ts";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 import toast from "react-hot-toast";
+import type { UserType } from "types/auth.ts";
 
 const { Title } = Typography;
 
@@ -39,7 +40,7 @@ export const ProfileEdit = () => {
     try {
       // No gender normalization
       const ownProfile = await updateOwnProfile(employee.profile);
-      const values = {
+      const values: UserType = {
         name: getFullName(ownProfile!) || "",
         email: ownProfile!.email || "",
         roles: ownProfile!.authorities || [],

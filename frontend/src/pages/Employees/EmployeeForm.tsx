@@ -1,7 +1,8 @@
 import { DatePicker, Form, Input, Select } from "utils/antd.tsx";
-import { DietaryPreference, Role } from "types/employee";
+import { Role } from "types/employee";
 import { DietTypeTag } from "components/DietTypeTag.tsx";
 import dayjs from "dayjs";
+import { DietaryPreference } from "components/canvas/utils/constants.tsx";
 
 const { Option } = Select;
 

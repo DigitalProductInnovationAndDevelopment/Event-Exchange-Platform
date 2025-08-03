@@ -202,9 +202,7 @@ export function reducer(state: AppState, action: Action) {
         return updated;
       });
 
-      // eslint-disable-next-line
-      // @ts-ignore
-      action.setSelectedIds(Object.values(idMap));
+      if (action.setSelectedIds) action.setSelectedIds(Object.values(idMap));
 
       return {
         ...state,

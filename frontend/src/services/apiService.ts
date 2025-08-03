@@ -533,7 +533,7 @@ export default function useApiService() {
     [request],
   );
 
-  const generateSeatAllocations = useCallback(async (eventId: string, seatMap: any, constraintInputValues: any) => {
+  const generateSeatAllocations = useCallback(async (eventId: string, seatMap: unknown, constraintInputValues: unknown) => {
     try {
       return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/assign`,
         {

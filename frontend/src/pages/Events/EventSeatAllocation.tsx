@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { type Key, useEffect, useMemo, useState } from "react";
 import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
 import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
-import KonvaCanvas, { type KonvaCanvasProps } from "components/canvas/KonvaCanvas";
+import { KonvaCanvas, type KonvaCanvasProps } from "components/canvas/KonvaCanvas";
 import { getFullName, type Profile } from "types/employee";
 import { type AlgorithmType, type ElementProperties, type UUID } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
@@ -193,7 +193,7 @@ const SeatAllocationContent = ({
 
   };
 
-  const handleConstraintInputChange = (key, value) => {
+  const handleConstraintInputChange = (key: string, value: string) => {
     setConstraintInputValues(prev => ({
       ...prev,
       [key]: value,
@@ -266,7 +266,7 @@ const SeatAllocationContent = ({
                 setLoading(false);
               }
             }}>
-            Show Acquainted Employees
+            Highlight Acquainted Employees
           </Button>
         </div>
 
@@ -322,7 +322,7 @@ const SeatAllocationContent = ({
                     { label: "Location", key: "Standort" },
                     { label: "Seniority", key: "Anstellung" },
                     { label: "Gender", key: "Geschlecht" },
-                  ].map(({ label, key }, idx) => (
+                  ].map(({ key }: { key: Key }, idx) => (
                     <div key={key} className="flex items-center min-h-[40px] h-full">
                       {idx === 0 ? (
                         <span className="text-left text-gray-500">always considered</span>

@@ -13,7 +13,7 @@ import {
 } from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useApiService from "../../services/apiService";
 import { DeleteOutlined, UploadOutlined, UserAddOutlined } from "@ant-design/icons";
 import { type Employee, getFullName, type ParticipationDetails } from "types/employee.ts";
@@ -201,7 +201,7 @@ export const EventParticipants = () => {
       key: "name",
       sorter: (a: ParticipationDetails, b: ParticipationDetails) =>
         getFullName(a).localeCompare(getFullName(b)),
-      render: (_: any, record: ParticipationDetails) => getFullName(record),
+      render: (_: unknown, record: ParticipationDetails) => getFullName(record),
     },
     {
       title: "Last Name",
@@ -209,7 +209,7 @@ export const EventParticipants = () => {
       key: "lastName",
       sorter: (a: ParticipationDetails, b: ParticipationDetails) =>
         (a.lastName ?? "").localeCompare(b.lastName ?? ""),
-      render: (_: any, record: ParticipationDetails) => record.lastName ?? "",
+      render: (_: unknown, record: ParticipationDetails) => record.lastName ?? "",
     },
     { title: "Email", dataIndex: "email", key: "email" },
     {
@@ -233,7 +233,7 @@ export const EventParticipants = () => {
     {
       title: "",
       key: "actions",
-      render: (_: any, record: ParticipationDetails) => (
+      render: (_: unknown, record: ParticipationDetails) => (
         <Popconfirm
           placement="right"
           title="Are you sure you want to delete this participant?"
@@ -258,7 +258,7 @@ export const EventParticipants = () => {
         parse(csv, {
           header: true,
           skipEmptyLines: true,
-          complete: (results: Papa.ParseResult<any>) => {
+          complete: (results: Papa.ParseResult<never>) => {
             // Validate headers
             const expectedHeaders = ['email', 'guestCount'];
             const actualHeaders = results.meta.fields || [];
@@ -279,7 +279,7 @@ export const EventParticipants = () => {
             }
 
             // Expecting columns: email, guestCount
-            const rows = (results.data as any[])
+            const rows = (results.data as ParticipationDetails[])
               .map(row => ({
                 email: row.email?.trim() || "",
                 guestCount: Number(row.guestCount) || 0,
@@ -389,7 +389,7 @@ export const EventParticipants = () => {
             {
               title: "",
               key: "actions",
-              render: (_: any, record: Employee & { id: string }) => (
+              render: (_: unknown, record: Employee & { id: string }) => (
                 <Button
                   type="primary"
                   icon={<UserAddOutlined />}
