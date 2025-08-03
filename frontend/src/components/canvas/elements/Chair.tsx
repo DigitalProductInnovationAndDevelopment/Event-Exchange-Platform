@@ -14,8 +14,9 @@ export class Chair implements ElementProperties {
   attachedTo: string | undefined;
   draggable: boolean;
   offset: { dx: number; dy: number };
-  assigneeProfile?: Profile;
-  belongsToVisitor?: boolean;
+  assigneeProfile?: Profile; // we don't persist this data to DB
+  belongsToVisitor?: boolean; // we don't persist this data to DB
+  acquaintedProfileIds?: UUID[]; // we don't persist this data to DB
 
   constructor(stageCenter: { x: number, y: number }) {
     this.id = uuidv4();
@@ -29,6 +30,7 @@ export class Chair implements ElementProperties {
     this.offset = { dx: 0, dy: 0 };
     this.assigneeProfile = undefined;
     this.belongsToVisitor = false;
+    this.acquaintedProfileIds = undefined;
   }
 }
 
@@ -39,7 +41,11 @@ export function ChairRender(chair: Chair) {
       onMouseOut={handleMouseOut}>
       <Circle
         radius={chair.radius || 10}
-        fill={chair.color || "#cccccc"}
+        fill={
+          !chair.acquaintedProfileIds ? (chair.color ?? "#cccccc") :
+            chair.acquaintedProfileIds.length > 0 ? "red" :
+              "rgba(73,154,33,0.79)"
+        }
         perfectDrawEnabled={false}
       />
       {chair.assigneeProfile && (

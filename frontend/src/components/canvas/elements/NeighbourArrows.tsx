@@ -30,11 +30,14 @@ function NeighbourArrows({
 
   const arrows = chairs
     .filter((chair) => chair.id !== selectedChair.id)
-    .filter((chair) => {
+    .filter((neighborChair) => {
       if (algorithmType === "table") {
-        return selectedChair.attachedTo === chair.attachedTo;
+        if (selectedChair.acquaintedProfileIds && neighborChair.assigneeProfile) {
+          return selectedChair.acquaintedProfileIds.includes(neighborChair.assigneeProfile.id);
+        }
+        return false;
       } else if (algorithmType === "distance") {
-        return areNeighbours(selectedChair, chair);
+        return areNeighbours(selectedChair, neighborChair);
       } else {
         return false;
       }

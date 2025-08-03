@@ -6,7 +6,7 @@ import useApiService from "services/apiService";
 import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
 import KonvaCanvas, { type KonvaCanvasProps } from "components/canvas/KonvaCanvas";
 import { getFullName, type Profile } from "types/employee";
-import { type AlgorithmType, type ElementProperties } from "components/canvas/utils/constants.tsx";
+import { type AlgorithmType, type ElementProperties, type UUID } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { Table } from "components/canvas/elements/Table.tsx";
 
@@ -49,7 +49,12 @@ const SeatAllocationContent = ({
   const [allocated, setAllocated] = useState<SeatAllocationResult[]>([]);
   const [unallocatedSearch, setUnallocatedSearch] = useState("");
   const [allocatedSearch, setAllocatedSearch] = useState("");
-  const { getSeatAllocations, updateSeatAllocation, generateSeatAllocations } = useApiService();
+  const {
+    getSeatAllocations,
+    updateSeatAllocation,
+    generateSeatAllocations,
+    findEmployeesSittingWithAcquaintances,
+  } = useApiService();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [emptyChairCount, setEmptyChairCount] = useState(0);
   const [constraintInputValues, setConstraintInputValues] = useState({
@@ -151,12 +156,14 @@ const SeatAllocationContent = ({
         if (e.type === "chair" && chairProfileMap.has(e.id)) {
           (e as Chair).assigneeProfile = { ...chairProfileMap.get(e.id)! };
           (e as Chair).belongsToVisitor = chairProfileMap.get(e.id)!.isVisitor;
+          (e as Chair).acquaintedProfileIds = undefined;
           if (!(e as Chair).attachedTo) {
             toast.error("Some participants are assigned to chairs that are not linked to a table. It might cause inconsistencies. Please be aware.");
           }
         } else if (e.type === "chair") {
           (e as Chair).assigneeProfile = undefined;
           (e as Chair).belongsToVisitor = undefined;
+          (e as Chair).acquaintedProfileIds = undefined;
           emptyChairCount++;
         }
       });
@@ -233,6 +240,33 @@ const SeatAllocationContent = ({
             }}
             title="Find and go to the first chair element on the canvas">
             <FullscreenExitOutlined />
+          </Button>
+          <Button
+            className="ms-3 mt-2"
+            type="primary"
+            title={`Green Chairs: every employee at the table is new \nRed Chairs: know at least one employee`}
+            onClick={async () => {
+              try {
+                setLoading(true);
+                const employeeIdsSittingWithTheirAcquaintances: Record<UUID, UUID[]> | null = await findEmployeesSittingWithAcquaintances(eventId);
+                if (employeeIdsSittingWithTheirAcquaintances) {
+                  state.elements.forEach(element => {
+                    if (element.type === "chair") {
+                      const chair = element as Chair;
+                      // we have to clear chair's state
+                      chair.acquaintedProfileIds = undefined;
+                      if (chair.assigneeProfile && !chair.belongsToVisitor) {
+                        const employeeId = chair.assigneeProfile!.id;
+                        chair.acquaintedProfileIds = employeeIdsSittingWithTheirAcquaintances[employeeId] ?? [];
+                      }
+                    }
+                  });
+                }
+              } finally {
+                setLoading(false);
+              }
+            }}>
+            Show Acquainted Employees
           </Button>
         </div>
 

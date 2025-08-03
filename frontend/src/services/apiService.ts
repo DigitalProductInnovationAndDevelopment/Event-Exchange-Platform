@@ -13,6 +13,7 @@ import { useAuth } from "../contexts/AuthContext.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import { Chair } from "components/canvas/elements/Chair.tsx";
 import { useNavigate } from "react-router-dom";
+import type { UUID } from "components/canvas/utils/constants.tsx";
 
 export const BASE_URL = import.meta.env.VITE_API_ORIGIN;
 
@@ -313,6 +314,7 @@ export default function useApiService() {
           if (el.type === "chair") {
             delete (el as Chair).assigneeProfile;
             delete (el as Chair).belongsToVisitor;
+            delete (el as Chair).acquaintedProfileIds;
           }
         });
         const response = await request(`/schematics/${id}`, {
@@ -573,6 +575,15 @@ export default function useApiService() {
     }
   }, [request]);
 
+  const findEmployeesSittingWithAcquaintances = useCallback(async (eventId: string) => {
+    try {
+      return await request<Record<UUID, UUID[]>>(`/seat-allocation/${eventId}/findAcquaintances`);
+    } catch (err) {
+      toast.error("Fetching employee acquaintances for this event failed");
+      return null;
+    }
+  }, [request]);
+
   return {
     request,
     logoutRequest,
@@ -603,6 +614,7 @@ export default function useApiService() {
     updateParticipant,
     deleteParticipation,
     generateSeatAllocations,
+    findEmployeesSittingWithAcquaintances,
     getSeatAllocations,
     updateSeatAllocation,
   };
