@@ -560,7 +560,7 @@ export default function useApiService() {
 
   const unsetAllSeatAllocations = useCallback(async (eventId: string) => {
     try {
-      return await request<void>(`/seat-allocation/${eventId}/unsetAllChairs`);
+      return await request<boolean>(`/seat-allocation/${eventId}/unsetAllChairs`);
     } catch (err) {
       toast.error("Unsetting of all seat allocations for this event failed");
     }

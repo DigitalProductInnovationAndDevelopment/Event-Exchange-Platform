@@ -224,13 +224,14 @@ const SeatAllocationContent = ({
     try {
       setLoading(true);
       setShowUnseatAllConfirmModal(false);
-      unsetAllSeatAllocations(eventId).then(() => {
-
-        participants.forEach(p => {
-          p.chairId = null;
-        });
-        setParticipants([...participants]);
-        toast.success("All Participants are unseated successfully!");
+      unsetAllSeatAllocations(eventId).then((result) => {
+        if (result) {
+          participants.forEach(p => {
+            p.chairId = null;
+          });
+          setParticipants([...participants]);
+          toast.success("All Participants are unseated successfully!");
+        }
       });
     } finally {
       setLoading(false);
