@@ -71,6 +71,12 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
     }
 
     @Override
+    public void unsetAllChairAssignmentsOfEvent(UUID eventId) {
+        chairRepository.unsetAllEmployeeParticipationChairsByEventId(eventId);
+        chairRepository.unsetAllVisitorParticipationChairsByEventId(eventId);
+    }
+
+    @Override
     public <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
                                                                                             Class<T> participationClass, UUID[] neighborProfileIds) {
 

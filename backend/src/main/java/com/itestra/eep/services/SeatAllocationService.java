@@ -15,6 +15,8 @@ public interface SeatAllocationService {
 
     Map<UUID, List<UUID>> findEmployeeIdsSittingWithAcquaintances(UUID eventId);
 
+    void unsetAllChairAssignmentsOfEvent(UUID eventId);
+
     <T extends Participation> void assignOneParticipantToChairAndPersistNewNeighbors(UUID participationId, UUID chairId, UUID eventId,
                                                                                      Class<T> participationClass, UUID[] neighborProfileIds);
 

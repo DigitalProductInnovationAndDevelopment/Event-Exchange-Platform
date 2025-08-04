@@ -54,4 +54,11 @@ public class SeatAllocationController {
         return new ResponseEntity<>(acquaintancesMap, HttpStatus.OK);
     }
 
+    @GetMapping("/{eventId}/unsetAllChairs")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Boolean> unsetAllChairAssignmentsOfEvent(@PathVariable UUID eventId) {
+        seatAllocationService.unsetAllChairAssignmentsOfEvent(eventId);
+        return ResponseEntity.ok(true);
+    }
+
 }
