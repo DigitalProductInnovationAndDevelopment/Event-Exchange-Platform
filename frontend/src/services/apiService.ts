@@ -558,6 +558,14 @@ export default function useApiService() {
     }
   }, [request]);
 
+  const unsetAllSeatAllocations = useCallback(async (eventId: string) => {
+    try {
+      return await request<void>(`/seat-allocation/${eventId}/unsetAllChairs`);
+    } catch (err) {
+      toast.error("Unsetting of all seat allocations for this event failed");
+    }
+  }, [request]);
+
   const updateSeatAllocation = useCallback(async (eventId: string, newSeatAllocations: SeatAllocationUpsert) => {
     try {
       const response = await request<boolean>(
@@ -617,5 +625,6 @@ export default function useApiService() {
     findEmployeesSittingWithAcquaintances,
     getSeatAllocations,
     updateSeatAllocation,
+    unsetAllSeatAllocations,
   };
 }

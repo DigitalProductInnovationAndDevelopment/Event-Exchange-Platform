@@ -1,5 +1,18 @@
 import React, { type Key, useEffect, useMemo, useState } from "react";
-import { Avatar, Button, Card, Col, Input, InputNumber, List, Row, Space, Spin, Typography } from "utils/antd.tsx";
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Input,
+  InputNumber,
+  List,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Typography,
+} from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb";
 import useApiService from "services/apiService";
@@ -15,6 +28,7 @@ import { areNeighbours, extractedNeighboringEmployeeProfileIds } from "component
 import { setCanvasPosition, setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
 import {
+  ClearOutlined,
   FullscreenExitOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -49,11 +63,13 @@ const SeatAllocationContent = ({
   const [allocated, setAllocated] = useState<SeatAllocationResult[]>([]);
   const [unallocatedSearch, setUnallocatedSearch] = useState("");
   const [allocatedSearch, setAllocatedSearch] = useState("");
+  const [showUnseatAllConfirmModal, setShowUnseatAllConfirmModal] = useState(false);
   const {
     getSeatAllocations,
     updateSeatAllocation,
     generateSeatAllocations,
     findEmployeesSittingWithAcquaintances,
+    unsetAllSeatAllocations,
   } = useApiService();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [emptyChairCount, setEmptyChairCount] = useState(0);
@@ -200,6 +216,28 @@ const SeatAllocationContent = ({
     }));
   };
 
+  const handleUnallocateAllClick = () => {
+    setShowUnseatAllConfirmModal(true);
+  };
+
+  const handleUnallocateAllConfirm = () => {
+    try {
+      setLoading(true);
+      setShowUnseatAllConfirmModal(false);
+      unsetAllSeatAllocations(eventId).then(() => {
+
+        participants.forEach(p => {
+          p.chairId = null;
+        });
+        setParticipants([...participants]);
+        toast.success("All Participants are unseated successfully!");
+      });
+    } finally {
+      setLoading(false);
+    }
+
+  };
+
   stageRefs?.current?.getStage()?.fire("contentReady");
 
   return (
@@ -208,7 +246,7 @@ const SeatAllocationContent = ({
       <Breadcrumb
         items={[
           { path: "/events", label: "Events" },
-          { path: `/events/${eventId}`, label: eventName || "Event" },
+          { path: `/events/${eventId}`, label: eventName || "Selected Event" },
           { path: `/events/${eventId}/seat-allocation/${schematicsId}`, label: "Manage Seat Allocation" },
         ]}
       />
@@ -376,7 +414,7 @@ const SeatAllocationContent = ({
                     (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
                     (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()),
                   ), [unallocated, unallocatedSearch])}
-                pagination={{ defaultPageSize: 5, showLessItems: true, showSizeChanger: true }}
+                pagination={{ defaultPageSize: 5, showSizeChanger: true, size: "small" }}
                 renderItem={item => (
                   <List.Item
                     actions={[
@@ -420,9 +458,13 @@ const SeatAllocationContent = ({
                 )}
               />
             </Card>
-            <Card title={`Allocated Participants ( ${allocated.length} / ${allocated.length + unallocated.length} )`}
-                  className="mb-6"
-                  style={{ display: isCollapsed || allocated.length === 0 ? "none" : "block" }}>
+            <Card
+              title={`Allocated Participants ( ${allocated.length} / ${allocated.length + unallocated.length} )`}
+              extra={<Button className="mr-2" icon={<ClearOutlined style={{ fontSize: 16, color: "red" }} />}
+                             onClick={handleUnallocateAllClick}></Button>}
+              className="mb-6"
+              style={{ display: isCollapsed || allocated.length === 0 ? "none" : "block" }}
+            >
               <Input.Search
                 placeholder="Search"
                 value={allocatedSearch}
@@ -431,7 +473,7 @@ const SeatAllocationContent = ({
               />
               {/* List of employees who are assigned to any seat */}
               <List
-                pagination={{ defaultPageSize: 5, showLessItems: true, showSizeChanger: true }}
+                pagination={{ defaultPageSize: 5, showSizeChanger: true, size: "small" }}
                 dataSource={useMemo(() =>
                   allocated.filter(item =>
                     (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
@@ -469,6 +511,21 @@ const SeatAllocationContent = ({
           </div>
         </Col>
       </Row>
+
+      {/* Unseat All seated participants of this event */}
+      <Modal
+        title="Unseat All Participants"
+        open={showUnseatAllConfirmModal}
+        onOk={handleUnallocateAllConfirm}
+        onCancel={() => setShowUnseatAllConfirmModal(false)}
+        okText="Confirm"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+        centered
+      >
+        <p>Are you sure you want to unseat all participants?</p>
+      </Modal>
+
     </div>
   );
 };
