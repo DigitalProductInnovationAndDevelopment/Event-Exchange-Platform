@@ -48,10 +48,10 @@ export interface ParticipationDetails {
   eventType: string;
   eventDate: string;
   eventAddress: string;
-  name: string;
-  lastName: string;
-  gitlabUsername: string;
-  email: string;
+  name?: string;
+  lastName?: string;
+  gitlabUsername?: string;
+  email?: string;
   dietTypes: (keyof typeof DietaryPreference)[];
 }
 

@@ -10,7 +10,7 @@ interface DietaryCombinationsResult {
 // Utility function to export participation data as CSV
 export const exportParticipationToCSV = (data: ParticipationDetails[], eventName: string) => {
   // Sort data alphabetically by last name
-  const sortedData = data.sort((a, b) => a.lastName.localeCompare(b.lastName));
+  const sortedData = data.sort((a, b) => (a.lastName || "").localeCompare(b.lastName || ""));
   
   // Define CSV headers
   const headers = [
