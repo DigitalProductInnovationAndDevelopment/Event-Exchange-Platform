@@ -518,34 +518,55 @@ export const handleTransformEnd = (
     node.scaleX(1);
     node.scaleY(1);
 
+    // if chairs are rotated together with the table that they are attached to,
+    // then we need this extra offset
+    let chairSpecificExtraTableOffset = null;
+    if (el.type === "chair" && el.attachedTo) {
+      const tableNode = nodes.find(node => node.attrs.id === el.attachedTo);
+      const table = state.elements.find(e => e.id === el.attachedTo)!;
+      if (tableNode && table) {
+        chairSpecificExtraTableOffset = { dx: tableNode?.x() - table.x!, dy: tableNode?.y() - table.y! };
+      }
+
+    }
+
     const update =
-      el.type === "circleTable" || el.type === "chair"
-        ? {
+      el.type === "circleTable" ? {
           id,
           radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
           rotation: node.rotation(),
           x: node.x()!,
           y: node.y()!,
-        }
-        : el.type !== "wall" && el.type !== "arrow"
-          ? {
+        } :
+        el.type === "chair" ? {
             id,
-            x: node.x()!,
-            y: node.y()!,
-            width: el.width ? Math.max(10, el.width * scaleX) : undefined,
-            height: el.height ? Math.max(10, el.height * scaleY) : undefined,
-            rotation: node.rotation(),
-          }
-          : {
-            id,
+            radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
+            rotation: node.rotation(), // Same rotation as table
             x: node.x(),
             y: node.y(),
-            x1: el.x1! * scaleX,
-            y1: el.y1! * scaleY,
-            x2: el.x2! * scaleX,
-            y2: el.y2! * scaleY,
-            rotation: node.rotation(),
-          };
+            offset: {
+              dx: el.offset!.dx! + (node.x() - el.x!) - (chairSpecificExtraTableOffset?.dx || 0), // Current relative position to table
+              dy: el.offset!.dy! + (node.y() - el.y!) - (chairSpecificExtraTableOffset?.dy || 0), // Current relative position to table
+            },
+          } :
+          el.type !== "wall" && el.type !== "arrow" ? {
+              id,
+              x: node.x()!,
+              y: node.y()!,
+              width: el.width ? Math.max(10, el.width * scaleX) : undefined,
+              height: el.height ? Math.max(10, el.height * scaleY) : undefined,
+              rotation: node.rotation(),
+            } :
+            {
+              id,
+              x: node.x(),
+              y: node.y(),
+              x1: el.x1! * scaleX,
+              y1: el.y1! * scaleY,
+              x2: el.x2! * scaleX,
+              y2: el.y2! * scaleY,
+              rotation: node.rotation(),
+            };
     updates.push(update);
   }
 
