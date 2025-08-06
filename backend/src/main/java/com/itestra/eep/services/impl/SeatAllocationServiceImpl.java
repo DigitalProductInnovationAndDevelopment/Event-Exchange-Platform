@@ -72,6 +72,13 @@ public class SeatAllocationServiceImpl implements SeatAllocationService {
 
     @Override
     public void unsetAllChairAssignmentsOfEvent(UUID eventId) {
+
+        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+
+        if (event.getDate().isBefore(LocalDateTime.now())) {
+            throw new ParticipantOfPastEventException();
+        }
+
         chairRepository.unsetAllEmployeeParticipationChairsByEventId(eventId);
         chairRepository.unsetAllVisitorParticipationChairsByEventId(eventId);
     }
