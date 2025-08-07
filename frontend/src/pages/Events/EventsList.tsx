@@ -257,6 +257,8 @@ export const EventsList = () => {
             }}
             rowKey="id"
             columns={columns}
+            // eslint-disable-next-line
+            // @ts-ignore
             dataSource={upcomingEvents}
             pagination={false}
             loading={loading}
@@ -354,6 +356,8 @@ export const EventsList = () => {
             }}
             rowKey="id"
             columns={columns}
+            // eslint-disable-next-line
+            // @ts-ignore
             dataSource={pastEvents}
             pagination={{ defaultPageSize: 15, showSizeChanger: true }}
             loading={loading}

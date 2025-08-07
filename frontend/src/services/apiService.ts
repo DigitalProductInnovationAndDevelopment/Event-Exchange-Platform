@@ -403,7 +403,9 @@ export default function useApiService() {
   );
 
   const createEmployeeBatch = useCallback(
-    async (employeeDataList: Employee[]): Promise<EmployeeBatchUpsertResponse | null> => {
+    async (employeeDataList: (Omit<Employee, "profile"> & {
+      profile: Omit<Profile, "id" | "dietTypes" | "isVisitor">
+    })[]): Promise<EmployeeBatchUpsertResponse | null> => {
       try {
         const response = await request<EmployeeBatchUpsertResponse>("/profile/employees/batch", {
           method: "POST",

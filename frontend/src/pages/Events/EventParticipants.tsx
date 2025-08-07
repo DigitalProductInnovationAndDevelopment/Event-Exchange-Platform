@@ -186,7 +186,7 @@ export const EventParticipants = () => {
   const filteredParticipants = participants.filter(
     e =>
       getFullName(e).toLowerCase().includes(participantSearch.toLowerCase()) ||
-      e.email.toLowerCase().includes(participantSearch.toLowerCase())
+      e.email?.toLowerCase().includes(participantSearch.toLowerCase())
   );
 
   const columns = [

@@ -84,9 +84,9 @@ const SeatAllocationContent = ({
   const [emptyChairCount, setEmptyChairCount] = useState(0);
   const [constraintInputValues, setConstraintInputValues] = useState({
     "last neighborhood": 0,
-    Standort: 0,
-    Anstellung: 0,
-    Geschlecht: 0,
+    "Standort": 0,
+    "Zugehörigkeit": 0,
+    "Geschlecht": 0,
   });
 
   // Calculate unallocated employees based on current seat assignment
@@ -379,7 +379,7 @@ const SeatAllocationContent = ({
                     { label: "Guests seated with employee", key: "guestsWithEmployee" },
                     { label: "Past Matches", key: "last neighborhood" },
                     { label: "Location", key: "Standort" },
-                    { label: "Seniority", key: "Anstellung" },
+                    { label: "Seniority", key: "Zugehörigkeit" },
                     { label: "Gender", key: "Geschlecht" },
                   ].map(({ label, key }) => (
                     <div key={key} className="flex items-center min-h-[40px] h-full">
@@ -392,7 +392,7 @@ const SeatAllocationContent = ({
                     { label: "Guests seated with employee", key: "guestsWithEmployee" },
                     { label: "Past Matches", key: "last neighborhood" },
                     { label: "Location", key: "Standort" },
-                    { label: "Seniority", key: "Anstellung" },
+                    { label: "Seniority", key: "Zugehörigkeit" },
                     { label: "Gender", key: "Geschlecht" },
                   ].map(({ key }: { key: Key }, idx) => (
                     <div key={key} className="flex items-center min-h-[40px] h-full">
@@ -402,7 +402,11 @@ const SeatAllocationContent = ({
                         <InputNumber
                           min={0}
                           max={3}
+                          // eslint-disable-next-line
+                          // @ts-ignore
                           value={constraintInputValues[key]}
+                          // eslint-disable-next-line
+                          // @ts-ignore
                           onChange={value => handleConstraintInputChange(key, value)}
                           step={1}
                           style={{ width: 80, marginLeft: 0 }}

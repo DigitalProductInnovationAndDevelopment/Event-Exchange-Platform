@@ -10,7 +10,7 @@ export interface Employee {
 
 export function getFullName(profile: Profile | ParticipationDetails | undefined): string | "" {
   if (profile) {
-    return profile.lastName ? `${profile.name} ${profile.lastName}` : profile.name;
+    return profile.lastName ? `${profile.name} ${profile.lastName}` : profile.name || "";
   }
   return "";
 }
