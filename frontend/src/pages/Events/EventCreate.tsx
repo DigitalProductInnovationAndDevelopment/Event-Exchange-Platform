@@ -151,12 +151,15 @@ export const EventCreate = () => {
                     <TextArea rows={4} />
                   </Form.Item>
                 </Descriptions.Item>
-                
+
                 <Descriptions.Item label="Notes" span={3}>
                   <Form.Item name="notes" noStyle>
-                    <TextArea rows={2} placeholder="Write your notes here. Only visible to admins." />
+                    <TextArea
+                      rows={2}
+                      placeholder="Write your notes here. Only visible to admins."
+                    />
                   </Form.Item>
-                </Descriptions.Item> 
+                </Descriptions.Item>
               </Descriptions>
             </Form>
           </Card>

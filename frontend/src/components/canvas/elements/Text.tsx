@@ -15,7 +15,7 @@ export class Text implements ElementProperties {
   color: string;
   draggable: boolean;
 
-  constructor(stageCenter: { x: number, y: number }) {
+  constructor(stageCenter: { x: number; y: number }) {
     this.id = uuidv4();
     this.type = "text";
     this.name = "text";

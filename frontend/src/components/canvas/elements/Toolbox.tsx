@@ -1,47 +1,62 @@
 import { Group, Layer, Rect, Stage, Text } from "react-konva";
-import { shapeFactory, type ShapeType, TOOLBOX_ITEMS, TOOLBOX_X, TOOLBOX_Y, type UUID } from "../utils/constants";
+import {
+  shapeFactory,
+  type ShapeType,
+  TOOLBOX_ITEMS,
+  TOOLBOX_X,
+  TOOLBOX_Y,
+  type UUID,
+} from "../utils/constants";
 import type { AppState } from "../reducers/CanvasReducer.tsx";
 import Konva from "konva";
 import React, { useRef } from "react";
 import useApiService from "services/apiService.ts";
 import { useParams } from "react-router-dom";
-import { type Action, addElement, changeBuildMode, clearUnsavedChairsState } from "../actions/actions.tsx";
+import {
+  type Action,
+  addElement,
+  changeBuildMode,
+  clearUnsavedChairsState,
+} from "../actions/actions.tsx";
 import { ElementInspector } from "components/canvas/elements/ElementInspector.tsx";
 import { findStageCenterCoordinates } from "components/canvas/utils/functions.tsx";
 
+const handleToolboxClick = (
+  type: ShapeType,
+  dispatch: (action: Action) => void,
+  currentBuildMode: number,
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
+  stageCenter: {
+    x: number;
+    y: number;
+  }
+) => {
+  const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
+  if (!toolItem) return;
 
-const handleToolboxClick =
-  (type: ShapeType, dispatch: (action: Action) => void, currentBuildMode: number, setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>, stageCenter: {
-    x: number,
-    y: number
-  }) => {
-    const toolItem = TOOLBOX_ITEMS.find(item => item.type === type);
-    if (!toolItem) return;
-
-    if (type === "quickWall") {
-      // Toggle quickwall mode: if already in build mode 1, switch back to 0
-      const newBuildMode = currentBuildMode === 1 ? 0 : 1;
-      dispatch(changeBuildMode(newBuildMode));
-    } else {
-      const newShape = shapeFactory(type, stageCenter);
-      setSelectedIds([newShape.id]);
-      dispatch(addElement(newShape));
-    }
-
-  };
+  if (type === "quickWall") {
+    // Toggle quickwall mode: if already in build mode 1, switch back to 0
+    const newBuildMode = currentBuildMode === 1 ? 0 : 1;
+    dispatch(changeBuildMode(newBuildMode));
+  } else {
+    const newShape = shapeFactory(type, stageCenter);
+    setSelectedIds([newShape.id]);
+    dispatch(addElement(newShape));
+  }
+};
 
 function Toolbox({
   dispatch,
   stageRef,
   state,
   selectedIds,
-                   setSelectedIds,
+  setSelectedIds,
 }: {
   dispatch: (action: Action) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   state: AppState;
   selectedIds: UUID[];
-  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>;
 }) {
   const { updateSchematics } = useApiService();
   const { schematicsId } = useParams();
@@ -81,7 +96,13 @@ function Toolbox({
                 y={i * 60 + 40}
                 onClick={() => {
                   const stageCenter = findStageCenterCoordinates(stageRef);
-                  handleToolboxClick(item.type, dispatch, state.buildMode, setSelectedIds, stageCenter);
+                  handleToolboxClick(
+                    item.type,
+                    dispatch,
+                    state.buildMode,
+                    setSelectedIds,
+                    stageCenter
+                  );
                 }}
                 cursor="pointer"
               >
@@ -93,14 +114,11 @@ function Toolbox({
             <Group
               y={toolboxHeight + 10}
               onClick={() =>
-                updateSchematics(
-                  schematicsId!,
-                  {
-                    ...state,
-                    canvasPosition: stageRef!.current!.getPosition(),
-                    scale: stageRef!.current!.scaleX(),
-                  },
-                ).then((response) => {
+                updateSchematics(schematicsId!, {
+                  ...state,
+                  canvasPosition: stageRef!.current!.getPosition(),
+                  scale: stageRef!.current!.scaleX(),
+                }).then(response => {
                   if (response) dispatch(clearUnsavedChairsState());
                 })
               }
@@ -125,7 +143,6 @@ function Toolbox({
             <Group x={15} y={560}>
               <FPSText layer={toolboxLayer}></FPSText>
             </Group>*/}
-
           </Group>
         </Layer>
       </Stage>
@@ -137,7 +154,6 @@ function Toolbox({
         ></ElementInspector>
       )}
     </div>
-
   );
 }
 

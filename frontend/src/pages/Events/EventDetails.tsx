@@ -1,4 +1,16 @@
-import { Button, Card, Col, Descriptions, Image, Modal, Row, Space, Spin, Statistic, Typography } from "utils/antd.tsx";
+import {
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Image,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Statistic,
+  Typography,
+} from "utils/antd.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumb } from "components/Breadcrumb.tsx";
 import {
@@ -20,7 +32,11 @@ import toast from "react-hot-toast";
 import { EventStatusTag } from "components/EventStatusTag.tsx";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
 import { type Profile } from "types/employee.ts";
-import { aggregateDietaryCombinations, exportDietaryPreferencesToCSV, exportParticipationToCSV } from "utils/utils.ts";
+import {
+  aggregateDietaryCombinations,
+  exportDietaryPreferencesToCSV,
+  exportParticipationToCSV,
+} from "utils/utils.ts";
 import { useEffect, useRef, useState } from "react";
 import Konva from "konva";
 import { handleExport } from "components/canvas/utils/functions.tsx";
@@ -77,10 +93,8 @@ export const EventDetails = () => {
         setEvent(eventDetailsData);
         setEventParticipantProfiles(eventDetailsData?.participantDetails ?? []);
         if (eventDetailsData?.participantDetails) {
-          const {
-            dietaryCombinationsEmployees,
-            dietaryCombinationsGuests,
-          } = aggregateDietaryCombinations(eventDetailsData!.participantDetails);
+          const { dietaryCombinationsEmployees, dietaryCombinationsGuests } =
+            aggregateDietaryCombinations(eventDetailsData!.participantDetails);
           setDietaryStatsEmployee(dietaryCombinationsEmployees);
           setDietaryStatsGuest(dietaryCombinationsGuests);
         }
@@ -158,17 +172,21 @@ export const EventDetails = () => {
   };
 
   if (loading) {
-    return (<div className="flex justify-center items-center h-screen">
-      <Spin size="large" tip="Loading event..." />
-    </div>);
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading event..." />
+      </div>
+    );
   } else if (!event) {
-    return <div className="flex justify-center items-center h-screen">
-      <div>Event not found.</div>
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div>Event not found.</div>
+      </div>
+    );
   }
 
   const imageFiles = event.fileEntities?.filter(
-    file => file.contentType === "image/png" || file.contentType === "image/jpeg",
+    file => file.contentType === "image/png" || file.contentType === "image/jpeg"
   );
 
   return (
@@ -203,7 +221,9 @@ export const EventDetails = () => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <Title level={2} className="!my-2 max-w-xl">{event.name}</Title>
+          <Title level={2} className="!my-2 max-w-xl">
+            {event.name}
+          </Title>
           <div className="px-4 py-2">
             <EventStatusTag status={event.status} size="big" />
           </div>
@@ -242,8 +262,10 @@ export const EventDetails = () => {
             width={400}
           >
             <p>Are you sure you want to delete this event?</p>
-            <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone, and it will delete "Employee
-              Matchings" belonging to this event, as well.</p>
+            <p style={{ color: "#8c8c8c", fontSize: "14px" }}>
+              This action cannot be undone, and it will delete "Employee Matchings" belonging to
+              this event, as well.
+            </p>
           </Modal>
         </Space>
       </div>
@@ -274,11 +296,11 @@ export const EventDetails = () => {
               <Descriptions.Item label="Description" span={3}>
                 {event.description}
               </Descriptions.Item>
-              {isAdmin && event.notes ?
-                (<Descriptions.Item label="Notes" span={3}>
+              {isAdmin && event.notes ? (
+                <Descriptions.Item label="Notes" span={3}>
                   {event.notes}
-                </Descriptions.Item>) : null
-              }
+                </Descriptions.Item>
+              ) : null}
             </Descriptions>
           </Card>
 
@@ -297,21 +319,19 @@ export const EventDetails = () => {
                       overflow: "hidden",
                     }}
                   >
-                    {
-                      imageUrl ? (
-                        <Image
-                          src={imageUrl}
-                          alt="Event Seat Plan Image"
-                          style={{
-                            width: "100%",
-                            height: "200px",
-                            objectFit: "fill",
-                          }}
-                        />
-                      ) : (
-                        <p>Loading schematics...</p>
-                      )
-                    }
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt="Event Seat Plan Image"
+                        style={{
+                          width: "100%",
+                          height: "200px",
+                          objectFit: "fill",
+                        }}
+                      />
+                    ) : (
+                      <p>Loading schematics...</p>
+                    )}
                   </div>
                 ) : (
                   <div
@@ -331,18 +351,24 @@ export const EventDetails = () => {
               {isAdmin && (
                 <Col span={8} style={{ height: "100%" }}>
                   <Space direction="vertical" className="w-full">
-                    <Button block icon={<UserAddOutlined />}
-                      onClick={() => navigate(`/events/${eventId}/manage-participants`)}>
+                    <Button
+                      block
+                      icon={<UserAddOutlined />}
+                      onClick={() => navigate(`/events/${eventId}/manage-participants`)}
+                    >
                       Manage Participants
                     </Button>
-                    <Button block icon={<EditOutlined />}
+                    <Button
+                      block
+                      icon={<EditOutlined />}
                       onClick={() => {
                         if (event?.schematics) {
                           navigate(`/events/${eventId}/seat-allocation/${event.schematics?.id}`);
                         } else {
                           handleCreate(`/events/${eventId}/seat-allocation`);
                         }
-                      }}>
+                      }}
+                    >
                       Manage Seat Allocation
                     </Button>
                   </Space>
@@ -356,11 +382,21 @@ export const EventDetails = () => {
             <div className="flex flex-col">
               <div className="flex md:flex-row justify-around items-stretch gap-4 w-full">
                 <Statistic title="Capacity" value={event.capacity} prefix={<TeamOutlined />} />
-                <Statistic title="Total Participants"
+                <Statistic
+                  title="Total Participants"
                   value={event.employeeParticipantCount + event.visitorParticipantCount}
-                  prefix={<TeamOutlined />} />
-                <Statistic title="Employees" value={event.employeeParticipantCount} prefix={<TeamOutlined />} />
-                <Statistic title="Guests" value={event.visitorParticipantCount} prefix={<TeamOutlined />} />
+                  prefix={<TeamOutlined />}
+                />
+                <Statistic
+                  title="Employees"
+                  value={event.employeeParticipantCount}
+                  prefix={<TeamOutlined />}
+                />
+                <Statistic
+                  title="Guests"
+                  value={event.visitorParticipantCount}
+                  prefix={<TeamOutlined />}
+                />
               </div>
             </div>
           </Card>
@@ -412,7 +448,6 @@ export const EventDetails = () => {
               </div>
             </Card>
           )}
-
         </Col>
 
         <Col span={8}>
@@ -440,7 +475,8 @@ export const EventDetails = () => {
                   icon={<FileTextOutlined />}
                   onClick={async () => {
                     const participants = await getEventParticipants(eventId!);
-                    if (participants) exportParticipationToCSV(participants, event?.name || "Event");
+                    if (participants)
+                      exportParticipationToCSV(participants, event?.name || "Event");
                   }}
                 >
                   Export Participant List
@@ -516,7 +552,9 @@ export const EventDetails = () => {
                         }}
                         onClick={() => {
                           console.log("Left button clicked, current index:", currentImageIndex);
-                          setCurrentImageIndex((currentImageIndex - 1 + imageFiles.length) % imageFiles.length);
+                          setCurrentImageIndex(
+                            (currentImageIndex - 1 + imageFiles.length) % imageFiles.length
+                          );
                         }}
                       />
                       <Button
@@ -560,14 +598,12 @@ export const EventDetails = () => {
                   onDelete={handleFileDelete}
                   onDownload={handleDownload}
                 />
-                {isAdmin && (
-                  <FileUploadButton eventId={eventId!} onUpload={handleFileUpload} />
-                )}
+                {isAdmin && <FileUploadButton eventId={eventId!} onUpload={handleFileUpload} />}
               </div>
             </Space>
           </Card>
         </Col>
       </Row>
-    </div >
+    </div>
   );
 };

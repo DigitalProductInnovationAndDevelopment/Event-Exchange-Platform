@@ -32,10 +32,38 @@ import Tag from "antd/es/tag";
 import Breadcrumb from "antd/es/breadcrumb";
 import Tooltip from "antd/es/tooltip";
 
-
 // Re-export for clean imports
 export {
-  Row, Col, Button, Input, Form, Select, Table, Card, Modal, List, Space, Spin, Typography,
-  Avatar, ConfigProvider, Dropdown, Layout, Menu, theme, Descriptions, DatePicker, Popconfirm,
-  Upload, InputNumber, Image, Statistic, Carousel, Switch, Result, Tag, Breadcrumb, Tooltip,
+  Row,
+  Col,
+  Button,
+  Input,
+  Form,
+  Select,
+  Table,
+  Card,
+  Modal,
+  List,
+  Space,
+  Spin,
+  Typography,
+  Avatar,
+  ConfigProvider,
+  Dropdown,
+  Layout,
+  Menu,
+  theme,
+  Descriptions,
+  DatePicker,
+  Popconfirm,
+  Upload,
+  InputNumber,
+  Image,
+  Statistic,
+  Carousel,
+  Switch,
+  Result,
+  Tag,
+  Breadcrumb,
+  Tooltip,
 };

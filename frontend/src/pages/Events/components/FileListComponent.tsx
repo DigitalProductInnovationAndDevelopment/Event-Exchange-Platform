@@ -35,9 +35,7 @@ const FileListDisplay: React.FC<FileListDisplayProps> = ({ files, onDelete, onDo
                   cancelText="No"
                   onConfirm={() => onDelete(file.fileId)}
                 >
-                  {isAdmin && (
-                    <Button danger icon={<DeleteOutlined />} />
-                  )}
+                  {isAdmin && <Button danger icon={<DeleteOutlined />} />}
                 </Popconfirm>
               </Space>,
             ]}

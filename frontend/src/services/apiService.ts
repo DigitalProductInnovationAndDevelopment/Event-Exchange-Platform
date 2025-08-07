@@ -6,7 +6,13 @@ import type {
   ParticipationDetails,
   Profile,
 } from "types/employee.ts";
-import type { Event, FileEntity, SchematicsEntity, SeatAllocationResult, SeatAllocationUpsert } from "types/event.ts";
+import type {
+  Event,
+  FileEntity,
+  SchematicsEntity,
+  SeatAllocationResult,
+  SeatAllocationUpsert,
+} from "types/event.ts";
 import toast from "react-hot-toast";
 import { useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext.tsx";
@@ -22,7 +28,11 @@ export default function useApiService() {
   const navigate = useNavigate();
 
   const request = useCallback(
-    async <T = never>(endpoint: string, options: RequestInit = {}, duration: number = 20000): Promise<T> => {
+    async <T = never>(
+      endpoint: string,
+      options: RequestInit = {},
+      duration: number = 20000
+    ): Promise<T> => {
       const url = `${BASE_URL}${endpoint}`;
 
       const isFormData = options.body instanceof FormData;
@@ -86,7 +96,7 @@ export default function useApiService() {
 
       return (await response.text()) as unknown as T;
     },
-    [logout],
+    [logout]
   );
 
   const logoutRequest = useCallback(async () => {
@@ -107,7 +117,9 @@ export default function useApiService() {
         console.error("Failed to login as visitor", error);
         return null;
       }
-    }, [request]);
+    },
+    [request]
+  );
 
   const getOwnProfile = useCallback(async (): Promise<Profile> => {
     return await request<Profile>("/profile/own");
@@ -127,7 +139,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const getEventById = useCallback(
@@ -139,20 +151,23 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
-  const getEvents = useCallback(async (from?: string): Promise<Event[] | null> => {
-    try {
-      const params = new URLSearchParams();
-      if (from) params.append("from", from);
+  const getEvents = useCallback(
+    async (from?: string): Promise<Event[] | null> => {
+      try {
+        const params = new URLSearchParams();
+        if (from) params.append("from", from);
 
-      return await request<Event[]>(`/events/all${params.toString() ? "?" + params : ""}`);
-    } catch (error) {
-      console.error("Failed to fetch events:", error);
-      return null;
-    }
-  }, [request]);
+        return await request<Event[]>(`/events/all${params.toString() ? "?" + params : ""}`);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        return null;
+      }
+    },
+    [request]
+  );
 
   const createEvent = useCallback(
     async (eventData: Event): Promise<Event | null> => {
@@ -168,7 +183,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const updateEvent = useCallback(
@@ -185,7 +200,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteEvent = useCallback(
@@ -200,7 +215,7 @@ export default function useApiService() {
         toast.error("Event deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
   const fileUpload = useCallback(
@@ -216,7 +231,7 @@ export default function useApiService() {
         toast.error("File upload failed");
       }
     },
-    [request],
+    [request]
   );
 
   const fileDownload = useCallback(
@@ -237,7 +252,7 @@ export default function useApiService() {
         toast.error("Failed to download file");
       }
     },
-    [request],
+    [request]
   );
 
   const deleteFile = useCallback(
@@ -252,17 +267,20 @@ export default function useApiService() {
         toast.error("File deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
-  const getSchematics: (id: string) => Promise<AppState | undefined> = useCallback(async (id: string) => {
-    try {
-      const response = await request<{ state: string }>(`/schematics/${id}`);
-      return JSON.parse(response.state) as AppState;
-    } catch (err) {
-      toast.error("Schematics fetch failed");
-    }
-  }, [request]);
+  const getSchematics: (id: string) => Promise<AppState | undefined> = useCallback(
+    async (id: string) => {
+      try {
+        const response = await request<{ state: string }>(`/schematics/${id}`);
+        return JSON.parse(response.state) as AppState;
+      } catch (err) {
+        toast.error("Schematics fetch failed");
+      }
+    },
+    [request]
+  );
 
   const initiateSchematics = useCallback(
     async (eventId: string): Promise<SchematicsEntity | null> => {
@@ -287,11 +305,11 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
-  const updateSchematics = useCallback(async (id: string, canvasState: AppState): Promise<SchematicsEntity | null> => {
-
+  const updateSchematics = useCallback(
+    async (id: string, canvasState: AppState): Promise<SchematicsEntity | null> => {
       try {
         canvasState.buildMode = 0;
 
@@ -310,7 +328,7 @@ export default function useApiService() {
         canvasStateToPersist.chairIdForManualAssignment = null;
 
         // We don't need to persist them into the AppState, the main data are stored and used from EmployeeParticipation/VisitorParticipation Tables
-        canvasStateToPersist.elements.forEach((el) => {
+        canvasStateToPersist.elements.forEach(el => {
           if (el.type === "chair") {
             delete (el as Chair).assigneeProfile;
             delete (el as Chair).belongsToVisitor;
@@ -330,7 +348,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteSchematics = useCallback(
@@ -345,7 +363,7 @@ export default function useApiService() {
         toast.error("Schematics deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
   const getEmployeeById = useCallback(
@@ -356,7 +374,7 @@ export default function useApiService() {
         toast.error("Employee fetch failed");
       }
     },
-    [request],
+    [request]
   );
 
   const getEmployees = useCallback(async () => {
@@ -381,7 +399,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const createEmployeeBatch = useCallback(
@@ -398,7 +416,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const updateEmployee = useCallback(
@@ -415,7 +433,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteEmployee = useCallback(
@@ -430,7 +448,7 @@ export default function useApiService() {
         toast.error("Employee deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
   const getEventParticipants = useCallback(
@@ -441,7 +459,7 @@ export default function useApiService() {
         toast.error("Fetch operation for the participants of the event failed");
       }
     },
-    [request],
+    [request]
   );
 
   const addParticipant = useCallback(
@@ -456,7 +474,7 @@ export default function useApiService() {
           {
             method: "POST",
             body: JSON.stringify(participation),
-          },
+          }
         );
         toast.success("Participant added successfully!");
         return response;
@@ -465,24 +483,26 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const addParticipantsBatch = useCallback(
     async (
-      eventId: string, participations: {
+      eventId: string,
+      participations: {
         guestCount: number;
         employeeId: string;
-      }[],
+      }[]
     ): Promise<ParticipationBatchResult | null> => {
       try {
-        if (participations.length === 0) return { createdParticipations: [], updatedParticipations: [] };
+        if (participations.length === 0)
+          return { createdParticipations: [], updatedParticipations: [] };
         const response = await request<ParticipationBatchResult>(
           `/events/${eventId}/participants/batch`,
           {
             method: "POST",
             body: JSON.stringify(participations),
-          },
+          }
         );
         toast.success("Participants added successfully!");
         return response;
@@ -491,7 +511,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const updateParticipant = useCallback(
@@ -506,7 +526,7 @@ export default function useApiService() {
           {
             method: "PUT",
             body: JSON.stringify(participation),
-          },
+          }
         );
         toast.success("Participant updated successfully!");
         return response;
@@ -515,7 +535,7 @@ export default function useApiService() {
         return null;
       }
     },
-    [request],
+    [request]
   );
 
   const deleteParticipation = useCallback(
@@ -530,67 +550,81 @@ export default function useApiService() {
         toast.error("Event participant deletion failed");
       }
     },
-    [request],
+    [request]
   );
 
-  const generateSeatAllocations = useCallback(async (eventId: string, seatMap: unknown, constraintInputValues: unknown) => {
-    try {
-      return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/assign`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            seatMap: seatMap,
-            constraints: constraintInputValues,
-          }),
-        }, 310_000,
-      );
-    } catch (err) {
-      toast.error("Seat allocation failed!");
-      return null;
-    }
-  }, [request]);
+  const generateSeatAllocations = useCallback(
+    async (eventId: string, seatMap: unknown, constraintInputValues: unknown) => {
+      try {
+        return await request<SeatAllocationResult[]>(
+          `/seat-allocation/${eventId}/assign`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              seatMap: seatMap,
+              constraints: constraintInputValues,
+            }),
+          },
+          310_000
+        );
+      } catch (err) {
+        toast.error("Seat allocation failed!");
+        return null;
+      }
+    },
+    [request]
+  );
 
-  const getSeatAllocations = useCallback(async (eventId: string) => {
-    try {
-      return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/allocations`);
-    } catch (err) {
-      toast.error("Fetching seat allocations operation failed");
-    }
-  }, [request]);
+  const getSeatAllocations = useCallback(
+    async (eventId: string) => {
+      try {
+        return await request<SeatAllocationResult[]>(`/seat-allocation/${eventId}/allocations`);
+      } catch (err) {
+        toast.error("Fetching seat allocations operation failed");
+      }
+    },
+    [request]
+  );
 
-  const unsetAllSeatAllocations = useCallback(async (eventId: string) => {
-    try {
-      return await request<boolean>(`/seat-allocation/${eventId}/unsetAllChairs`);
-    } catch (err) {
-      toast.error("Unsetting of all seat allocations for this event failed");
-    }
-  }, [request]);
+  const unsetAllSeatAllocations = useCallback(
+    async (eventId: string) => {
+      try {
+        return await request<boolean>(`/seat-allocation/${eventId}/unsetAllChairs`);
+      } catch (err) {
+        toast.error("Unsetting of all seat allocations for this event failed");
+      }
+    },
+    [request]
+  );
 
-  const updateSeatAllocation = useCallback(async (eventId: string, newSeatAllocations: SeatAllocationUpsert) => {
-    try {
-      const response = await request<boolean>(
-        `/seat-allocation/${eventId}/allocations`,
-        {
+  const updateSeatAllocation = useCallback(
+    async (eventId: string, newSeatAllocations: SeatAllocationUpsert) => {
+      try {
+        const response = await request<boolean>(`/seat-allocation/${eventId}/allocations`, {
           method: "PUT",
           body: JSON.stringify(newSeatAllocations),
-        },
-      );
-      toast.success("Seat assignment is set successfully!");
-      return response;
-    } catch (err) {
-      toast.error("Fetching seat allocations operation failed");
-      return null;
-    }
-  }, [request]);
+        });
+        toast.success("Seat assignment is set successfully!");
+        return response;
+      } catch (err) {
+        toast.error("Fetching seat allocations operation failed");
+        return null;
+      }
+    },
+    [request]
+  );
 
-  const findEmployeesSittingWithAcquaintances = useCallback(async (eventId: string) => {
-    try {
-      return await request<Record<UUID, UUID[]>>(`/seat-allocation/${eventId}/findAcquaintances`);
-    } catch (err) {
-      toast.error("Fetching employee acquaintances for this event failed");
-      return null;
-    }
-  }, [request]);
+  const findEmployeesSittingWithAcquaintances = useCallback(
+    async (eventId: string) => {
+      try {
+        return await request<Record<UUID, UUID[]>>(`/seat-allocation/${eventId}/findAcquaintances`);
+      } catch (err) {
+        toast.error("Fetching employee acquaintances for this event failed");
+        return null;
+      }
+    },
+    [request]
+  );
 
   return {
     request,

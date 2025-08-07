@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Card, Col, Input, Modal, Row, Select, Space, Table, Typography } from "utils/antd.tsx";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Table,
+  Typography,
+} from "utils/antd.tsx";
 import {
   DownloadOutlined,
   ExclamationCircleOutlined,
@@ -21,7 +32,13 @@ import dayjs from "dayjs";
 const { Title } = Typography;
 
 function parseDate(dateStr: string) {
-  const result = dayjs(dateStr, ["DD.MM.YYYY", "D.MM.YYYY", "DD.M.YYYY", "D.M.YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
+  const result = dayjs(dateStr, [
+    "DD.MM.YYYY",
+    "D.MM.YYYY",
+    "DD.M.YYYY",
+    "D.M.YYYY",
+    "YYYY-MM-DD",
+  ]).format("YYYY-MM-DD");
   if (result === "Invalid Date") {
     return null;
   } else return result;
@@ -32,65 +49,69 @@ const columns = (
   onNavigate: (employeeId?: string, anchor?: string, editMode?: boolean) => void,
   onDeleteClick: (employeeId: string, employeeName: string) => void
 ): ColumnsType<Employee> => [
-    {
-      title: "Name",
-      dataIndex: ["profile", "name"],
-      key: "profile.name",
-      sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
-    },
-    {
-      title: "Last Name",
-      dataIndex: ["profile", "lastName"],
-      key: "profile.lastName",
-      sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-    },
-    {
-      title: "Date Joined",
-      dataIndex: "employmentStartDate",
-      key: "employmentStartDate",
-    },
-    {
-      title: "Events",
-      dataIndex: "attendedEventsCount",
-      key: "attendedEventsCount",
-      render: (_count: number, record: Employee) => (
+  {
+    title: "Name",
+    dataIndex: ["profile", "name"],
+    key: "profile.name",
+    sorter: (a, b) => (a.profile?.name ?? "").localeCompare(b.profile?.name ?? ""),
+  },
+  {
+    title: "Last Name",
+    dataIndex: ["profile", "lastName"],
+    key: "profile.lastName",
+    sorter: (a, b) => (a.profile?.lastName ?? "").localeCompare(b.profile?.lastName ?? ""),
+  },
+  {
+    title: "Location",
+    dataIndex: "location",
+    key: "location",
+  },
+  {
+    title: "Date Joined",
+    dataIndex: "employmentStartDate",
+    key: "employmentStartDate",
+  },
+  {
+    title: "Events",
+    dataIndex: "attendedEventsCount",
+    key: "attendedEventsCount",
+    render: (_count: number, record: Employee) => (
+      <Button
+        type="link"
+        style={{ color: "black" }}
+        onClick={() => onNavigate(record.profile.id, "events")}
+      >
+        {record.participationCount}
+      </Button>
+    ),
+  },
+  {
+    title: "Actions",
+    key: "actions",
+    render: (_, record: Employee) => (
+      <Space size="small" align="end">
         <Button
-          type="link"
-          style={{ color: "black" }}
-          onClick={() => onNavigate(record.profile.id, "events")}
+          type="default"
+          icon={<EyeOutlined />}
+          onClick={() => onNavigate(record.profile.id)}
+          style={{ background: "#fff", border: "1px solid #d9d9d9" }}
         >
-          {record.participationCount}
+          View
         </Button>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record: Employee) => (
-        <Space size="small" align="end">
-          <Button
-            type="default"
-            icon={<EyeOutlined />}
-            onClick={() => onNavigate(record.profile.id)}
-            style={{ background: "#fff", border: "1px solid #d9d9d9" }}
-          >
-            View
-          </Button>
-          <Button danger type="default" onClick={(e) => {
+        <Button
+          danger
+          type="default"
+          onClick={e => {
             e.stopPropagation();
             onDeleteClick(record.profile.id, getFullName(record.profile));
-          }}>
-            Delete
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+          }}
+        >
+          Delete
+        </Button>
+      </Space>
+    ),
+  },
+];
 
 function downloadCSV(): void {
   const employees: Employee[] = [
@@ -154,7 +175,7 @@ function downloadCSV(): void {
     "Employment Start Date",
     "Email",
     "Gender",
-    "Gitlab Username"
+    "Gitlab Username",
   ];
 
   const rows = employees.map(emp => [
@@ -187,7 +208,9 @@ export const EmployeesList = () => {
   const { getEmployees, createEmployeeBatch } = useApiService();
   const { deleteEmployee } = useApiService();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [employeeToDelete, setEmployeeToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [employeeToDelete, setEmployeeToDelete] = useState<{ id: string; name: string } | null>(
+    null
+  );
 
   const handleDeleteEmployee = async () => {
     if (!employeeToDelete) return;
@@ -235,7 +258,7 @@ export const EmployeesList = () => {
     [employees]
   );
 
-  const ALL_LOCATIONS_VALUE = '__ALL__';
+  const ALL_LOCATIONS_VALUE = "__ALL__";
 
   // Filter employees by name and location
   const filteredData = useMemo(() => {
@@ -243,7 +266,7 @@ export const EmployeesList = () => {
       const matchesSearch =
         searchText === "" ||
         item.profile.email.toLowerCase().includes(searchText.toLowerCase()) ||
-        (getFullName(item.profile)).toLowerCase().includes(searchText.toLowerCase());
+        getFullName(item.profile).toLowerCase().includes(searchText.toLowerCase());
       // If locationFilter is undefined, show all locations
       const matchesLocation = locationFilter === undefined || item.location === locationFilter;
       return matchesSearch && matchesLocation;
@@ -281,18 +304,24 @@ export const EmployeesList = () => {
           skipEmptyLines: true,
           complete: results => {
             // Validate headers
-            const expectedHeaders = ['Name', 'Last Name', 'Location', 'Employment Start Date', 'Email', 'Gender', 'Gitlab Username'];
+            const expectedHeaders = [
+              "Name",
+              "Last Name",
+              "Location",
+              "Employment Start Date",
+              "Email",
+              "Gender",
+              "Gitlab Username",
+            ];
             const actualHeaders = results.meta.fields || [];
-            const hasValidHeaders = expectedHeaders.every(header => 
-              actualHeaders.includes(header)
-            );
-            const hasOnlyExpectedHeaders = actualHeaders.every(header => 
+            const hasValidHeaders = expectedHeaders.every(header => actualHeaders.includes(header));
+            const hasOnlyExpectedHeaders = actualHeaders.every(header =>
               expectedHeaders.includes(header)
             );
 
             if (!hasValidHeaders || !hasOnlyExpectedHeaders) {
               toast.error(
-                `Invalid CSV format. Expected columns: ${expectedHeaders.join(', ')}. Found: ${actualHeaders.join(', ')}`,
+                `Invalid CSV format. Expected columns: ${expectedHeaders.join(", ")}. Found: ${actualHeaders.join(", ")}`,
                 { duration: 5000 }
               );
               setImportedRows([]);
@@ -327,7 +356,7 @@ export const EmployeesList = () => {
     if (!importedRows.length) return;
     // Map importedRows to EmployeeCreateDTO-like objects
     const payload: (Omit<Employee, "profile"> & {
-      profile: Omit<Profile, "id" | "dietTypes" | "isVisitor">
+      profile: Omit<Profile, "id" | "dietTypes" | "isVisitor">;
     })[] = importedRows.map(row => ({
       profile: {
         name: row.name.trim(),
@@ -394,10 +423,12 @@ export const EmployeesList = () => {
               placeholder="Location"
               style={{ width: "100%" }}
               value={locationFilter === undefined ? ALL_LOCATIONS_VALUE : locationFilter}
-              onChange={value => setLocationFilter(value === ALL_LOCATIONS_VALUE ? undefined : value)}
+              onChange={value =>
+                setLocationFilter(value === ALL_LOCATIONS_VALUE ? undefined : value)
+              }
               options={[
                 { value: ALL_LOCATIONS_VALUE, label: "All Locations" },
-                ...uniqueLocations.map(location => ({ value: location, label: location }))
+                ...uniqueLocations.map(location => ({ value: location, label: location })),
               ]}
             />
           </Col>
@@ -468,19 +499,22 @@ export const EmployeesList = () => {
           </Button>,
         ]}
       >
-        <div style={{ marginBottom: 12, color: '#faad14' }}>
-          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>, <code>Last
-          Name</code>, <code>Location</code>, <code>Employment Start
-          Date</code>, <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>. Note: <code>Gitlab
-          Username</code> is optional and can stay empty.
+        <div style={{ marginBottom: 12, color: "#faad14" }}>
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>Name</code>,{" "}
+          <code>Last Name</code>, <code>Location</code>, <code>Employment Start Date</code>,{" "}
+          <code>Email</code>, <code>Gender</code>, and <code>Gitlab Username</code>. Note:{" "}
+          <code>Gitlab Username</code> is optional and can stay empty.
         </div>
-        <Button
-          style={{ marginBottom: 12 }}
-          onClick={downloadCSV}
-        >
+        <Button style={{ marginBottom: 12 }} onClick={downloadCSV}>
           Download CSV Template
         </Button>
-        <Input key={fileInputKey} type="file" accept=".csv" className="mb-4" onChange={handleImportFile} />
+        <Input
+          key={fileInputKey}
+          type="file"
+          accept=".csv"
+          className="mb-4"
+          onChange={handleImportFile}
+        />
         {importedRows.length > 0 && (
           <Table
             columns={[
@@ -507,13 +541,19 @@ export const EmployeesList = () => {
         centered
         open={deleteModalOpen}
         onOk={handleDeleteEmployee}
-        onCancel={() => { setDeleteModalOpen(false); setEmployeeToDelete(null); }}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setEmployeeToDelete(null);
+        }}
         okText="Yes, Delete"
         cancelText="Cancel"
         okButtonProps={{ danger: true }}
         width={400}
       >
-        <p>Are you sure you want to delete this employee{employeeToDelete ? ` (${employeeToDelete.name})` : ""}?</p>
+        <p>
+          Are you sure you want to delete this employee
+          {employeeToDelete ? ` (${employeeToDelete.name})` : ""}?
+        </p>
         <p style={{ color: "#8c8c8c", fontSize: "14px" }}>This action cannot be undone.</p>
       </Modal>
     </div>

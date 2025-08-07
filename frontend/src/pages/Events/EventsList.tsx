@@ -13,7 +13,13 @@ import {
   Table,
   Typography,
 } from "utils/antd.tsx";
-import { AppstoreOutlined, EyeOutlined, PlusOutlined, SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Breadcrumb } from "components/Breadcrumb";
@@ -116,8 +122,12 @@ export const EventsList = () => {
       dataIndex: "participantCount",
       key: "participantCount",
       width: "8%",
-      render: (_: number, record: Event) => (record.employeeParticipantCount + record.visitorParticipantCount),
-      sorter: (a, b) => (a.employeeParticipantCount + a.visitorParticipantCount) - (b.employeeParticipantCount + b.visitorParticipantCount),
+      render: (_: number, record: Event) =>
+        record.employeeParticipantCount + record.visitorParticipantCount,
+      sorter: (a, b) =>
+        a.employeeParticipantCount +
+        a.visitorParticipantCount -
+        (b.employeeParticipantCount + b.visitorParticipantCount),
     },
     {
       title: "Employees",
@@ -185,7 +195,11 @@ export const EventsList = () => {
             <AppstoreOutlined className={!isTableView ? "text-blue-500" : "text-gray-400"} />
           </Space>
           {isAdmin && (
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/events/create")}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => navigate("/events/create")}
+            >
               Create Event
             </Button>
           )}
@@ -270,7 +284,10 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.employeeParticipantCount + event.visitorParticipantCount} </div>
+                          <div>
+                            Participants:{" "}
+                            {event.employeeParticipantCount + event.visitorParticipantCount}{" "}
+                          </div>
                           <div>
                             {(() => {
                               const filteredImages = event.fileEntities?.filter(
@@ -365,7 +382,10 @@ export const EventsList = () => {
                         <div className="text-gray-600">
                           <div>Date: {dayjs(event.date).format("MMMM D, YYYY, HH:mm")}</div>
                           <div>Location: {event.address}</div>
-                          <div>Participants: {event.employeeParticipantCount + event.visitorParticipantCount}</div>
+                          <div>
+                            Participants:{" "}
+                            {event.employeeParticipantCount + event.visitorParticipantCount}
+                          </div>
                         </div>
                       </div>
                     }

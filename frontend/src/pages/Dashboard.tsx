@@ -31,7 +31,9 @@ export const Dashboard = () => {
       try {
         setLoading(true);
         const data = await getEvents(dayjs().startOf("day").toISOString());
-        setUpcomingEvents(data?.filter(event => new Date(event.date).getTime() > new Date().getTime()) ?? []);
+        setUpcomingEvents(
+          data?.filter(event => new Date(event.date).getTime() > new Date().getTime()) ?? []
+        );
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -50,19 +52,20 @@ export const Dashboard = () => {
       <Row gutter={[16, 16]}>
         <Col span={16}>
           <Row gutter={[16, 16]} className="mb-4">
-            {
-              isAdmin && (
-                <Col span={8}>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    size="large"
-                    block
-                    onClick={() => navigate("/events/create")}
-                  > Create New Event
-                  </Button>
-                </Col>)
-            }
+            {isAdmin && (
+              <Col span={8}>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  block
+                  onClick={() => navigate("/events/create")}
+                >
+                  {" "}
+                  Create New Event
+                </Button>
+              </Col>
+            )}
             <Col span={8}>
               <Button
                 type="primary"
@@ -74,20 +77,19 @@ export const Dashboard = () => {
                 Events
               </Button>
             </Col>
-            {
-              isAdmin && (
-                <Col span={8}>
-                  <Button
-                    type="primary"
-                    icon={<TeamOutlined />}
-                    size="large"
-                    block
-                    onClick={() => navigate("/employees")}
-                  >
-                    Employees
-                  </Button>
-                </Col>)
-            }
+            {isAdmin && (
+              <Col span={8}>
+                <Button
+                  type="primary"
+                  icon={<TeamOutlined />}
+                  size="large"
+                  block
+                  onClick={() => navigate("/employees")}
+                >
+                  Employees
+                </Button>
+              </Col>
+            )}
           </Row>
         </Col>
       </Row>
@@ -102,10 +104,8 @@ export const Dashboard = () => {
             const participants = event.participantDetails || [];
             const employeeCount = event.employeeParticipantCount;
             const guestCount = event.visitorParticipantCount;
-            const {
-              dietaryCombinationsEmployees,
-              dietaryCombinationsGuests,
-            } = aggregateDietaryCombinations(participants);
+            const { dietaryCombinationsEmployees, dietaryCombinationsGuests } =
+              aggregateDietaryCombinations(participants);
 
             return (
               <List.Item
@@ -138,16 +138,21 @@ export const Dashboard = () => {
                             <Space className="items-center">
                               <TeamOutlined />
                               <span>
-                                {event.employeeParticipantCount + event.visitorParticipantCount}/{event.capacity} participants
+                                {event.employeeParticipantCount + event.visitorParticipantCount}/
+                                {event.capacity} participants
                               </span>
                             </Space>
                             <Space className="items-center">
                               <UserOutlined />
-                              <span><b>Employees:</b> {employeeCount}</span>
+                              <span>
+                                <b>Employees:</b> {employeeCount}
+                              </span>
                             </Space>
                             <Space className="items-center">
                               <UsergroupAddOutlined />
-                              <span><b>Guests:</b> {guestCount}</span>
+                              <span>
+                                <b>Guests:</b> {guestCount}
+                              </span>
                             </Space>
                           </Space>
                           <Space direction="vertical" size="small">
@@ -155,28 +160,36 @@ export const Dashboard = () => {
 
                             {/* Employees */}
                             <div>
-                              <Text strong style={{ fontSize: "14px" }}>Employees:</Text>
+                              <Text strong style={{ fontSize: "14px" }}>
+                                Employees:
+                              </Text>
                               <Space wrap style={{ marginTop: 4 }}>
-                                {Object.keys(dietaryCombinationsEmployees).length === 0 &&
-                                  <span style={{ color: "#aaa" }}>No data</span>}
-                                {Object.entries(dietaryCombinationsEmployees).map(([combo, count]) => {
-                                  const diets = combo === "None" ? [] : combo.split(", ");
-                                  const prettyCombo = prettifyDiet(diets);
-                                  return (
-                                    <span key={`emp-${combo}`} style={{ marginLeft: 4 }}>
-                                      {prettyCombo} x {count}
-                                    </span>
-                                  );
-                                })}
+                                {Object.keys(dietaryCombinationsEmployees).length === 0 && (
+                                  <span style={{ color: "#aaa" }}>No data</span>
+                                )}
+                                {Object.entries(dietaryCombinationsEmployees).map(
+                                  ([combo, count]) => {
+                                    const diets = combo === "None" ? [] : combo.split(", ");
+                                    const prettyCombo = prettifyDiet(diets);
+                                    return (
+                                      <span key={`emp-${combo}`} style={{ marginLeft: 4 }}>
+                                        {prettyCombo} x {count}
+                                      </span>
+                                    );
+                                  }
+                                )}
                               </Space>
                             </div>
 
                             {/* Guests */}
                             <div>
-                              <Text strong style={{ fontSize: "14px" }}>Guests:</Text>
+                              <Text strong style={{ fontSize: "14px" }}>
+                                Guests:
+                              </Text>
                               <Space wrap style={{ marginTop: 4 }}>
-                                {Object.keys(dietaryCombinationsGuests).length === 0 &&
-                                  <span style={{ color: "#aaa" }}>No data</span>}
+                                {Object.keys(dietaryCombinationsGuests).length === 0 && (
+                                  <span style={{ color: "#aaa" }}>No data</span>
+                                )}
                                 {Object.entries(dietaryCombinationsGuests).map(([combo, count]) => {
                                   const diets = combo === "None" ? [] : combo.split(", ");
                                   const prettyCombo = prettifyDiet(diets);

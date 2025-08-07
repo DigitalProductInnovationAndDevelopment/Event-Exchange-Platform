@@ -18,7 +18,7 @@ export class Chair implements ElementProperties {
   belongsToVisitor?: boolean; // we don't persist this data to DB
   acquaintedProfileIds?: UUID[]; // we don't persist this data to DB
 
-  constructor(stageCenter: { x: number, y: number }) {
+  constructor(stageCenter: { x: number; y: number }) {
     this.id = uuidv4();
     this.type = "chair";
     this.x = stageCenter.x;
@@ -36,15 +36,15 @@ export class Chair implements ElementProperties {
 
 export function ChairRender(chair: Chair) {
   return (
-    <Group
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}>
+    <Group onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
       <Circle
         radius={chair.radius || 10}
         fill={
-          !chair.acquaintedProfileIds ? (chair.color ?? "#cccccc") :
-            chair.acquaintedProfileIds.length > 0 ? "red" :
-              "rgba(73,154,33,0.79)"
+          !chair.acquaintedProfileIds
+            ? (chair.color ?? "#cccccc")
+            : chair.acquaintedProfileIds.length > 0
+              ? "red"
+              : "rgba(73,154,33,0.79)"
         }
         perfectDrawEnabled={false}
       />
@@ -64,4 +64,3 @@ export function ChairRender(chair: Chair) {
     </Group>
   );
 }
-

@@ -68,9 +68,17 @@ export function reducer(state: AppState, action: Action) {
       if (action.payload) {
         // If payload is a string, parse it; if it's already an object, use it directly
         if (typeof action.payload === "string") {
-          return { ...JSON.parse(action.payload), history: { past: [], future: [] }, unsavedChairs: new Set<UUID>() };
+          return {
+            ...JSON.parse(action.payload),
+            history: { past: [], future: [] },
+            unsavedChairs: new Set<UUID>(),
+          };
         } else {
-          return { ...action.payload, history: { past: [], future: [] }, unsavedChairs: new Set<UUID>() };
+          return {
+            ...action.payload,
+            history: { past: [], future: [] },
+            unsavedChairs: new Set<UUID>(),
+          };
         }
       } else return { ...state, history: { past: [], future: [] }, unsavedChairs: new Set<UUID>() };
     case ADD_ELEMENT: {
@@ -147,9 +155,7 @@ export function reducer(state: AppState, action: Action) {
         if (original) {
           const newId = uuidv4();
           idMap[original.id] = newId;
-          if (
-            original.type === "chair"
-          ) {
+          if (original.type === "chair") {
             const newChair = {
               ...original,
               id: newId,
@@ -158,10 +164,7 @@ export function reducer(state: AppState, action: Action) {
             };
             delete (newChair as Chair).assigneeProfile;
             newElements.push(newChair);
-          } else if (
-            original.type === "rectTable" ||
-            original.type === "circleTable"
-          ) {
+          } else if (original.type === "rectTable" || original.type === "circleTable") {
             newElements.push({
               ...original,
               id: newId,
@@ -195,7 +198,9 @@ export function reducer(state: AppState, action: Action) {
 
           // Case 2: Array of string references ( important for attachedChairs)
           if (Array.isArray(value)) {
-            updated[key] = value.map(item => (idMap[item] ? idMap[item] : null)).filter(item => item !== null);
+            updated[key] = value
+              .map(item => (idMap[item] ? idMap[item] : null))
+              .filter(item => item !== null);
           }
         }
 
@@ -250,10 +255,13 @@ export function reducer(state: AppState, action: Action) {
       return {
         ...state,
         history: {
-          past: [...(state.history?.past ?? []), {
-            ...state,
-            elements: structuredClone(state.elements),
-          }],
+          past: [
+            ...(state.history?.past ?? []),
+            {
+              ...state,
+              elements: structuredClone(state.elements),
+            },
+          ],
           future: [],
         },
       };

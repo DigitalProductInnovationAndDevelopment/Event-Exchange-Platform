@@ -11,7 +11,6 @@ import type { UserType } from "types/auth.ts";
 const { Title } = Typography;
 
 export const ProfileEdit = () => {
-
   const navigate = useNavigate();
   const { getOwnProfile, updateOwnProfile } = useApiService();
   const { login } = useAuth();
@@ -46,7 +45,6 @@ export const ProfileEdit = () => {
         roles: ownProfile!.authorities || [],
       };
       await login(values);
-
     } catch (error) {
       toast.error("Failed to update profile");
       console.error("Error updating profile:", error);
@@ -66,11 +64,11 @@ export const ProfileEdit = () => {
   // Normalize gender to uppercase for initialValues
   const normalizedInitialValues = profile
     ? {
-      profile: {
-        ...profile,
-        gender: profile.gender || undefined,
-      },
-    }
+        profile: {
+          ...profile,
+          gender: profile.gender || undefined,
+        },
+      }
     : { profile: { gender: undefined } };
 
   return (
@@ -100,8 +98,12 @@ export const ProfileEdit = () => {
         </div>
       </div>
       <Card>
-        <EmployeeForm initialValues={normalizedInitialValues} onSave={handleFinish} form={form}
-                      isOwnProfileEdit={true} />
+        <EmployeeForm
+          initialValues={normalizedInitialValues}
+          onSave={handleFinish}
+          form={form}
+          isOwnProfileEdit={true}
+        />
       </Card>
     </div>
   );

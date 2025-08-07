@@ -121,7 +121,6 @@ export const handleExport = async (stageRef: React.RefObject<Konva.Stage | null>
   }
 };
 
-
 export function findStageCenterCoordinates(stageRef: React.RefObject<Konva.Stage | null>) {
   const stage = stageRef.current?.getStage();
 
@@ -131,13 +130,12 @@ export function findStageCenterCoordinates(stageRef: React.RefObject<Konva.Stage
   const height = (stage?.height() ?? 0) / scaleY;
   const stageX = (stageRef.current?.x() ?? 0) / scaleX;
   const stageY = (stageRef.current?.y() ?? 0) / scaleY;
-  const centerX = (width * 0.5 - stageX);
-  const centerY = (height * 0.5 - stageY);
+  const centerX = width * 0.5 - stageX;
+  const centerY = height * 0.5 - stageY;
   return { x: centerX, y: centerY };
 }
 
 export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID[]) => {
-
   const selectedIdSet = new Set(selectedIds);
 
   const chairsToBeDeleted: Chair[] = [];
@@ -146,13 +144,12 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
   const allTablesMap = new Map<UUID, Table>();
 
   for (const el of state.elements) {
-
     if (el.type === "chair") {
       if (selectedIdSet.has(el.id)) {
         chairsToBeDeleted.push(el as Chair);
       }
       allChairMap.set(el.id, el as Chair);
-    } else if ((el.type === "rectTable" || el.type === "circleTable")) {
+    } else if (el.type === "rectTable" || el.type === "circleTable") {
       if (selectedIdSet.has(el.id)) {
         tablesToBeDeleted.push(el as Table);
       }
@@ -169,7 +166,6 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
 
   // Check tables with assigned attached chairs
   if (tablesToBeDeleted.length > 0) {
-
     for (const table of tablesToBeDeleted) {
       if (!table.attachedChairs?.length) continue;
 
@@ -179,10 +175,12 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
       });
 
       if (hasAssignedAttachedChairs) {
-        toast.error("Cannot delete table(s) that have chairs with assigned guests. Please unassign first.");
+        toast.error(
+          "Cannot delete table(s) that have chairs with assigned guests. Please unassign first."
+        );
         return false;
       } else {
-        table.attachedChairs.forEach((chairId) => {
+        table.attachedChairs.forEach(chairId => {
           const chair = allChairMap.get(chairId);
           if (chair) {
             chair.attachedTo = undefined;
@@ -192,7 +190,7 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
     }
   }
 
-  chairsToBeDeleted.forEach((chair) => {
+  chairsToBeDeleted.forEach(chair => {
     if (chair.attachedTo) {
       const table = allTablesMap.get(chair.attachedTo);
       if (table?.attachedChairs) {
@@ -204,25 +202,34 @@ export const validateCanvasElementDeletion = (state: AppState, selectedIds: UUID
 };
 
 export function extractedNeighboringEmployeeProfileIds(
-  chairId: string | null, state: AppState, generateChairNeighborMap: (algorithmType: AlgorithmType) => Record<string, Record<string, string[]>>, algorithmType: AlgorithmType) {
-
+  chairId: string | null,
+  state: AppState,
+  generateChairNeighborMap: (
+    algorithmType: AlgorithmType
+  ) => Record<string, Record<string, string[]>>,
+  algorithmType: AlgorithmType
+) {
   let neighbourProfileIds: UUID[] = [];
   if (chairId) {
     const chair = state.elements.find(el => el.type === "chair" && el.id === chairId);
 
     let neighborChairIds;
     try {
-      neighborChairIds = new Set(generateChairNeighborMap(algorithmType)[chair!.attachedTo!][chairId]);
+      neighborChairIds = new Set(
+        generateChairNeighborMap(algorithmType)[chair!.attachedTo!][chairId]
+      );
     } catch (e) {
       toast.error("Chair is not attached to a table!");
       throw e;
     }
 
     neighbourProfileIds = state.elements.reduce<string[]>((acc, el) => {
-      if (el.type === "chair" &&
+      if (
+        el.type === "chair" &&
         neighborChairIds.has(el.id) &&
         (el as Chair).assigneeProfile &&
-        !(el as Chair).belongsToVisitor) {
+        !(el as Chair).belongsToVisitor
+      ) {
         acc.push((el as Chair).assigneeProfile!.id!);
       }
       return acc;

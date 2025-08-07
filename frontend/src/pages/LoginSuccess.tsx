@@ -16,7 +16,6 @@ export const LoginSuccess = () => {
   useEffect(() => {
     const doLogin = async () => {
       try {
-
         const ownProfile = await getOwnProfile();
 
         const values = {

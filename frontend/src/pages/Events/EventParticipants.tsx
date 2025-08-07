@@ -65,7 +65,6 @@ export const EventParticipants = () => {
     if (eventId) {
       fetchParticipationData();
     }
-
   }, [eventId, getEmployees, getEventParticipants]);
 
   const allEmployeesFiltered = allEmployees
@@ -73,7 +72,7 @@ export const EventParticipants = () => {
       p =>
         (getFullName(p.profile).toLowerCase().includes(employeeSearch.toLowerCase()) ||
           p.profile.email.toLowerCase().includes(employeeSearch.toLowerCase())) &&
-        !participants.some(participant => participant.employeeId === p.profile.id),
+        !participants.some(participant => participant.employeeId === p.profile.id)
     )
     .sort((a, b) => getFullName(a.profile).localeCompare(getFullName(b.profile)));
 
@@ -90,7 +89,7 @@ export const EventParticipants = () => {
       guestCount: number;
       eventId: string;
       employeeId: string;
-    },
+    }
   ) => {
     try {
       setLoading(true);
@@ -100,11 +99,11 @@ export const EventParticipants = () => {
           prev.map(p =>
             p.id === participationId
               ? {
-                ...p,
-                guestCount: values.guestCount ?? 0,
-              }
-              : p,
-          ),
+                  ...p,
+                  guestCount: values.guestCount ?? 0,
+                }
+              : p
+          )
         );
       }
     } finally {
@@ -130,11 +129,12 @@ export const EventParticipants = () => {
   };
 
   const handleAddParticipantBatch = async (
-    eventId: UUID, rows: { guestCount: number; email: string; }[],
+    eventId: UUID,
+    rows: { guestCount: number; email: string }[]
   ) => {
     if (!rows.length) return;
     const emailToEmployee = Object.fromEntries(
-      allEmployees.map(e => [e.profile.email, e.profile.id]),
+      allEmployees.map(e => [e.profile.email, e.profile.id])
     );
     const batch = rows
       .map(row => ({
@@ -144,13 +144,10 @@ export const EventParticipants = () => {
       .filter(p => p.employeeId);
 
     if (batch.length != rows.length) {
-      const missingEmails = rows
-        .filter(row => !emailToEmployee[row.email])
-        .map(row => row.email);
-      toast.error(
-        `Some emails could not be mapped to employees: ${missingEmails.join(", ")}`,
-        { duration: 8000 },
-      );
+      const missingEmails = rows.filter(row => !emailToEmployee[row.email]).map(row => row.email);
+      toast.error(`Some emails could not be mapped to employees: ${missingEmails.join(", ")}`, {
+        duration: 8000,
+      });
     }
 
     if (batch.length) {
@@ -167,7 +164,7 @@ export const EventParticipants = () => {
           const updatedCount = batchResult.updatedParticipations?.length ?? 0;
           toast.success(
             `Participants imported! Created: ${createdCount}, Updated: ${updatedCount}`,
-            { duration: 6000 },
+            { duration: 6000 }
           );
           const allNew = [
             ...(batchResult.createdParticipations ?? []),
@@ -175,9 +172,7 @@ export const EventParticipants = () => {
           ];
           // Remove duplicates by employeeId
           const merged = [
-            ...participants.filter(
-              p => !allNew.some(np => np.employeeId === p.employeeId),
-            ),
+            ...participants.filter(p => !allNew.some(np => np.employeeId === p.employeeId)),
             ...allNew,
           ];
           setParticipants(merged);
@@ -190,8 +185,8 @@ export const EventParticipants = () => {
 
   const filteredParticipants = participants.filter(
     e =>
-      (getFullName(e)).toLowerCase().includes(participantSearch.toLowerCase()) ||
-      e.email.toLowerCase().includes(participantSearch.toLowerCase()),
+      getFullName(e).toLowerCase().includes(participantSearch.toLowerCase()) ||
+      e.email.toLowerCase().includes(participantSearch.toLowerCase())
   );
 
   const columns = [
@@ -260,18 +255,16 @@ export const EventParticipants = () => {
           skipEmptyLines: true,
           complete: (results: Papa.ParseResult<never>) => {
             // Validate headers
-            const expectedHeaders = ['email', 'guestCount'];
+            const expectedHeaders = ["email", "guestCount"];
             const actualHeaders = results.meta.fields || [];
-            const hasValidHeaders = expectedHeaders.every(header => 
-              actualHeaders.includes(header)
-            );
-            const hasOnlyExpectedHeaders = actualHeaders.every(header => 
+            const hasValidHeaders = expectedHeaders.every(header => actualHeaders.includes(header));
+            const hasOnlyExpectedHeaders = actualHeaders.every(header =>
               expectedHeaders.includes(header)
             );
 
             if (!hasValidHeaders || !hasOnlyExpectedHeaders) {
               toast.error(
-                `Invalid CSV format. Expected columns: ${expectedHeaders.join(', ')}. Found: ${actualHeaders.join(', ')}`,
+                `Invalid CSV format. Expected columns: ${expectedHeaders.join(", ")}. Found: ${actualHeaders.join(", ")}`,
                 { duration: 5000 }
               );
               setImportedRows([]);
@@ -442,7 +435,7 @@ export const EventParticipants = () => {
             onClick={() =>
               handleAddParticipantBatch(
                 eventId!,
-                importedRows.map(row => ({ ...row })),
+                importedRows.map(row => ({ ...row }))
               )
             }
           >
@@ -450,18 +443,19 @@ export const EventParticipants = () => {
           </Button>,
         ]}
       >
-        <div style={{ marginBottom: 12, color: '#faad14' }}>
-          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>email</code> and <code>guestCount</code>.
+        <div style={{ marginBottom: 12, color: "#faad14" }}>
+          <strong>Disclaimer:</strong> Please provide a CSV file with the columns <code>email</code>{" "}
+          and <code>guestCount</code>.
         </div>
         <Button
           style={{ marginBottom: 12 }}
           onClick={() => {
             const csvContent = "email;guestCount\nexample@email.com;2\n";
-            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const blob = new Blob([csvContent], { type: "text/csv" });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
+            const a = document.createElement("a");
             a.href = url;
-            a.download = 'participants_template.csv';
+            a.download = "participants_template.csv";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -470,7 +464,13 @@ export const EventParticipants = () => {
         >
           Download CSV Template
         </Button>
-        <Input key={fileInputKey} type="file" accept=".csv" onChange={handleImportFile} className="mb-4" />
+        <Input
+          key={fileInputKey}
+          type="file"
+          accept=".csv"
+          onChange={handleImportFile}
+          className="mb-4"
+        />
         {importedRows.length > 0 && (
           <Table
             columns={[

@@ -13,7 +13,7 @@ export class Arrow implements ElementProperties {
   color: string;
   draggable: boolean;
 
-  constructor(stageCenter: { x: number, y: number }) {
+  constructor(stageCenter: { x: number; y: number }) {
     this.id = uuidv4();
     this.type = "arrow";
     this.x1 = stageCenter.x;

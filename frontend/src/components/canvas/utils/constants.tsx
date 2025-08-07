@@ -5,7 +5,15 @@ import { Arrow, ArrowRender } from "components/canvas/elements/Arrow.tsx";
 import { Text, TextRender } from "components/canvas/elements/Text.tsx";
 
 export type UUID = string;
-export type ShapeType = "chair" | "rectTable" | "circleTable" | "wall" | "quickWall" | "arrow" | "text" | "room";
+export type ShapeType =
+  | "chair"
+  | "rectTable"
+  | "circleTable"
+  | "wall"
+  | "quickWall"
+  | "arrow"
+  | "text"
+  | "room";
 export type AlgorithmType = "table" | "distance";
 
 export const DIET_TYPE_COLORS: Record<string, string> = {
@@ -13,7 +21,7 @@ export const DIET_TYPE_COLORS: Record<string, string> = {
   VEGAN: "lime",
   LACTOSE_FREE: "blue",
   GLUTEN_FREE: "magenta",
-  FRUCTOSE_FREE: "orange"
+  FRUCTOSE_FREE: "orange",
 };
 
 export const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
@@ -165,7 +173,7 @@ export const getEditableParameters = (
   }
 };
 
-export const shapeFactory = (type: ShapeType, stageCenter: { x: number, y: number }) => {
+export const shapeFactory = (type: ShapeType, stageCenter: { x: number; y: number }) => {
   switch (type) {
     case "chair":
       return new Chair(stageCenter);

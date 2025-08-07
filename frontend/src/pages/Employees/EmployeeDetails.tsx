@@ -10,7 +10,6 @@ import type { EventType } from "types/event.ts";
 import { EventTypeTag } from "components/EventTypeTag.tsx";
 import { useAuth } from "../../contexts/AuthContext.tsx";
 
-
 const { Title } = Typography;
 
 // Table columns for attended events
@@ -215,11 +214,11 @@ export const EmployeeDetails = () => {
                 : field.value || ""}
             </Descriptions.Item>
           ))}
-          {isAdmin && employee?.profile.notes ?
-            (<Descriptions.Item label="Notes" span={3}>
+          {isAdmin && employee?.profile.notes ? (
+            <Descriptions.Item label="Notes" span={3}>
               {employee?.profile.notes}
-            </Descriptions.Item>) : null
-          }
+            </Descriptions.Item>
+          ) : null}
         </Descriptions>
       </Card>
 

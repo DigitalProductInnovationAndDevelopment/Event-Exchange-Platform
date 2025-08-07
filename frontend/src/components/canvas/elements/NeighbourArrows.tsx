@@ -12,25 +12,19 @@ interface NeighbourArrowsProps {
   algorithmType: AlgorithmType;
 }
 
-function NeighbourArrows({
-                           state,
-                           table,
-                           selectedChairId,
-                           algorithmType,
-                         }: NeighbourArrowsProps) {
+function NeighbourArrows({ state, table, selectedChairId, algorithmType }: NeighbourArrowsProps) {
   if (!table || !selectedChairId) return null;
 
   const chairs = state.elements.filter(
-    (el) => el.type === "chair" && table.attachedChairs.includes(el.id),
+    el => el.type === "chair" && table.attachedChairs.includes(el.id)
   ) as Chair[];
 
-  const selectedChair = chairs.find((chair) => chair.id === selectedChairId);
+  const selectedChair = chairs.find(chair => chair.id === selectedChairId);
   if (!selectedChair) return null;
 
-
   const arrows = chairs
-    .filter((chair) => chair.id !== selectedChair.id)
-    .filter((neighborChair) => {
+    .filter(chair => chair.id !== selectedChair.id)
+    .filter(neighborChair => {
       if (algorithmType === "table") {
         if (selectedChair.acquaintedProfileIds && neighborChair.assigneeProfile) {
           return selectedChair.acquaintedProfileIds.includes(neighborChair.assigneeProfile.id);
@@ -45,7 +39,7 @@ function NeighbourArrows({
 
   return (
     <Group>
-      {arrows.map((neighbor) => (
+      {arrows.map(neighbor => (
         <Arrow
           key={neighbor.id}
           points={[selectedChair.x, selectedChair.y, neighbor.x, neighbor.y]}

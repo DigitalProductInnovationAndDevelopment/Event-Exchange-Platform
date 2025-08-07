@@ -12,7 +12,11 @@ import {
   updateMultipleWithoutUndoRedo,
 } from "components/canvas/actions/actions.tsx";
 import Konva from "konva";
-import { type ElementProperties, shapeFactory, type UUID } from "components/canvas/utils/constants.tsx";
+import {
+  type ElementProperties,
+  shapeFactory,
+  type UUID,
+} from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import React from "react";
@@ -23,10 +27,11 @@ import type { SelectionRectangleType } from "components/canvas/elements/Selectio
 import { validateCanvasElementDeletion } from "components/canvas/utils/functions.tsx";
 import toast from "react-hot-toast";
 
-
-export const handleKeyUp = (e: KeyboardEvent,
-                            setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
-                            stageRef: React.RefObject<Konva.Stage | null>) => {
+export const handleKeyUp = (
+  e: KeyboardEvent,
+  setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
+  stageRef: React.RefObject<Konva.Stage | null>
+) => {
   if (e.key === "Shift") {
     setIsShiftPressed(false);
     const container = stageRef!.current?.container();
@@ -41,8 +46,10 @@ export const handleKeyDown = (
   dispatch: (action: Action) => void,
   setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>,
   setIsShiftPressed: React.Dispatch<React.SetStateAction<boolean>>,
-  selectedIds: UUID[], setQuickWallCoordinates: React.Dispatch<React.SetStateAction<QuickWallProps>>,
-  state: AppState) => {
+  selectedIds: UUID[],
+  setQuickWallCoordinates: React.Dispatch<React.SetStateAction<QuickWallProps>>,
+  state: AppState
+) => {
   // we have to skip key handling if user is typing in an input or textarea
   const tag = (e.target as HTMLElement).tagName.toLowerCase();
   if (tag === "input" || tag === "textarea") return;
@@ -93,12 +100,12 @@ export const handleKeyDown = (
   }
 };
 
-
 export const handleWheel = (
   e: { evt: WheelEvent },
   stageRef: React.RefObject<Konva.Stage | null>,
   scale: number,
-  setScale: React.Dispatch<React.SetStateAction<number>>) => {
+  setScale: React.Dispatch<React.SetStateAction<number>>
+) => {
   e.evt.preventDefault();
   const scaleBy = 1.05;
   const stage = stageRef.current;
@@ -116,7 +123,8 @@ export const handleDragMove = (
   e: Konva.KonvaEventObject<DragEvent>,
   el: ElementProperties,
   state: AppState,
-  dispatch: (action: Action) => void) => {
+  dispatch: (action: Action) => void
+) => {
   // If it's a table with attached chairs, update the chairs position during dragging
   if ((el.type === "rectTable" || el.type === "circleTable") && el.attachedChairs!.length > 0) {
     const shape: Konva.Stage | Konva.Shape = e.target;
@@ -126,16 +134,16 @@ export const handleDragMove = (
     // Get all attached chairs and their offsets
     const updates = el
       .attachedChairs!.map((chairId: string) => {
-      const chair = state.elements.find(e => e.id === chairId) as Chair;
-      if (chair && chair.offset) {
-        return {
-          id: chairId,
-          x: newX + chair.offset.dx,
-          y: newY + chair.offset.dy,
-        };
-      }
-      return null;
-    })
+        const chair = state.elements.find(e => e.id === chairId) as Chair;
+        if (chair && chair.offset) {
+          return {
+            id: chairId,
+            x: newX + chair.offset.dx,
+            y: newY + chair.offset.dy,
+          };
+        }
+        return null;
+      })
       .filter(Boolean);
 
     // Update all chair positions
@@ -143,25 +151,27 @@ export const handleDragMove = (
       dispatch(updateMultipleWithoutUndoRedo(updates));
     }
   }
-
 };
-
 
 export function handleDoubleClickOnElement(
   _e: KonvaEventObject<MouseEvent>,
   el: ElementProperties,
-  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) {
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>
+) {
   // setSelectedIds([...selectedIds, el.id]);
   setSelectedIds([el.id]);
 }
 
-export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRectangle: SelectionRectangleType,
-                              state: AppState,
-                              stageRef: React.RefObject<Konva.Stage | null>,
-                              rectRefs: React.RefObject<Map<UUID, Konva.NodeConfig>>,
-                              dispatch: (action: Action) => void,
-                              setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>,
-                              setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) {
+export function handleMouseUp(
+  isSelecting: React.RefObject<boolean>,
+  selectionRectangle: SelectionRectangleType,
+  state: AppState,
+  stageRef: React.RefObject<Konva.Stage | null>,
+  rectRefs: React.RefObject<Map<UUID, Konva.NodeConfig>>,
+  dispatch: (action: Action) => void,
+  setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>,
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>
+) {
   // Do nothing if we didn't start selection
   if (!isSelecting.current) {
     return;
@@ -184,7 +194,7 @@ export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRe
     // we are checking if rectangle intersects with selection box
     return Konva.Util.haveIntersection(
       selBox,
-      rectRefs.current.get(rect.id)!.getClientRect({ relativeTo: stageRef.current }),
+      rectRefs.current.get(rect.id)!.getClientRect({ relativeTo: stageRef.current })
     );
   });
   dispatch(setChairIdForManualAssignment(null));
@@ -192,14 +202,15 @@ export function handleMouseUp(isSelecting: React.RefObject<boolean>, selectionRe
 }
 
 export const handleMouseMove = (
-  e: { evt: MouseEvent, target: Konva.Stage },
+  e: { evt: MouseEvent; target: Konva.Stage },
   isShiftPressed: boolean,
-  state: AppState, scale: number,
+  state: AppState,
+  scale: number,
   stageRef: React.RefObject<Konva.Stage | null>,
   isSelecting: React.RefObject<boolean>,
   selectionRectangle: SelectionRectangleType,
-  setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>) => {
-
+  setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectangleType>>
+) => {
   const container = stageRef!.current?.container();
   if (container && (isShiftPressed || state.buildMode === 1)) {
     container.style.cursor = "default";
@@ -228,7 +239,8 @@ export const handleMouseDown = (
   scale: number,
   state: AppState,
   quickWallCoordinates: QuickWallProps,
-  setQuickWallCoordinates: React.Dispatch<React.SetStateAction<QuickWallProps>>) => {
+  setQuickWallCoordinates: React.Dispatch<React.SetStateAction<QuickWallProps>>
+) => {
   const stage = e.target.getStage()!;
   const pointer = stageRef.current!.getPointerPosition()!;
   isSelecting.current = e.evt.shiftKey;
@@ -275,15 +287,22 @@ export const handleGroupDragStart = (dispatch: (action: Action) => void) => {
   dispatch(commitUndoRedoHistory());
 };
 
-export const handleGroupDragEnd = (deltaX: number, deltaY: number, dispatch: (action: Action) => void, state: AppState, selectedIds: UUID[]) => {
-
-  const updatedElements = state.elements.filter(el => selectedIds.includes(el.id)).map(el => {
-    return {
-      ...el,
-      x: el.x! + deltaX,
-      y: el.y! + deltaY,
-    };
-  });
+export const handleGroupDragEnd = (
+  deltaX: number,
+  deltaY: number,
+  dispatch: (action: Action) => void,
+  state: AppState,
+  selectedIds: UUID[]
+) => {
+  const updatedElements = state.elements
+    .filter(el => selectedIds.includes(el.id))
+    .map(el => {
+      return {
+        ...el,
+        x: el.x! + deltaX,
+        y: el.y! + deltaY,
+      };
+    });
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   dispatch(updateMultipleWithoutUndoRedo(updatedElements));
@@ -300,7 +319,8 @@ export const handleDragEnd = (
   dispatch: (action: Action) => void,
   state: AppState,
   rectRefs: React.RefObject<Map<UUID, Konva.NodeConfig>>,
-  stageRef: React.RefObject<Konva.Stage | null>) => {
+  stageRef: React.RefObject<Konva.Stage | null>
+) => {
   const shape = e.target;
   const x = shape.x();
   const y = shape.y();
@@ -309,7 +329,7 @@ export const handleDragEnd = (
   if (el.type === "chair") {
     // Find the closest table
     const tables = state.elements.filter(
-      (t): t is Table => t.type === "circleTable" || t.type === "rectTable",
+      (t): t is Table => t.type === "circleTable" || t.type === "rectTable"
     );
 
     const table = tables.find(t => {
@@ -325,13 +345,15 @@ export const handleDragEnd = (
         const chairBox = {
           x: x - chairRadius,
           y: y - chairRadius,
-          width: 2 * (chairRadius),
-          height: 2 * (chairRadius),
+          width: 2 * chairRadius,
+          height: 2 * chairRadius,
         };
 
         // Get the table's client rect (handles rotation automatically)
         // Note: You'll need to pass rectRefs and stageRef to this function or access them from context
-        const tableRect = rectRefs.current.get(t.id)?.getClientRect({ relativeTo: stageRef.current });
+        const tableRect = rectRefs.current
+          .get(t.id)
+          ?.getClientRect({ relativeTo: stageRef.current });
 
         if (!tableRect) return false;
 
@@ -361,12 +383,13 @@ export const handleDragEnd = (
         let normalizedRotation = table.rotation % 360;
         if (normalizedRotation < 0) normalizedRotation += 360;
 
-        if (normalizedRotation < 1 ||
+        if (
+          normalizedRotation < 1 ||
           (89 < normalizedRotation && normalizedRotation < 91) ||
           (179 < normalizedRotation && normalizedRotation < 181) ||
           (269 < normalizedRotation && normalizedRotation < 271) ||
-          normalizedRotation > 359) {
-
+          normalizedRotation > 359
+        ) {
           const { radius: padding } = el;
           const tableX = table.x;
           const tableY = table.y;
@@ -443,26 +466,30 @@ export const handleDragEnd = (
 
       // Update chair with attachment info
       dispatch(
-        updateMultipleWithoutUndoRedo([{
-          id: el.id,
-          x: attachPosition.x,
-          y: attachPosition.y,
-          attachedTo: table.id,
-          offset: {
-            dx: attachPosition.x - table.x,
-            dy: attachPosition.y - table.y,
-            angle: attachPosition.angle,
+        updateMultipleWithoutUndoRedo([
+          {
+            id: el.id,
+            x: attachPosition.x,
+            y: attachPosition.y,
+            attachedTo: table.id,
+            offset: {
+              dx: attachPosition.x - table.x,
+              dy: attachPosition.y - table.y,
+              angle: attachPosition.angle,
+            },
           },
-        }]),
+        ])
       );
 
       // Update table with attached chair
       if (!table.attachedChairs.includes(el.id)) {
         dispatch(
-          updateMultipleWithoutUndoRedo([{
-            id: table.id,
-            attachedChairs: [...table.attachedChairs, el.id],
-          }]),
+          updateMultipleWithoutUndoRedo([
+            {
+              id: table.id,
+              attachedChairs: [...table.attachedChairs, el.id],
+            },
+          ])
         );
       }
       return;
@@ -472,23 +499,21 @@ export const handleDragEnd = (
       // Detach chair from table
       const parents = state.elements.filter(t => t.id === el.attachedTo) as Table[];
       if (parents) {
-        parents.forEach((parent) => {
-          updates.push(
-            {
-              id: parent.id,
-              attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
-            },
-          );
+        parents.forEach(parent => {
+          updates.push({
+            id: parent.id,
+            attachedChairs: parent.attachedChairs.filter(cid => cid !== el.id),
+          });
         });
       }
       updates.push({ id: el.id, x, y, attachedTo: undefined, offset: null });
       el.attachedTo = undefined;
-      dispatch(
-        updateMultipleWithoutUndoRedo(updates),
-      );
+      dispatch(updateMultipleWithoutUndoRedo(updates));
 
       if ((el as Chair).assigneeProfile) {
-        toast.error("Cannot remove occupied chairs. Unassign participants before removing chairs from the table.");
+        toast.error(
+          "Cannot remove occupied chairs. Unassign participants before removing chairs from the table."
+        );
         setTimeout(() => dispatch(undo(true)), 100);
       }
       return;
@@ -496,15 +521,14 @@ export const handleDragEnd = (
   }
   // Default handling for position updates
   dispatch(updateMultipleWithoutUndoRedo([{ id, x, y }]));
-
 };
 
 export const handleTransformEnd = (
   transformerRef: React.RefObject<Konva.Transformer | null>,
   state: AppState,
   dispatch: (action: Action) => void,
-  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>) => {
-
+  setSelectedIds: React.Dispatch<React.SetStateAction<UUID[]>>
+) => {
   const nodes = transformerRef.current!.nodes();
   const selectedIds = [];
   const updates = [];
@@ -525,48 +549,53 @@ export const handleTransformEnd = (
       const tableNode = nodes.find(node => node.attrs.id === el.attachedTo);
       const table = state.elements.find(e => e.id === el.attachedTo)!;
       if (tableNode && table) {
-        chairSpecificExtraTableOffset = { dx: tableNode?.x() - table.x!, dy: tableNode?.y() - table.y! };
+        chairSpecificExtraTableOffset = {
+          dx: tableNode?.x() - table.x!,
+          dy: tableNode?.y() - table.y!,
+        };
       }
-
     }
 
     const update =
-      el.type === "circleTable" ? {
-          id,
-          radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
-          rotation: node.rotation(),
-          x: node.x()!,
-          y: node.y()!,
-        } :
-        el.type === "chair" ? {
+      el.type === "circleTable"
+        ? {
             id,
             radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
-            rotation: node.rotation(), // Same rotation as table
-            x: node.x(),
-            y: node.y(),
-            offset: {
-              dx: el.offset!.dx! + (node.x() - el.x!) - (chairSpecificExtraTableOffset?.dx || 0), // Current relative position to table
-              dy: el.offset!.dy! + (node.y() - el.y!) - (chairSpecificExtraTableOffset?.dy || 0), // Current relative position to table
-            },
-          } :
-          el.type !== "wall" && el.type !== "arrow" ? {
+            rotation: node.rotation(),
+            x: node.x()!,
+            y: node.y()!,
+          }
+        : el.type === "chair"
+          ? {
               id,
-              x: node.x()!,
-              y: node.y()!,
-              width: el.width ? Math.max(10, el.width * scaleX) : undefined,
-              height: el.height ? Math.max(10, el.height * scaleY) : undefined,
-              rotation: node.rotation(),
-            } :
-            {
-              id,
+              radius: el.radius ? Math.max(10, el.radius * scaleX) : undefined,
+              rotation: node.rotation(), // Same rotation as table
               x: node.x(),
               y: node.y(),
-              x1: el.x1! * scaleX,
-              y1: el.y1! * scaleY,
-              x2: el.x2! * scaleX,
-              y2: el.y2! * scaleY,
-              rotation: node.rotation(),
-            };
+              offset: {
+                dx: el.offset!.dx! + (node.x() - el.x!) - (chairSpecificExtraTableOffset?.dx || 0), // Current relative position to table
+                dy: el.offset!.dy! + (node.y() - el.y!) - (chairSpecificExtraTableOffset?.dy || 0), // Current relative position to table
+              },
+            }
+          : el.type !== "wall" && el.type !== "arrow"
+            ? {
+                id,
+                x: node.x()!,
+                y: node.y()!,
+                width: el.width ? Math.max(10, el.width * scaleX) : undefined,
+                height: el.height ? Math.max(10, el.height * scaleY) : undefined,
+                rotation: node.rotation(),
+              }
+            : {
+                id,
+                x: node.x(),
+                y: node.y(),
+                x1: el.x1! * scaleX,
+                y1: el.y1! * scaleY,
+                x2: el.x2! * scaleX,
+                y2: el.y2! * scaleY,
+                rotation: node.rotation(),
+              };
     updates.push(update);
   }
 

@@ -34,7 +34,7 @@ export interface Project {
 }
 
 export interface EmployeeBatchUpsertResponse {
-  insertedEmployees: Employee[],
+  insertedEmployees: Employee[];
   updatedEmployees: Employee[];
 }
 

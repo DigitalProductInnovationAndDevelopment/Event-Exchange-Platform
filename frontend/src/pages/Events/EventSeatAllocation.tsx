@@ -19,13 +19,23 @@ import useApiService from "services/apiService";
 import { CanvasProvider, useCanvas } from "components/canvas/contexts/CanvasContext";
 import { KonvaCanvas, type KonvaCanvasProps } from "components/canvas/KonvaCanvas";
 import { getFullName, type Profile } from "types/employee";
-import { type AlgorithmType, type ElementProperties, type UUID } from "components/canvas/utils/constants.tsx";
+import {
+  type AlgorithmType,
+  type ElementProperties,
+  type UUID,
+} from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { Table } from "components/canvas/elements/Table.tsx";
 
 import { CanvasTooltip } from "components/CanvasTooltip.tsx";
-import { areNeighbours, extractedNeighboringEmployeeProfileIds } from "components/canvas/utils/functions.tsx";
-import { setCanvasPosition, setChairIdForManualAssignment } from "components/canvas/actions/actions.tsx";
+import {
+  areNeighbours,
+  extractedNeighboringEmployeeProfileIds,
+} from "components/canvas/utils/functions.tsx";
+import {
+  setCanvasPosition,
+  setChairIdForManualAssignment,
+} from "components/canvas/actions/actions.tsx";
 import type { SeatAllocationResult } from "types/event.ts";
 import {
   ClearOutlined,
@@ -41,18 +51,17 @@ import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
-
 // Main content component for seat allocation
 const SeatAllocationContent = ({
-                                 eventId,
-                                 eventName,
-                                 schematicsId,
-                                 stageRefs,
-                               }: {
-  eventId: string,
-  eventName: string,
-  schematicsId: string,
-  stageRefs?: React.RefObject<Konva.Stage | null>,
+  eventId,
+  eventName,
+  schematicsId,
+  stageRefs,
+}: {
+  eventId: string;
+  eventName: string;
+  schematicsId: string;
+  stageRefs?: React.RefObject<Konva.Stage | null>;
 }) => {
   const navigate = useNavigate();
   const { state, dispatch } = useCanvas();
@@ -75,9 +84,9 @@ const SeatAllocationContent = ({
   const [emptyChairCount, setEmptyChairCount] = useState(0);
   const [constraintInputValues, setConstraintInputValues] = useState({
     "last neighborhood": 0,
-    "Standort": 0,
-    "Anstellung": 0,
-    "Geschlecht": 0,
+    Standort: 0,
+    Anstellung: 0,
+    Geschlecht: 0,
   });
 
   // Calculate unallocated employees based on current seat assignment
@@ -93,7 +102,6 @@ const SeatAllocationContent = ({
         });
       }
     })();
-
   }, [eventId, getSeatAllocations]);
 
   useEffect(() => {
@@ -103,12 +111,15 @@ const SeatAllocationContent = ({
       setEmptyChairCount(emptyChairsCount);
       setLoading(false);
     })();
-
   }, [participants, state.elements.length]);
 
   const generateChairNeighborMap = (algorithmType: AlgorithmType) => {
-    const tables: Table[] = (state.elements.filter((el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable") as Table[]);
-    const chairs: Chair[] = (state.elements.filter((el: ElementProperties) => el.type === "chair") as Chair[]);
+    const tables: Table[] = state.elements.filter(
+      (el: ElementProperties) => el.type === "circleTable" || el.type === "rectTable"
+    ) as Table[];
+    const chairs: Chair[] = state.elements.filter(
+      (el: ElementProperties) => el.type === "chair"
+    ) as Chair[];
 
     const chairMap = new Map<string, Chair>();
     chairs.forEach((chair: Chair) => {
@@ -148,7 +159,6 @@ const SeatAllocationContent = ({
     return neighborMap;
   };
 
-
   const updateChairLabels = (participants: SeatAllocationResult[]) => {
     const assigned: SeatAllocationResult[] = [];
     const unassigned: SeatAllocationResult[] = [];
@@ -167,22 +177,23 @@ const SeatAllocationContent = ({
     }
 
     let emptyChairCount = 0;
-    state.elements
-      ?.forEach((e: ElementProperties) => {
-        if (e.type === "chair" && chairProfileMap.has(e.id)) {
-          (e as Chair).assigneeProfile = { ...chairProfileMap.get(e.id)! };
-          (e as Chair).belongsToVisitor = chairProfileMap.get(e.id)!.isVisitor;
-          (e as Chair).acquaintedProfileIds = undefined;
-          if (!(e as Chair).attachedTo) {
-            toast.error("Some participants are assigned to chairs that are not linked to a table. It might cause inconsistencies. Please be aware.");
-          }
-        } else if (e.type === "chair") {
-          (e as Chair).assigneeProfile = undefined;
-          (e as Chair).belongsToVisitor = undefined;
-          (e as Chair).acquaintedProfileIds = undefined;
-          emptyChairCount++;
+    state.elements?.forEach((e: ElementProperties) => {
+      if (e.type === "chair" && chairProfileMap.has(e.id)) {
+        (e as Chair).assigneeProfile = { ...chairProfileMap.get(e.id)! };
+        (e as Chair).belongsToVisitor = chairProfileMap.get(e.id)!.isVisitor;
+        (e as Chair).acquaintedProfileIds = undefined;
+        if (!(e as Chair).attachedTo) {
+          toast.error(
+            "Some participants are assigned to chairs that are not linked to a table. It might cause inconsistencies. Please be aware."
+          );
         }
-      });
+      } else if (e.type === "chair") {
+        (e as Chair).assigneeProfile = undefined;
+        (e as Chair).belongsToVisitor = undefined;
+        (e as Chair).acquaintedProfileIds = undefined;
+        emptyChairCount++;
+      }
+    });
 
     setAllocated(assigned);
     setUnallocated(unassigned);
@@ -194,11 +205,18 @@ const SeatAllocationContent = ({
     //console.log(generateChairNeighborMap());
     try {
       if ((state.unsavedChairs?.size ?? 0) > 0) {
-        toast.error("You have created new chairs that are not saved. Please save the schematics before generating seat allocations.", { duration: 6000 });
+        toast.error(
+          "You have created new chairs that are not saved. Please save the schematics before generating seat allocations.",
+          { duration: 6000 }
+        );
         return;
       }
       setLoading(true);
-      const results: SeatAllocationResult[] | null = await generateSeatAllocations(eventId!, generateChairNeighborMap("table"), constraintInputValues);
+      const results: SeatAllocationResult[] | null = await generateSeatAllocations(
+        eventId!,
+        generateChairNeighborMap("table"),
+        constraintInputValues
+      );
       if (results) {
         toast.success("Seats are allocated successfully!");
         setParticipants(results);
@@ -206,7 +224,6 @@ const SeatAllocationContent = ({
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleConstraintInputChange = (key: string, value: string) => {
@@ -224,7 +241,7 @@ const SeatAllocationContent = ({
     try {
       setLoading(true);
       setShowUnseatAllConfirmModal(false);
-      unsetAllSeatAllocations(eventId).then((result) => {
+      unsetAllSeatAllocations(eventId).then(result => {
         if (result) {
           participants.forEach(p => {
             p.chairId = null;
@@ -236,7 +253,6 @@ const SeatAllocationContent = ({
     } finally {
       setLoading(false);
     }
-
   };
 
   stageRefs?.current?.getStage()?.fire("contentReady");
@@ -248,7 +264,10 @@ const SeatAllocationContent = ({
         items={[
           { path: "/events", label: "Events" },
           { path: `/events/${eventId}`, label: eventName || "Selected Event" },
-          { path: `/events/${eventId}/seat-allocation/${schematicsId}`, label: "Manage Seat Allocation" },
+          {
+            path: `/events/${eventId}/seat-allocation/${schematicsId}`,
+            label: "Manage Seat Allocation",
+          },
         ]}
       />
       {/* Page title and action buttons */}
@@ -261,23 +280,27 @@ const SeatAllocationContent = ({
             type="primary"
             onClick={() => {
               const foundElement =
-                state.elements.find(element => element.type === "chair") ??
-                state.elements[0];
+                state.elements.find(element => element.type === "chair") ?? state.elements[0];
 
               if (foundElement) {
                 // Center the canvas on the chair element
-                dispatch(setCanvasPosition({
-                  canvasPosition: { x: -foundElement.x!, y: -foundElement.y! },
-                  scale: 1,
-                }));
+                dispatch(
+                  setCanvasPosition({
+                    canvasPosition: { x: -foundElement.x!, y: -foundElement.y! },
+                    scale: 1,
+                  })
+                );
               } else {
-                dispatch(setCanvasPosition({
-                  canvasPosition: { x: 0, y: 0 },
-                  scale: 1,
-                }));
+                dispatch(
+                  setCanvasPosition({
+                    canvasPosition: { x: 0, y: 0 },
+                    scale: 1,
+                  })
+                );
               }
             }}
-            title="Find and go to the first chair element on the canvas">
+            title="Find and go to the first chair element on the canvas"
+          >
             <FullscreenExitOutlined />
           </Button>
           <Button
@@ -287,7 +310,8 @@ const SeatAllocationContent = ({
             onClick={async () => {
               try {
                 setLoading(true);
-                const employeeIdsSittingWithTheirAcquaintances: Record<UUID, UUID[]> | null = await findEmployeesSittingWithAcquaintances(eventId);
+                const employeeIdsSittingWithTheirAcquaintances: Record<UUID, UUID[]> | null =
+                  await findEmployeesSittingWithAcquaintances(eventId);
                 if (employeeIdsSittingWithTheirAcquaintances) {
                   state.elements.forEach(element => {
                     if (element.type === "chair") {
@@ -296,7 +320,8 @@ const SeatAllocationContent = ({
                       chair.acquaintedProfileIds = undefined;
                       if (chair.assigneeProfile && !chair.belongsToVisitor) {
                         const employeeId = chair.assigneeProfile!.id;
-                        chair.acquaintedProfileIds = employeeIdsSittingWithTheirAcquaintances[employeeId] ?? [];
+                        chair.acquaintedProfileIds =
+                          employeeIdsSittingWithTheirAcquaintances[employeeId] ?? [];
                       }
                     }
                   });
@@ -304,7 +329,8 @@ const SeatAllocationContent = ({
               } finally {
                 setLoading(false);
               }
-            }}>
+            }}
+          >
             Highlight Acquainted Employees
           </Button>
         </div>
@@ -320,8 +346,11 @@ const SeatAllocationContent = ({
             style={{ transition: "all 0.2s ease" }}
             title={isCollapsed ? "Expand" : "Collapse"}
           >
-            {isCollapsed ? <MenuFoldOutlined style={{ fontSize: "12px" }} /> :
-              <MenuUnfoldOutlined style={{ fontSize: "12px" }} />}
+            {isCollapsed ? (
+              <MenuFoldOutlined style={{ fontSize: "12px" }} />
+            ) : (
+              <MenuUnfoldOutlined style={{ fontSize: "12px" }} />
+            )}
           </Button>
         </Space>
       </div>
@@ -330,7 +359,11 @@ const SeatAllocationContent = ({
         <Col span={isCollapsed ? 24 : 18}>
           <Card className="mb-6">
             <div style={{ height: "600px", overflow: "hidden" }}>
-              <KonvaCanvas schematicsUUID={schematicsId} stageReference={stageRefs} isFullWidth={isCollapsed} />
+              <KonvaCanvas
+                schematicsUUID={schematicsId}
+                stageReference={stageRefs}
+                isFullWidth={isCollapsed}
+              />
             </div>
           </Card>
           <Card className="mb-6" title="Seat Allocation Settings">
@@ -370,7 +403,7 @@ const SeatAllocationContent = ({
                           min={0}
                           max={3}
                           value={constraintInputValues[key]}
-                          onChange={(value) => handleConstraintInputChange(key, value)}
+                          onChange={value => handleConstraintInputChange(key, value)}
                           step={1}
                           style={{ width: 80, marginLeft: 0 }}
                           className="text-left"
@@ -380,8 +413,14 @@ const SeatAllocationContent = ({
                   ))}
                 </div>
                 <div className="flex flex-col w-1/3">
-                  <span className="text-left text-black" style={{ minHeight: '200px', display: 'flex', alignItems: 'flex-start' }}>
-                    Set the weighting for each constraint to guide how the seat allocation algorithm prioritizes them. Higher values mean greater importance. "Guests seated with employee" is always considered; for the others, choose a value from 0 (not considered at all) to 3 (very important).
+                  <span
+                    className="text-left text-black"
+                    style={{ minHeight: "200px", display: "flex", alignItems: "flex-start" }}
+                  >
+                    Set the weighting for each constraint to guide how the seat allocation algorithm
+                    prioritizes them. Higher values mean greater importance. "Guests seated with
+                    employee" is always considered; for the others, choose a value from 0 (not
+                    considered at all) to 3 (very important).
                   </span>
                 </div>
               </div>
@@ -389,19 +428,22 @@ const SeatAllocationContent = ({
           </Card>
         </Col>
         <Col span={isCollapsed ? 0 : 6}>
-          <div style={{
-            transition: "all 0.3s ease",
-            overflow: "hidden",
-            width: "100%",
-            opacity: isCollapsed ? 0.3 : 1,
-          }}>
+          <div
+            style={{
+              transition: "all 0.3s ease",
+              overflow: "hidden",
+              width: "100%",
+              opacity: isCollapsed ? 0.3 : 1,
+            }}
+          >
             <Card className="mb-6" style={{ display: isCollapsed ? "none" : "block" }}>
               <b>{`Empty Seat Count: ${emptyChairCount}`}</b>
             </Card>
             <Card
               title={`Unallocated Participants ( ${unallocated.length} / ${allocated.length + unallocated.length} )`}
               className="mb-6"
-                  style={{ display: isCollapsed || unallocated.length === 0 ? "none" : "block" }}>
+              style={{ display: isCollapsed || unallocated.length === 0 ? "none" : "block" }}
+            >
               <Input.Search
                 placeholder="Search"
                 value={unallocatedSearch}
@@ -410,11 +452,19 @@ const SeatAllocationContent = ({
               />
               {/* List of employees who are not yet assigned to any seat */}
               <List
-                dataSource={useMemo(() =>
-                  unallocated.filter(item =>
-                    (getFullName(item.profile).toLowerCase() || "").includes(unallocatedSearch.toLowerCase()) ||
-                    (item.profile.email?.toLowerCase() || "").includes(unallocatedSearch.toLowerCase()),
-                  ), [unallocated, unallocatedSearch])}
+                dataSource={useMemo(
+                  () =>
+                    unallocated.filter(
+                      item =>
+                        (getFullName(item.profile).toLowerCase() || "").includes(
+                          unallocatedSearch.toLowerCase()
+                        ) ||
+                        (item.profile.email?.toLowerCase() || "").includes(
+                          unallocatedSearch.toLowerCase()
+                        )
+                    ),
+                  [unallocated, unallocatedSearch]
+                )}
                 pagination={{ defaultPageSize: 5, showSizeChanger: true, size: "small" }}
                 renderItem={item => (
                   <List.Item
@@ -426,27 +476,34 @@ const SeatAllocationContent = ({
                           onClick={() => {
                             const chairId = state.chairIdForManualAssignment!;
                             if (state.unsavedChairs?.has(chairId)) {
-                              toast.error("This seat is created new and not saved, please save the schematics before assigning a participant!", { duration: 6000 });
+                              toast.error(
+                                "This seat is created new and not saved, please save the schematics before assigning a participant!",
+                                { duration: 6000 }
+                              );
                               return;
                             }
-                            const neighbourProfileIds = extractedNeighboringEmployeeProfileIds(chairId, state, generateChairNeighborMap, "table");
+                            const neighbourProfileIds = extractedNeighboringEmployeeProfileIds(
+                              chairId,
+                              state,
+                              generateChairNeighborMap,
+                              "table"
+                            );
 
                             updateSeatAllocation(eventId, {
                               participationId: item.participationId,
                               chairId: state.chairIdForManualAssignment,
                               neighbourProfileIds: neighbourProfileIds,
-                            }).then(
-                              (assignmentResponse) => {
-                                if (assignmentResponse) {
-                                  participants.find(p => p.participationId === item.participationId)!.chairId = state.chairIdForManualAssignment;
-                                  setParticipants([...participants]);
-                                  dispatch(setChairIdForManualAssignment(null));
-                                }
-                              },
-                            );
+                            }).then(assignmentResponse => {
+                              if (assignmentResponse) {
+                                participants.find(
+                                  p => p.participationId === item.participationId
+                                )!.chairId = state.chairIdForManualAssignment;
+                                setParticipants([...participants]);
+                                dispatch(setChairIdForManualAssignment(null));
+                              }
+                            });
                           }}
-                        >
-                        </Button>
+                        ></Button>
                       ),
                     ].filter(Boolean)}
                   >
@@ -461,8 +518,13 @@ const SeatAllocationContent = ({
             </Card>
             <Card
               title={`Allocated Participants ( ${allocated.length} / ${allocated.length + unallocated.length} )`}
-              extra={<Button className="mr-2" icon={<ClearOutlined style={{ fontSize: 16, color: "red" }} />}
-                             onClick={handleUnallocateAllClick}></Button>}
+              extra={
+                <Button
+                  className="mr-2"
+                  icon={<ClearOutlined style={{ fontSize: 16, color: "red" }} />}
+                  onClick={handleUnallocateAllClick}
+                ></Button>
+              }
               className="mb-6"
               style={{ display: isCollapsed || allocated.length === 0 ? "none" : "block" }}
             >
@@ -475,30 +537,41 @@ const SeatAllocationContent = ({
               {/* List of employees who are assigned to any seat */}
               <List
                 pagination={{ defaultPageSize: 5, showSizeChanger: true, size: "small" }}
-                dataSource={useMemo(() =>
-                  allocated.filter(item =>
-                    (getFullName(item.profile).toLowerCase() || "").includes(allocatedSearch.toLowerCase()) ||
-                    (item.profile.email?.toLowerCase() || "").includes(allocatedSearch.toLowerCase()),
-                  ), [allocated, allocatedSearch])}
+                dataSource={useMemo(
+                  () =>
+                    allocated.filter(
+                      item =>
+                        (getFullName(item.profile).toLowerCase() || "").includes(
+                          allocatedSearch.toLowerCase()
+                        ) ||
+                        (item.profile.email?.toLowerCase() || "").includes(
+                          allocatedSearch.toLowerCase()
+                        )
+                    ),
+                  [allocated, allocatedSearch]
+                )}
                 renderItem={item => (
                   <List.Item
                     actions={[
-                      <Button icon={<LogoutOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />}
-                              onClick={() => {
-                                updateSeatAllocation(eventId, {
-                                  participationId: item.participationId,
-                                  chairId: null,
-                                  neighbourProfileIds: null,
-                                }).then(
-                                  (assignmentResponse) => {
-                                    if (assignmentResponse) {
-                                      participants.find(p => p.participationId === item.participationId)!.chairId = null;
-                                      setParticipants([...participants]);
-                                    }
-                                  },
-                                );
-                              }}>
-                      </Button>,
+                      <Button
+                        icon={
+                          <LogoutOutlined key="delete" style={{ fontSize: 16, color: "#ff4d4f" }} />
+                        }
+                        onClick={() => {
+                          updateSeatAllocation(eventId, {
+                            participationId: item.participationId,
+                            chairId: null,
+                            neighbourProfileIds: null,
+                          }).then(assignmentResponse => {
+                            if (assignmentResponse) {
+                              participants.find(
+                                p => p.participationId === item.participationId
+                              )!.chairId = null;
+                              setParticipants([...participants]);
+                            }
+                          });
+                        }}
+                      ></Button>,
                     ]}
                   >
                     <List.Item.Meta
@@ -526,13 +599,16 @@ const SeatAllocationContent = ({
       >
         <p>Are you sure you want to unseat all participants?</p>
       </Modal>
-
     </div>
   );
 };
 
 // Main page component: fetches data and provides context
-export const EventSeatAllocation = ({ stageReference, schematicsUUID, eventName }: KonvaCanvasProps) => {
+export const EventSeatAllocation = ({
+  stageReference,
+  schematicsUUID,
+  eventName,
+}: KonvaCanvasProps) => {
   const { eventId } = useParams();
   const [eventNameState] = useState<string>(eventName!);
   const [schematicsId, setSchematicsId] = useState<string | null>(null);
@@ -553,9 +629,11 @@ export const EventSeatAllocation = ({ stageReference, schematicsUUID, eventName 
   }, [eventId, eventName, schematicsUUID]);
 
   if (loading || !eventId) {
-    return (<div className="flex justify-center items-center h-screen">
-      <Spin size="large" tip="Loading event details..." />
-    </div>);
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Loading event details..." />
+      </div>
+    );
   }
 
   return (

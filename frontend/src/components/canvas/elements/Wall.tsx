@@ -6,7 +6,7 @@ import { handleMouseOut, handleMouseOver } from "components/canvas/utils/functio
 export type QuickWallProps = {
   x1?: number;
   y1?: number;
-}
+};
 
 export class Wall implements ElementProperties {
   id: UUID;
@@ -21,7 +21,7 @@ export class Wall implements ElementProperties {
   color: string;
   draggable: boolean;
 
-  constructor(stageCenter?: { x: number, y: number }) {
+  constructor(stageCenter?: { x: number; y: number }) {
     this.id = uuidv4();
     this.type = "wall";
     this.x1 = stageCenter?.x ?? 200;

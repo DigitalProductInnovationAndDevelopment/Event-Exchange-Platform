@@ -28,17 +28,17 @@ export interface SchematicsEntity {
 }
 
 export interface SeatAllocationResult {
-  profile: Profile,
+  profile: Profile;
   participationId: UUID;
-  invitorId: UUID | null,
-  chairId: UUID | null,
-  accessLink: string
+  invitorId: UUID | null;
+  chairId: UUID | null;
+  accessLink: string;
 }
 
 export interface SeatAllocationUpsert {
-  participationId: UUID,
-  chairId: UUID | null,
-  neighbourProfileIds: UUID[] | null,
+  participationId: UUID;
+  chairId: UUID | null;
+  neighbourProfileIds: UUID[] | null;
 }
 
 export interface EventMinimal {

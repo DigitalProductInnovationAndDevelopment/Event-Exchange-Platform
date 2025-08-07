@@ -86,9 +86,7 @@ export const Login = () => {
             {isVisitorExpanded && (
               <div className="bg-white p-4 rounded-lg border space-y-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Access Code
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Access Code</label>
                   <Input
                     prefix={<UserOutlined />}
                     placeholder="Enter access code"
@@ -98,9 +96,7 @@ export const Login = () => {
                     onKeyPress={handleKeyPress}
                     status={error ? "error" : ""}
                   />
-                  {error && (
-                    <div className="text-red-500 text-sm">{error}</div>
-                  )}
+                  {error && <div className="text-red-500 text-sm">{error}</div>}
                 </div>
 
                 <div className="flex space-x-2">
@@ -113,11 +109,7 @@ export const Login = () => {
                   >
                     Continue
                   </Button>
-                  <Button
-                    type="text"
-                    onClick={toggleVisitorLogin}
-                    className="flex-1"
-                  >
+                  <Button type="text" onClick={toggleVisitorLogin} className="flex-1">
                     Cancel
                   </Button>
                 </div>
