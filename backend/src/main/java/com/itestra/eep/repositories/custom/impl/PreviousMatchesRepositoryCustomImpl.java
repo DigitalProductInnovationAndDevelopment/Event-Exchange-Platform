@@ -28,6 +28,7 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
 
 
     @Override
+    @Transactional(readOnly = true)
     public Map<UUID, List<UUID>> findEmployeeIdsSittingWithAcquaintances(UUID eventId, int cutoffYear) {
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
 
@@ -71,6 +72,8 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
 
         LocalDateTime cutoffDate = eventDate.minusYears(cutoffYear);
 
+        Set<UUID> currentEventEmployeeParticipantIds = employeeParticipationRepository.findAllEmployeeParticipantIdsOfEvent(eventId);
+
         Set<UUID> eventsToConsider = eventRepository.findEventsByDateBetween(cutoffDate, eventDate);
 
         Set<EmployeeParticipationDTO> employeeParticipationDTOs = new HashSet<>();
@@ -82,7 +85,11 @@ public class PreviousMatchesRepositoryCustomImpl implements PreviousMatchesRepos
             Set<PreviousMatch.PreviousMatchId> filteredMatches = emp.getPreviousMatches().stream()
                     .filter(pm ->
                             eventsToConsider.contains(pm.getId().getEventId()) &&
-                                    empId.equals(pm.getId().getFirstEmployeeId()))
+                                    empId.equals(pm.getId().getFirstEmployeeId()) &&
+                                    // The following is used to filter out previous matchings with employees that happened before but those employees are not participating
+                                    // in the current event. So no need to include those matchings. This reduces unnecessary constraint count.
+                                    currentEventEmployeeParticipantIds.contains(pm.getId().getSecondEmployeeId())
+                    )
                     .map(PreviousMatch::getId)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
 

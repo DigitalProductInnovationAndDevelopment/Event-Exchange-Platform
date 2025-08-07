@@ -34,5 +34,7 @@ public interface EmployeeParticipationRepository extends JpaRepository<EmployeeP
             "            and pm.id.firstEmployeeId = pm2.id.secondEmployeeId)")
     List<Object[]> findEmployeePairsOfCurrentEventThatAreAcquaintedFromPreviousEvents(Set<UUID> previousEventIds, UUID currentEventId);
 
+    @Query("select e.employee.id from EmployeeParticipation e where e.eventId = ?1")
+    Set<UUID> findAllEmployeeParticipantIdsOfEvent(UUID eventId);
 
 }

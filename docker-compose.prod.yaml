@@ -1,0 +1,71 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: itestra-frontend-prod
+    ports:
+      - "${FRONTEND_PORT}:5173"
+    environment:
+      - VITE_API_ORIGIN=${BACKEND_ADDRESS}
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres
+    container_name: itestra-postgres-prod
+    # we exclude port mapping for security, just accessible via internal docker network
+    # ports:
+    #   - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - ./backend/src/main/java/com/itestra/eep/sql:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: prod
+    container_name: itestra-backend-prod
+    ports:
+      - "${SERVER_PORT}:8000"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://itestra-postgres-prod:5432/${DATABASE_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+      APPLICATION_SECURITY_JWT_SECRET_KEY: ${JWT_SERVER_KEY}
+      BACKEND_DOMAIN_ADDRESS: ${BACKEND_ADDRESS}
+      CLIENT_INSTANCE_ADDRESS: ${CLIENT_INSTANCE_ADDRESS}
+      GITLAB_INSTANCE_CLIENT_ID: ${GITLAB_INSTANCE_CLIENT_ID}
+      GITLAB_INSTANCE_CLIENT_SECRET: ${GITLAB_INSTANCE_CLIENT_SECRET}
+      CONSTRAINT_SOLVER_NUM_SEARCH_WORKERS: ${CONSTRAINT_SOLVER_SEARCH_WORKERS_COUNT}
+      CONSTRAINT_SOLVER_SOLVER_TIME_LIMIT: ${CONSTRAINT_SOLVER_DURATION_LIMIT}
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f ${BACKEND_ADDRESS}/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+networks:
+  app-network:
+    driver: bridge

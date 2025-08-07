@@ -2,7 +2,7 @@
 
 Download the backend repository.
 
-There should be a `docker-compose.yaml` file in the project's root directory.
+There should be a `docker-compose.yaml` file in the backend directory.
 
 Run `docker compose up`.
 

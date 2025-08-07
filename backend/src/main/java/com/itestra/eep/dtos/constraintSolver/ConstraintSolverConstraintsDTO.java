@@ -12,7 +12,7 @@ public class ConstraintSolverConstraintsDTO implements Serializable {
     @JsonProperty("Standort")
     int place;
 
-    @JsonProperty("Anstellung")
+    @JsonProperty("Zugehörigkeit")
     int employmentDuration;
 
     @JsonProperty("Geschlecht")

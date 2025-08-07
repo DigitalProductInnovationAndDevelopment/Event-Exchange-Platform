@@ -9,7 +9,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA organization
     GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO organization_user;
 
 
-CREATE TABLE organization.audit_log
+CREATE TABLE IF NOT EXISTS organization.audit_log
 (
     id             BIGSERIAL PRIMARY KEY,
     uid            UUID         NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE organization.audit_log
     timestamp      TIMESTAMP
 );
 
-CREATE TABLE organization.profile
+CREATE TABLE IF NOT EXISTS organization.profile
 (
     id              UUID PRIMARY KEY,
     gitlab_username VARCHAR(255) NULL UNIQUE,
@@ -32,7 +32,7 @@ CREATE TABLE organization.profile
     updated_at      TIMESTAMP
 );
 
-CREATE TABLE organization.user_roles
+CREATE TABLE IF NOT EXISTS organization.user_roles
 (
     profile_id UUID        NOT NULL,
     role       VARCHAR(50) NOT NULL,
@@ -40,14 +40,14 @@ CREATE TABLE organization.user_roles
     CONSTRAINT unique_user_role UNIQUE (profile_id, role)
 );
 
-CREATE TABLE organization.employee
+CREATE TABLE IF NOT EXISTS organization.employee
 (
     profile_id      UUID PRIMARY KEY REFERENCES organization.profile (id) ON DELETE CASCADE,
     location        VARCHAR(255) NOT NULL,
     employment_start_date DATE
 );
 
-CREATE TABLE organization.event
+CREATE TABLE IF NOT EXISTS organization.event
 (
     id          UUID PRIMARY KEY,
     name        VARCHAR(255)   NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE organization.event
     address    VARCHAR(1000) NOT NULL
 );
 
-CREATE TABLE organization.previous_matches
+CREATE TABLE IF NOT EXISTS organization.previous_matches
 (
     first_employee_id  UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
     second_employee_id UUID REFERENCES organization.employee (profile_id) ON DELETE CASCADE,
@@ -67,13 +67,13 @@ CREATE TABLE organization.previous_matches
     PRIMARY KEY (first_employee_id, second_employee_id, event_id)
 );
 
-CREATE TABLE organization.chair
+CREATE TABLE IF NOT EXISTS organization.chair
 (
     id       UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.event (id) ON DELETE CASCADE
 );
 
-CREATE TABLE organization.employee_participation
+CREATE TABLE IF NOT EXISTS organization.employee_participation
 (
     id          UUID PRIMARY KEY,
     guest_count INTEGER,
@@ -87,7 +87,7 @@ CREATE TABLE organization.employee_participation
     CONSTRAINT unique_chair_per_employee_participation UNIQUE (chair_id, event_id)
 );
 
-CREATE TABLE organization.visitor_participation
+CREATE TABLE IF NOT EXISTS organization.visitor_participation
 (
     id                       UUID PRIMARY KEY,
     profile_id               UUID REFERENCES organization.profile (id) ON DELETE CASCADE                NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE organization.visitor_participation
 );
 
 
-CREATE TABLE organization.files
+CREATE TABLE IF NOT EXISTS organization.files
 (
     file_id      UUID PRIMARY KEY,
     event_id UUID references organization.event (id) ON DELETE CASCADE,
@@ -115,7 +115,7 @@ CREATE TABLE organization.files
     updated_at   TIMESTAMP
 );
 
-CREATE TABLE organization.schematics
+CREATE TABLE IF NOT EXISTS organization.schematics
 (
     id         UUID PRIMARY KEY,
     event_id UUID REFERENCES organization.event (id) ON DELETE CASCADE,
