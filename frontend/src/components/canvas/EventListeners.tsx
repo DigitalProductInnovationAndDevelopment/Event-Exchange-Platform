@@ -12,11 +12,7 @@ import {
   updateMultipleWithoutUndoRedo,
 } from "components/canvas/actions/actions.tsx";
 import Konva from "konva";
-import {
-  type ElementProperties,
-  shapeFactory,
-  type UUID,
-} from "components/canvas/utils/constants.tsx";
+import { type ElementProperties, shapeFactory, type UUID } from "components/canvas/utils/constants.tsx";
 import type { Chair } from "components/canvas/elements/Chair.tsx";
 import type { AppState } from "components/canvas/reducers/CanvasReducer.tsx";
 import React from "react";
@@ -274,7 +270,7 @@ export const handleMouseDown = (
 
       const stageCenter = { x: 0, y: 0 };
       let element = shapeFactory("wall", stageCenter) as Wall;
-      element = { ...element, x1, y1, x2, y2 } as Wall;
+      element = { ...element, x1, y1, x2, y2, x: 0, y: 0 } as Wall;
 
       dispatch(addElement(element));
 

@@ -24,6 +24,8 @@ export class Wall implements ElementProperties {
   constructor(stageCenter?: { x: number; y: number }) {
     this.id = uuidv4();
     this.type = "wall";
+    this.x = 0;
+    this.y = 0;
     this.x1 = stageCenter?.x ?? 200;
     this.y1 = stageCenter?.y ?? 100;
     this.x2 = (stageCenter?.x ?? 200) + 150;
